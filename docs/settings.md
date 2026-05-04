@@ -69,6 +69,24 @@ void-shell-settings defaults
 
 Output should be JSON on stdout and human-readable diagnostics on stderr. QML should treat helper failure as non-fatal and keep safe defaults.
 
+## Build From Source
+
+```bash
+zig build
+```
+
+The installed binary is written under `zig-out/bin/void-shell-settings`.
+
+Quick checks:
+
+```bash
+zig build
+./zig-out/bin/void-shell-settings defaults
+./zig-out/bin/void-shell-settings read
+```
+
+The initial helper is intentionally small. `read` falls back to defaults when no settings file exists. `write` persists the provided JSON payload as-is; strict schema validation will be added before QML depends on it for critical state.
+
 ## QML Boundary
 
 `SettingsService.qml` remains the presentation-facing state owner. The Zig helper should only persist, validate, and normalize settings data.
