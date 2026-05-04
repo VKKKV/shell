@@ -6,54 +6,91 @@
 
 ## Overview
 
-<!--
-Document your project's component conventions here.
+The project uses three layers:
 
-Questions to answer:
-- What component patterns do you use?
-- How are props defined?
-- How do you handle composition?
-- What accessibility standards apply?
--->
+- `components/` for reusable tactical UI primitives
+- `modules/hud/` for composed feature surfaces
+- `services/` for state and external integrations
 
-(To be filled by the team)
+The guiding rule is: components render, modules compose, services fetch/state-manage.
 
 ---
 
 ## Component Structure
 
-<!-- Standard structure of a component file -->
+### Components
 
-(To be filled by the team)
+Files in `components/` should be small and visual-first.
+
+Examples:
+
+- `TacticalFrame.qml`
+- `MetricRow.qml`
+- `Sparkline.qml`
+- `ToggleRow.qml`
+
+Good component traits:
+
+- accepts simple props
+- no shell-command execution
+- no direct Hyprland/system parsing
+- reusable across multiple modules
+
+### Modules
+
+Files in `modules/hud/` should represent visible product features.
+
+Examples:
+
+- `TopStatusBar.qml`
+- `LeftTacticalPanel.qml`
+- `CenterTerminalPanel.qml`
+- `RightMonitorPanel.qml`
+- `SettingsPanel.qml`
+
+Good module traits:
+
+- composes several components
+- reads shaped data from services
+- contains minimal glue logic only
 
 ---
 
 ## Props Conventions
 
-<!-- How props should be defined and typed -->
+- Prefer explicit typed properties like `property bool`, `property int`, `property string`.
+- Use `required property` for delegate/model data when the component is invalid without it.
+- Pass already-formatted display values into visual components when possible.
 
-(To be filled by the team)
+Examples:
+
+- `MetricRow.qml` receives `label`, `value`, `progress`, `accent`.
+- `LiveIndicator.qml` receives only `label`.
 
 ---
 
 ## Styling Patterns
 
-<!-- How styles are applied (CSS modules, styled-components, Tailwind, etc.) -->
-
-(To be filled by the team)
+- Centralize colors, spacing, sizing, and breakpoints in `theme/Theme.qml`.
+- Do not scatter hard-coded tactical yellow/gray values across modules.
+- Preserve the hard-edged machine-interface style: sharp corners, dense typography, thin borders.
+- Scanline and polish effects should stay optional and controllable through settings state.
 
 ---
 
 ## Accessibility
 
-<!-- A11y requirements and patterns -->
+This project is visual-first and desktop-shell-specific, but minimum interaction clarity still applies.
 
-(To be filled by the team)
+- clickable areas should have obvious hover/active feedback
+- labels should elide rather than overflow
+- fallback states should render readable text, not blank panels
 
 ---
 
 ## Common Mistakes
 
-<!-- Component-related mistakes your team has made -->
-
-(To be filled by the team)
+- putting service logic inside `components/`
+- growing `HudLayout.qml` instead of extracting a new module
+- bypassing `Theme.qml` with ad-hoc constants
+- copying the visual language of reference shells instead of adapting it to this project
