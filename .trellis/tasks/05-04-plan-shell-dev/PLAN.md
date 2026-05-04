@@ -246,3 +246,26 @@ Acceptance:
 Acceptance:
 - Zig is used where it simplifies reliability/performance, not as premature architecture.
 - QML remains responsible for presentation; Zig helpers own data collection or durable backend behavior.
+
+## Prioritized Next Steps
+
+1. Wire QML settings state to the Zig helper.
+   - Load initial settings with `void-shell-settings read`.
+   - Save changes with `void-shell-settings write <json>`.
+   - Treat helper failures as non-fatal and keep QML defaults active.
+
+2. Implement panel visibility settings.
+   - Connect `leftVisible`, `centerVisible`, and `rightVisible` from the settings contract to `HudLayout.qml`.
+   - Add tactical toggles in `SettingsPanel.qml`.
+
+3. Wire update interval settings.
+   - Connect `data.updateIntervalMs` to `SystemStats.poller.interval`.
+   - Add settings panel controls with the existing `1000..30000` clamp range.
+
+4. Do screenshot-driven visual tuning.
+   - Tune panel proportions, font sizes, yellow intensity, scanline opacity, and graph density from real screenshots.
+   - Keep `quickshell -p .` warning-free after every visual pass.
+
+5. Expand feature set through vertical slices.
+   - Candidate features: audio, MPRIS/media, tray, notifications, launcher, and power/session controls.
+   - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
