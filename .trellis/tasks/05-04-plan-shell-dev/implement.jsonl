@@ -1,0 +1,9 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Frontend file layout conventions for Quickshell modules"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "QML component and composition conventions"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend quality and verification expectations"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Service and UI state ownership guidance"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Search-first and reuse checklist before creating helpers"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Data flow checklist for system service integrations"}
+{"file": "target.md", "reason": "Authoritative visual target description for tactical dashboard style"}

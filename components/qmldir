@@ -1,0 +1,5 @@
+TacticalFrame 1.0 TacticalFrame.qml
+TacticalLabel 1.0 TacticalLabel.qml
+MetricRow 1.0 MetricRow.qml
+ProgressBar 1.0 ProgressBar.qml
+Sparkline 1.0 Sparkline.qml
