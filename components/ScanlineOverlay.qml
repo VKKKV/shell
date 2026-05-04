@@ -9,7 +9,7 @@ Item {
     clip: true
 
     Repeater {
-        model: Math.ceil(root.height / 8)
+        model: Math.max(0, Math.ceil(Math.max(0, root.height) / 8))
 
         Rectangle {
             required property int index

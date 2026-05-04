@@ -21,6 +21,8 @@ Refer to [target.md](target.md) for a detailed breakdown of the interface elemen
 
 See [docs/hyprland.md](docs/hyprland.md) for Hyprland layer-shell, blur, and workspace integration notes.
 
+See [docs/settings.md](docs/settings.md) for the settings persistence contract and Zig helper plan.
+
 ## License
 
 GPLv3
