@@ -1,30 +1,33 @@
 import "../theme"
 import QtQuick
 
-Row {
+Item {
     id: root
 
     property string label: ">> LIVE"
 
-    spacing: 6
-    implicitHeight: Math.max(7, labelText.implicitHeight)
-    implicitWidth: dot.width + spacing + labelText.implicitWidth
+    width: content.implicitWidth
+    height: content.implicitHeight
     opacity: 0.95
 
-    Rectangle {
-        id: dot
+    Row {
+        id: content
 
-        width: 7
-        height: 7
-        anchors.verticalCenter: parent.verticalCenter
-        color: Theme.line
-    }
+        anchors.centerIn: parent
+        spacing: 6
 
-    TacticalLabel {
-        id: labelText
+        Rectangle {
+            width: 7
+            height: 7
+            anchors.verticalCenter: parent.verticalCenter
+            color: Theme.line
+        }
 
-        text: root.label
-        accent: true
+        TacticalLabel {
+            text: root.label
+            accent: true
+        }
+
     }
 
     SequentialAnimation on opacity {
