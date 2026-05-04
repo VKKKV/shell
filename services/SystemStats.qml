@@ -17,6 +17,8 @@ Singleton {
     property var networkRows: [["DOWN", "924.4 KiB/s", 0.76, true], ["UP", "88.1 KiB/s", 0.24, false], ["LINK", "SECURE", -1, true]]
     property var networkHistory: [0.18, 0.42, 0.3, 0.74, 0.52, 0.64, 0.21, 0.82, 0.36, 0.57, 0.7, 0.25]
     property var filesystemRows: [["/", "72%", 0.72, false], ["/home", "64%", 0.64, false], ["/data", "41%", 0.41, false]]
+    property string statusLine: "stats: fallback values active"
+    property var logLines: ["stats: initializing collectors"]
     property var previousCpu: ({})
     property real previousNetworkRx: 0
     property real previousNetworkTx: 0
@@ -40,8 +42,18 @@ Singleton {
         return next;
     }
 
+    function log(message: string): void {
+        const next = root.logLines.slice();
+        next.push(message);
+        while (next.length > 4)
+            next.shift();
+        root.logLines = next;
+        root.statusLine = message;
+    }
+
     function updateMemory(output: string): void {
         const lines = output.trim().split("\n");
+        let foundMemory = false;
         for (const line of lines) {
             const parts = line.trim().split(/\s+/);
             if (parts.length < 3)
@@ -52,13 +64,18 @@ Singleton {
                 const used = Number(parts[2]);
                 root.ramProgress = total > 0 ? used / total : 0;
                 root.ramText = `${formatGiB(used)} ${(root.ramProgress * 100).toFixed(1)}%`;
+                foundMemory = total > 0;
             } else if (parts[0] === "Swap:") {
                 const total = Number(parts[1]);
                 const used = Number(parts[2]);
                 root.swapProgress = total > 0 ? used / total : 0;
-                root.swapText = `${formatGiB(used)} ${(root.swapProgress * 100).toFixed(1)}%`;
+                root.swapText = total > 0 ? `${formatGiB(used)} ${(root.swapProgress * 100).toFixed(1)}%` : "0.0G 0.0%";
             }
         }
+        if (foundMemory)
+            log("stats: memory collector online");
+        else
+            log("stats: memory collector fallback");
     }
 
     function updateFilesystem(output: string): void {
@@ -79,6 +96,7 @@ Singleton {
 
         if (rows.length > 0)
             root.filesystemRows = rows;
+        log(rows.length > 0 ? `stats: filesystem collector online (${rows.length})` : "stats: filesystem collector fallback");
     }
 
     function updateCpu(output: string): void {
@@ -119,6 +137,9 @@ Singleton {
         if (rows.length > 0) {
             root.cpuRows = rows;
             root.cpuHistory = pushHistory(root.cpuHistory, aggregate / rows.length, 18);
+            log(`stats: cpu collector online (${rows.length})`);
+        } else {
+            log("stats: cpu collector fallback");
         }
     }
 
@@ -144,6 +165,7 @@ Singleton {
             const scale = Math.max(1048576, downRate, upRate);
             root.networkRows = [["DOWN", formatRate(downRate), Math.min(1, downRate / scale), true], ["UP", formatRate(upRate), Math.min(1, upRate / scale), false], ["LINK", "SECURE", -1, true]];
             root.networkHistory = pushHistory(root.networkHistory, downRate / scale, 12);
+            log("stats: network collector online");
         }
 
         root.previousNetworkRx = rx;

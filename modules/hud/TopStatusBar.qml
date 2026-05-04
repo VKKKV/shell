@@ -92,7 +92,7 @@ TacticalFrame {
 
             TacticalLabel {
                 anchors.right: parent.right
-                text: "HYPRLAND // QML RENDERER"
+                text: HyprlandService.available ? "HYPRLAND // QML RENDERER" : "HYPRLAND // FALLBACK MODE"
                 dim: true
             }
 

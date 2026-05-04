@@ -56,7 +56,7 @@ TacticalFrame {
         }
 
         LogStream {
-            lines: ["audit: root access granted", "net: eno1 link secure", "pkg: qml renderer updated", "matrix: tactical sync 100%"]
+            lines: [HyprlandService.statusLine, SystemStats.statusLine].concat(SystemStats.logLines)
         }
 
     }
