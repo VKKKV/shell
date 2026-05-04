@@ -22,6 +22,11 @@ QtObject {
     readonly property int bottomBarHeight: 42
     readonly property int sidePanelWidth: 300
     readonly property int rightPanelWidth: 410
+    readonly property int sidePanelMinWidth: 240
+    readonly property int rightPanelMinWidth: 320
+    readonly property int sidePanelMaxWidth: 320
+    readonly property int rightPanelMaxWidth: 440
+    readonly property int compactWidth: 1500
 
     readonly property string fontFamily: "monospace"
     readonly property int fontTiny: 10

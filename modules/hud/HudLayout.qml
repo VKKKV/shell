@@ -6,6 +6,11 @@ import QtQuick.Layouts
 Item {
     id: root
 
+    readonly property bool compact: width > 0 && width < Theme.compactWidth
+    readonly property int contentWidth: Math.max(0, width - Theme.margin * 2)
+    readonly property int sideWidth: Math.max(Theme.sidePanelMinWidth, Math.min(Theme.sidePanelMaxWidth, Math.round(contentWidth * (compact ? 0.18 : 0.19))))
+    readonly property int rightWidth: Math.max(Theme.rightPanelMinWidth, Math.min(Theme.rightPanelMaxWidth, Math.round(contentWidth * (compact ? 0.25 : 0.26))))
+
     Rectangle {
         anchors.fill: parent
         color: Theme.background
@@ -33,7 +38,9 @@ Item {
             spacing: Theme.gap
 
             LeftTacticalPanel {
-                Layout.preferredWidth: Theme.sidePanelWidth
+                Layout.preferredWidth: root.sideWidth
+                Layout.minimumWidth: Theme.sidePanelMinWidth
+                Layout.maximumWidth: Theme.sidePanelMaxWidth
                 Layout.fillHeight: true
             }
 
@@ -43,7 +50,9 @@ Item {
             }
 
             RightMonitorPanel {
-                Layout.preferredWidth: Theme.rightPanelWidth
+                Layout.preferredWidth: root.rightWidth
+                Layout.minimumWidth: Theme.rightPanelMinWidth
+                Layout.maximumWidth: Theme.rightPanelMaxWidth
                 Layout.fillHeight: true
             }
 
