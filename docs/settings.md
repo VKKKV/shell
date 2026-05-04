@@ -47,7 +47,7 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `data.liveDataEnabled` is boolean.
 - `data.updateIntervalMs` is clamped to `1000..30000`.
 - panel visibility fields are booleans.
-- Unknown fields should be preserved by a backend helper when possible.
+- Unknown fields are currently dropped by the Zig helper during normalization. Preserving unknown fields is a future compatibility improvement.
 
 ## Zig Helper Plan
 
@@ -85,7 +85,7 @@ zig build
 ./zig-out/bin/void-shell-settings read
 ```
 
-The initial helper is intentionally small. `read` falls back to defaults when no settings file exists. `write` persists the provided JSON payload as-is; strict schema validation will be added before QML depends on it for critical state.
+The initial helper is intentionally small. `read` falls back to defaults when no settings file exists. `write` validates and normalizes known fields, clamps numeric values, writes the normalized JSON, and prints the normalized JSON to stdout.
 
 ## QML Boundary
 

@@ -1,5 +1,15 @@
 const std = @import("std");
 
+const Settings = struct {
+    scanlines_enabled: bool = true,
+    intensity: f64 = 1.0,
+    live_data_enabled: bool = true,
+    update_interval_ms: i64 = 5000,
+    left_visible: bool = true,
+    center_visible: bool = true,
+    right_visible: bool = true,
+};
+
 const defaults_json =
     \\{
     \\  "version": 1,
@@ -83,15 +93,113 @@ fn readSettings(allocator: std.mem.Allocator) !void {
 }
 
 fn writeSettings(allocator: std.mem.Allocator, payload: []const u8) !void {
+    const normalized = try normalizeSettings(allocator, payload);
+    defer allocator.free(normalized);
+
     const path = try settingsPath(allocator);
     defer allocator.free(path);
     try ensureSettingsDir(allocator, path);
 
     const file = try std.fs.cwd().createFile(path, .{ .truncate = true });
     defer file.close();
-    try file.writeAll(payload);
+    try file.writeAll(normalized);
     try file.writeAll("\n");
-    try writeStdout("{\"ok\":true}\n");
+    try writeStdout(normalized);
+    try writeStdout("\n");
+}
+
+fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
+    var parsed = try std.json.parseFromSlice(std.json.Value, allocator, payload, .{});
+    defer parsed.deinit();
+
+    var settings = Settings{};
+    const root = parsed.value;
+    if (root != .object)
+        return error.InvalidSettingsJson;
+
+    if (objectField(root, "visual")) |visual| {
+        settings.scanlines_enabled = boolField(visual, "scanlinesEnabled") orelse settings.scanlines_enabled;
+        settings.intensity = clampFloat(numberField(visual, "intensity") orelse settings.intensity, 0.5, 1.5);
+    }
+
+    if (objectField(root, "data")) |data| {
+        settings.live_data_enabled = boolField(data, "liveDataEnabled") orelse settings.live_data_enabled;
+        settings.update_interval_ms = clampInt(integerField(data, "updateIntervalMs") orelse settings.update_interval_ms, 1000, 30000);
+    }
+
+    if (objectField(root, "panels")) |panels| {
+        settings.left_visible = boolField(panels, "leftVisible") orelse settings.left_visible;
+        settings.center_visible = boolField(panels, "centerVisible") orelse settings.center_visible;
+        settings.right_visible = boolField(panels, "rightVisible") orelse settings.right_visible;
+    }
+
+    return std.fmt.allocPrint(allocator,
+        \\{{
+        \\  "version": 1,
+        \\  "visual": {{
+        \\    "scanlinesEnabled": {},
+        \\    "intensity": {d:.1}
+        \\  }},
+        \\  "data": {{
+        \\    "liveDataEnabled": {},
+        \\    "updateIntervalMs": {}
+        \\  }},
+        \\  "panels": {{
+        \\    "leftVisible": {},
+        \\    "centerVisible": {},
+        \\    "rightVisible": {}
+        \\  }}
+        \\}}
+    , .{
+        settings.scanlines_enabled,
+        settings.intensity,
+        settings.live_data_enabled,
+        settings.update_interval_ms,
+        settings.left_visible,
+        settings.center_visible,
+        settings.right_visible,
+    });
+}
+
+fn objectField(value: std.json.Value, key: []const u8) ?std.json.Value {
+    if (value != .object)
+        return null;
+    return value.object.get(key);
+}
+
+fn boolField(value: std.json.Value, key: []const u8) ?bool {
+    const field = objectField(value, key) orelse return null;
+    if (field != .bool)
+        return null;
+    return field.bool;
+}
+
+fn numberField(value: std.json.Value, key: []const u8) ?f64 {
+    const field = objectField(value, key) orelse return null;
+    return switch (field) {
+        .float => |inner| inner,
+        .integer => |inner| @floatFromInt(inner),
+        .number_string => |inner| std.fmt.parseFloat(f64, inner) catch null,
+        else => null,
+    };
+}
+
+fn integerField(value: std.json.Value, key: []const u8) ?i64 {
+    const field = objectField(value, key) orelse return null;
+    return switch (field) {
+        .integer => |inner| inner,
+        .float => |inner| @intFromFloat(inner),
+        .number_string => |inner| std.fmt.parseInt(i64, inner, 10) catch null,
+        else => null,
+    };
+}
+
+fn clampFloat(value: f64, min: f64, max: f64) f64 {
+    return @max(min, @min(max, value));
+}
+
+fn clampInt(value: i64, min: i64, max: i64) i64 {
+    return @max(min, @min(max, value));
 }
 
 fn writeStdout(bytes: []const u8) !void {
