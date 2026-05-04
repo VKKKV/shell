@@ -6,6 +6,9 @@ quickshell
 https://quickshell.org/docs/v0.3.0/
 https://github.com/quickshell-mirror/quickshell
 
+zig docs
+https://ziglang.org/documentation/master/
+
 shell based on quickshell
 
 https://github.com/caelestia-dots/shell
