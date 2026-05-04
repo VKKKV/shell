@@ -258,7 +258,7 @@ This automatically:
 Use `/trellis:finish-work` command to run through:
 1. [OK] All code committed, commit message follows convention
 2. [OK] Session recorded via `add_session.py`
-3. [OK] No lint/test errors
+3. [OK] Project checks pass (`zig build`, `qmllint`, `quickshell -p .`)
 4. [OK] Working directory clean (or WIP noted)
 5. [OK] Spec docs updated if needed
 
