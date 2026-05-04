@@ -7,7 +7,7 @@ import QtQuick.Layouts
 TacticalFrame {
     id: root
 
-    property int activeWorkspace: 2
+    property int activeWorkspace: HyprlandService.activeWorkspace
 
     highlighted: true
 
@@ -45,11 +45,12 @@ TacticalFrame {
                 Rectangle {
                     required property int index
                     readonly property bool active: index + 1 === root.activeWorkspace
+                    readonly property bool occupied: HyprlandService.isOccupied(index + 1)
 
                     width: 34
                     height: 24
-                    color: active ? Theme.line : "transparent"
-                    border.color: Theme.line
+                    color: active ? Theme.line : (occupied ? Theme.panelSoft : "transparent")
+                    border.color: active || occupied ? Theme.line : Theme.lineDim
                     border.width: Theme.lineWidth
 
                     TacticalLabel {
@@ -57,6 +58,12 @@ TacticalFrame {
                         text: index + 1
                         color: parent.active ? Theme.background : Theme.line
                         font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: HyprlandService.switchWorkspace(parent.index + 1)
                     }
 
                 }
