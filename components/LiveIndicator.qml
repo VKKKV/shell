@@ -7,11 +7,13 @@ Row {
     property string label: ">> LIVE"
 
     spacing: 6
-    height: childrenRect.height
-    width: childrenRect.width
+    implicitHeight: Math.max(7, labelText.implicitHeight)
+    implicitWidth: dot.width + spacing + labelText.implicitWidth
     opacity: 0.95
 
     Rectangle {
+        id: dot
+
         width: 7
         height: 7
         anchors.verticalCenter: parent.verticalCenter
@@ -19,6 +21,8 @@ Row {
     }
 
     TacticalLabel {
+        id: labelText
+
         text: root.label
         accent: true
     }

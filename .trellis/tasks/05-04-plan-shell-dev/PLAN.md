@@ -170,3 +170,69 @@ Acceptance:
 - Multi-compositor workspace support beyond Hyprland.
 - Audio/media/tray widgets unless explicitly needed for target parity.
 - Persistent user configuration and migrations.
+
+## Next Development Roadmap
+
+### Phase A: Runtime Cleanliness And Visual Tuning
+- Fix all Quickshell runtime warnings before adding larger features.
+- Use real screenshots from the running shell as the visual feedback source.
+- Tune panel proportions, font sizes, yellow intensity, scanline opacity, and graph density against `target.md` and `target.png`.
+- Add screenshot checkpoints after major visual changes.
+
+Acceptance:
+- `quickshell -p .` loads without QML warnings in normal startup.
+- No binding loops or layout/anchor undefined behavior warnings remain.
+- The HUD remains readable on the user's monitor resolution.
+
+### Phase B: Hyprland Integration Docs And Compositor Polish
+- Add `docs/hyprland.md` with recommended `layerrule`/blur settings for the `prts-hud` namespace.
+- Document expected behavior for overlay/top layer, transparency, blur, and workspace click actions.
+- Keep blur optional; the shell must remain usable without compositor blur.
+
+Acceptance:
+- A user can copy the documented Hyprland rules and understand what each rule changes.
+- No shell code depends on blur being enabled.
+
+### Phase C: Responsive And Monitor Fit
+- Add layout guardrails for smaller monitors and non-16:9 resolutions.
+- Make right and left panels configurable or clamp their widths from theme values.
+- Ensure center terminal text elides or compresses before overflowing panels.
+
+Acceptance:
+- No important content is clipped on the user's monitor.
+- The HUD remains usable at common 1080p and 1440p widths.
+
+### Phase D: Service Reliability, Fallbacks, And Logging
+- Add service-level fallback states for unavailable commands, missing mounts, and missing Hyprland data.
+- Add lightweight structured logging for service failures without spamming the UI.
+- Keep command/process parsing inside `services/` only.
+
+Acceptance:
+- Missing `/data`, no swap, or unavailable command paths do not create QML errors.
+- The UI shows safe fallback values while logs preserve enough detail for debugging.
+
+### Phase E: Settings Panel In Tactical Style
+- Build a settings panel that matches the PRTS/techwear visual language rather than generic material design.
+- First settings should control theme intensity, scanlines, panel visibility, update intervals, and mock/live data toggles.
+- Add a clear service boundary for settings persistence before expanding options.
+
+Acceptance:
+- Settings UI feels like part of the tactical shell.
+- User can adjust key visual/system options without editing QML.
+
+### Phase F: Feature Expansion Toward Reference Shells
+- Add richer widgets inspired by reference projects while preserving this shell's style: audio, media/MPRIS, network detail, tray, notifications, launcher, power/session, and optional dashboard popouts.
+- Add features as vertical slices with a working visual surface plus service integration.
+- Avoid adding large registry/plugin systems until there are enough widgets to justify them.
+
+Acceptance:
+- Each new feature has a visible tactical UI, service boundary, fallback behavior, validation, and commit checkpoint.
+
+### Phase G: Zig Backend Preference
+- Prefer Zig for new backend/helper binaries when QML/Quickshell service code becomes too slow, too complex, or too shell-command-heavy.
+- Candidate Zig helpers: system metrics daemon, log tail/normalizer, settings persistence, hardware sensor aggregation, and IPC bridge.
+- Keep Zig helpers optional at first and communicate through simple stdout JSON, files, or local IPC.
+
+Acceptance:
+- Zig is used where it simplifies reliability/performance, not as premature architecture.
+- QML remains responsible for presentation; Zig helpers own data collection or durable backend behavior.

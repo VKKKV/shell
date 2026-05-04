@@ -2,16 +2,15 @@ import "../theme"
 import QtQuick
 import QtQuick.Layouts
 
-RowLayout {
+Item {
     id: root
 
     property var values: []
     property color barColor: Theme.line
 
-    spacing: 3
+    implicitHeight: 42
 
     Rectangle {
-        z: -1
         anchors.fill: parent
         color: "transparent"
         border.color: Theme.lineDim
@@ -19,17 +18,24 @@ RowLayout {
         opacity: 0.45
     }
 
-    Repeater {
-        model: root.values.length
+    RowLayout {
+        anchors.fill: parent
+        anchors.margins: 3
+        spacing: 3
 
-        Rectangle {
-            required property int index
+        Repeater {
+            model: root.values.length
 
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignBottom
-            Layout.preferredHeight: 8 + Math.max(0, Math.min(1, root.values[index])) * Math.max(1, root.height - 10)
-            color: root.barColor
-            opacity: 0.42 + Math.max(0, Math.min(1, root.values[index])) * 0.5
+            Rectangle {
+                required property int index
+
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignBottom
+                Layout.preferredHeight: 8 + Math.max(0, Math.min(1, root.values[index])) * Math.max(1, root.height - 16)
+                color: root.barColor
+                opacity: 0.42 + Math.max(0, Math.min(1, root.values[index])) * 0.5
+            }
+
         }
 
     }
