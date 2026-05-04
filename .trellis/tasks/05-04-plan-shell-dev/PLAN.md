@@ -269,3 +269,98 @@ Acceptance:
 5. Expand feature set through vertical slices.
    - Candidate features: audio, MPRIS/media, tray, notifications, launcher, and power/session controls.
    - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
+
+## Reference Feature Gap Analysis
+
+The reference shells provide a much broader desktop environment than the current tactical HUD. Missing features should be added as vertical slices, preserving this project's machine-interface visual language instead of copying Material/Noctalia/Caelestia styling.
+
+### Already Covered In This Project
+- Full-screen tactical HUD surface.
+- Top/bottom status bars.
+- Hyprland workspace display and switching.
+- Live CPU, memory, network, and filesystem stats.
+- Tactical settings panel foundation.
+- Zig settings helper with JSON normalization.
+- Hyprland namespace/blur documentation.
+
+### Missing High-Value Features From References
+- Dashboard/control center popout.
+  - References: Caelestia dashboard, Noctalia panels, DankDash/control center.
+  - Tactical version: command-center panel with quick toggles, system overview, media, calendar, weather, and power actions.
+
+- App launcher and search.
+  - References: Caelestia launcher, Noctalia launcher providers, Dank app drawer/search.
+  - Tactical version: keyboard-first command palette with apps, actions, settings entries, calculator, and shell commands.
+
+- Notifications and toast system.
+  - References: Caelestia notifications/sidebar, Noctalia notification history/rules/toasts, Dank notification service/toasts.
+  - Tactical version: alert stream, notification history drawer, rules, DND toggle, and tactical toast cards.
+
+- Audio, microphone, and media/MPRIS.
+  - References: Caelestia Audio/Players/Lyrics, Noctalia AudioService/MediaService/SpectrumService, Dank AudioService/MprisController/MediaPlayerTab.
+  - Tactical version: audio levels, mute controls, MPRIS track display, spectrum/visualizer, lyrics optional.
+
+- Network detail, VPN, Bluetooth.
+  - References: Caelestia Network/Nmcli/VPN/Bluetooth popouts, Noctalia Network/VPN/Bluetooth services, Dank Network/VPN/Bluetooth services.
+  - Tactical version: network detail panel, Wi-Fi list, VPN status, Bluetooth device monitor.
+
+- Wallpaper/theme/color management.
+  - References: Caelestia wallpapers/colours, Noctalia theme/color/wallpaper services, Dank wallpaper/theme browser.
+  - Tactical version: theme profile selector, warning-yellow palette tuning, wallpaper/background integration, optional dynamic color extraction.
+
+- Dock/taskbar/active window overview.
+  - References: Dank dock/taskbar/overview, Noctalia dock/desktop widgets, Caelestia active window/window info.
+  - Tactical version: compact mission dock, active window details, workspace overview overlay.
+
+- System tray.
+  - References: Caelestia tray, Noctalia tray panel/widget settings, Dank system tray bar.
+  - Tactical version: tray drawer with square tactical icon cells and popout menu bridge.
+
+- Session/power/idle/lock controls.
+  - References: Caelestia session/idle/lock, Noctalia session menu/idle/power profile, Dank session/power sleep/idle services.
+  - Tactical version: authenticated power menu, idle inhibitor, power profile, lock/logout/reboot/shutdown actions.
+
+- Clipboard, keyboard layout, emoji, keybinds.
+  - References: Noctalia clipboard/emoji/keyboard services, Dank keybinds/clipboard, Caelestia keyboard layout popout.
+  - Tactical version: clipboard buffer panel, keyboard layout indicator, keybind recorder/list.
+
+- Weather, calendar, location/night light.
+  - References: all three have weather/calendar/location-related panels or services.
+  - Tactical version: environmental telemetry card with weather, calendar agenda, night-light status.
+
+- Desktop widgets and plugin/IPC system.
+  - References: Noctalia plugins/desktop widgets/IPC, Dank plugins/desktop widgets/IPC, Caelestia utilities/drawers.
+  - Tactical version: defer until core shell is stable; add only after several first-party widgets prove registry value.
+
+### Recommended Feature Build Order
+
+1. Settings persistence wiring.
+   - Connect QML `SettingsService` to `void-shell-settings` read/write.
+   - Add panel visibility and update interval controls.
+
+2. Tactical command center.
+   - Create the first large popout/panel surface.
+   - Include quick toggles, service logs, power actions, and system overview.
+
+3. Launcher/search.
+   - Implement keyboard-first app/action/settings search.
+   - Keep providers simple before adding registry abstractions.
+
+4. Notifications/toasts.
+   - Add notification capture, history, DND, and tactical toast visuals.
+
+5. Audio/media stack.
+   - Add volume/mic controls and MPRIS display.
+   - Add spectrum/lyrics only after core media controls are stable.
+
+6. Network/VPN/Bluetooth detail.
+   - Expand current network stats into actionable connectivity panels.
+
+7. Wallpaper/theme management.
+   - Add theme profiles and wallpaper/background controls.
+
+8. Dock/taskbar/tray/session controls.
+   - Add mission dock, tray drawer, active window overview, and power/session menu.
+
+9. Optional plugin/IPC system.
+   - Defer until multiple first-party panels/widgets need dynamic registration.
