@@ -8,3 +8,5 @@ Sparkline 1.0 Sparkline.qml
 RadarDisplay 1.0 RadarDisplay.qml
 TerminalLine 1.0 TerminalLine.qml
 TerminalSection 1.0 TerminalSection.qml
+CoreGrid 1.0 CoreGrid.qml
+LogStream 1.0 LogStream.qml
