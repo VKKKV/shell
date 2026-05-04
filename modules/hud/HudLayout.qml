@@ -32,71 +32,9 @@ Item {
                 Layout.fillHeight: true
             }
 
-            TacticalFrame {
+            CenterTerminalPanel {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                title: "TERMINAL 01 // BASH"
-                highlighted: true
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: Theme.panelPadding
-                    anchors.topMargin: 38
-                    spacing: 10
-
-                    TacticalLabel {
-                        Layout.fillWidth: true
-                        text: "root@tactical-node-02:~# neofetch --tactical"
-                        accent: true
-                        size: Theme.fontNormal
-                    }
-
-                    TacticalLabel {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        text: "OS:       PRTS-Hyprland Linux x86_64\nHOST:     Tactical Node 02\nKERNEL:   6.8.9-zen1-1-zen\nPKGS:     1342 (pacman)\nWM:       Hyprland (QML)\nCPU:      AMD Ryzen 9 7950X (24) @ 5.65 GHz\nGPU:      NVIDIA GeForce RTX 4080\nMEMORY:   19.71 GiB / 31.30 GiB\n\n:: resolving dependencies...\n:: downloading hyprland-qml-git...       [##########] 100%\n:: building quickshell tactical modules   [#######---] 72%\n:: installing package payload             [#####-----] 51%\n\nSYSTEM CHANNEL: SECURE\nTACTICAL LAYER: ONLINE"
-                        size: Theme.fontNormal
-                        lineHeight: 1.2
-                    }
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 28
-                        color: Theme.panelSoft
-                        border.color: Theme.lineDim
-
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
-
-                            TacticalLabel {
-                                text: "TTY1"
-                                dim: true
-                            }
-
-                            TacticalLabel {
-                                text: "ROOT"
-                                dim: true
-                            }
-
-                            TacticalLabel {
-                                Layout.fillWidth: true
-                                text: "KERNEL 6.8.9-ZEN"
-                                dim: true
-                            }
-
-                            TacticalLabel {
-                                text: ">> LIVE"
-                                accent: true
-                            }
-
-                        }
-
-                    }
-
-                }
-
             }
 
             TacticalFrame {

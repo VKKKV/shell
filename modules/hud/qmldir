@@ -3,3 +3,4 @@ HudLayout 1.0 HudLayout.qml
 TopStatusBar 1.0 TopStatusBar.qml
 BottomStatusBar 1.0 BottomStatusBar.qml
 LeftTacticalPanel 1.0 LeftTacticalPanel.qml
+CenterTerminalPanel 1.0 CenterTerminalPanel.qml
