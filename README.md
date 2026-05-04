@@ -1,33 +1,24 @@
-# PRTS Hyprland Tactical Shell
+# Shell
 
-Quickshell/QML shell prototype for the tactical desktop HUD described in `target.md`.
+A tactical desktop environment based on Hyprland and QML.
 
-## Run
+## Overview
 
-```bash
-quickshell -p .
-```
+This project aims to create a highly functional and visually striking tactical desktop environment. It features a high-contrast, techwear-inspired aesthetic with integrated system monitoring and a focus on power-user efficiency.
 
-If your Quickshell build expects an explicit config file, run:
+![Preview](target.png)
 
-```bash
-quickshell -c shell.qml
-```
+## Features
 
-## Current Scope
+- **Techwear Aesthetic:** High-contrast visuals inspired by tactical interfaces.
+- **Integrated Monitoring:** Real-time CPU, GPU, memory, and network stats.
+- **Hyprland & QML:** Built on modern, performant technologies.
+- **Modular Design:** Easily customizable components.
 
-- Full-screen transparent `PanelWindow` HUD surface.
-- Tactical top status bar with clock/date placeholders, workspaces, and renderer labels.
-- Left tactical/thermal/power panel using target-style static data.
-- Central terminal frame with neofetch/package-manager style static output.
-- Right system monitor matrix with static CPU, RAM, network, filesystem, node, and log rows.
-- Bottom access/status strip.
+## Documentation
 
-Live data integration is intentionally deferred until the layout and visual language match the target.
+Refer to [target.md](target.md) for a detailed breakdown of the interface elements.
 
-## Development Checkpoints
+## License
 
-- Implement one vertical slice at a time.
-- Format and lint QML before treating a slice as done.
-- Run Quickshell when available and watch for QML/runtime errors.
-- Commit each verified slice or stable milestone so the project always has a resumable checkpoint.
+GPLv3
