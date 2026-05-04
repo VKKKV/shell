@@ -12,3 +12,4 @@ CoreGrid 1.0 CoreGrid.qml
 LogStream 1.0 LogStream.qml
 ScanlineOverlay 1.0 ScanlineOverlay.qml
 LiveIndicator 1.0 LiveIndicator.qml
+ToggleRow 1.0 ToggleRow.qml

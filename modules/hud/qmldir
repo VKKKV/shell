@@ -5,3 +5,4 @@ BottomStatusBar 1.0 BottomStatusBar.qml
 LeftTacticalPanel 1.0 LeftTacticalPanel.qml
 CenterTerminalPanel 1.0 CenterTerminalPanel.qml
 RightMonitorPanel 1.0 RightMonitorPanel.qml
+SettingsPanel 1.0 SettingsPanel.qml

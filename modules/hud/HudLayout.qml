@@ -1,7 +1,9 @@
 import "../../components"
+import "../../services"
 import "../../theme"
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 
 Item {
     id: root
@@ -14,12 +16,13 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: Theme.background
-        opacity: 0.88
+        opacity: 0.72 + 0.16 * SettingsService.intensity
     }
 
     ScanlineOverlay {
+        visible: SettingsService.scanlinesEnabled
         anchors.fill: parent
-        lineOpacity: 0.025
+        lineOpacity: 0.025 * SettingsService.intensity
     }
 
     ColumnLayout {
@@ -63,6 +66,15 @@ Item {
             Layout.preferredHeight: Theme.bottomBarHeight
         }
 
+    }
+
+    SettingsPanel {
+        anchors.fill: parent
+    }
+
+    Shortcut {
+        sequence: "Ctrl+Alt+S"
+        onActivated: SettingsService.togglePanel()
     }
 
 }
