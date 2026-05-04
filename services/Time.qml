@@ -11,7 +11,7 @@ QtObject {
     readonly property string timeText: Qt.formatDateTime(now, "hh:mm:ss")
     readonly property string dateText: Qt.formatDateTime(now, "yyyy-MM-dd ddd").toUpperCase()
 
-    Timer {
+    property Timer ticker: Timer {
         interval: 1000
         repeat: true
         running: true
