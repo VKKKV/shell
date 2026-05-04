@@ -12,6 +12,11 @@ Item {
         opacity: 0.88
     }
 
+    ScanlineOverlay {
+        anchors.fill: parent
+        lineOpacity: 0.025
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: Theme.margin

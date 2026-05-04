@@ -6,12 +6,28 @@ Rectangle {
 
     property string title: ""
     property bool highlighted: false
+    property bool scanlines: true
 
     color: Theme.panel
     border.color: highlighted ? Theme.line : Theme.lineDim
     border.width: Theme.lineWidth
     radius: 0
     clip: true
+
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: 4
+        color: "transparent"
+        border.color: Theme.lineDim
+        border.width: highlighted ? Theme.lineWidth : 0
+        opacity: 0.35
+    }
+
+    ScanlineOverlay {
+        visible: root.scanlines
+        anchors.fill: parent
+        lineOpacity: root.highlighted ? 0.065 : 0.04
+    }
 
     Rectangle {
         anchors.left: parent.left
@@ -57,6 +73,18 @@ Rectangle {
         font.pixelSize: Theme.fontSmall
         font.bold: true
         font.letterSpacing: 1.4
+    }
+
+    Text {
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.panelPadding
+        anchors.top: parent.top
+        anchors.topMargin: 7
+        text: highlighted ? "[ACTIVE]" : "[SYNC]"
+        color: highlighted ? Theme.line : Theme.textDim
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.fontTiny
+        font.letterSpacing: 1.2
     }
 
 }

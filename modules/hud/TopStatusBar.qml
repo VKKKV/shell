@@ -43,14 +43,17 @@ TacticalFrame {
                 model: 5
 
                 Rectangle {
+                    id: workspaceButton
+
                     required property int index
                     readonly property bool active: index + 1 === root.activeWorkspace
                     readonly property bool occupied: HyprlandService.isOccupied(index + 1)
+                    property bool hovered: false
 
                     width: 34
                     height: 24
-                    color: active ? Theme.line : (occupied ? Theme.panelSoft : "transparent")
-                    border.color: active || occupied ? Theme.line : Theme.lineDim
+                    color: active ? Theme.line : (hovered ? Theme.lineDim : (occupied ? Theme.panelSoft : "transparent"))
+                    border.color: active || occupied || hovered ? Theme.line : Theme.lineDim
                     border.width: Theme.lineWidth
 
                     TacticalLabel {
@@ -63,6 +66,9 @@ TacticalFrame {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onEntered: workspaceButton.hovered = true
+                        onExited: workspaceButton.hovered = false
                         onClicked: HyprlandService.switchWorkspace(parent.index + 1)
                     }
 

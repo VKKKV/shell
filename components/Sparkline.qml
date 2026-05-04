@@ -10,6 +10,15 @@ RowLayout {
 
     spacing: 3
 
+    Rectangle {
+        z: -1
+        anchors.fill: parent
+        color: "transparent"
+        border.color: Theme.lineDim
+        border.width: Theme.lineWidth
+        opacity: 0.45
+    }
+
     Repeater {
         model: root.values.length
 

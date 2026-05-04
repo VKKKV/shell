@@ -24,9 +24,17 @@ TacticalFrame {
             size: Theme.fontNormal
         }
 
-        TacticalLabel {
-            text: "TACTICAL LAYER ONLINE // SECURE CHANNEL ESTABLISHED"
-            dim: true
+        Row {
+            spacing: 12
+
+            TacticalLabel {
+                text: "TACTICAL LAYER ONLINE // SECURE CHANNEL ESTABLISHED"
+                dim: true
+            }
+
+            LiveIndicator {
+            }
+
         }
 
     }
