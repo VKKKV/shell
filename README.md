@@ -19,6 +19,8 @@ This project aims to create a highly functional and visually striking tactical d
 
 Refer to [target.md](target.md) for a detailed breakdown of the interface elements.
 
+See [docs/hyprland.md](docs/hyprland.md) for Hyprland layer-shell, blur, and workspace integration notes.
+
 ## License
 
 GPLv3
