@@ -105,7 +105,7 @@ Item {
 
             TextBlock {
                 title: "STATUS"
-                lines: ["settings persistence: pending", "theme backend: qml live state", "zig backend: planned"]
+                lines: ["settings persistence: zig helper ready", "theme backend: qml live state", "schema normalization: active"]
             }
 
             Item {
@@ -114,7 +114,7 @@ Item {
 
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "NEXT: persist settings + add zig-backed config helper"
+                text: "NEXT: connect QML settings state to void-shell-settings"
                 dim: true
             }
 

@@ -29,6 +29,9 @@ components/
   MetricRow.qml
   ProgressBar.qml
   Sparkline.qml
+  ToggleRow.qml
+  TerminalLine.qml
+  TerminalSection.qml
 modules/
   hud/
     HudWindow.qml
@@ -38,13 +41,16 @@ modules/
     CenterTerminalPanel.qml
     RightMonitorPanel.qml
     BottomStatusBar.qml
+    SettingsPanel.qml
 services/
   Time.qml
-  Hyprland.qml
+  HyprlandService.qml
   SystemStats.qml
-  Network.qml
+  SettingsService.qml
 theme/
   Theme.qml
+src/settings/
+  main.zig
 ```
 
 ## Architecture Decisions
@@ -54,6 +60,7 @@ theme/
 - `theme/Theme.qml` is the single source of truth for tactical colors, line widths, spacing, font sizes, panel dimensions, and animation durations.
 - `components/` contains reusable presentational primitives only. Keep business logic out of these files.
 - `services/` contains external state and command integration. A widget should read state from services and dispatch user actions, not parse command output inline unless it is a temporary spike.
+- `src/settings/main.zig` provides the first backend helper for settings persistence/normalization; keep QML as presentation state and Zig as durable data validation/persistence.
 - Do not create plugin registries, settings migrations, or dynamic widget ordering in the first implementation. Add those only after the shell works visually.
 - Create a git commit at each necessary checkpoint: after a slice is implemented, formatted, linted, and runtime-checked enough to be safely resumed later.
 
@@ -212,13 +219,15 @@ Acceptance:
 - The UI shows safe fallback values while logs preserve enough detail for debugging.
 
 ### Phase E: Settings Panel In Tactical Style
-- Build a settings panel that matches the VOID/techwear visual language rather than generic material design.
-- First settings should control theme intensity, scanlines, panel visibility, update intervals, and mock/live data toggles.
-- Add a clear service boundary for settings persistence before expanding options.
+- Settings panel foundation exists and matches the VOID/techwear visual language.
+- Current settings control theme intensity, scanlines, and live data state boundaries.
+- Zig helper `void-shell-settings` exists and normalizes settings JSON.
+- Next step is wiring QML `SettingsService` to `void-shell-settings read/write`.
 
 Acceptance:
 - Settings UI feels like part of the tactical shell.
-- User can adjust key visual/system options without editing QML.
+- User can adjust key visual/system options without editing QML during the current session.
+- Persistent read/write is implemented through Zig before settings are considered complete.
 
 ### Phase F: Feature Expansion Toward Reference Shells
 - Add richer widgets inspired by reference projects while preserving this shell's style: audio, media/MPRIS, network detail, tray, notifications, launcher, power/session, and optional dashboard popouts.
@@ -230,7 +239,8 @@ Acceptance:
 
 ### Phase G: Zig Backend Preference
 - Prefer Zig for new backend/helper binaries when QML/Quickshell service code becomes too slow, too complex, or too shell-command-heavy.
-- Candidate Zig helpers: system metrics daemon, log tail/normalizer, settings persistence, hardware sensor aggregation, and IPC bridge.
+- Implemented helper: `void-shell-settings` for settings defaults/read/write normalization.
+- Candidate future helpers: system metrics daemon, log tail/normalizer, hardware sensor aggregation, and IPC bridge.
 - Keep Zig helpers optional at first and communicate through simple stdout JSON, files, or local IPC.
 
 Acceptance:
