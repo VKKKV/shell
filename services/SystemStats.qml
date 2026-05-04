@@ -202,15 +202,27 @@ Singleton {
     }
 
     property Timer poller: Timer {
-        interval: 5000
+        interval: SettingsService.updateIntervalMs
         repeat: true
-        running: true
+        running: SettingsService.liveDataEnabled
         triggeredOnStart: true
         onTriggered: {
             root.memoryProcess.running = true;
             root.filesystemProcess.running = true;
             root.cpuProcess.running = true;
             root.networkProcess.running = true;
+        }
+    }
+
+    Connections {
+        target: SettingsService
+        function onLiveDataEnabledChanged(): void {
+            if (SettingsService.liveDataEnabled)
+                root.poller.restart();
+        }
+        function onUpdateIntervalMsChanged(): void {
+            if (SettingsService.liveDataEnabled)
+                root.poller.restart();
         }
     }
 }

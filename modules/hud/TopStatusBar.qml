@@ -78,22 +78,185 @@ TacticalFrame {
 
         }
 
-        Column {
+        ColumnLayout {
             Layout.preferredWidth: 310
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
             spacing: 4
 
             TacticalLabel {
-                anchors.right: parent.right
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignRight
                 text: "// VOID.SYS.V2.0"
                 accent: true
                 size: Theme.fontNormal
             }
 
             TacticalLabel {
-                anchors.right: parent.right
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignRight
                 text: HyprlandService.available ? "HYPRLAND // QML RENDERER" : "HYPRLAND // FALLBACK MODE"
                 dim: true
+            }
+
+            RowLayout {
+                Layout.alignment: Qt.AlignRight
+                spacing: 6
+
+                TacticalLabel {
+                    text: "AUDIO " + AudioService.volumeText
+                    accent: AudioService.available && !AudioService.muted
+                    dim: !AudioService.available || AudioService.muted
+                }
+
+                Rectangle {
+                    width: 22
+                    height: 18
+                    color: "transparent"
+                    border.color: Theme.lineDim
+                    border.width: Theme.lineWidth
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: AudioService.changeVolume(-0.05)
+                    }
+
+                    TacticalLabel {
+                        anchors.centerIn: parent
+                        text: "-"
+                        accent: true
+                    }
+
+                }
+
+                Rectangle {
+                    width: 22
+                    height: 18
+                    color: AudioService.muted ? Theme.lineDim : "transparent"
+                    border.color: AudioService.available ? Theme.line : Theme.lineDim
+                    border.width: Theme.lineWidth
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: AudioService.toggleMute()
+                    }
+
+                    TacticalLabel {
+                        anchors.centerIn: parent
+                        text: "M"
+                        accent: AudioService.available
+                        dim: !AudioService.available
+                    }
+
+                }
+
+                Rectangle {
+                    width: 22
+                    height: 18
+                    color: "transparent"
+                    border.color: Theme.lineDim
+                    border.width: Theme.lineWidth
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: AudioService.changeVolume(0.05)
+                    }
+
+                    TacticalLabel {
+                        anchors.centerIn: parent
+                        text: "+"
+                        accent: true
+                    }
+
+                }
+
+            }
+
+            TrayStrip {
+                Layout.alignment: Qt.AlignRight
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 6
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                    elide: Text.ElideRight
+                    text: MediaService.displayText
+                    accent: MediaService.available && MediaService.status === "PLAYING"
+                    dim: !MediaService.available
+                }
+
+                Rectangle {
+                    width: 22
+                    height: 18
+                    color: "transparent"
+                    border.color: Theme.lineDim
+                    border.width: Theme.lineWidth
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: MediaService.control("previous")
+                    }
+
+                    TacticalLabel {
+                        anchors.centerIn: parent
+                        text: "<"
+                        accent: MediaService.available
+                        dim: !MediaService.available
+                    }
+
+                }
+
+                Rectangle {
+                    width: 22
+                    height: 18
+                    color: MediaService.status === "PLAYING" ? Theme.lineDim : "transparent"
+                    border.color: MediaService.available ? Theme.line : Theme.lineDim
+                    border.width: Theme.lineWidth
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: MediaService.control("play-pause")
+                    }
+
+                    TacticalLabel {
+                        anchors.centerIn: parent
+                        text: MediaService.status === "PLAYING" ? "||" : ">"
+                        accent: MediaService.available
+                        dim: !MediaService.available
+                    }
+
+                }
+
+                Rectangle {
+                    width: 22
+                    height: 18
+                    color: "transparent"
+                    border.color: Theme.lineDim
+                    border.width: Theme.lineWidth
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: MediaService.control("next")
+                    }
+
+                    TacticalLabel {
+                        anchors.centerIn: parent
+                        text: ">"
+                        accent: MediaService.available
+                        dim: !MediaService.available
+                    }
+
+                }
+
             }
 
         }

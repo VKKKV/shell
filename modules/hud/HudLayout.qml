@@ -41,6 +41,7 @@ Item {
             spacing: Theme.gap
 
             LeftTacticalPanel {
+                visible: SettingsService.leftVisible
                 Layout.preferredWidth: root.sideWidth
                 Layout.minimumWidth: Theme.sidePanelMinWidth
                 Layout.maximumWidth: Theme.sidePanelMaxWidth
@@ -48,11 +49,13 @@ Item {
             }
 
             CenterTerminalPanel {
+                visible: SettingsService.centerVisible
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
 
             RightMonitorPanel {
+                visible: SettingsService.rightVisible
                 Layout.preferredWidth: root.rightWidth
                 Layout.minimumWidth: Theme.rightPanelMinWidth
                 Layout.maximumWidth: Theme.rightPanelMaxWidth

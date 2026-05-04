@@ -35,6 +35,11 @@ TacticalFrame {
         }
 
         MetricBlock {
+            title: "POWER SOURCE"
+            rows: [[BatteryService.label, BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
+        }
+
+        MetricBlock {
             title: "NETWORK // eno1"
             rows: SystemStats.networkRows
         }
@@ -56,7 +61,7 @@ TacticalFrame {
         }
 
         LogStream {
-            lines: [HyprlandService.statusLine, SystemStats.statusLine].concat(SystemStats.logLines)
+            lines: [HyprlandService.statusLine, SystemStats.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
         }
 
     }

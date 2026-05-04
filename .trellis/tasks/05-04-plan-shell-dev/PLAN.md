@@ -1,17 +1,17 @@
 # Shell Development Plan
 
 ## Planning Status
-- Status: ready for implementation using `target.md` as the authoritative visual brief.
+- Status: core HUD implemented; next work should close functional gaps using `target.md` as the authoritative visual brief.
 - Trellis context: `implement.jsonl`, `check.jsonl`, and `debug.jsonl` are initialized.
 - Task type: frontend.
 - Primary deliverable: a Quickshell tactical desktop dashboard matching the VOID-Hyprland cyberpunk interface described in `target.md`.
 
 ## Constraints And Assumptions
 - The shell is built with Quickshell/QML for Wayland, with Hyprland as the first compositor target.
-- This repository is currently mostly planning artifacts plus `target.png`; implementation should create the app structure from scratch instead of modifying an existing shell.
+- This repository already contains a runnable Quickshell HUD structure; implementation should proceed as small vertical slices against the existing `components/`, `modules/hud/`, `services/`, and `theme/` boundaries.
 - `target.md` defines the required visual and functional granularity: top status bar, left tactical/thermal/power panels, central terminal frame, right monitoring matrix, and bottom status bar.
 - Reference projects are for architecture patterns only. Do not copy large blocks from Caelestia, Noctalia, or DankMaterialShell.
-- Prefer a small, runnable tactical frame over broad but incomplete live monitoring. Static mock data is acceptable for the first pass if the layout and visual language are correct.
+- Prefer feature slices that connect an existing tactical surface to real service data. Static mock data is acceptable only where a real integration has not been prioritized yet.
 
 ## Reference Findings
 - Caelestia keeps `shell.qml` thin and delegates real UI to modules/services. Its bar uses component loaders and service singletons for Hyprland, audio, brightness, and time.
@@ -173,9 +173,9 @@ Acceptance:
 - Dense tactical UI can become unreadable quickly; prioritize spacing, hierarchy, and monospaced alignment over adding more numbers.
 
 ## Deferred Work
-- Dynamic widget registry, settings UI, and user-configurable panel layout.
+- Dynamic widget registry and user-configurable widget ordering.
 - Multi-compositor workspace support beyond Hyprland.
-- Audio/media/tray widgets unless explicitly needed for target parity.
+- Large plugin/IPC system until multiple first-party widgets need dynamic registration.
 - Persistent user configuration and migrations.
 
 ## Next Development Roadmap
@@ -249,25 +249,20 @@ Acceptance:
 
 ## Prioritized Next Steps
 
-1. Wire QML settings state to the Zig helper.
+1. Settings persistence and settings-driven runtime behavior.
    - Load initial settings with `void-shell-settings read`.
    - Save changes with `void-shell-settings write <json>`.
    - Treat helper failures as non-fatal and keep QML defaults active.
+   - Connect `liveDataEnabled` and `updateIntervalMs` to `SystemStats.poller`.
+   - Connect `leftVisible`, `centerVisible`, and `rightVisible` to `HudLayout.qml`.
+   - Add tactical controls for panel visibility and update interval in `SettingsPanel.qml`.
 
-2. Implement panel visibility settings.
-   - Connect `leftVisible`, `centerVisible`, and `rightVisible` from the settings contract to `HudLayout.qml`.
-   - Add tactical toggles in `SettingsPanel.qml`.
-
-3. Wire update interval settings.
-   - Connect `data.updateIntervalMs` to `SystemStats.poller.interval`.
-   - Add settings panel controls with the existing `1000..30000` clamp range.
-
-4. Do screenshot-driven visual tuning.
+2. Screenshot-driven visual tuning.
    - Tune panel proportions, font sizes, yellow intensity, scanline opacity, and graph density from real screenshots.
    - Keep `quickshell -p .` warning-free after every visual pass.
 
-5. Expand feature set through vertical slices.
-   - Candidate features: audio, MPRIS/media, tray, notifications, launcher, and power/session controls.
+3. Broader reference-shell features.
+   - Candidate features: command center, launcher/search, notifications, network/VPN/Bluetooth detail, wallpaper/theme profiles, dock/taskbar, clipboard, calendar/weather.
    - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
 
 ## Reference Feature Gap Analysis
@@ -279,6 +274,11 @@ The reference shells provide a much broader desktop environment than the current
 - Top/bottom status bars.
 - Hyprland workspace display and switching.
 - Live CPU, memory, network, and filesystem stats.
+- Audio volume/mute polling and controls via `wpctl`.
+- Session lock/logout/reboot/shutdown controls with confirmation.
+- Battery/power-source display with AC/no-battery fallback.
+- Media/MPRIS display and previous/play-pause/next controls via `playerctl`.
+- Minimal system tray strip using Quickshell status notifier items.
 - Tactical settings panel foundation.
 - Zig settings helper with JSON normalization.
 - Hyprland namespace/blur documentation.
@@ -338,29 +338,34 @@ The reference shells provide a much broader desktop environment than the current
    - Connect QML `SettingsService` to `void-shell-settings` read/write.
    - Add panel visibility and update interval controls.
 
-2. Tactical command center.
+2. Audio and power/session controls.
+   - Add first everyday-shell controls before broader dashboard features.
+
+3. Battery and media/MPRIS.
+   - Fill the remaining PRD status widgets with graceful hardware/session fallbacks.
+
+4. System tray.
+   - Implement after confirming Quickshell v0.3 status-notifier support.
+
+5. Tactical command center.
    - Create the first large popout/panel surface.
    - Include quick toggles, service logs, power actions, and system overview.
 
-3. Launcher/search.
+6. Launcher/search.
    - Implement keyboard-first app/action/settings search.
    - Keep providers simple before adding registry abstractions.
 
-4. Notifications/toasts.
+7. Notifications/toasts.
    - Add notification capture, history, DND, and tactical toast visuals.
 
-5. Audio/media stack.
-   - Add volume/mic controls and MPRIS display.
-   - Add spectrum/lyrics only after core media controls are stable.
-
-6. Network/VPN/Bluetooth detail.
+8. Network/VPN/Bluetooth detail.
    - Expand current network stats into actionable connectivity panels.
 
-7. Wallpaper/theme management.
+9. Wallpaper/theme management.
    - Add theme profiles and wallpaper/background controls.
 
-8. Dock/taskbar/tray/session controls.
+10. Dock/taskbar/desktop controls.
    - Add mission dock, tray drawer, active window overview, and power/session menu.
 
-9. Optional plugin/IPC system.
+11. Optional plugin/IPC system.
    - Defer until multiple first-party panels/widgets need dynamic registration.

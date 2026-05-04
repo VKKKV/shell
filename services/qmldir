@@ -2,3 +2,7 @@ singleton Time 1.0 Time.qml
 singleton SystemStats 1.0 SystemStats.qml
 singleton HyprlandService 1.0 HyprlandService.qml
 singleton SettingsService 1.0 SettingsService.qml
+singleton AudioService 1.0 AudioService.qml
+singleton SessionService 1.0 SessionService.qml
+singleton BatteryService 1.0 BatteryService.qml
+singleton MediaService 1.0 MediaService.qml
