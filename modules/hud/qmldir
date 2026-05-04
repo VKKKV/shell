@@ -1,2 +1,4 @@
 HudWindow 1.0 HudWindow.qml
 HudLayout 1.0 HudLayout.qml
+TopStatusBar 1.0 TopStatusBar.qml
+BottomStatusBar 1.0 BottomStatusBar.qml

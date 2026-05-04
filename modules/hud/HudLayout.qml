@@ -17,86 +17,9 @@ Item {
         anchors.margins: Theme.margin
         spacing: Theme.gap
 
-        TacticalFrame {
+        TopStatusBar {
             Layout.fillWidth: true
             Layout.preferredHeight: Theme.topBarHeight
-            highlighted: true
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: Theme.panelPadding
-                spacing: Theme.gap
-
-                Column {
-                    Layout.preferredWidth: 260
-                    Layout.alignment: Qt.AlignVCenter
-                    spacing: 2
-
-                    TacticalLabel {
-                        text: "08:54:37"
-                        accent: true
-                        size: Theme.fontClock
-                    }
-
-                    TacticalLabel {
-                        text: "2025-05-17 SAT"
-                        dim: true
-                    }
-
-                }
-
-                Row {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignCenter
-                    spacing: 10
-
-                    Repeater {
-                        model: 5
-
-                        Rectangle {
-                            required property int index
-
-                            width: 34
-                            height: 24
-                            color: index === 1 ? Theme.line : "transparent"
-                            border.color: Theme.line
-                            border.width: Theme.lineWidth
-
-                            TacticalLabel {
-                                anchors.centerIn: parent
-                                text: index + 1
-                                color: index === 1 ? Theme.background : Theme.line
-                                font.bold: true
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                Column {
-                    Layout.preferredWidth: 310
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                    spacing: 4
-
-                    TacticalLabel {
-                        anchors.right: parent.right
-                        text: "// SYS.PRTS.V2.0"
-                        accent: true
-                        size: Theme.fontNormal
-                    }
-
-                    TacticalLabel {
-                        anchors.right: parent.right
-                        text: "HYPRLAND // QML RENDERER"
-                        dim: true
-                    }
-
-                }
-
-            }
-
         }
 
         RowLayout {
@@ -260,36 +183,9 @@ Item {
 
         }
 
-        TacticalFrame {
+        BottomStatusBar {
             Layout.fillWidth: true
             Layout.preferredHeight: Theme.bottomBarHeight
-            highlighted: true
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: Theme.panelPadding
-                anchors.rightMargin: Theme.panelPadding
-
-                TacticalLabel {
-                    text: "PRTS-HYPRLAND // NODE_02 // ID: 10.0.0.12"
-                    dim: true
-                }
-
-                TacticalLabel {
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "[ROOT_ACCESS_GRANTED]"
-                    accent: true
-                    size: Theme.fontNormal
-                }
-
-                TacticalLabel {
-                    text: "TACTICAL LAYER ONLINE // SECURE CHANNEL ESTABLISHED"
-                    dim: true
-                }
-
-            }
-
         }
 
     }
