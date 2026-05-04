@@ -12,7 +12,7 @@ TacticalFrame {
         anchors.rightMargin: Theme.panelPadding
 
         TacticalLabel {
-            text: "PRTS-HYPRLAND // NODE_02 // ID: 10.0.0.12"
+            text: "VOID-HYPRLAND // NODE_02 // ID: 10.0.0.12"
             dim: true
         }
 

@@ -85,7 +85,7 @@ TacticalFrame {
 
             TacticalLabel {
                 anchors.right: parent.right
-                text: "// SYS.PRTS.V2.0"
+                text: "// VOID.SYS.V2.0"
                 accent: true
                 size: Theme.fontNormal
             }

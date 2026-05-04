@@ -8,20 +8,20 @@ The HUD window is configured in `modules/hud/HudWindow.qml`:
 
 ```qml
 WlrLayershell.layer: WlrLayer.Top
-WlrLayershell.namespace: "prts-hud"
+WlrLayershell.namespace: "void-hud"
 exclusiveZone: 0
 color: "transparent"
 ```
 
-Use the `prts-hud` namespace when writing Hyprland rules.
+Use the `void-hud` namespace when writing Hyprland rules.
 
 ## Recommended Blur Setup
 
 Add rules like this to `hyprland.conf` if you want compositor blur behind the tactical panels:
 
 ```ini
-layerrule = blur, prts-hud
-layerrule = ignorezero, prts-hud
+layerrule = blur, void-hud
+layerrule = ignorezero, void-hud
 ```
 
 If the blur feels too soft for the target style, keep blur disabled. The HUD is designed to remain readable with plain black/translucent panel surfaces.

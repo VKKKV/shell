@@ -60,7 +60,7 @@ TacticalFrame {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 title: "SYSTEM IDENTITY"
-                lines: [["OS", "PRTS-Hyprland Linux x86_64"], ["HOST", "Tactical Node 02"], ["KERNEL", "6.8.9-zen1-1-zen"], ["PKGS", "1342 (pacman)"], ["WM", "Hyprland (QML)", true], ["CPU", "AMD Ryzen 9 7950X (24) @ 5.65 GHz"], ["GPU", "NVIDIA GeForce RTX 4080"], ["MEMORY", "19.71 GiB / 31.30 GiB", true]]
+                lines: [["OS", "VOID-Hyprland Linux x86_64"], ["HOST", "Tactical Node 02"], ["KERNEL", "6.8.9-zen1-1-zen"], ["PKGS", "1342 (pacman)"], ["WM", "Hyprland (QML)", true], ["CPU", "AMD Ryzen 9 7950X (24) @ 5.65 GHz"], ["GPU", "NVIDIA GeForce RTX 4080"], ["MEMORY", "19.71 GiB / 31.30 GiB", true]]
             }
 
             Rectangle {

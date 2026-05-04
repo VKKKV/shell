@@ -1,6 +1,6 @@
 # target.png 图像描述
 
-这张图片展示了一个充满科幻感、高对比度、暗黑风格的 Linux 桌面环境（通常被称为 "Rice"）。该界面被标记为 "PRTS-HYPRLAND TACTICAL DESKTOP ENVIRONMENT"（战术桌面环境），采用了 Hyprland 窗口管理器和 QML 渲染器，整体呈现出强烈的**机能风 (Techwear/Cyberpunk Aesthetic)**，色调以黑色为底，配以明亮的黄色和灰色文字及图标。
+这张图片展示了一个充满科幻感、高对比度、暗黑风格的 Linux 桌面环境（通常被称为 "Rice"）。该界面被标记为 "VOID-HYPRLAND TACTICAL DESKTOP ENVIRONMENT"（战术桌面环境），采用了 Hyprland 窗口管理器和 QML 渲染器，整体呈现出强烈的**机能风 (Techwear/Cyberpunk Aesthetic)**，色调以黑色为底，配以明亮的黄色和灰色文字及图标。
 
 ## 整体布局与机能风格
 
@@ -16,7 +16,7 @@
 ### 1. 顶部状态栏
 *   **左侧：** 显示大字体的数字时钟 `08:54:37` 以及日期 `2025-05-17 SAT`。
 *   **中间：** 工作区选择器，显示 1 到 5 个工作区，其中第 2 个工作区处于激活状态（黄色高亮）。
-*   **右侧：** 系统版本标识 `// SYS.PRTS.V2.0` 以及渲染器信息 `HYPRLAND // QML RENDERER`。
+*   **右侧：** 系统版本标识 `// VOID.SYS.V2.0` 以及渲染器信息 `HYPRLAND // QML RENDERER`。
 
 ### 2. 左侧边栏 (Tactical & Thermal)
 *   **TACTICAL LAYER (战术层)：** 显示状态为 `ONLINE`（在线），并提供同步率 (100%)、信号强度 (98%) 和加密协议 (AES-256) 的实时数据。下方有一个雷达状的几何图形。
@@ -26,7 +26,7 @@
 ### 3. 中央主窗口 (Terminal 01)
 中央是一个名为 `TERMINAL 01` 的终端窗口，正在运行 `bash`。
 *   **Neofetch 输出：** 显示了详细的系统信息：
-    *   **OS:** PRTS-Hyprland Linux x86_64
+    *   **OS:** VOID-Hyprland Linux x86_64
     *   **Host:** Tactical Node 02
     *   **Kernel:** 6.8.9-zen1-1-zen
     *   **Packages:** 1342 (pacman)

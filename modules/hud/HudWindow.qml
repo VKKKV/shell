@@ -8,7 +8,7 @@ PanelWindow {
     color: "transparent"
     exclusiveZone: 0
     WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.namespace: "prts-hud"
+    WlrLayershell.namespace: "void-hud"
 
     anchors {
         top: true

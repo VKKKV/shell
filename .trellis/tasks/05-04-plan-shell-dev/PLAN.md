@@ -4,7 +4,7 @@
 - Status: ready for implementation using `target.md` as the authoritative visual brief.
 - Trellis context: `implement.jsonl`, `check.jsonl`, and `debug.jsonl` are initialized.
 - Task type: frontend.
-- Primary deliverable: a Quickshell tactical desktop dashboard matching the PRTS/Hyprland cyberpunk interface described in `target.md`.
+- Primary deliverable: a Quickshell tactical desktop dashboard matching the VOID-Hyprland cyberpunk interface described in `target.md`.
 
 ## Constraints And Assumptions
 - The shell is built with Quickshell/QML for Wayland, with Hyprland as the first compositor target.
@@ -87,13 +87,13 @@ Acceptance:
 
 Acceptance:
 - No repeated magic values for core spacing, border widths, yellow/gray colors, and typography.
-- The UI reads as PRTS tactical/HUD rather than generic status widgets.
+- The UI reads as VOID tactical/HUD rather than generic status widgets.
 
 ### Slice 3: Top And Bottom Status Bars
 - Add `services/Time.qml` or a minimal local `Timer` if only `Clock.qml` needs it.
 - Implement top-left large digital time and date.
 - Implement top-center workspace selector 1-5 using `Quickshell.Hyprland` first.
-- Implement top-right labels: `// SYS.PRTS.V2.0` and `HYPRLAND // QML RENDERER`.
+- Implement top-right labels: `// VOID.SYS.V2.0` and `HYPRLAND // QML RENDERER`.
 - Implement bottom status strip with system ID, `[ROOT_ACCESS_GRANTED]`, and secure tactical channel status.
 
 Acceptance:
@@ -185,7 +185,7 @@ Acceptance:
 - The HUD remains readable on the user's monitor resolution.
 
 ### Phase B: Hyprland Integration Docs And Compositor Polish
-- Add `docs/hyprland.md` with recommended `layerrule`/blur settings for the `prts-hud` namespace.
+- Add `docs/hyprland.md` with recommended `layerrule`/blur settings for the `void-hud` namespace.
 - Document expected behavior for overlay/top layer, transparency, blur, and workspace click actions.
 - Keep blur optional; the shell must remain usable without compositor blur.
 
@@ -212,7 +212,7 @@ Acceptance:
 - The UI shows safe fallback values while logs preserve enough detail for debugging.
 
 ### Phase E: Settings Panel In Tactical Style
-- Build a settings panel that matches the PRTS/techwear visual language rather than generic material design.
+- Build a settings panel that matches the VOID/techwear visual language rather than generic material design.
 - First settings should control theme intensity, scanlines, panel visibility, update intervals, and mock/live data toggles.
 - Add a clear service boundary for settings persistence before expanding options.
 
