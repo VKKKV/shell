@@ -1,4 +1,5 @@
 import "../../components"
+import "../../services"
 import "../../theme"
 import QtQuick
 import QtQuick.Layouts
@@ -30,7 +31,7 @@ TacticalFrame {
 
         MetricBlock {
             title: "MEMORY BUS"
-            rows: [["RAM", "19.7G 62.9%", 0.629, true], ["SWAP", "2.1G 26.2%", 0.262, false]]
+            rows: [["RAM", SystemStats.ramText, SystemStats.ramProgress, true], ["SWAP", SystemStats.swapText, SystemStats.swapProgress, false]]
         }
 
         MetricBlock {
@@ -46,7 +47,7 @@ TacticalFrame {
 
         MetricBlock {
             title: "FILESYSTEM"
-            rows: [["/", "72%", 0.72, false], ["/home", "64%", 0.64, false], ["/data", "41%", 0.41, false]]
+            rows: SystemStats.filesystemRows
         }
 
         TextBlock {
