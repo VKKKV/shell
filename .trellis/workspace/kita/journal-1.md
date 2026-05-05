@@ -254,3 +254,12 @@
 - Added local lyrics fallback support to `MediaService.qml` and displayed lyrics telemetry in the command center.
 - Added power-profile hint text and tray protocol affordance text to close polish-only roadmap gaps.
 - Updated `PLAN.md` to mark concrete high-value gaps covered and explicitly keep plugin/IPC/third-party desktop widgets out of scope for this task.
+
+## 2026-05-05 - Visual Fit MVP Planning And Pass
+
+- Captured user feedback in the PRD: settings discoverability, side/right panel clipping, target-yellow mismatch, fixed expansion sizing, and orbital ASCII expectations.
+- Adopted the option-2 MVP scope: visible settings entry, target-like yellow defaults, right-panel sizing/text fixes, central safe-area expansion sizing, and a reworked orbital ASCII map.
+- Updated `Theme.qml` to use the refreshed `target.md` palette (`#F2C94C`, `#E0E0E0`, `#828282`, `#333333`) and widened right-panel bounds.
+- Added a visible top-bar `SETTINGS` button and clarified the settings column target color label.
+- Replaced fixed expansion limits with dynamic central safe-area sizing shared by orbital/CPU/network/filesystem/log expansions.
+- Reworked `OrbitalExpansionPanel.qml` into a responsive semi-transparent ASCII top-down orbital map with dynamic dimensions, planet codes, center axes, and track traces.

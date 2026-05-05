@@ -9,7 +9,7 @@ ColumnLayout {
 
     TacticalLabel {
         Layout.fillWidth: true
-        text: "VISUAL // DATA // PANELS"
+        text: "VISUAL // TARGET #F2C94C // DATA // PANELS"
         accent: true
     }
 

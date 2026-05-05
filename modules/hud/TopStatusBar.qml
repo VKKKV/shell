@@ -199,6 +199,30 @@ TacticalFrame {
                 Layout.fillWidth: true
                 spacing: 6
 
+                Rectangle {
+                    Layout.preferredWidth: 84
+                    Layout.preferredHeight: 20
+                    color: settingsArea.containsMouse || SettingsService.panelOpen ? Theme.lineDim : "transparent"
+                    border.color: settingsArea.containsMouse || SettingsService.panelOpen ? Theme.line : Theme.border
+                    border.width: Theme.lineWidth
+
+                    MouseArea {
+                        id: settingsArea
+
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: SettingsService.togglePanel()
+                    }
+
+                    TacticalLabel {
+                        anchors.centerIn: parent
+                        text: "SETTINGS"
+                        accent: settingsArea.containsMouse || SettingsService.panelOpen
+                        size: Theme.fontTiny
+                    }
+                }
+
                 TrayStrip {
                 }
 

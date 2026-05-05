@@ -25,6 +25,7 @@ ColumnLayout {
 
             Layout.fillWidth: true
             text: modelData
+            elide: Text.ElideRight
         }
 
     }

@@ -11,7 +11,7 @@ Item {
     readonly property bool compact: width > 0 && width < Theme.compactWidth
     readonly property int contentWidth: Math.max(0, width - Theme.margin * 2)
     readonly property int sideWidth: Math.max(Theme.sidePanelMinWidth, Math.min(Theme.sidePanelMaxWidth, Math.max(leftPanel.implicitWidth, Math.round(contentWidth * (compact ? 0.18 : 0.19)))))
-    readonly property int rightWidth: Math.max(Theme.rightPanelMinWidth, Math.min(Theme.rightPanelMaxWidth, Math.max(rightPanel.implicitWidth, Math.round(contentWidth * (compact ? 0.25 : 0.26)))))
+    readonly property int rightWidth: Math.max(Theme.rightPanelMinWidth, Math.min(Theme.rightPanelMaxWidth, Math.max(rightPanel.implicitWidth, Math.round(contentWidth * (compact ? 0.29 : 0.3)))))
     readonly property int topHeight: Math.min(Theme.topBarMaxHeight, Math.max(Theme.topBarMinHeight, topBar.implicitHeight))
     readonly property int bottomHeight: Math.min(Theme.bottomBarMaxHeight, Math.max(Theme.bottomBarMinHeight, bottomBar.implicitHeight))
     readonly property int sideAvailableHeight: Math.max(0, height - topHeight - bottomHeight - Theme.margin * 4)
@@ -21,8 +21,10 @@ Item {
     readonly property int bottomReserved: bottomBar.height + Theme.margin * 2
     readonly property int leftReserved: leftPanel.visible ? leftPanel.width + Theme.margin * 2 : 0
     readonly property int rightReserved: rightPanel.visible ? rightPanel.width + Theme.margin * 2 : 0
-    readonly property int expansionWidth: Math.min(980, width - leftReserved - rightReserved - Theme.margin * 2)
-    readonly property int expansionHeight: Math.min(620, height - topReserved - bottomReserved - Theme.margin * 2)
+    readonly property int centerSafeWidth: Math.max(320, width - leftReserved - rightReserved - Theme.margin * 2)
+    readonly property int centerSafeHeight: Math.max(260, height - topReserved - bottomReserved - Theme.margin * 2)
+    readonly property int expansionWidth: Math.max(320, centerSafeWidth)
+    readonly property int expansionHeight: Math.max(260, centerSafeHeight)
     readonly property int expansionTargetX: leftReserved + Math.max(0, width - leftReserved - rightReserved - expansionWidth) / 2
     readonly property int expansionTargetY: topReserved + Math.max(0, height - topReserved - bottomReserved - expansionHeight) / 2
     readonly property int orbitalOriginX: leftPanel.x + leftPanel.width * 0.5

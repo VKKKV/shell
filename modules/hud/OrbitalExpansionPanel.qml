@@ -11,6 +11,8 @@ TacticalFrame {
     highlighted: true
 
     property real phase: 0
+    readonly property int mapColumns: Math.max(48, Math.min(108, Math.floor((orbitViewport.width - 24) / 9)))
+    readonly property int mapRows: Math.max(22, Math.min(44, Math.floor((orbitViewport.height - 24) / 17)))
     readonly property var planets: [
         { name: "MERCURY", code: "ME", radius: 0.16, speed: 4.15 },
         { name: "VENUS", code: "VE", radius: 0.24, speed: 1.62 },
@@ -28,26 +30,46 @@ TacticalFrame {
     }
 
     function buildAsciiMap(): var {
-        const width = 42;
-        const height = 19;
+        const width = mapColumns;
+        const height = mapRows;
         const grid = [];
+        const centerX = Math.floor(width / 2);
+        const centerY = Math.floor(height / 2);
+        const ratio = width / Math.max(1, height) * 0.46;
         for (let y = 0; y < height; y++) {
             let row = "";
             for (let x = 0; x < width; x++) {
-                const dx = (x - width / 2) / (width / 2);
-                const dy = (y - height / 2) / (height / 2);
+                const dx = (x - centerX) / (width / 2);
+                const dy = (y - centerY) / (height / 2) / ratio;
                 const distance = Math.sqrt(dx * dx + dy * dy);
-                const orbit = Math.abs((distance * 10) % 1) < 0.045;
-                row += orbit ? "." : " ";
+                let glyph = " ";
+                for (const planet of planets) {
+                    if (Math.abs(distance - planet.radius) < 0.012) {
+                        glyph = ".";
+                        break;
+                    }
+                }
+                if (Math.abs(y - centerY) < 1 && x % 8 === 0)
+                    glyph = "-";
+                if (Math.abs(x - centerX) < 1 && y % 4 === 0)
+                    glyph = "|";
+                row += glyph;
             }
             grid.push(row);
         }
 
-        grid[Math.floor(height / 2)] = replaceAt(grid[Math.floor(height / 2)], Math.floor(width / 2) - 1, "SU");
+        grid[centerY] = replaceAt(grid[centerY], centerX - 1, "SU");
         for (const planet of planets) {
             const angle = planetAngle(planet) * Math.PI / 180;
-            const px = Math.round(width / 2 + Math.cos(angle) * planet.radius * width * 0.47);
-            const py = Math.round(height / 2 + Math.sin(angle) * planet.radius * height * 0.46);
+            const px = Math.round(centerX + Math.cos(angle) * planet.radius * width * 0.49);
+            const py = Math.round(centerY + Math.sin(angle) * planet.radius * height * 0.49 * ratio);
+            for (let trail = 1; trail <= 8; trail++) {
+                const trailAngle = (planetAngle(planet) - trail * (3 + planet.speed)) * Math.PI / 180;
+                const tx = Math.round(centerX + Math.cos(trailAngle) * planet.radius * width * 0.49);
+                const ty = Math.round(centerY + Math.sin(trailAngle) * planet.radius * height * 0.49 * ratio);
+                if (ty >= 0 && ty < height && tx >= 0 && tx < width)
+                    grid[ty] = replaceAt(grid[ty], tx, trail < 3 ? "+" : "·");
+            }
             if (py >= 0 && py < height && px >= 0 && px < width - 1)
                 grid[py] = replaceAt(grid[py], px, planet.code);
         }
@@ -113,46 +135,45 @@ TacticalFrame {
             spacing: 14
 
             Rectangle {
+                id: orbitViewport
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                color: "#66000000"
+                color: "#55000000"
                 border.color: Theme.lineDim
                 border.width: Theme.lineWidth
                 clip: true
 
-                Column {
-                    anchors.centerIn: parent
-                    spacing: 2
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 12
+                    spacing: 4
 
-                    Repeater {
-                        model: root.asciiMap
-
-                        TacticalLabel {
-                            required property string modelData
-
-                            text: modelData
-                            accent: text.indexOf("SU") >= 0
-                            size: Theme.fontNormal
-                            font.letterSpacing: 1.8
-                        }
+                    TacticalLabel {
+                        Layout.fillWidth: true
+                        text: "ASCII ORBITAL PLANE // " + root.mapColumns + "x" + root.mapRows + " // TRACK TRACE +/· // TRANSPARENT SAFE AREA"
+                        accent: true
+                        elide: Text.ElideRight
                     }
-                }
 
-                Repeater {
-                    model: root.planets
+                    Column {
+                        Layout.alignment: Qt.AlignCenter
+                        spacing: 0
 
-                    Rectangle {
-                        required property var modelData
+                        Repeater {
+                            model: root.asciiMap
 
-                        readonly property real angle: root.planetAngle(modelData) * Math.PI / 180
+                            Text {
+                                required property string modelData
 
-                        width: 7
-                        height: 7
-                        radius: 0
-                        color: Theme.line
-                        x: parent.width / 2 + Math.cos(angle) * modelData.radius * parent.width * 0.43 - width / 2
-                        y: parent.height / 2 + Math.sin(angle) * modelData.radius * parent.height * 0.42 - height / 2
-                        opacity: 0.85
+                                text: modelData
+                                color: text.indexOf("SU") >= 0 ? Theme.line : Theme.text
+                                font.family: Theme.fontFamily
+                                font.pixelSize: Math.max(10, Math.min(15, (orbitViewport.height - 64) / Math.max(1, root.mapRows)))
+                                font.letterSpacing: Math.max(0, Math.min(2.2, (orbitViewport.width / Math.max(1, root.mapColumns)) - 7.8))
+                                font.bold: text.indexOf("SU") >= 0 || /ME|VE|EA|MA|JU|SA|UR|NE/.test(text)
+                            }
+                        }
                     }
                 }
             }
