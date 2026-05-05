@@ -472,3 +472,10 @@
 - Updated `TrayStrip.qml` to visually mark menu-capable and menu-only tray items with border/indicator hints.
 - Updated `TrayDrawer.qml` to show per-item `MENU`, `ONLY`, or `ACT` affordance text and clearer tray protocol copy.
 - Right-clicking tray items without advertised menus now falls back to normal activation instead of attempting secondary/native menu behavior.
+
+## 2026-05-05 - Command Center Settings Grouping
+
+- Added the next PRD phase for grouping command-center settings controls so the column is no longer one long flat list.
+- Added reusable `components/SectionHeader.qml` and registered it in `components/qmldir`.
+- Grouped `CommandCenterSettingsColumn.qml` into tactical sections for visual palette, backdrop/wallpaper, system data/input, panel visibility, typography/density, surface/scanlines, contrast tuning, and polling cadence.
+- Preserved existing setting controls and behaviors while improving scan readability.

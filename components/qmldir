@@ -3,6 +3,7 @@ TacticalLabel 1.0 TacticalLabel.qml
 MetricRow 1.0 MetricRow.qml
 MetricBlock 1.0 MetricBlock.qml
 TextBlock 1.0 TextBlock.qml
+SectionHeader 1.0 SectionHeader.qml
 ProgressBar 1.0 ProgressBar.qml
 Sparkline 1.0 Sparkline.qml
 RadarDisplay 1.0 RadarDisplay.qml

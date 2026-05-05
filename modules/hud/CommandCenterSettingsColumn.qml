@@ -13,6 +13,11 @@ ColumnLayout {
         accent: true
     }
 
+    SectionHeader {
+        tag: "01"
+        text: "VISUAL PALETTE"
+    }
+
     GridLayout {
         Layout.fillWidth: true
         columns: 5
@@ -86,6 +91,11 @@ ColumnLayout {
         Layout.fillWidth: true
         text: "BACKGROUND // " + SettingsService.backgroundMode.toUpperCase()
         accent: SettingsService.backgroundMode !== "void"
+    }
+
+    SectionHeader {
+        tag: "02"
+        text: "BACKDROP AND WALLPAPER"
     }
 
     GridLayout {
@@ -237,6 +247,11 @@ ColumnLayout {
         }
     }
 
+    SectionHeader {
+        tag: "03"
+        text: "SYSTEM DATA AND INPUT"
+    }
+
     ToggleRow {
         label: "SCANLINE OVERLAY"
         checked: SettingsService.scanlinesEnabled
@@ -327,6 +342,11 @@ ColumnLayout {
         }
     }
 
+    SectionHeader {
+        tag: "04"
+        text: "PANEL VISIBILITY"
+    }
+
     ToggleRow {
         label: "LEFT PANEL"
         checked: SettingsService.leftVisible
@@ -337,6 +357,11 @@ ColumnLayout {
         label: "RIGHT PANEL"
         checked: SettingsService.rightVisible
         onToggled: (checked) => SettingsService.rightVisible = checked
+    }
+
+    SectionHeader {
+        tag: "05"
+        text: "TYPOGRAPHY AND DENSITY"
     }
 
     MetricRow {
@@ -480,6 +505,11 @@ ColumnLayout {
         }
     }
 
+    SectionHeader {
+        tag: "06"
+        text: "SURFACE AND SCANLINES"
+    }
+
     MetricRow {
         label: "PANEL OPACITY"
         value: Math.round(SettingsService.panelOpacity * 100) + "%"
@@ -578,6 +608,11 @@ ColumnLayout {
                 accent: true
             }
         }
+    }
+
+    SectionHeader {
+        tag: "07"
+        text: "CONTRAST TUNING"
     }
 
     MetricRow {
@@ -728,6 +763,11 @@ ColumnLayout {
                 accent: true
             }
         }
+    }
+
+    SectionHeader {
+        tag: "08"
+        text: "POLLING CADENCE"
     }
 
     MetricRow {

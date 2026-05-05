@@ -493,3 +493,30 @@ Decision (ADR-lite):
 - Context: tray menus previously failed when display was called with an item delegate. The current implementation avoids that by using activation fallbacks, but users still need clearer per-item affordance hints.
 - Decision: keep the safe activation path and improve visible protocol labels instead of building custom menu rendering.
 - Consequences: tray UX becomes clearer without risking native menu runtime errors. The trade-off is that menu styling and deeper menu browsing remain delegated/deferred.
+
+### Next Optimization MVP: Command Center Settings Grouping
+
+Plan source: prioritized command-center note to keep settings controls available but group them so the panel does not become a long flat list.
+
+Requirements:
+
+- Add clear tactical section headers inside `CommandCenterSettingsColumn.qml`.
+- Preserve all existing settings controls, order, persistence, and behavior.
+- Group related controls into readable clusters: visual palette, backdrop/wallpaper, system/data toggles, panel visibility, typography/density, surface/scanline opacity, contrast, and polling.
+- Use reusable styling for section headers instead of ad-hoc repeated labels.
+- Keep the settings column scrollable inside the existing command-center safe-area sizing.
+
+Acceptance Criteria:
+
+- [x] Settings column has visible grouped sections instead of one undifferentiated list.
+- [x] No existing settings controls are removed or renamed in a way that breaks behavior.
+- [x] Section header styling is reusable and registered in `components/qmldir` if implemented as a component.
+- [x] Command-center layout and scroll behavior remain unchanged.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: the command center has grown into a broader control surface, but the settings column is still a long flat list of controls.
+- Decision: add lightweight section dividers and group labels while preserving the current single-column scroll model.
+- Consequences: improves discoverability and scanning with low risk. The trade-off is that this is not a full settings navigation/sidebar redesign.

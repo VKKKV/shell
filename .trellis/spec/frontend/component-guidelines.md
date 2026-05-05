@@ -26,6 +26,7 @@ Examples:
 
 - `TacticalFrame.qml`
 - `MetricRow.qml`
+- `SectionHeader.qml`
 - `Sparkline.qml`
 - `ToggleRow.qml`
 - `AnalogOrbitClock.qml`

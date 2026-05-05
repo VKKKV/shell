@@ -26,6 +26,7 @@ components/
 ├── TacticalFrame.qml
 ├── TacticalLabel.qml
 ├── MetricBlock.qml
+├── SectionHeader.qml
 ├── Sparkline.qml
 ├── TrayStrip.qml
 ├── AnalogOrbitClock.qml
