@@ -381,3 +381,32 @@ Decision (ADR-lite):
 - Command center should continue toggling with `Ctrl+Alt+S`, but `Escape` should close it when open.
 - All central expansion panels should expose the same close affordance: top-right `CLOSE` tactical button, same dimensions, border logic, hover behavior, and text sizing.
 - Future panel buttons should use a shared component rather than hand-rolled rectangles in each panel.
+
+### Next Optimization MVP: Visual Density Profiles
+
+User instruction context: continue staged shell optimization after fine appearance controls by implementing the backlog item for visual density tuning.
+
+Requirements:
+
+- Add a settings-panel control for visual density with `compact`, `normal`, and `dense` profiles.
+- Persist the density profile through `SettingsService.qml` and `void-shell-settings` as `visual.density`.
+- Keep default behavior visually equivalent by defaulting to `normal`.
+- Apply density through `Theme.qml` so shared row heights, control heights, graph heights, and spacing can respond without one-off per-panel knobs.
+- Clamp/normalize invalid persisted values back to `normal` in both QML and Zig.
+- Keep the phase focused on coarse global density, not per-panel layout customization.
+
+Acceptance Criteria:
+
+- [x] Command-center settings expose `DENSITY` controls for `COMPACT`, `NORMAL`, and `DENSE`.
+- [x] `visual.density` persists and normalizes through the Zig settings helper.
+- [x] `Theme.qml` exposes density-derived sizing primitives for controls, rows, graphs, and spacing.
+- [x] At least the command-center settings controls and major CPU/network/filesystem expansion graph/row surfaces use density-derived sizing.
+- [x] Invalid persisted density values fall back to `normal`.
+- [x] `qmllint`, `zig build`, `git diff --check`, settings helper normalization checks, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: typography, opacity, scanlines, and contrast are now tunable, but dense HUD surfaces still use fixed row/control/graph heights. Users need a coarse way to trade compactness against readability without editing QML.
+- Decision: add a single persisted `visual.density` profile and derive common layout sizes from `Theme.qml`.
+- Consequences: global density tuning becomes available with a small contract. The trade-off is that individual surfaces do not yet have independent density profiles; those can be added later only if real use shows a need.

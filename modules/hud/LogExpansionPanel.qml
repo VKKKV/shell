@@ -14,12 +14,12 @@ CentralPanelChrome {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 12
+        spacing: Theme.densitySpacing
 
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 14
+            spacing: Theme.densitySpacing
 
             Rectangle {
                 Layout.fillWidth: true
@@ -32,7 +32,7 @@ CentralPanelChrome {
                 ColumnLayout {
                     anchors.fill: parent
                     anchors.margins: 10
-                    spacing: 6
+                    spacing: Theme.densitySmallSpacing
 
                     Repeater {
                         model: root.logLines
@@ -42,7 +42,7 @@ CentralPanelChrome {
                             required property int index
 
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 30
+                            Layout.preferredHeight: Theme.densityRowHeight
                             color: modelData.indexOf("fallback") >= 0 || modelData.indexOf("missing") >= 0 ? Theme.lineDim : "transparent"
                             border.color: index % 2 === 0 ? Theme.lineDim : "transparent"
                             border.width: Theme.lineWidth
@@ -51,7 +51,7 @@ CentralPanelChrome {
                                 anchors.fill: parent
                                 anchors.leftMargin: 8
                                 anchors.rightMargin: 8
-                                spacing: 8
+                                spacing: Theme.densitySmallSpacing
 
                                 TacticalLabel {
                                     text: String(index).padStart(2, "0")
@@ -78,7 +78,7 @@ CentralPanelChrome {
             ColumnLayout {
                 Layout.preferredWidth: 280
                 Layout.fillHeight: true
-                spacing: 10
+                spacing: Theme.densitySpacing
 
                 TextBlock {
                     title: "EVENT BUS"

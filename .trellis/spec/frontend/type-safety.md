@@ -40,7 +40,7 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 ### 1. Scope / Trigger
 
 - Trigger: adding or changing persistent appearance settings that affect global typography, panel surfaces, or scanline overlays.
-- Applies to: `visual.fontScale`, `visual.panelOpacity`, and `visual.scanlineStrength` in `SettingsService.qml`, `Theme.qml`, `src/settings/main.zig`, `docs/settings.md`, and command-center settings controls.
+- Applies to: `visual.fontScale`, `visual.panelOpacity`, `visual.scanlineStrength`, `visual.borderOpacity`, `visual.dimTextOpacity`, `visual.lineContrast`, and `visual.density` in `SettingsService.qml`, `Theme.qml`, `src/settings/main.zig`, `docs/settings.md`, and command-center settings controls.
 - This is a cross-layer contract because QML owns live UI state while Zig owns durable JSON normalization.
 
 ### 2. Signatures
@@ -54,12 +54,14 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - Durable JSON field: `visual.borderOpacity: number`.
 - Durable JSON field: `visual.dimTextOpacity: number`.
 - Durable JSON field: `visual.lineContrast: number`.
+- Durable JSON field: `visual.density: "compact" | "normal" | "dense"`.
 - Zig setting field: `Settings.font_scale: f64`.
 - Zig setting field: `Settings.panel_opacity: f64`.
 - Zig setting field: `Settings.scanline_strength: f64`.
 - Zig setting field: `Settings.border_opacity: f64`.
 - Zig setting field: `Settings.dim_text_opacity: f64`.
 - Zig setting field: `Settings.line_contrast: f64`.
+- Zig setting field: `Settings.density: []const u8`.
 - Zig helper commands: `void-shell-settings defaults`, `void-shell-settings read`, `void-shell-settings write '<json>'`.
 
 ### 3. Contracts
@@ -76,11 +78,14 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - `visual.dimTextOpacity` range is `0.45..1.0`.
 - `visual.lineContrast` default is `1.0`, preserving the selected accent color.
 - `visual.lineContrast` range is `0.65..1.35`.
+- `visual.density` default is `normal`, preserving current layout density.
+- `visual.density` allowed values are `compact`, `normal`, and `dense`; invalid values normalize to `normal`.
 - QML must clamp immediate UI writes before scheduling persistence.
 - Zig must clamp persisted input and emit normalized JSON.
 - `Theme.qml` is the only place that multiplies base font sizes by `fontScale`; individual panels should keep using theme font properties.
 - `Theme.qml` is the only place that derives global tactical panel colors from `panelOpacity`; individual panels should keep using `Theme.panel`/`Theme.panelSoft`.
 - `Theme.qml` is the only place that derives `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim` from fine appearance controls.
+- `Theme.qml` is the only place that derives reusable density sizing such as `Theme.densityControlHeight`, `Theme.densityRowHeight`, and `Theme.densityGraphHeight`.
 - Existing `ScanlineOverlay` call sites should multiply their base opacity by `SettingsService.scanlineStrength`; `scanlinesEnabled` remains the on/off switch.
 - Settings UI should adjust `fontScale` in small steps and show the current percent value.
 
@@ -100,8 +105,10 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - `visual.dimTextOpacity > 1.0` -> clamp to `1.0`.
 - `visual.lineContrast < 0.65` -> clamp to `0.65`.
 - `visual.lineContrast > 1.35` -> clamp to `1.35`.
+- Missing or invalid `visual.density` -> normalize to `normal`.
 - Panel hard-codes new font sizes after this contract -> fail review; use `Theme.font*` instead.
 - Panel hard-codes global panel background alpha after this contract -> fail review; use `Theme.panel` or `Theme.panelSoft` instead.
+- Panel adds new repeated control/row/graph heights after this contract -> fail review; use density sizing from `Theme.qml` where the size is part of shared HUD rhythm.
 - Scanline call site ignores `SettingsService.scanlineStrength` -> fail review unless the overlay is explicitly decorative and not user-facing.
 - Settings-helper test writes without temp `XDG_CONFIG_HOME` -> risky; may alter the user's live settings.
 
@@ -111,6 +118,7 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - Good: settings column changes `SettingsService.panelOpacity`, `Theme.panel` updates globally, panels keep using `Theme.panel`.
 - Good: settings column changes `SettingsService.scanlineStrength`, existing scanline overlays get stronger/weaker while the toggle still disables them.
 - Good: settings column changes fine contrast settings, and existing panels update through `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim`.
+- Good: settings column changes `SettingsService.density`, and shared row/control/graph heights update through `Theme.qml`.
 - Base: a visual-only component uses `Theme.fontTiny`/`Theme.fontNormal` and automatically inherits scaling.
 - Bad: a panel implements its own `property int localFontSize` and bypasses `Theme.qml`, causing inconsistent scaling.
 

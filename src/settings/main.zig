@@ -9,6 +9,7 @@ const Settings = struct {
     border_opacity: f64 = 1.0,
     dim_text_opacity: f64 = 1.0,
     line_contrast: f64 = 1.0,
+    density: []const u8 = "normal",
     profile: []const u8 = "amber",
     accent_color: []const u8 = "#F2C94C",
     background_mode: []const u8 = "void",
@@ -31,6 +32,7 @@ const defaults_json =
     \\    "borderOpacity": 1.0,
     \\    "dimTextOpacity": 1.0,
     \\    "lineContrast": 1.0,
+    \\    "density": "normal",
     \\    "profile": "amber",
     \\    "accentColor": "#F2C94C",
     \\    "backgroundMode": "void"
@@ -144,6 +146,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.border_opacity = clampFloat(numberField(visual, "borderOpacity") orelse settings.border_opacity, 0.35, 1.0);
         settings.dim_text_opacity = clampFloat(numberField(visual, "dimTextOpacity") orelse settings.dim_text_opacity, 0.45, 1.0);
         settings.line_contrast = clampFloat(numberField(visual, "lineContrast") orelse settings.line_contrast, 0.65, 1.35);
+        settings.density = densityField(visual, "density") orelse settings.density;
         settings.profile = themeProfileField(visual, "profile") orelse settings.profile;
         settings.accent_color = accentColorField(visual, "accentColor") orelse settings.accent_color;
         settings.background_mode = backgroundModeField(visual, "backgroundMode") orelse settings.background_mode;
@@ -172,6 +175,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\    "borderOpacity": {d:.2},
         \\    "dimTextOpacity": {d:.2},
         \\    "lineContrast": {d:.2},
+        \\    "density": "{s}",
         \\    "profile": "{s}",
         \\    "accentColor": "{s}",
         \\    "backgroundMode": "{s}"
@@ -195,6 +199,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.border_opacity,
         settings.dim_text_opacity,
         settings.line_contrast,
+        settings.density,
         settings.profile,
         settings.accent_color,
         settings.background_mode,
@@ -236,6 +241,16 @@ fn backgroundModeField(value: std.json.Value, key: []const u8) ?[]const u8 {
     const mode = field.string;
     if (std.mem.eql(u8, mode, "void") or std.mem.eql(u8, mode, "grid") or std.mem.eql(u8, mode, "radar"))
         return mode;
+    return null;
+}
+
+fn densityField(value: std.json.Value, key: []const u8) ?[]const u8 {
+    const field = objectField(value, key) orelse return null;
+    if (field != .string)
+        return null;
+    const density = field.string;
+    if (std.mem.eql(u8, density, "compact") or std.mem.eql(u8, density, "normal") or std.mem.eql(u8, density, "dense"))
+        return density;
     return null;
 }
 

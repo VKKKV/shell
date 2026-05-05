@@ -5,7 +5,7 @@ import QtQuick
 import QtQuick.Layouts
 
 ColumnLayout {
-    spacing: 10
+    spacing: Theme.densitySpacing
 
     TacticalLabel {
         Layout.fillWidth: true
@@ -15,18 +15,18 @@ ColumnLayout {
 
     GridLayout {
         Layout.fillWidth: true
-        columns: 4
-        rowSpacing: 6
-        columnSpacing: 6
+        columns: 5
+        rowSpacing: Theme.densitySmallSpacing
+        columnSpacing: Theme.densitySmallSpacing
 
         Repeater {
-            model: ["#F2C94C", "#96BF48", "#55B7FF", "#FF4D2E"]
+            model: ["#F2C94C", "#FFB900", "#96BF48", "#55B7FF", "#FF4D2E"]
 
             Rectangle {
                 required property string modelData
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: 24
+                Layout.preferredHeight: Theme.densityControlHeight
                 color: SettingsService.accentColor === modelData ? Theme.lineDim : "transparent"
                 border.color: SettingsService.accentColor === modelData ? Theme.line : Theme.border
                 border.width: Theme.lineWidth
@@ -51,8 +51,8 @@ ColumnLayout {
     GridLayout {
         Layout.fillWidth: true
         columns: 4
-        rowSpacing: 6
-        columnSpacing: 6
+        rowSpacing: Theme.densitySmallSpacing
+        columnSpacing: Theme.densitySmallSpacing
 
         Repeater {
             model: ["amber", "green", "blue", "red"]
@@ -61,7 +61,7 @@ ColumnLayout {
                 required property string modelData
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: 24
+                Layout.preferredHeight: Theme.densityControlHeight
                 color: SettingsService.themeProfile === modelData ? Theme.lineDim : "transparent"
                 border.color: SettingsService.themeProfile === modelData ? Theme.line : Theme.lineDim
                 border.width: Theme.lineWidth
@@ -91,8 +91,8 @@ ColumnLayout {
     GridLayout {
         Layout.fillWidth: true
         columns: 3
-        rowSpacing: 6
-        columnSpacing: 6
+        rowSpacing: Theme.densitySmallSpacing
+        columnSpacing: Theme.densitySmallSpacing
 
         Repeater {
             model: ["void", "grid", "radar"]
@@ -101,7 +101,7 @@ ColumnLayout {
                 required property string modelData
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: 24
+                Layout.preferredHeight: Theme.densityControlHeight
                 color: SettingsService.backgroundMode === modelData ? Theme.lineDim : "transparent"
                 border.color: SettingsService.backgroundMode === modelData ? Theme.line : Theme.lineDim
                 border.width: Theme.lineWidth
@@ -129,11 +129,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: refreshWallpaperArea.containsMouse ? Theme.panelSoft : "transparent"
             border.color: Theme.lineDim
             border.width: Theme.lineWidth
@@ -156,7 +156,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: applyWallpaperArea.containsMouse ? Theme.panelSoft : "transparent"
             border.color: WallpaperService.selectedPath.length > 0 ? Theme.line : Theme.lineDim
             border.width: Theme.lineWidth
@@ -182,7 +182,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: colorProfileArea.containsMouse ? Theme.panelSoft : "transparent"
             border.color: Theme.lineDim
             border.width: Theme.lineWidth
@@ -211,7 +211,7 @@ ColumnLayout {
             required property var modelData
 
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: WallpaperService.selectedPath === modelData.path ? Theme.lineDim : (wallpaperArea.containsMouse ? Theme.panelSoft : "transparent")
             border.color: WallpaperService.selectedPath === modelData.path ? Theme.line : Theme.lineDim
             border.width: Theme.lineWidth
@@ -258,11 +258,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
             opacity: AudioService.micAvailable ? 1 : 0.45
@@ -284,7 +284,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: AudioService.micMuted ? Theme.lineDim : "transparent"
             border.color: AudioService.micAvailable ? Theme.line : Theme.lineDim
             opacity: AudioService.micAvailable ? 1 : 0.45
@@ -306,7 +306,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
             opacity: AudioService.micAvailable ? 1 : 0.45
@@ -348,11 +348,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -371,7 +371,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -389,6 +389,47 @@ ColumnLayout {
         }
     }
 
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "DENSITY // " + SettingsService.density.toUpperCase()
+        accent: SettingsService.density !== "normal"
+    }
+
+    GridLayout {
+        Layout.fillWidth: true
+        columns: 3
+        rowSpacing: Theme.densitySmallSpacing
+        columnSpacing: Theme.densitySmallSpacing
+
+        Repeater {
+            model: ["compact", "normal", "dense"]
+
+            Rectangle {
+                required property string modelData
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: Theme.densityControlHeight
+                color: SettingsService.density === modelData ? Theme.lineDim : "transparent"
+                border.color: SettingsService.density === modelData ? Theme.line : Theme.lineDim
+                border.width: Theme.lineWidth
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: SettingsService.density = parent.modelData
+                }
+
+                TacticalLabel {
+                    anchors.centerIn: parent
+                    text: parent.modelData.toUpperCase()
+                    accent: SettingsService.density === parent.modelData
+                    dim: SettingsService.density !== parent.modelData
+                    size: Theme.fontTiny
+                }
+            }
+        }
+    }
+
     MetricRow {
         label: "FONT SCALE"
         value: Math.round(SettingsService.fontScale * 100) + "%"
@@ -398,11 +439,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -421,7 +462,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -448,11 +489,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -471,7 +512,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -498,11 +539,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -521,7 +562,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -548,11 +589,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -571,7 +612,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -598,11 +639,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -621,7 +662,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -648,11 +689,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -671,7 +712,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -698,11 +739,11 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 8
+        spacing: Theme.densitySmallSpacing
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 
@@ -721,7 +762,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: Theme.densityControlHeight
             color: "transparent"
             border.color: Theme.lineDim
 

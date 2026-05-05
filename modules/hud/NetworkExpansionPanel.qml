@@ -12,17 +12,17 @@ CentralPanelChrome {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 12
+        spacing: Theme.densitySpacing
 
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 14
+            spacing: Theme.densitySpacing
 
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: 10
+                spacing: Theme.densitySpacing
 
                 MetricBlock {
                     title: "THROUGHPUT BUS"
@@ -31,7 +31,7 @@ CentralPanelChrome {
 
                 Sparkline {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 120
+                    Layout.preferredHeight: Theme.densityGraphHeight + Theme.densityControlHeight
                     values: SystemStats.networkHistory
                 }
 
@@ -54,7 +54,7 @@ CentralPanelChrome {
                         required property var modelData
 
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 30
+                        Layout.preferredHeight: Theme.densityRowHeight
                         color: modelData.active ? Theme.lineDim : "#44000000"
                         border.color: modelData.active ? Theme.line : Theme.lineDim
                         border.width: Theme.lineWidth
@@ -63,7 +63,7 @@ CentralPanelChrome {
                             anchors.fill: parent
                             anchors.leftMargin: 8
                             anchors.rightMargin: 8
-                            spacing: 8
+                            spacing: Theme.densitySmallSpacing
 
                             TacticalLabel {
                                 text: modelData.active ? "LINK" : modelData.signal + "%"
@@ -91,7 +91,7 @@ CentralPanelChrome {
             ColumnLayout {
                 Layout.preferredWidth: 280
                 Layout.fillHeight: true
-                spacing: 10
+                spacing: Theme.densitySpacing
 
                 TextBlock {
                     title: "LINK STATUS"

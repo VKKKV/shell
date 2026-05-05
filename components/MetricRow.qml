@@ -11,7 +11,7 @@ RowLayout {
     property bool accent: false
 
     Layout.fillWidth: true
-    spacing: 8
+    spacing: Theme.densitySmallSpacing
 
     TacticalLabel {
         Layout.preferredWidth: 84
@@ -25,7 +25,7 @@ RowLayout {
     ProgressBar {
         visible: root.progress >= 0
         Layout.fillWidth: true
-        Layout.preferredHeight: 8
+        Layout.preferredHeight: Theme.densityProgressHeight
         value: root.progress
     }
 

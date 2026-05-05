@@ -9,7 +9,7 @@ ColumnLayout {
     property var lines: []
 
     Layout.fillWidth: true
-    spacing: 4
+    spacing: Theme.densitySmallSpacing * 0.5
 
     TacticalLabel {
         Layout.fillWidth: true

@@ -24,6 +24,7 @@ Singleton {
     property real borderOpacity: 1
     property real dimTextOpacity: 1
     property real lineContrast: 1
+    property string density: "normal"
     property int updateIntervalMs: 5000
     property string statusLine: "settings: defaults active"
     property string helperPath: "./zig-out/bin/void-shell-settings"
@@ -75,6 +76,10 @@ Singleton {
         return ["void", "grid", "radar"].indexOf(value) >= 0 ? value : "void";
     }
 
+    function normalizeDensity(value: string): string {
+        return ["compact", "normal", "dense"].indexOf(value) >= 0 ? value : "normal";
+    }
+
     function normalizeAccentColor(value: string): string {
         return /^#[0-9a-fA-F]{6}$/.test(value) ? value.toUpperCase() : "#F2C94C";
     }
@@ -101,6 +106,8 @@ Singleton {
                 dimTextOpacity = clampDimTextOpacity(settings.visual.dimTextOpacity);
             if (typeof settings.visual.lineContrast === "number")
                 lineContrast = clampLineContrast(settings.visual.lineContrast);
+            if (typeof settings.visual.density === "string")
+                density = normalizeDensity(settings.visual.density);
             if (typeof settings.visual.profile === "string")
                 themeProfile = normalizeThemeProfile(settings.visual.profile);
             if (typeof settings.visual.accentColor === "string")
@@ -137,6 +144,7 @@ Singleton {
                 borderOpacity: clampBorderOpacity(borderOpacity),
                 dimTextOpacity: clampDimTextOpacity(dimTextOpacity),
                 lineContrast: clampLineContrast(lineContrast),
+                density: normalizeDensity(density),
                 profile: normalizeThemeProfile(themeProfile),
                 accentColor: normalizeAccentColor(accentColor),
                 backgroundMode: normalizeBackgroundMode(backgroundMode)
@@ -198,6 +206,14 @@ Singleton {
         const normalized = normalizeBackgroundMode(backgroundMode);
         if (normalized !== backgroundMode) {
             backgroundMode = normalized;
+            return;
+        }
+        scheduleSave();
+    }
+    onDensityChanged: {
+        const normalized = normalizeDensity(density);
+        if (normalized !== density) {
+            density = normalized;
             return;
         }
         scheduleSave();

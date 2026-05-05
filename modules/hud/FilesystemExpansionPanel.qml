@@ -22,17 +22,17 @@ CentralPanelChrome {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 12
+        spacing: Theme.densitySpacing
 
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 14
+            spacing: Theme.densitySpacing
 
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: 10
+                spacing: Theme.densitySpacing
 
                 Repeater {
                     model: SystemStats.filesystemRows
@@ -41,7 +41,7 @@ CentralPanelChrome {
                         required property var modelData
 
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 72
+                        Layout.preferredHeight: Theme.densityCardHeight
                         color: modelData[2] >= 0.7 ? Theme.lineDim : "#44000000"
                         border.color: modelData[2] >= 0.7 ? Theme.line : Theme.lineDim
                         border.width: Theme.lineWidth
@@ -49,7 +49,7 @@ CentralPanelChrome {
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 8
-                            spacing: 5
+                            spacing: Theme.densitySmallSpacing * 0.75
 
                             RowLayout {
                                 Layout.fillWidth: true
@@ -69,7 +69,7 @@ CentralPanelChrome {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: 10
+                                Layout.preferredHeight: Theme.densityProgressHeight
                                 color: "transparent"
                                 border.color: Theme.lineDim
                                 border.width: Theme.lineWidth
@@ -96,7 +96,7 @@ CentralPanelChrome {
             ColumnLayout {
                 Layout.preferredWidth: 280
                 Layout.fillHeight: true
-                spacing: 10
+                spacing: Theme.densitySpacing
 
                 TextBlock {
                     title: "STORAGE STATUS"

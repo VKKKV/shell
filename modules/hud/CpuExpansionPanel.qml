@@ -22,19 +22,19 @@ CentralPanelChrome {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 12
+        spacing: Theme.densitySpacing
 
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 14
+            spacing: Theme.densitySpacing
 
             GridLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 columns: 3
-                columnSpacing: 8
-                rowSpacing: 8
+                columnSpacing: Theme.densitySmallSpacing
+                rowSpacing: Theme.densitySmallSpacing
 
                 Repeater {
                     model: SystemStats.cpuRows
@@ -43,7 +43,7 @@ CentralPanelChrome {
                         required property var modelData
 
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 74
+                        Layout.preferredHeight: Theme.densityCardHeight
                         color: modelData[3] ? Theme.lineDim : "#66000000"
                         border.color: modelData[3] ? Theme.line : Theme.lineDim
                         border.width: Theme.lineWidth
@@ -51,7 +51,7 @@ CentralPanelChrome {
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 8
-                            spacing: 4
+                            spacing: Theme.densitySmallSpacing * 0.5
 
                             RowLayout {
                                 Layout.fillWidth: true
@@ -78,7 +78,7 @@ CentralPanelChrome {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: 5
+                                Layout.preferredHeight: Math.max(4, Theme.densityProgressHeight - 3)
                                 color: "transparent"
                                 border.color: Theme.lineDim
                                 border.width: Theme.lineWidth
@@ -99,7 +99,7 @@ CentralPanelChrome {
             ColumnLayout {
                 Layout.preferredWidth: 280
                 Layout.fillHeight: true
-                spacing: 10
+                spacing: Theme.densitySpacing
 
                 TextBlock {
                     title: "PROCESSOR BUS"
@@ -108,7 +108,7 @@ CentralPanelChrome {
 
                 Sparkline {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 86
+                    Layout.preferredHeight: Theme.densityGraphHeight
                     values: SystemStats.cpuHistory
                 }
 

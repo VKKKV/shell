@@ -32,6 +32,7 @@ Fallback if `XDG_CONFIG_HOME` is unset:
       "borderOpacity": 1.0,
       "dimTextOpacity": 1.0,
       "lineContrast": 1.0,
+      "density": "normal",
       "profile": "amber",
     "accentColor": "#F2C94C",
     "backgroundMode": "void"
@@ -59,6 +60,7 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `visual.borderOpacity` is clamped to `0.35..1.0` and drives global border opacity.
 - `visual.dimTextOpacity` is clamped to `0.45..1.0` and drives secondary text opacity.
 - `visual.lineContrast` is clamped to `0.65..1.35` and adjusts the accent line color contrast.
+- `visual.density` is one of `compact`, `normal`, or `dense` and drives coarse QML layout density.
 - `visual.profile` is one of `amber`, `green`, `blue`, or `red`.
 - `visual.accentColor` is a hex RGB color (`#RRGGBB`) and defaults to `#F2C94C`.
 - `visual.backgroundMode` is one of `void`, `grid`, or `radar`.

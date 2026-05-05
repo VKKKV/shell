@@ -442,3 +442,12 @@
 - Code-spec frontend docs updated: directory structure, component guidelines, type-safety appearance contract.
 - PRD/PLAN/journal synced for all phases.
 - Working tree clean, no uncommitted changes.
+
+## 2026-05-05 - Visual Density Profiles
+
+- Added the next PRD/PLAN phase for global visual density profiles: `compact`, `normal`, and `dense`.
+- Added persisted `visual.density` support in `SettingsService.qml` and `src/settings/main.zig`, including invalid-value normalization to `normal`.
+- Added command-center density controls and theme-derived density sizing primitives for controls, rows, cards, progress bars, graphs, and spacing.
+- Applied density sizing to the command-center settings controls plus CPU/network/filesystem/log expansion rows and graph surfaces.
+- Added `#FFB900` as an additional command-center accent color preset.
+- Updated `docs/settings.md` and the frontend type-safety spec with the density contract.
