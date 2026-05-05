@@ -19,3 +19,5 @@ singleton ExpansionService 1.0 ExpansionService.qml
 singleton KeybindService 1.0 KeybindService.qml
 singleton EmojiService 1.0 EmojiService.qml
 singleton WallpaperService 1.0 WallpaperService.qml
+singleton ServiceLogService 1.0 ServiceLogService.qml
+singleton EnvironmentService 1.0 EnvironmentService.qml

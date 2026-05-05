@@ -263,3 +263,52 @@
 - Added a visible top-bar `SETTINGS` button and clarified the settings column target color label.
 - Replaced fixed expansion limits with dynamic central safe-area sizing shared by orbital/CPU/network/filesystem/log expansions.
 - Reworked `OrbitalExpansionPanel.qml` into a responsive semi-transparent ASCII top-down orbital map with dynamic dimensions, planet codes, center axes, and track traces.
+
+## 2026-05-05 - Orbital Overlay Correction
+
+- Responded to feedback that clicking the globe still opened a framed panel instead of an orbital view.
+- Replaced `OrbitalExpansionPanel.qml`'s `TacticalFrame` root with a bare transparent `Item` overlay.
+- Removed the right-side status column and framed panel chrome so the central safe area is dominated by the ASCII solar orbit map, with only small status and close controls remaining.
+
+## 2026-05-05 - Graphical Orbital Follow-up Planning
+
+- Captured feedback that the ASCII orbital direction is visually weak for the desired sci-fi shell style.
+- Updated the PRD and plan to treat ASCII orbital rendering as a temporary prototype/fallback.
+- Planned a future graphical orbital rewrite with QML drawing primitives, glowing orbit rings, animated planets, trails, reticles, translucent overlays, and warning-yellow tactical labels.
+
+## 2026-05-05 - Granularity Alignment And Graphical Orbital Slice
+
+- Aligned frontend structure/component guidelines with the current project granularity: command-center columns, central expansion surfaces, `ExpansionService`, and feature-oriented services.
+- Updated the shell development plan architecture block to reflect current components, expansion panels, and services instead of the early minimal HUD skeleton.
+- Replaced the ASCII orbital prototype with a graphical sci-fi orbit sensor using Canvas orbit rings/ticks/radial sweep lines plus QML planet nodes, halos, trails, reticles, and live phase labels.
+
+## 2026-05-05 - System Stats Fallback Slice
+
+- Updated `services/SystemStats.qml` filesystem polling to skip missing `/home` or `/data` paths instead of letting `df` fail the whole collector.
+- Added command-exit fallback handling for memory, filesystem, CPU, and network collectors with safe display rows and combined service status text.
+- Verified the slice with `qmllint`, `zig build`, `git diff --check`, and a Quickshell startup smoke check.
+
+## 2026-05-05 - Panel Text Clipping Fix
+
+- Fixed edge panel content clipping by wrapping `LeftTacticalPanel.qml` and `RightMonitorPanel.qml` content in internal `Flickable` containers.
+- Fixed command center column clipping by giving overview/settings/actions columns independent `Flickable` scroll regions.
+- Preserved existing outer panel sizing/exclusion behavior while allowing overflowing text and dense widgets to remain reachable instead of being cut by `TacticalFrame.clip`.
+
+## 2026-05-05 - Adaptive Side Panel Height Fix
+
+- Removed the internal `Theme.sidePanelMaxHeight` cap from left/right panel `implicitHeight` calculations.
+- Left/right panels now report true content height to `HudLayout`, which clamps them only against the available space between top and bottom bars.
+- Internal side-panel scrolling is enabled only when content height exceeds the clamped panel height, matching the intended grow-until-boundary behavior.
+
+## 2026-05-05 - Service Log Slice
+
+- Added `services/ServiceLogService.qml` as a lightweight structured event buffer for service fallback/debug events.
+- Connected `SystemStats.qml` collector status transitions into the service log with `info`/`warn` levels.
+- Added a compact recent service log section to the command center overview so fallback events are visible without spamming edge panels.
+
+## 2026-05-05 - Existing Plan Completion Pass
+
+- Added `services/EnvironmentService.qml` for night-light/environment telemetry using local process detection fallbacks.
+- Added command-center environment status lines and service status integration.
+- Extended `LauncherService.qml` with `=<expr>` calculator result copying and `$ <command>` shell dispatch provider.
+- Updated `PLAN.md` statuses to mark all concrete existing roadmap phases covered, with future work requiring new feedback or new Trellis tasks.

@@ -79,13 +79,20 @@ User feedback captured 2026-05-05:
 - Orbital expansion panel does not match expectations. It should open as a partially transparent ASCII solar-system orbit view, dynamically sized from the central empty safe area, with real-time positions and visible tracks rendered as ASCII characters from a top-down view.
 - Other central expansion panels also suffer from fixed sizing and clipped content; they should use the same dynamic central safe-area sizing model.
 
+Follow-up feedback captured 2026-05-05:
+
+- ASCII orbital rendering feels visually weak/ugly for the desired shell style.
+- Future orbital expansion should use a graphical implementation instead of ASCII.
+- The graphical orbital view must be strongly sci-fi: glowing orbit paths, animated planets, depth/scan effects, tactical labels, reticles, translucent overlays, warning-yellow accents, and mechanical/cyber motion language.
+
 ### Requirements (Evolving)
 
 - Make command/settings panel entry discoverable from visible HUD affordances, not only a hidden keybind.
 - Improve side-panel content sizing so panels expand/clamp based on real content and avoid clipped right-panel text.
 - Set default tactical accent to a brighter target-like yellow and expose color/intensity adjustment in command/settings UI.
 - Replace fixed-size expansion surfaces with central safe-area-aware sizing.
-- Rework orbital expansion into a partially transparent ASCII top-down solar-system view with dynamic orbit positions and track traces.
+- Previous ASCII orbital direction has been superseded.
+- Use a graphical sci-fi orbit system while preserving central safe-area sizing and deterministic local motion.
 - Apply the same responsive expansion container behavior to CPU/network/filesystem/log drill-downs.
 
 ### Acceptance Criteria (Evolving)
@@ -94,7 +101,7 @@ User feedback captured 2026-05-05:
 - [ ] Right monitor panel labels/values elide or wrap intentionally without disappearing or clipping critical text.
 - [ ] Default theme uses bright warning yellow close to `target.png`, and settings can adjust/tune the accent.
 - [ ] Expansion panels size themselves from the central safe area instead of fixed constants.
-- [ ] Orbital expansion renders a semi-transparent ASCII orbit map with live-looking positions and visible track history.
+- [x] Graphical orbital expansion replaces ASCII with animated orbit rings, glowing planet nodes, trails, labels, reticles, and sci-fi HUD effects.
 - [ ] CPU/network/filesystem/log expansions no longer clip at common 1080p/1440p dimensions.
 
 ### MVP Decision: Visual Fit Pass 1
@@ -109,6 +116,18 @@ Out of scope for this MVP:
 
 - Full redesign of every non-orbital expansion panel.
 - Exact pixel/color matching from `target.png`, because this environment cannot inspect the image directly; use updated `target.md` and user feedback as source of truth.
+
+### Follow-up Plan: Graphical Orbital Rewrite
+
+The ASCII orbital overlay was treated as a temporary prototype and has been replaced by a graphical top-down solar-system visualization:
+
+- Uses QML/Qt Quick primitives (`Canvas`, `Rectangle`, `Repeater`) instead of text glyphs as the primary rendering language.
+- Renders translucent orbit rings/ellipses sized from the central safe area.
+- Animates planet nodes deterministically with local phase data; no network ephemeris required.
+- Adds trails, glow halos, scan/radial lines, reticles, distance ticks, coordinate labels, and warning-yellow tactical annotations.
+- Keeps the overlay partially transparent so it feels integrated into the central HUD rather than a modal card.
+- Preserves the existing `ExpansionService` and central safe-area deployment behavior.
+- Avoid a generic flat chart; the visual target is a high-density sci-fi tactical sensor display.
 
 ### Technical Notes
 

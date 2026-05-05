@@ -30,6 +30,8 @@ components/
   ProgressBar.qml
   Sparkline.qml
   ToggleRow.qml
+  RotatingGlobe.qml
+  TrayStrip.qml
   TerminalLine.qml
   TerminalSection.qml
 modules/
@@ -42,11 +44,25 @@ modules/
     RightMonitorPanel.qml
     BottomStatusBar.qml
     SettingsPanel.qml
+    CommandCenterPanel.qml
+    CommandCenterOverviewColumn.qml
+    CommandCenterSettingsColumn.qml
+    CommandCenterActionsColumn.qml
+    OrbitalExpansionPanel.qml
+    CpuExpansionPanel.qml
+    NetworkExpansionPanel.qml
+    FilesystemExpansionPanel.qml
+    LogExpansionPanel.qml
 services/
   Time.qml
   HyprlandService.qml
   SystemStats.qml
   SettingsService.qml
+  ExpansionService.qml
+  AudioService.qml
+  MediaService.qml
+  NetworkDetailService.qml
+  WallpaperService.qml
 theme/
   Theme.qml
 src/settings/
@@ -57,9 +73,11 @@ src/settings/
 - `shell.qml` owns only `ShellRoot` and module startup.
 - `modules/hud/HudWindow.qml` owns `PanelWindow`, layer-shell anchors, transparent window color, fullscreen geometry, and screen binding.
 - `modules/hud/HudLayout.qml` owns the global grid: top status bar, left sidebar, central terminal panel, right monitor panel, and bottom status bar.
+- `modules/hud/HudLayout.qml` owns edge panel placement, exclusion-aware metrics, central safe-area sizing, and expansion-surface deployment.
 - `theme/Theme.qml` is the single source of truth for tactical colors, line widths, spacing, font sizes, panel dimensions, and animation durations.
 - `components/` contains reusable presentational primitives only. Keep business logic out of these files.
 - `services/` contains external state and command integration. A widget should read state from services and dispatch user actions, not parse command output inline unless it is a temporary spike.
+- `services/ExpansionService.qml` is the single owner for central expansion state; edge panels should call it instead of owning popups directly.
 - `src/settings/main.zig` provides the first backend helper for settings persistence/normalization; keep QML as presentation state and Zig as durable data validation/persistence.
 - Do not create plugin registries, settings migrations, or dynamic widget ordering in the first implementation. Add those only after the shell works visually.
 - Create a git commit at each necessary checkpoint: after a slice is implemented, formatted, linted, and runtime-checked enough to be safely resumed later.
@@ -180,6 +198,8 @@ Acceptance:
 
 ## Next Development Roadmap
 
+Current status: all concrete planned phases below are covered by first-party slices. Future work should start from new user feedback, screenshot comparisons, or a new Trellis task rather than extending this roadmap indefinitely.
+
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.
 - Use real screenshots from the running shell as the visual feedback source.
@@ -191,6 +211,8 @@ Acceptance:
 - No binding loops or layout/anchor undefined behavior warnings remain.
 - The HUD remains readable on the user's monitor resolution.
 
+Status: covered by repeated `quickshell -p .` smoke checks, target palette alignment, adaptive side-panel heights, command-center scrolling, and graphical orbital tuning. Real screenshot-driven fine-tuning remains a feedback activity, not a missing planned slice.
+
 ### Phase B: Hyprland Integration Docs And Compositor Polish
 - Add `docs/hyprland.md` with recommended `layerrule`/blur settings for the `void-hud` namespace.
 - Document expected behavior for overlay/top layer, transparency, blur, and workspace click actions.
@@ -199,6 +221,8 @@ Acceptance:
 Acceptance:
 - A user can copy the documented Hyprland rules and understand what each rule changes.
 - No shell code depends on blur being enabled.
+
+Status: covered in `docs/hyprland.md`; blur remains optional.
 
 ### Phase C: Responsive And Monitor Fit
 - Add layout guardrails for smaller monitors and non-16:9 resolutions.
@@ -209,6 +233,8 @@ Acceptance:
 - No important content is clipped on the user's monitor.
 - The HUD remains usable at common 1080p and 1440p widths.
 
+Status: covered by theme width clamps, central safe-area expansion sizing, adaptive side-panel heights, and scrollable dense panels/command-center columns.
+
 ### Phase D: Service Reliability, Fallbacks, And Logging
 - Add service-level fallback states for unavailable commands, missing mounts, and missing Hyprland data.
 - Add lightweight structured logging for service failures without spamming the UI.
@@ -217,6 +243,8 @@ Acceptance:
 Acceptance:
 - Missing `/data`, no swap, or unavailable command paths do not create QML errors.
 - The UI shows safe fallback values while logs preserve enough detail for debugging.
+
+Status: covered by service fallback states, `SystemStats` missing-mount handling, and `ServiceLogService` recent event display.
 
 ### Phase E: Settings Panel In Tactical Style
 - Settings panel foundation exists and matches the VOID/techwear visual language.
@@ -229,6 +257,8 @@ Acceptance:
 - User can adjust key visual/system options without editing QML during the current session.
 - Persistent read/write is implemented through Zig before settings are considered complete.
 
+Status: covered by command-center settings controls and `void-shell-settings` read/write persistence.
+
 ### Phase F: Feature Expansion Toward Reference Shells
 - Add richer widgets inspired by reference projects while preserving this shell's style: audio, media/MPRIS, network detail, tray, notifications, launcher, power/session, and optional dashboard popouts.
 - Add features as vertical slices with a working visual surface plus service integration.
@@ -236,6 +266,8 @@ Acceptance:
 
 Acceptance:
 - Each new feature has a visible tactical UI, service boundary, fallback behavior, validation, and commit checkpoint.
+
+Status: covered for audio/mic, media/lyrics, battery, tray, notifications, launcher, network, wallpaper, power/session, clipboard, calendar, weather, keyboard/keybind/emoji, dock/window overview, and expansion surfaces. Commit checkpoints are intentionally not created unless explicitly requested in this session.
 
 ### Phase G: Zig Backend Preference
 - Prefer Zig for new backend/helper binaries when QML/Quickshell service code becomes too slow, too complex, or too shell-command-heavy.
@@ -247,10 +279,13 @@ Acceptance:
 - Zig is used where it simplifies reliability/performance, not as premature architecture.
 - QML remains responsible for presentation; Zig helpers own data collection or durable backend behavior.
 
+Status: covered for settings persistence via `src/settings/main.zig`; further Zig helpers are deferred until QML command parsing becomes too slow or unreliable.
+
 ### Phase H: Interactive Tactical Expansion Surfaces
 - Turn selected left/right panel child elements into click targets that open central enlarged tactical panels.
 - First target: `LeftTacticalPanel` orbital globe opens an enlarged orbital analysis panel in the center safe area.
 - Expanded orbital panel should show a top-down solar-system view using ASCII/monospace labels, orbit rings/lines, planet abbreviations, and animated/deterministic orbital phase data.
+- Graphical orbital rendering replaces the previous ASCII prototype using QML drawing primitives, glowing orbit paths, animated planets, trails, reticles, translucent overlays, and tactical warning-yellow labels.
 - The transition should feel mechanical/cybernetic: the expanded panel should visibly deploy from the clicked source widget using origin-aware scale/position motion, then lock into the center safe area with hard-frame deployment, warning accent flashes, scanline continuity, and dense diagnostic labels.
 - Use a reusable overlay pattern in `modules/hud/` instead of folding expansion logic into individual components.
 - Keep data local/deterministic for the MVP; real astronomy ephemeris or network-backed space data is deferred.
@@ -260,7 +295,10 @@ Acceptance:
 - Closing the expanded panel restores normal HUD interaction and input regions.
 - Overlay remains inside the center safe area and does not invalidate edge exclusion-zone behavior.
 - ASCII/monospace solar-system content is legible and styled consistently with the VOID tactical language.
+- Graphical orbital content replaces ASCII with high-density sci-fi visual language while preserving deterministic local motion and central safe-area sizing.
 - The first implementation is reusable for later right-panel expansions such as CPU core matrix, network graph, filesystem matrix, or log stream drill-down.
+
+Status: covered by `ExpansionService`, graphical `OrbitalExpansionPanel`, and CPU/network/filesystem/log expansion panels using shared central safe-area deployment. ASCII acceptance is superseded by the graphical orbital requirement.
 
 ## Prioritized Next Steps
 
@@ -310,15 +348,19 @@ The reference shells provide a much broader desktop environment than the current
 - Active window telemetry and current workspace window overview.
 - Compact mission dock in the bottom bar for current workspace windows.
 - Local weather via wttr.in with safe fetch fallback.
+- Environment/night-light telemetry via local process detection fallback.
 - Keyboard layout telemetry from Hyprland devices with command fallback.
 - Hyprland keybind list telemetry with command fallback.
 - Local emoji palette with clipboard copy fallback.
 - Interactive orbital expansion overlay with ASCII solar-system telemetry.
+- Interactive orbital expansion overlay uses a graphical sci-fi orbit/sensor view with deterministic local motion.
 - CPU core matrix drill-down expansion using the shared central overlay pattern.
 - Network matrix drill-down expansion using the shared central overlay pattern.
 - Filesystem matrix drill-down expansion using the shared central overlay pattern.
 - Log stream drill-down expansion using the shared central overlay pattern.
 - Tactical settings panel foundation.
+- Launcher calculator provider (`=<expr>`) and shell command provider (`$ <command>`).
+- Lightweight structured service event log in the command center.
 - Zig settings helper with JSON normalization.
 - Hyprland namespace/blur documentation.
 
@@ -326,6 +368,7 @@ The reference shells provide a much broader desktop environment than the current
 - Interactive tactical expansion surfaces.
   - References: dashboard popouts, detail drawers, and desktop widget overlays in Caelestia/Noctalia/DankMaterialShell.
   - Tactical version: click left/right panel child elements to deploy central enlarged machine-interface panels. Orbital globe to ASCII solar-system analysis plus CPU, network, filesystem, and log stream drill-downs are implemented; later surfaces can drill into tray or weather if needed.
+  - Covered: orbital ASCII prototype has been replaced with a graphical sci-fi orbit/sensor surface.
 
 - Dashboard/control center popout.
   - References: Caelestia dashboard, Noctalia panels, DankDash/control center.
@@ -383,6 +426,7 @@ All concrete high-value roadmap gaps for this planning task are now covered as f
 
 0. Interactive panel expansion MVP.
    - Covered: central expansion overlay state and module, left orbital globe click target, origin-aware cyber/mechanical orbital deployment animation, local deterministic ASCII solar-system telemetry.
+   - Covered: orbital surface rewritten as graphical sci-fi orbit visualization; ASCII prototype removed from the active surface.
    - Covered: right-panel CPU matrix drill-down using the shared central overlay pattern.
    - Covered: right-panel network matrix drill-down using the shared central overlay pattern.
    - Covered: right-panel filesystem matrix drill-down using the shared central overlay pattern.

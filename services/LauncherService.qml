@@ -10,6 +10,7 @@ Singleton {
 
     property string query: ""
     property string statusLine: "launcher: initializing"
+    property string pendingCopyText: ""
     property var apps: []
     readonly property var actions: [{
         id: "settings",
@@ -32,12 +33,47 @@ Singleton {
 
     function filterEntries(): var {
         const needle = query.trim().toLowerCase();
+        const raw = query.trim();
+        const dynamic = [];
+
+        if (raw.indexOf("=") === 0) {
+            const expression = raw.slice(1).trim();
+            if (/^[0-9+\-*/(). %]+$/.test(expression) && expression.length > 0) {
+                try {
+                    const value = Function("return (" + expression + ")")();
+                    dynamic.push({
+                        type: "calc",
+                        id: "calc",
+                        name: expression + " = " + value,
+                        command: String(value)
+                    });
+                } catch (error) {
+                    dynamic.push({
+                        type: "calc",
+                        id: "calc-error",
+                        name: "calculator parse fallback",
+                        command: ""
+                    });
+                }
+            }
+        } else if (raw.indexOf("$") === 0) {
+            const command = raw.slice(1).trim();
+            if (command.length > 0) {
+                dynamic.push({
+                    type: "shell",
+                    id: "shell-command",
+                    name: "Execute // " + command,
+                    command
+                });
+            }
+        }
+
         const combined = actions.map(action => ({
             type: "action",
             id: action.id,
             name: action.name,
             command: action.command
-        })).concat(apps);
+        })).concat(dynamic).concat(apps);
 
         if (needle.length === 0)
             return combined.slice(0, 8);
@@ -82,6 +118,21 @@ Singleton {
             return;
         }
 
+        if (entry.type === "calc") {
+            pendingCopyText = entry.command;
+            copyProcess.running = true;
+            statusLine = "launcher: calculator copied";
+            return;
+        }
+
+        if (entry.type === "shell") {
+            launchProcess.command = ["sh", "-c", entry.command];
+            launchProcess.running = true;
+            statusLine = "launcher: shell dispatch";
+            SettingsService.panelOpen = false;
+            return;
+        }
+
         if (entry.command === "settings") {
             SettingsService.togglePanel();
         } else if (entry.command === "terminal") {
@@ -117,6 +168,13 @@ Singleton {
         onExited: (exitCode) => {
             if (exitCode !== 0)
                 root.statusLine = "launcher: command failed";
+        }
+    }
+
+    property Process copyProcess: Process {
+        command: ["sh", "-c", "printf %s \"$1\" | wl-copy", "void-shell-launcher", root.pendingCopyText]
+        onExited: (exitCode) => {
+            root.statusLine = exitCode === 0 ? "launcher: copied result" : "launcher: wl-copy fallback";
         }
     }
 }

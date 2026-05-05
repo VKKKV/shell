@@ -60,9 +60,19 @@ TacticalFrame {
             Layout.fillHeight: true
             spacing: 8
 
-            CommandCenterOverviewColumn {
+            Flickable {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                contentWidth: width
+                contentHeight: overviewColumn.implicitHeight
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+
+                CommandCenterOverviewColumn {
+                    id: overviewColumn
+
+                    width: parent.width
+                }
             }
 
             Rectangle {
@@ -71,9 +81,19 @@ TacticalFrame {
                 color: Theme.lineDim
             }
 
-            CommandCenterSettingsColumn {
+            Flickable {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                contentWidth: width
+                contentHeight: settingsColumn.implicitHeight
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+
+                CommandCenterSettingsColumn {
+                    id: settingsColumn
+
+                    width: parent.width
+                }
             }
 
             Rectangle {
@@ -82,9 +102,19 @@ TacticalFrame {
                 color: Theme.lineDim
             }
 
-            CommandCenterActionsColumn {
+            Flickable {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                contentWidth: width
+                contentHeight: actionsColumn.implicitHeight
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+
+                CommandCenterActionsColumn {
+                    id: actionsColumn
+
+                    width: parent.width
+                }
             }
         }
     }

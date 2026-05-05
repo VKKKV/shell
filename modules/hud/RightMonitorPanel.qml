@@ -5,135 +5,146 @@ import QtQuick
 import QtQuick.Layouts
 
 TacticalFrame {
+    id: root
+
     title: "SYSTEM MONITOR MATRIX"
     implicitWidth: Math.max(Theme.rightPanelMinWidth, content.implicitWidth + Theme.panelPadding * 2)
-    implicitHeight: Math.min(Theme.sidePanelMaxHeight, content.implicitHeight + Theme.panelPadding + 38)
+    implicitHeight: content.implicitHeight + Theme.panelPadding + 38
 
-    ColumnLayout {
-        id: content
-
+    Flickable {
         anchors.fill: parent
         anchors.margins: Theme.panelPadding
         anchors.topMargin: 38
-        spacing: 10
+        contentWidth: width
+        contentHeight: content.implicitHeight
+        boundsBehavior: Flickable.StopAtBounds
+        clip: true
+        interactive: contentHeight > height
 
-        TacticalLabel {
-            Layout.fillWidth: true
-            text: "CPU // 12C/24T // LIVE LOAD"
-            accent: true
-        }
+        ColumnLayout {
+            id: content
 
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: cpuGrid.implicitHeight
+            width: parent.width
+            spacing: 10
 
-            CoreGrid {
-                id: cpuGrid
-
-                anchors.left: parent.left
-                anchors.right: parent.right
-                cores: SystemStats.cpuRows
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "CPU // 12C/24T // LIVE LOAD"
+                accent: true
             }
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onClicked: ExpansionService.show("cpu", "right-cpu")
-            }
-        }
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: cpuGrid.implicitHeight
 
-        Sparkline {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 46
-            values: SystemStats.cpuHistory
-        }
+                CoreGrid {
+                    id: cpuGrid
 
-        MetricBlock {
-            title: "MEMORY BUS"
-            rows: [["RAM", SystemStats.ramText, SystemStats.ramProgress, true], ["SWAP", SystemStats.swapText, SystemStats.swapProgress, false]]
-        }
-
-        MetricBlock {
-            title: "POWER SOURCE"
-            rows: [[BatteryService.label, BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: networkStack.implicitHeight
-
-            ColumnLayout {
-                id: networkStack
-
-                anchors.left: parent.left
-                anchors.right: parent.right
-                spacing: 10
-
-                MetricBlock {
-                    title: "NETWORK // eno1"
-                    rows: SystemStats.networkRows
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    cores: SystemStats.cpuRows
                 }
 
-                MetricBlock {
-                    title: "NETWORK DETAIL"
-                    rows: NetworkDetailService.rows
-                }
-
-                Sparkline {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 34
-                    values: SystemStats.networkHistory
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: ExpansionService.show("cpu", "right-cpu")
                 }
             }
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onClicked: ExpansionService.show("network", "right-network")
+            Sparkline {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 46
+                values: SystemStats.cpuHistory
             }
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: filesystemBlock.implicitHeight
 
             MetricBlock {
-                id: filesystemBlock
-
-                title: "FILESYSTEM"
-                rows: SystemStats.filesystemRows
+                title: "MEMORY BUS"
+                rows: [["RAM", SystemStats.ramText, SystemStats.ramProgress, true], ["SWAP", SystemStats.swapText, SystemStats.swapProgress, false]]
             }
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onClicked: ExpansionService.show("filesystem", "right-filesystem")
-            }
-        }
-
-        TextBlock {
-            title: "NODES // STATUS"
-            lines: ["NODE_01  ONLINE", "NODE_02  ACTIVE 10.0.0.12", "NODE_03  ONLINE", "NODE_04  IDLE", "NODE_05  ONLINE"]
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: logStream.implicitHeight
-
-            LogStream {
-                id: logStream
-
-                lines: [HyprlandService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
+            MetricBlock {
+                title: "POWER SOURCE"
+                rows: [[BatteryService.label, BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
             }
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onClicked: ExpansionService.show("logs", "right-logs")
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: networkStack.implicitHeight
+
+                ColumnLayout {
+                    id: networkStack
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: 10
+
+                    MetricBlock {
+                        title: "NETWORK // eno1"
+                        rows: SystemStats.networkRows
+                    }
+
+                    MetricBlock {
+                        title: "NETWORK DETAIL"
+                        rows: NetworkDetailService.rows
+                    }
+
+                    Sparkline {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 34
+                        values: SystemStats.networkHistory
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: ExpansionService.show("network", "right-network")
+                }
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: filesystemBlock.implicitHeight
+
+                MetricBlock {
+                    id: filesystemBlock
+
+                    title: "FILESYSTEM"
+                    rows: SystemStats.filesystemRows
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: ExpansionService.show("filesystem", "right-filesystem")
+                }
+            }
+
+            TextBlock {
+                title: "NODES // STATUS"
+                lines: ["NODE_01  ONLINE", "NODE_02  ACTIVE 10.0.0.12", "NODE_03  ONLINE", "NODE_04  IDLE", "NODE_05  ONLINE"]
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: logStream.implicitHeight
+
+                LogStream {
+                    id: logStream
+
+                    lines: [HyprlandService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: ExpansionService.show("logs", "right-logs")
+                }
             }
         }
 

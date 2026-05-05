@@ -20,7 +20,7 @@ The guiding rule is: components render, modules compose, services fetch/state-ma
 
 ### Components
 
-Files in `components/` should be small and visual-first.
+Files in `components/` should be small and visual-first. Components can contain local animation and pointer affordances, but they should not own cross-surface application state.
 
 Examples:
 
@@ -35,6 +35,7 @@ Good component traits:
 - no shell-command execution
 - no direct Hyprland/system parsing
 - reusable across multiple modules
+- uses `Theme.qml` for repeated colors/sizes
 
 ### Modules
 
@@ -53,6 +54,19 @@ Good module traits:
 - composes several components
 - reads shaped data from services
 - contains minimal glue logic only
+- owns layout for one product surface or one expansion panel
+
+### Expansion Surfaces
+
+Central drill-downs are product surfaces, not generic components.
+
+Rules:
+
+- put them in `modules/hud/*ExpansionPanel.qml`
+- route open/close state through `services/ExpansionService.qml`
+- size them from `HudLayout` central safe-area metrics
+- keep the visual language tactical and high-density
+- do not add separate popup/window owners per edge-panel child
 
 ---
 
@@ -73,8 +87,9 @@ Examples:
 
 - Centralize colors, spacing, sizing, and breakpoints in `theme/Theme.qml`.
 - Do not scatter hard-coded tactical yellow/gray values across modules.
-- Preserve the hard-edged machine-interface style: sharp corners, dense typography, thin borders.
+- Preserve the hard-edged machine-interface style: sharp corners, dense typography, thin borders, warning-yellow highlights, and translucent HUD layers.
 - Scanline and polish effects should stay optional and controllable through settings state.
+- Graphical sci-fi effects should still be built from small QML primitives or a focused Canvas/Shape surface, not copied wholesale from reference shells.
 
 ---
 

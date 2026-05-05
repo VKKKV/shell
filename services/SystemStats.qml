@@ -23,6 +23,10 @@ Singleton {
     property real previousNetworkRx: 0
     property real previousNetworkTx: 0
     property real previousNetworkTime: 0
+    property string memoryStatus: "memory: initializing"
+    property string filesystemStatus: "filesystem: initializing"
+    property string cpuStatus: "cpu: initializing"
+    property string networkStatus: "network: initializing"
 
     function formatGiB(bytes: real): string {
         return (bytes / 1073741824).toFixed(1) + "G";
@@ -49,6 +53,11 @@ Singleton {
             next.shift();
         root.logLines = next;
         root.statusLine = message;
+        ServiceLogService.push("stats", message.indexOf("fallback") >= 0 ? "warn" : "info", message);
+    }
+
+    function updateStatus(): void {
+        root.statusLine = memoryStatus + " // " + filesystemStatus + " // " + cpuStatus + " // " + networkStatus;
     }
 
     function updateMemory(output: string): void {
@@ -72,10 +81,9 @@ Singleton {
                 root.swapText = total > 0 ? `${formatGiB(used)} ${(root.swapProgress * 100).toFixed(1)}%` : "0.0G 0.0%";
             }
         }
-        if (foundMemory)
-            log("stats: memory collector online");
-        else
-            log("stats: memory collector fallback");
+        memoryStatus = foundMemory ? "memory: online" : "memory: fallback";
+        log(memoryStatus);
+        updateStatus();
     }
 
     function updateFilesystem(output: string): void {
@@ -96,7 +104,9 @@ Singleton {
 
         if (rows.length > 0)
             root.filesystemRows = rows;
-        log(rows.length > 0 ? `stats: filesystem collector online (${rows.length})` : "stats: filesystem collector fallback");
+        filesystemStatus = rows.length > 0 ? `filesystem: online (${rows.length})` : "filesystem: fallback";
+        log(filesystemStatus);
+        updateStatus();
     }
 
     function updateCpu(output: string): void {
@@ -137,10 +147,13 @@ Singleton {
         if (rows.length > 0) {
             root.cpuRows = rows;
             root.cpuHistory = pushHistory(root.cpuHistory, aggregate / rows.length, 18);
-            log(`stats: cpu collector online (${rows.length})`);
+            cpuStatus = `cpu: online (${rows.length})`;
+            log(cpuStatus);
         } else {
-            log("stats: cpu collector fallback");
+            cpuStatus = "cpu: fallback";
+            log(cpuStatus);
         }
+        updateStatus();
     }
 
     function updateNetwork(output: string): void {
@@ -165,7 +178,9 @@ Singleton {
             const scale = Math.max(1048576, downRate, upRate);
             root.networkRows = [["DOWN", formatRate(downRate), Math.min(1, downRate / scale), true], ["UP", formatRate(upRate), Math.min(1, upRate / scale), false], ["LINK", "SECURE", -1, true]];
             root.networkHistory = pushHistory(root.networkHistory, downRate / scale, 12);
-            log("stats: network collector online");
+            networkStatus = "network: online";
+            log(networkStatus);
+            updateStatus();
         }
 
         root.previousNetworkRx = rx;
@@ -178,12 +193,27 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: root.updateMemory(text)
         }
+        onExited: (exitCode) => {
+            if (exitCode !== 0) {
+                root.memoryStatus = "memory: command fallback";
+                root.log(root.memoryStatus);
+                root.updateStatus();
+            }
+        }
     }
 
     property Process filesystemProcess: Process {
-        command: ["df", "-B1", "/", "/home", "/data"]
+        command: ["sh", "-c", "set -- / /home /data; targets=''; for mount in \"$@\"; do [ -e \"$mount\" ] && targets=\"$targets '$mount'\"; done; if [ -n \"$targets\" ]; then eval df -B1 $targets; else df -B1 /; fi"]
         stdout: StdioCollector {
             onStreamFinished: root.updateFilesystem(text)
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0) {
+                root.filesystemStatus = "filesystem: command fallback";
+                root.filesystemRows = [["/", "UNKNOWN", -1, false], ["/home", "SKIPPED", -1, false], ["/data", "MISSING", -1, false]];
+                root.log(root.filesystemStatus);
+                root.updateStatus();
+            }
         }
     }
 
@@ -192,12 +222,27 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: root.updateCpu(text)
         }
+        onExited: (exitCode) => {
+            if (exitCode !== 0) {
+                root.cpuStatus = "cpu: command fallback";
+                root.log(root.cpuStatus);
+                root.updateStatus();
+            }
+        }
     }
 
     property Process networkProcess: Process {
         command: ["cat", "/proc/net/dev"]
         stdout: StdioCollector {
             onStreamFinished: root.updateNetwork(text)
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0) {
+                root.networkStatus = "network: command fallback";
+                root.networkRows = [["DOWN", "0.0 KiB/s", 0, false], ["UP", "0.0 KiB/s", 0, false], ["LINK", "FALLBACK", -1, false]];
+                root.log(root.networkStatus);
+                root.updateStatus();
+            }
         }
     }
 

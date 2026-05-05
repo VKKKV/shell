@@ -9,7 +9,7 @@ ColumnLayout {
 
     TextBlock {
         title: "SYSTEM OVERVIEW"
-        lines: ["workspace: " + HyprlandService.activeWorkspace, "active: " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "wifi: " + NetworkDetailService.wifiStatus, "audio: " + AudioService.volumeText + " // mic " + AudioService.micText, "keyboard: " + KeyboardService.activeLayout + " // " + KeyboardService.activeKeyboard, "weather: " + WeatherService.displayText, "media: " + MediaService.displayText]
+        lines: ["workspace: " + HyprlandService.activeWorkspace, "active: " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "wifi: " + NetworkDetailService.wifiStatus, "audio: " + AudioService.volumeText + " // mic " + AudioService.micText, "keyboard: " + KeyboardService.activeLayout + " // " + KeyboardService.activeKeyboard, "weather: " + WeatherService.displayText, "environment: " + EnvironmentService.nightLightText, "media: " + MediaService.displayText]
     }
 
     TacticalLabel {
@@ -251,7 +251,56 @@ ColumnLayout {
 
     TextBlock {
         title: "SERVICE STATUS"
-        lines: [SettingsService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, AudioService.micStatusLine, BatteryService.statusLine, MediaService.statusLine, LauncherService.statusLine, NotificationService.statusLine, ClipboardService.statusLine, WeatherService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine, KeyboardService.statusLine, KeybindService.statusLine, EmojiService.statusLine]
+        lines: [SettingsService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, AudioService.micStatusLine, BatteryService.statusLine, MediaService.statusLine, LauncherService.statusLine, NotificationService.statusLine, ClipboardService.statusLine, WeatherService.statusLine, EnvironmentService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine, KeyboardService.statusLine, KeybindService.statusLine, EmojiService.statusLine, ServiceLogService.statusLine]
+    }
+
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "SERVICE LOG // RECENT EVENTS"
+        accent: ServiceLogService.events.length > 0
+        dim: ServiceLogService.events.length === 0
+    }
+
+    Repeater {
+        model: ServiceLogService.events.slice(0, 5)
+
+        Rectangle {
+            required property var modelData
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: modelData.level === "error" || modelData.level === "warn" ? Theme.lineDim : "transparent"
+            border.color: modelData.level === "error" || modelData.level === "warn" ? Theme.line : Theme.border
+            border.width: Theme.lineWidth
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: 8
+
+                TacticalLabel {
+                    text: modelData.time
+                    dim: true
+                    size: Theme.fontTiny
+                }
+
+                TacticalLabel {
+                    text: modelData.source.toUpperCase()
+                    accent: modelData.level !== "info"
+                    size: Theme.fontTiny
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: modelData.message
+                    elide: Text.ElideRight
+                    dim: modelData.level === "info"
+                    accent: modelData.level !== "info"
+                    size: Theme.fontTiny
+                }
+            }
+        }
     }
 
     RowLayout {
