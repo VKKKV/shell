@@ -424,3 +424,21 @@
 - Updated `Theme.qml` to derive `Theme.panel` and `Theme.panelSoft` from `SettingsService.panelOpacity`, preserving the default `#cc030303` look at `0.8`.
 - Wired `SettingsService.scanlineStrength` into global, frame, and orbital `ScanlineOverlay` call sites while preserving the `scanlinesEnabled` toggle.
 - Added command-center settings controls for `PANEL OPACITY` and `SCANLINE STRENGTH`.
+
+## 2026-05-05 - Session Closure
+
+- Final `/trellis:finish-work` verification:
+  - `zig build` passes.
+  - `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml` passes.
+  - `timeout 8s quickshell -p .` loads cleanly with `Configuration Loaded`.
+  - `void-shell-settings defaults` and `read` output valid JSON on stdout.
+  - `git status` clean, working tree up to date with `origin/master`.
+- Commits this session:
+  - `0175ec7 feat(settings): add font scale control`
+  - `fe7e056 docs: align shell development granularity`
+  - `66e30fd feat(settings): add appearance opacity controls`
+  - `2a3bcc9 refactor(hud): align orbital panel chrome`
+  - `0c1749c feat(settings): add fine appearance controls`
+- Code-spec frontend docs updated: directory structure, component guidelines, type-safety appearance contract.
+- PRD/PLAN/journal synced for all phases.
+- Working tree clean, no uncommitted changes.
