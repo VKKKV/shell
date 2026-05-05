@@ -115,3 +115,15 @@
 - Added `services/CalendarService.qml` with local date, month grid, and generated agenda state.
 - Added local agenda and calendar grid to the command center.
 - Replaced the bottom center access text with compact day/date telemetry.
+
+## 2026-05-04 - Active Window Overview Slice
+
+- Extended `HyprlandService.qml` with active toplevel title/class and current workspace window rows.
+- Added active window telemetry to the top status bar and command center overview.
+- Added clickable current-workspace window rows to the command center using Hyprland focus dispatch.
+
+## 2026-05-04 - Mission Dock Slice
+
+- Reviewed architecture before continuing; no blocking refactor was needed after command center decomposition.
+- Added `modules/hud/MissionDock.qml` to render current workspace windows as compact bottom-bar targets.
+- Mounted `MissionDock` in `BottomStatusBar.qml` and updated the roadmap.

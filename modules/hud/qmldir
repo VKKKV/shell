@@ -3,6 +3,7 @@ HudExclusionZone 1.0 HudExclusionZone.qml
 HudLayout 1.0 HudLayout.qml
 TopStatusBar 1.0 TopStatusBar.qml
 BottomStatusBar 1.0 BottomStatusBar.qml
+MissionDock 1.0 MissionDock.qml
 LeftTacticalPanel 1.0 LeftTacticalPanel.qml
 CenterTerminalPanel 1.0 CenterTerminalPanel.qml
 RightMonitorPanel 1.0 RightMonitorPanel.qml

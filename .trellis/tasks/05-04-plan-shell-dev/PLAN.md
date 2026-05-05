@@ -260,7 +260,7 @@ Acceptance:
    - Use existing services first; avoid adding plugin registries.
 
 3. Broader reference-shell features.
-   - Candidate features: dock/taskbar, weather.
+   - Candidate features: weather.
    - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
 
 ## Reference Feature Gap Analysis
@@ -285,6 +285,7 @@ The reference shells provide a much broader desktop environment than the current
 - Clipboard buffer using `wl-paste`/`wl-copy` with command center history controls.
 - Local calendar grid and agenda state in the command center.
 - Active window telemetry and current workspace window overview.
+- Compact mission dock in the bottom bar for current workspace windows.
 - Tactical settings panel foundation.
 - Zig settings helper with JSON normalization.
 - Hyprland namespace/blur documentation.

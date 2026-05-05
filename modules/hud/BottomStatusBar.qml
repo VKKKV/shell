@@ -23,11 +23,16 @@ TacticalFrame {
         }
 
         TacticalLabel {
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
+            Layout.preferredWidth: 220
+            horizontalAlignment: Text.AlignLeft
             text: "[" + CalendarService.dayText + " // " + CalendarService.dateText + "]"
             accent: true
             size: Theme.fontNormal
+        }
+
+        MissionDock {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
         }
 
         Row {
