@@ -205,6 +205,34 @@ Decision (ADR-lite):
 - Decision: implement a small shared central-panel chrome primitive or minimally extend existing primitives, then migrate command center and non-orbital expansion panels to it. Keep orbital mostly custom because it is intentionally a sensor overlay rather than a framed information panel.
 - Consequences: improves consistency and reduces duplication with low product risk. The trade-off is that this does not yet solve visual density controls, diagnostics, tray custom menus, or performance profiling; those remain future phases.
 
+### Next Optimization MVP: Time-Based Orbital Ephemeris
+
+User instruction captured 2026-05-05: add a development phase for `OrbitalExpansionPanel` to calculate planet positions from the current time and display related orbital information on the panel.
+
+Requirements:
+
+- Replace purely arbitrary local phase movement with deterministic time-based orbital positions derived from the current date/time.
+- Use local, offline astronomical approximations; do not require network ephemeris access.
+- Display per-planet orbital metadata in the panel, such as heliocentric longitude/phase, orbital period, approximate distance scale, and update/source status.
+- Preserve the current graphical sci-fi orbital surface, trails, reticles, labels, translucent overlay, and central safe-area sizing.
+- Keep the implementation inside `OrbitalExpansionPanel.qml` unless reusable state becomes necessary; do not add a backend helper for this MVP.
+- Clearly document that positions are approximate visual ephemerides, not precision astronomy data.
+
+Acceptance Criteria:
+
+- [x] Planet node positions are calculated from current time using each planet's orbital period and a known epoch offset.
+- [x] The orbital display updates over time without network access.
+- [x] The panel shows related orbital information for visible planets.
+- [x] Existing orbital sci-fi visual language and close behavior are preserved.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: the orbital panel currently looks live but its motion is local/deterministic rather than grounded in actual date/time orbital phase.
+- Decision: use simple circular heliocentric ephemeris approximations seeded from J2000-style epoch longitudes and sidereal orbital periods. This gives stable, time-derived top-down positions without adding network or precision ephemeris dependencies.
+- Consequences: the visualization becomes more meaningful and explainable while remaining lightweight. The trade-off is limited astronomical precision; eccentricity, inclination, retrograde effects, and real ephemeris corrections remain out of scope unless a future task requires them.
+
 ### Panel Control Standardization
 
 - Central overlays should close with a consistent shortcut: `Escape`.

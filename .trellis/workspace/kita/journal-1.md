@@ -357,3 +357,11 @@
 - Migrated `CommandCenterPanel.qml`, `CpuExpansionPanel.qml`, `NetworkExpansionPanel.qml`, `FilesystemExpansionPanel.qml`, and `LogExpansionPanel.qml` to the shared chrome while leaving `OrbitalExpansionPanel.qml` as a custom translucent sensor overlay.
 - Registered the new component in `components/qmldir`.
 - Verified the phase with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
+
+## 2026-05-05 - Time-Based Orbital Ephemeris
+
+- Added the next development phase to the PRD/PLAN for current-time-driven approximate orbital positions in `OrbitalExpansionPanel.qml`.
+- Replaced arbitrary phase animation with J2000-style circular heliocentric approximations using each planet's epoch longitude and sidereal period against `Time.now`.
+- Added per-planet on-panel ephemeris metadata: longitude, AU scale, period, UTC timestamp, and J2000 day count.
+- Preserved the translucent graphical sensor surface, trails, labels, reticles, close affordance, and central safe-area deployment behavior.
+- Verified the phase with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.

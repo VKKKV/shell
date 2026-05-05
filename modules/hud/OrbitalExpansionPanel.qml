@@ -7,22 +7,46 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    property real phase: 0
+    readonly property real dayMs: 86400000
+    readonly property date epochJ2000: new Date(Date.UTC(2000, 0, 1, 12, 0, 0))
+    readonly property real daysSinceEpoch: (Time.now.getTime() - epochJ2000.getTime()) / dayMs
+    readonly property real scanPhase: (Time.now.getTime() / 72) % 360
     readonly property real coreSize: Math.min(width, height)
     readonly property real orbitRadius: coreSize * 0.42
     readonly property var planets: [
-        { name: "MERCURY", code: "ME", radius: 0.18, speed: 4.15, size: 5 },
-        { name: "VENUS", code: "VE", radius: 0.26, speed: 1.62, size: 7 },
-        { name: "EARTH", code: "EA", radius: 0.35, speed: 1.0, size: 8 },
-        { name: "MARS", code: "MA", radius: 0.44, speed: 0.53, size: 6 },
-        { name: "JUPITER", code: "JU", radius: 0.58, speed: 0.084, size: 13 },
-        { name: "SATURN", code: "SA", radius: 0.7, speed: 0.034, size: 12 },
-        { name: "URANUS", code: "UR", radius: 0.82, speed: 0.012, size: 10 },
-        { name: "NEPTUNE", code: "NE", radius: 0.93, speed: 0.006, size: 10 }
+        { name: "MERCURY", code: "ME", radius: 0.18, au: 0.387, period: 87.969, epochLongitude: 252.251, size: 5 },
+        { name: "VENUS", code: "VE", radius: 0.26, au: 0.723, period: 224.701, epochLongitude: 181.979, size: 7 },
+        { name: "EARTH", code: "EA", radius: 0.35, au: 1.0, period: 365.256, epochLongitude: 100.464, size: 8 },
+        { name: "MARS", code: "MA", radius: 0.44, au: 1.524, period: 686.98, epochLongitude: 355.433, size: 6 },
+        { name: "JUPITER", code: "JU", radius: 0.58, au: 5.203, period: 4332.589, epochLongitude: 34.351, size: 13 },
+        { name: "SATURN", code: "SA", radius: 0.7, au: 9.537, period: 10759.22, epochLongitude: 50.077, size: 12 },
+        { name: "URANUS", code: "UR", radius: 0.82, au: 19.191, period: 30685.4, epochLongitude: 314.055, size: 10 },
+        { name: "NEPTUNE", code: "NE", radius: 0.93, au: 30.069, period: 60189.0, epochLongitude: 304.348, size: 10 }
     ]
 
     function planetAngle(planet: var): real {
-        return (phase * planet.speed + planet.radius * 720) % 360;
+        return positiveDegrees(planet.epochLongitude + daysSinceEpoch * 360 / planet.period);
+    }
+
+    function positiveDegrees(value: real): real {
+        const wrapped = value % 360;
+        return wrapped < 0 ? wrapped + 360 : wrapped;
+    }
+
+    function orbitalProgress(planet: var): real {
+        return positiveDegrees(planetAngle(planet) - planet.epochLongitude) / 360;
+    }
+
+    function formattedLongitude(planet: var): string {
+        return planetAngle(planet).toFixed(1) + " DEG";
+    }
+
+    function formattedPeriod(planet: var): string {
+        return planet.period >= 1000 ? (planet.period / 365.256).toFixed(1) + " Y" : planet.period.toFixed(1) + " D";
+    }
+
+    function planetLine(planet: var): string {
+        return planet.code + " " + formattedLongitude(planet) + " // " + planet.au.toFixed(3) + " AU // " + formattedPeriod(planet);
     }
 
     function planetX(planet: var, angleOffset: real): real {
@@ -33,14 +57,6 @@ Item {
     function planetY(planet: var, angleOffset: real): real {
         const angle = (planetAngle(planet) + angleOffset) * Math.PI / 180;
         return height / 2 + Math.sin(angle) * orbitRadius * planet.radius * 0.58;
-    }
-
-    NumberAnimation on phase {
-        from: 0
-        to: 360
-        duration: 26000
-        loops: Animation.Infinite
-        running: root.visible
     }
 
     Rectangle {
@@ -86,7 +102,7 @@ Item {
             ctx.globalAlpha = 0.18;
             ctx.strokeStyle = accent;
             for (let spoke = 0; spoke < 12; spoke++) {
-                const angle = spoke * Math.PI / 6 + root.phase * Math.PI / 720;
+                const angle = spoke * Math.PI / 6 + root.scanPhase * Math.PI / 720;
                 ctx.beginPath();
                 ctx.moveTo(Math.cos(angle) * 28, Math.sin(angle) * 16);
                 ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius * 0.58);
@@ -123,7 +139,7 @@ Item {
 
         Connections {
             target: root
-            function onPhaseChanged(): void {
+            function onScanPhaseChanged(): void {
                 orbitCanvas.requestPaint();
             }
             function onWidthChanged(): void {
@@ -150,8 +166,9 @@ Item {
                 Rectangle {
                     required property int index
 
-                    readonly property real trailX: root.planetX(parent.modelData, -(index + 1) * (4 + parent.modelData.speed))
-                    readonly property real trailY: root.planetY(parent.modelData, -(index + 1) * (4 + parent.modelData.speed))
+                    readonly property real trailStep: (index + 1) * Math.max(2, 720 / parent.modelData.period)
+                    readonly property real trailX: root.planetX(parent.modelData, -trailStep)
+                    readonly property real trailY: root.planetY(parent.modelData, -trailStep)
 
                     x: trailX - width / 2
                     y: trailY - height / 2
@@ -206,9 +223,62 @@ Item {
             TacticalLabel {
                 x: Math.min(root.width - implicitWidth - 8, Math.max(8, parent.px + 12))
                 y: Math.min(root.height - implicitHeight - 8, Math.max(8, parent.py - 18))
-                text: modelData.code + " // " + Math.round(root.planetAngle(modelData)) + "°"
+                text: modelData.code + " // " + Math.round(root.planetAngle(modelData)) + "° // " + modelData.au.toFixed(1) + "AU"
                 accent: true
                 size: Theme.fontTiny
+            }
+        }
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.margins: 10
+        width: Math.min(parent.width * 0.42, 360)
+        height: Math.min(parent.height * 0.36, ephemerisColumn.implicitHeight + 22)
+        color: "#33000000"
+        border.color: Theme.lineDim
+        border.width: Theme.lineWidth
+
+        ColumnLayout {
+            id: ephemerisColumn
+
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 4
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "APPROX EPHEMERIS // J2000 CIRCULAR"
+                accent: true
+                size: Theme.fontTiny
+                elide: Text.ElideRight
+            }
+
+            Repeater {
+                model: root.planets
+
+                RowLayout {
+                    required property var modelData
+
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    TacticalLabel {
+                        text: modelData.code
+                        accent: true
+                        size: Theme.fontTiny
+                    }
+
+                    TacticalLabel {
+                        Layout.fillWidth: true
+                        text: root.planetLine(modelData)
+                        dim: modelData.code !== "EA"
+                        accent: modelData.code === "EA"
+                        size: Theme.fontTiny
+                        elide: Text.ElideRight
+                    }
+                }
             }
         }
     }
@@ -284,7 +354,7 @@ Item {
             id: statusText
 
             anchors.centerIn: parent
-            text: "GRAPHICAL ORBIT SENSOR // PHASE " + Math.round(root.phase) + " DEG // LOCAL EPHEMERIS // SCI-FI MODE"
+            text: "ORBIT SENSOR // UTC " + Qt.formatDateTime(Time.now, "yyyy-MM-dd hh:mm:ss") + " // J2000+" + Math.floor(root.daysSinceEpoch) + "D // APPROX"
             accent: true
             size: Theme.fontTiny
         }
