@@ -249,20 +249,25 @@ Acceptance:
 
 ## Prioritized Next Steps
 
-1. Settings persistence and settings-driven runtime behavior.
-   - Load initial settings with `void-shell-settings read`.
-   - Save changes with `void-shell-settings write <json>`.
-   - Treat helper failures as non-fatal and keep QML defaults active.
-   - Connect `liveDataEnabled` and `updateIntervalMs` to `SystemStats.poller`.
-   - Connect `leftVisible`, `centerVisible`, and `rightVisible` to `HudLayout.qml`.
-   - Add tactical controls for panel visibility and update interval in `SettingsPanel.qml`.
-
-2. Screenshot-driven visual tuning.
+1. Screenshot-driven visual tuning.
    - Tune panel proportions, font sizes, yellow intensity, scanline opacity, and graph density from real screenshots.
    - Keep `quickshell -p .` warning-free after every visual pass.
+   - Verify edge exclusion zones push real Hyprland windows into the center safe area on the target monitor.
 
-3. Broader reference-shell features.
-   - Candidate features: command center, launcher/search, notifications, network/VPN/Bluetooth detail, wallpaper/theme profiles, dock/taskbar, clipboard, calendar/weather.
+2. Tactical command center.
+   - Convert the settings overlay into a broader command center with quick toggles, system overview, service statuses, and power actions.
+   - Keep settings controls available, but group them so the panel does not become a long flat list.
+   - Use existing services first; avoid adding plugin registries.
+
+3. Launcher/search.
+   - Add keyboard-first app/action/settings search.
+   - Start with app launch and built-in shell actions before calculator/providers.
+
+4. Notifications/toasts.
+   - Add notification capture, history, DND, and tactical toast visuals.
+
+5. Broader reference-shell features.
+   - Candidate features: network/VPN/Bluetooth detail, wallpaper/theme profiles, dock/taskbar, clipboard, calendar/weather.
    - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
 
 ## Reference Feature Gap Analysis
@@ -279,6 +284,7 @@ The reference shells provide a much broader desktop environment than the current
 - Battery/power-source display with AC/no-battery fallback.
 - Media/MPRIS display and previous/play-pause/next controls via `playerctl`.
 - Minimal system tray strip using Quickshell status notifier items.
+- Edge exclusion zones that reserve real screen space and push Hyprland windows into the center safe area.
 - Tactical settings panel foundation.
 - Zig settings helper with JSON normalization.
 - Hyprland namespace/blur documentation.

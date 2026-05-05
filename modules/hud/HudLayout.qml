@@ -17,7 +17,24 @@ Item {
     readonly property int sideAvailableHeight: Math.max(0, height - topHeight - bottomHeight - Theme.margin * 4)
     readonly property int leftHeight: Math.min(sideAvailableHeight, Math.max(0, leftPanel.implicitHeight))
     readonly property int rightHeight: Math.min(sideAvailableHeight, Math.max(0, rightPanel.implicitHeight))
+    readonly property int topReserved: topBar.height + Theme.margin * 2
+    readonly property int bottomReserved: bottomBar.height + Theme.margin * 2
+    readonly property int leftReserved: leftPanel.visible ? leftPanel.width + Theme.margin * 2 : 0
+    readonly property int rightReserved: rightPanel.visible ? rightPanel.width + Theme.margin * 2 : 0
     readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion]
+
+    function syncMetrics(): void {
+        HudMetrics.topReserved = topReserved;
+        HudMetrics.bottomReserved = bottomReserved;
+        HudMetrics.leftReserved = leftReserved;
+        HudMetrics.rightReserved = rightReserved;
+    }
+
+    Component.onCompleted: syncMetrics()
+    onTopReservedChanged: syncMetrics()
+    onBottomReservedChanged: syncMetrics()
+    onLeftReservedChanged: syncMetrics()
+    onRightReservedChanged: syncMetrics()
 
     ScanlineOverlay {
         visible: SettingsService.scanlinesEnabled

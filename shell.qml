@@ -9,4 +9,20 @@ ShellRoot {
     HudWindow {
     }
 
+    HudExclusionZone {
+        edge: "top"
+    }
+
+    HudExclusionZone {
+        edge: "bottom"
+    }
+
+    HudExclusionZone {
+        edge: "left"
+    }
+
+    HudExclusionZone {
+        edge: "right"
+    }
+
 }

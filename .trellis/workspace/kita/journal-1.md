@@ -59,3 +59,16 @@
 - Replaced fixed top/bottom bar heights with implicit content-driven heights clamped by theme min/max values.
 - Updated left/right side panels to expose implicit sizes and expand inward based on content width/height.
 - Added size animations so top expands downward, bottom expands upward, and side panels expand toward the center without abrupt jumps.
+
+## 2026-05-04 - Edge Exclusion Zones
+
+- Added development plan entry for edge space reservation so compositor-managed Hyprland windows are pushed into the center safe area.
+- Added `services/HudMetrics.qml` to share visible HUD dimensions with reservation windows.
+- Added `modules/hud/HudExclusionZone.qml`, a transparent `PanelWindow` using `ExclusionMode.Auto` and empty input mask.
+- Instantiated top, bottom, left, and right exclusion zones from `shell.qml` so dynamic HUD dimensions reserve matching screen space.
+
+## 2026-05-04 - Command Center Foundation
+
+- Reviewed current shell structure and found no blocking optimization needs; verification passed before continuing.
+- Updated `PLAN.md` to move completed edge/settings/media/tray work out of the next-step list.
+- Refactored `SettingsPanel.qml` into a broader command center with system overview, live metrics, service status, settings controls, and session power actions in three columns.

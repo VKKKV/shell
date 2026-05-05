@@ -6,3 +6,4 @@ singleton AudioService 1.0 AudioService.qml
 singleton SessionService 1.0 SessionService.qml
 singleton BatteryService 1.0 BatteryService.qml
 singleton MediaService 1.0 MediaService.qml
+singleton HudMetrics 1.0 HudMetrics.qml
