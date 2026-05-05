@@ -39,7 +39,7 @@ TacticalFrame {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: ExpansionService.show("cpu")
+                onClicked: ExpansionService.show("cpu", "right-cpu")
             }
         }
 

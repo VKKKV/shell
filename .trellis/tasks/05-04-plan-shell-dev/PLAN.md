@@ -251,12 +251,12 @@ Acceptance:
 - Turn selected left/right panel child elements into click targets that open central enlarged tactical panels.
 - First target: `LeftTacticalPanel` orbital globe opens an enlarged orbital analysis panel in the center safe area.
 - Expanded orbital panel should show a top-down solar-system view using ASCII/monospace labels, orbit rings/lines, planet abbreviations, and animated/deterministic orbital phase data.
-- The transition should feel mechanical/cybernetic: hard-frame deployment, warning accent flashes, scanline continuity, and dense diagnostic labels.
+- The transition should feel mechanical/cybernetic: the expanded panel should visibly deploy from the clicked source widget using origin-aware scale/position motion, then lock into the center safe area with hard-frame deployment, warning accent flashes, scanline continuity, and dense diagnostic labels.
 - Use a reusable overlay pattern in `modules/hud/` instead of folding expansion logic into individual components.
 - Keep data local/deterministic for the MVP; real astronomy ephemeris or network-backed space data is deferred.
 
 Acceptance:
-- Clicking the small `RotatingGlobe` region opens a central expanded orbital panel.
+- Clicking the small `RotatingGlobe` region opens a central expanded orbital panel that scales/moves out from the globe's left-panel origin instead of flashing in at the center.
 - Closing the expanded panel restores normal HUD interaction and input regions.
 - Overlay remains inside the center safe area and does not invalidate edge exclusion-zone behavior.
 - ASCII/monospace solar-system content is legible and styled consistently with the VOID tactical language.
@@ -371,7 +371,7 @@ The reference shells provide a much broader desktop environment than the current
 ### Recommended Feature Build Order
 
 0. Interactive panel expansion MVP.
-   - Covered: central expansion overlay state and module, left orbital globe click target, cyber/mechanical orbital analysis panel, local deterministic ASCII solar-system telemetry.
+   - Covered: central expansion overlay state and module, left orbital globe click target, origin-aware cyber/mechanical orbital deployment animation, local deterministic ASCII solar-system telemetry.
    - Covered: right-panel CPU matrix drill-down using the shared central overlay pattern.
    - Next expansions: apply the same overlay pattern to network graph, filesystem rows, and log stream drill-downs.
 

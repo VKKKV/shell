@@ -186,3 +186,9 @@
 - Added `modules/hud/CpuExpansionPanel.qml` as a right-panel drill-down surface using the shared expansion overlay pattern.
 - Made the right monitor CPU core grid clickable and routed it through `ExpansionService.show("cpu")`.
 - Updated the roadmap to mark CPU matrix expansion covered and leave network/filesystem/log drill-downs next.
+
+## 2026-05-05 - Runtime Warning And Expansion Motion Fix
+
+- Changed `PowerProfileService.qml` to probe `powerprofilesctl` through `command -v` before running it, preventing missing-binary startup warnings.
+- Extended `ExpansionService.show()` with source-origin metadata for expansion surfaces.
+- Updated orbital and CPU expansion placement so panels scale/move from their clicked source direction instead of flashing directly into the center.

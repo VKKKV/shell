@@ -12,6 +12,7 @@ Singleton {
     property bool idleInhibited: false
     property bool available: false
     property bool idleAvailable: false
+    property bool commandAvailable: false
     property string statusLine: "power profile: initializing"
     property string idleStatusLine: "idle inhibitor: initializing"
 
@@ -30,7 +31,7 @@ Singleton {
     }
 
     function setProfile(next: string): void {
-        if (!available)
+        if (!commandAvailable || !available)
             return;
         profileProcess.command = ["powerprofilesctl", "set", next];
         profileProcess.running = true;
@@ -48,7 +49,7 @@ Singleton {
     }
 
     function refresh(): void {
-        refreshProcess.running = true;
+        availabilityProcess.running = true;
     }
 
     Component.onCompleted: refresh()
@@ -70,8 +71,22 @@ Singleton {
         }
     }
 
+    property Process availabilityProcess: Process {
+        command: ["sh", "-c", "command -v powerprofilesctl >/dev/null 2>&1"]
+        onExited: (exitCode) => {
+            root.commandAvailable = exitCode === 0;
+            if (root.commandAvailable)
+                root.refreshProcess.running = true;
+            else {
+                root.available = false;
+                root.profile = "UNAVAILABLE";
+                root.statusLine = "power profile: command missing";
+            }
+        }
+    }
+
     property Process refreshProcess: Process {
-        command: ["powerprofilesctl", "get"]
+        command: ["sh", "-c", "powerprofilesctl get"]
         stdout: StdioCollector {
             onStreamFinished: root.updateProfile(text)
         }
@@ -85,7 +100,7 @@ Singleton {
     }
 
     property Process profileProcess: Process {
-        command: ["powerprofilesctl", "get"]
+        command: ["sh", "-c", "powerprofilesctl get"]
         onExited: (exitCode) => {
             if (exitCode === 0)
                 root.refresh();

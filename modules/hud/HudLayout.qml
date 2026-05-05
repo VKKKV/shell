@@ -21,6 +21,14 @@ Item {
     readonly property int bottomReserved: bottomBar.height + Theme.margin * 2
     readonly property int leftReserved: leftPanel.visible ? leftPanel.width + Theme.margin * 2 : 0
     readonly property int rightReserved: rightPanel.visible ? rightPanel.width + Theme.margin * 2 : 0
+    readonly property int expansionWidth: Math.min(980, width - leftReserved - rightReserved - Theme.margin * 2)
+    readonly property int expansionHeight: Math.min(620, height - topReserved - bottomReserved - Theme.margin * 2)
+    readonly property int expansionTargetX: leftReserved + Math.max(0, width - leftReserved - rightReserved - expansionWidth) / 2
+    readonly property int expansionTargetY: topReserved + Math.max(0, height - topReserved - bottomReserved - expansionHeight) / 2
+    readonly property int orbitalOriginX: leftPanel.x + leftPanel.width * 0.5
+    readonly property int orbitalOriginY: leftPanel.y + Math.min(260, leftPanel.height * 0.42) * 0.5 + 38
+    readonly property int cpuOriginX: rightPanel.x + rightPanel.width * 0.5
+    readonly property int cpuOriginY: rightPanel.y + 90
     readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion, expansionInputRegion, toastInputRegion]
 
     function syncMetrics(): void {
@@ -132,23 +140,53 @@ Item {
         }
 
         OrbitalExpansionPanel {
-            visible: ExpansionService.activeSurface === "orbital"
-            width: Math.min(980, parent.width - HudMetrics.leftReserved - HudMetrics.rightReserved - Theme.margin * 2)
-            height: Math.min(620, parent.height - HudMetrics.topReserved - HudMetrics.bottomReserved - Theme.margin * 2)
-            x: HudMetrics.leftReserved + Math.max(0, parent.width - HudMetrics.leftReserved - HudMetrics.rightReserved - width) / 2
-            y: HudMetrics.topReserved + Math.max(0, parent.height - HudMetrics.topReserved - HudMetrics.bottomReserved - height) / 2
+            id: orbitalExpansion
 
+            visible: ExpansionService.activeSurface === "orbital"
+            width: root.expansionWidth
+            height: root.expansionHeight
+            x: visible ? root.expansionTargetX : root.orbitalOriginX - width / 2
+            y: visible ? root.expansionTargetY : root.orbitalOriginY - height / 2
+            scale: visible ? 1 : 0.08
+            opacity: visible ? 1 : 0
+            transformOrigin: Item.Center
+
+            Behavior on x {
+                NumberAnimation { duration: 240; easing.type: Easing.OutCubic }
+            }
+            Behavior on y {
+                NumberAnimation { duration: 240; easing.type: Easing.OutCubic }
+            }
+            Behavior on scale {
+                NumberAnimation { duration: 240; easing.type: Easing.OutBack }
+            }
             Behavior on opacity {
-                NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
             }
         }
 
         CpuExpansionPanel {
             visible: ExpansionService.activeSurface === "cpu"
-            width: Math.min(980, parent.width - HudMetrics.leftReserved - HudMetrics.rightReserved - Theme.margin * 2)
-            height: Math.min(620, parent.height - HudMetrics.topReserved - HudMetrics.bottomReserved - Theme.margin * 2)
-            x: HudMetrics.leftReserved + Math.max(0, parent.width - HudMetrics.leftReserved - HudMetrics.rightReserved - width) / 2
-            y: HudMetrics.topReserved + Math.max(0, parent.height - HudMetrics.topReserved - HudMetrics.bottomReserved - height) / 2
+            width: root.expansionWidth
+            height: root.expansionHeight
+            x: visible ? root.expansionTargetX : root.cpuOriginX - width / 2
+            y: visible ? root.expansionTargetY : root.cpuOriginY - height / 2
+            scale: visible ? 1 : 0.08
+            opacity: visible ? 1 : 0
+            transformOrigin: Item.Center
+
+            Behavior on x {
+                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+            }
+            Behavior on y {
+                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+            }
+            Behavior on scale {
+                NumberAnimation { duration: 220; easing.type: Easing.OutBack }
+            }
+            Behavior on opacity {
+                NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+            }
         }
     }
 
