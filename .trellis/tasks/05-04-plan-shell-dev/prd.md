@@ -459,7 +459,7 @@ Acceptance Criteria:
 - [x] Expansion backdrop has a transition that does not block close behavior.
 - [x] No click-to-open, close button, backdrop-close, or `Escape` close behavior regresses.
 - [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
-- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
 
 Decision (ADR-lite):
 
