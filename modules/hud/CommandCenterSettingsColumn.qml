@@ -59,6 +59,84 @@ ColumnLayout {
         onToggled: (checked) => SettingsService.liveDataEnabled = checked
     }
 
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "MICROPHONE // " + AudioService.micText
+        accent: AudioService.micAvailable && !AudioService.micMuted
+        dim: !AudioService.micAvailable || AudioService.micMuted
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+            opacity: AudioService.micAvailable ? 1 : 0.45
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: AudioService.micAvailable ? Qt.PointingHandCursor : Qt.ArrowCursor
+                enabled: AudioService.micAvailable
+                onClicked: AudioService.changeMicVolume(-0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "MIC -"
+                accent: AudioService.micAvailable
+                dim: !AudioService.micAvailable
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: AudioService.micMuted ? Theme.lineDim : "transparent"
+            border.color: AudioService.micAvailable ? Theme.line : Theme.lineDim
+            opacity: AudioService.micAvailable ? 1 : 0.45
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: AudioService.micAvailable ? Qt.PointingHandCursor : Qt.ArrowCursor
+                enabled: AudioService.micAvailable
+                onClicked: AudioService.toggleMicMute()
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: AudioService.micMuted ? "MIC MUTED" : "MIC LIVE"
+                accent: AudioService.micAvailable && !AudioService.micMuted
+                dim: !AudioService.micAvailable || AudioService.micMuted
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+            opacity: AudioService.micAvailable ? 1 : 0.45
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: AudioService.micAvailable ? Qt.PointingHandCursor : Qt.ArrowCursor
+                enabled: AudioService.micAvailable
+                onClicked: AudioService.changeMicVolume(0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "MIC +"
+                accent: AudioService.micAvailable
+                dim: !AudioService.micAvailable
+            }
+        }
+    }
+
     ToggleRow {
         label: "LEFT PANEL"
         checked: SettingsService.leftVisible

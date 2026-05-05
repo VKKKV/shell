@@ -9,7 +9,7 @@ ColumnLayout {
 
     TextBlock {
         title: "SYSTEM OVERVIEW"
-        lines: ["workspace: " + HyprlandService.activeWorkspace, "active: " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "wifi: " + NetworkDetailService.wifiStatus, "keyboard: " + KeyboardService.activeLayout + " // " + KeyboardService.activeKeyboard, "weather: " + WeatherService.displayText, "media: " + MediaService.displayText]
+        lines: ["workspace: " + HyprlandService.activeWorkspace, "active: " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "wifi: " + NetworkDetailService.wifiStatus, "audio: " + AudioService.volumeText + " // mic " + AudioService.micText, "keyboard: " + KeyboardService.activeLayout + " // " + KeyboardService.activeKeyboard, "weather: " + WeatherService.displayText, "media: " + MediaService.displayText]
     }
 
     TacticalLabel {
@@ -115,12 +115,12 @@ ColumnLayout {
 
     MetricBlock {
         title: "LIVE METRICS"
-        rows: [["RAM", SystemStats.ramText, SystemStats.ramProgress, true], ["SWAP", SystemStats.swapText, SystemStats.swapProgress, false], ["AUDIO", AudioService.volumeText, AudioService.available ? AudioService.volume : -1, AudioService.available], ["POWER", BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
+        rows: [["RAM", SystemStats.ramText, SystemStats.ramProgress, true], ["SWAP", SystemStats.swapText, SystemStats.swapProgress, false], ["AUDIO", AudioService.volumeText, AudioService.available ? AudioService.volume : -1, AudioService.available], ["MIC", AudioService.micText, AudioService.micAvailable ? AudioService.micVolume : -1, AudioService.micAvailable && !AudioService.micMuted], ["POWER", BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
     }
 
     TextBlock {
         title: "SERVICE STATUS"
-        lines: [SettingsService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine, LauncherService.statusLine, NotificationService.statusLine, ClipboardService.statusLine, WeatherService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine, KeyboardService.statusLine]
+        lines: [SettingsService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, AudioService.micStatusLine, BatteryService.statusLine, MediaService.statusLine, LauncherService.statusLine, NotificationService.statusLine, ClipboardService.statusLine, WeatherService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine, KeyboardService.statusLine]
     }
 
     RowLayout {

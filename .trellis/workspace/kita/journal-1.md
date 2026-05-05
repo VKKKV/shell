@@ -162,3 +162,9 @@
 - Extended `NetworkDetailService.qml` with `nmcli` Wi-Fi scan telemetry and fallback status.
 - Added command center Wi-Fi scan rows showing SSID, signal, security, and active link state.
 - Updated the roadmap to mark Wi-Fi list telemetry covered while leaving connection flows deferred.
+
+## 2026-05-05 - Microphone Controls Slice
+
+- Extended `AudioService.qml` with default source volume, mute state, fallback status, and `wpctl` microphone controls.
+- Added microphone telemetry to command center overview metrics and microphone controls to settings.
+- Updated the roadmap to mark microphone controls covered while leaving spectrum/lyrics deferred.
