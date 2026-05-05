@@ -5,6 +5,11 @@ import QtQuick
 Item {
     id: root
 
+    property int panelX: Theme.margin
+    property int panelY: Theme.margin
+    property int panelWidth: Math.max(320, width - Theme.margin * 2)
+    property int panelHeight: Math.max(260, height - Theme.margin * 2)
+
     visible: SettingsService.panelOpen
     opacity: visible ? 1 : 0
 
@@ -14,8 +19,9 @@ Item {
     }
 
     CommandCenterPanel {
-        width: Math.min(920, parent.width - Theme.margin * 2)
-        height: Math.min(620, parent.height - Theme.margin * 2)
-        anchors.centerIn: parent
+        x: root.panelX
+        y: root.panelY
+        width: root.panelWidth
+        height: root.panelHeight
     }
 }

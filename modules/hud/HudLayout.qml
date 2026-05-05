@@ -187,6 +187,10 @@ Item {
         id: settingsPanel
 
         anchors.fill: parent
+        panelX: root.expansionTargetX
+        panelY: root.expansionTargetY
+        panelWidth: root.expansionWidth
+        panelHeight: root.expansionHeight
     }
 
     Item {
@@ -411,6 +415,17 @@ Item {
     Shortcut {
         sequence: "Ctrl+Alt+S"
         onActivated: SettingsService.togglePanel()
+    }
+
+    Shortcut {
+        sequence: "Escape"
+        enabled: SettingsService.panelOpen || ExpansionService.open
+        onActivated: {
+            if (ExpansionService.open)
+                ExpansionService.close();
+            else
+                SettingsService.panelOpen = false;
+        }
     }
 
 }

@@ -312,3 +312,22 @@
 - Added command-center environment status lines and service status integration.
 - Extended `LauncherService.qml` with `=<expr>` calculator result copying and `$ <command>` shell dispatch provider.
 - Updated `PLAN.md` statuses to mark all concrete existing roadmap phases covered, with future work requiring new feedback or new Trellis tasks.
+
+## 2026-05-05 - README Accent And Central Sizing Pass
+
+- Expanded `README.md` with the implemented HUD features, command-center usage, graphical orbital sensor, launcher providers, service logs, and settings persistence.
+- Added persistent `visual.accentColor` support with default `#F2C94C` across `SettingsService.qml`, `Theme.qml`, `docs/settings.md`, and the Zig settings helper.
+- Added command-center accent swatches so the shell emphasis color can be changed from settings.
+- Unified `SettingsPanel.qml` sizing with the same central safe-area rectangle used by expansion panels via `HudLayout.qml`.
+
+## 2026-05-05 - Tray QApplication Fix And Refinement Backlog
+
+- Fixed right-click tray platform menu errors by adding `//@ pragma UseQApplication` to the top of `shell.qml`.
+- Verified Quickshell startup still loads cleanly after enabling QApplication mode.
+- Added a refinement backlog to the PRD covering visual hierarchy, motion language, central surface consistency, tray UX, color controls, and performance checks.
+
+## 2026-05-05 - Tray Fallback And Central Close Standardization
+
+- Replaced broken tray `display(item, ...)` calls with reference-shell-style `activate()`/`secondaryActivate()` behavior until a Window-backed/custom tray menu surface exists.
+- Added `components/PanelCloseButton.qml` and reused it across command center plus orbital/CPU/network/filesystem/log central panels.
+- Added `Escape` close handling in `HudLayout.qml` for both command center and expansion overlays while preserving `Ctrl+Alt+S` command-center toggle.

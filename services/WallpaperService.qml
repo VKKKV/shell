@@ -67,8 +67,9 @@ Singleton {
     }
 
     function applySuggestedProfile(): void {
+        SettingsService.accentColor = dominantColor;
         SettingsService.themeProfile = suggestedProfile;
-        applyStatusLine = "wallpaper color: profile " + suggestedProfile;
+        applyStatusLine = "wallpaper color: " + dominantColor + " // " + suggestedProfile;
     }
 
     function refresh(): void {

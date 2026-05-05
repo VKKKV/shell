@@ -132,3 +132,35 @@ The ASCII orbital overlay was treated as a temporary prototype and has been repl
 ### Technical Notes
 
 - The model cannot inspect `target.png` directly in this environment; use `target.md`, existing screenshot feedback, and user description as the source of truth unless a textual color/geometry spec is provided.
+
+## 7. Refinement Backlog
+
+Captured after tray menu fix on 2026-05-05.
+
+### Runtime Fixes
+
+- Quickshell platform tray menus require QApplication mode. Root `shell.qml` should keep `//@ pragma UseQApplication` before imports so `SystemTrayItem.display(...)` can open native platform menus.
+
+### Refinement Opportunities
+
+- Visual hierarchy: continue reducing dense text collisions by prioritizing primary telemetry, moving secondary diagnostics into command-center/expansion surfaces, and keeping edge panels readable at a glance.
+- Motion language: make deploy/close transitions, scan sweeps, and graph animations feel consistently mechanical rather than generic fade/scale.
+- Color controls: accent color is now configurable; future refinement can expose finer contrast/opacity controls for border, dim text, scanline opacity, and panel background.
+- Central surfaces: settings and expansion panels now share safe-area sizing; future work should standardize close controls, headers, and status strips across every central surface.
+- Tray UX: native menu bridging works through QApplication mode; future work can add visual state hints for items with native menus and safer fallback text when a tray item lacks menu support.
+- Tray UX update: `PlatformMenuEntry.display()` needs a real Window, not an item delegate. Current implementation should avoid direct `display(item, ...)` calls and use `activate()`/`secondaryActivate()` fallback until a Window-backed or custom tray menu surface is implemented.
+- Performance: Canvas orbital effects and polling services should be profiled if CPU usage becomes visible; keep deterministic local animation but avoid unnecessary repaint loops.
+
+### Suggested Next Refinement MVP
+
+- Standardize central panel chrome across command center and CPU/network/filesystem/log expansions.
+- Standardize panel button styling, starting with central panel close buttons and close shortcuts.
+- Add a small visual density setting (`compact`, `normal`, `dense`) that adjusts font sizes, row heights, and graph heights.
+- Add a runtime diagnostics page in command center showing Quickshell mode, enabled services, missing commands, and recent service log warnings.
+
+### Panel Control Standardization
+
+- Central overlays should close with a consistent shortcut: `Escape`.
+- Command center should continue toggling with `Ctrl+Alt+S`, but `Escape` should close it when open.
+- All central expansion panels should expose the same close affordance: top-right `CLOSE` tactical button, same dimensions, border logic, hover behavior, and text sizing.
+- Future panel buttons should use a shared component rather than hand-rolled rectangles in each panel.

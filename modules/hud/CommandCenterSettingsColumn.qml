@@ -9,8 +9,43 @@ ColumnLayout {
 
     TacticalLabel {
         Layout.fillWidth: true
-        text: "VISUAL // TARGET #F2C94C // DATA // PANELS"
+        text: "VISUAL // ACCENT " + SettingsService.accentColor + " // DATA // PANELS"
         accent: true
+    }
+
+    GridLayout {
+        Layout.fillWidth: true
+        columns: 4
+        rowSpacing: 6
+        columnSpacing: 6
+
+        Repeater {
+            model: ["#F2C94C", "#96BF48", "#55B7FF", "#FF4D2E"]
+
+            Rectangle {
+                required property string modelData
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 24
+                color: SettingsService.accentColor === modelData ? Theme.lineDim : "transparent"
+                border.color: SettingsService.accentColor === modelData ? Theme.line : Theme.border
+                border.width: Theme.lineWidth
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: SettingsService.accentColor = parent.modelData
+                }
+
+                TacticalLabel {
+                    anchors.centerIn: parent
+                    text: parent.modelData
+                    accent: SettingsService.accentColor === parent.modelData
+                    dim: SettingsService.accentColor !== parent.modelData
+                    size: Theme.fontTiny
+                }
+            }
+        }
     }
 
     GridLayout {

@@ -118,4 +118,12 @@ TacticalFrame {
             }
         }
     }
+
+    PanelCloseButton {
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.rightMargin: Theme.panelPadding
+        anchors.topMargin: 8
+        onCloseRequested: SettingsService.panelOpen = false
+    }
 }

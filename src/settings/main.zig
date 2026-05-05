@@ -4,6 +4,7 @@ const Settings = struct {
     scanlines_enabled: bool = true,
     intensity: f64 = 1.0,
     profile: []const u8 = "amber",
+    accent_color: []const u8 = "#F2C94C",
     background_mode: []const u8 = "void",
     live_data_enabled: bool = true,
     update_interval_ms: i64 = 5000,
@@ -19,6 +20,7 @@ const defaults_json =
     \\    "scanlinesEnabled": true,
     \\    "intensity": 1.0,
     \\    "profile": "amber",
+    \\    "accentColor": "#F2C94C",
     \\    "backgroundMode": "void"
     \\  },
     \\  "data": {
@@ -125,6 +127,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.scanlines_enabled = boolField(visual, "scanlinesEnabled") orelse settings.scanlines_enabled;
         settings.intensity = clampFloat(numberField(visual, "intensity") orelse settings.intensity, 0.5, 1.5);
         settings.profile = themeProfileField(visual, "profile") orelse settings.profile;
+        settings.accent_color = accentColorField(visual, "accentColor") orelse settings.accent_color;
         settings.background_mode = backgroundModeField(visual, "backgroundMode") orelse settings.background_mode;
     }
 
@@ -146,6 +149,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\    "scanlinesEnabled": {},
         \\    "intensity": {d:.1},
         \\    "profile": "{s}",
+        \\    "accentColor": "{s}",
         \\    "backgroundMode": "{s}"
         \\  }},
         \\  "data": {{
@@ -162,6 +166,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.scanlines_enabled,
         settings.intensity,
         settings.profile,
+        settings.accent_color,
         settings.background_mode,
         settings.live_data_enabled,
         settings.update_interval_ms,
@@ -202,6 +207,20 @@ fn backgroundModeField(value: std.json.Value, key: []const u8) ?[]const u8 {
     if (std.mem.eql(u8, mode, "void") or std.mem.eql(u8, mode, "grid") or std.mem.eql(u8, mode, "radar"))
         return mode;
     return null;
+}
+
+fn accentColorField(value: std.json.Value, key: []const u8) ?[]const u8 {
+    const field = objectField(value, key) orelse return null;
+    if (field != .string)
+        return null;
+    const color = field.string;
+    if (color.len != 7 or color[0] != '#')
+        return null;
+    for (color[1..]) |char| {
+        if (!std.ascii.isHex(char))
+            return null;
+    }
+    return color;
 }
 
 fn numberField(value: std.json.Value, key: []const u8) ?f64 {

@@ -13,11 +13,18 @@ RowLayout {
 
     spacing: 6
 
-    function openMenu(item: SystemTrayItem, target: Item): void {
-        if (item.hasMenu)
-            item.display(target, target.width, target.height);
-        else
+    function activateItem(item: SystemTrayItem): void {
+        if (item.onlyMenu && item.hasMenu) {
             item.secondaryActivate();
+            return;
+        }
+        item.activate();
+    }
+
+    function openMenu(item: SystemTrayItem): void {
+        // Native platform menu display requires a Window, not an Item. Until we own a
+        // custom menu surface, use secondary activation like reference shells do.
+        item.secondaryActivate();
     }
 
     TacticalLabel {
@@ -66,9 +73,9 @@ RowLayout {
                 hoverEnabled: true
                 onClicked: (mouse) => {
                     if (mouse.button === Qt.RightButton)
-                        root.openMenu(trayCell.modelData, trayCell);
+                        root.openMenu(trayCell.modelData);
                     else
-                        trayCell.modelData.activate();
+                        root.activateItem(trayCell.modelData);
                 }
             }
 

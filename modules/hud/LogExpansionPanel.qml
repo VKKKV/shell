@@ -29,27 +29,10 @@ TacticalFrame {
                 elide: Text.ElideRight
             }
 
-            Rectangle {
-                Layout.preferredWidth: 84
-                Layout.preferredHeight: 26
-                color: closeArea.containsMouse ? Theme.lineDim : "transparent"
-                border.color: closeArea.containsMouse ? Theme.line : Theme.lineDim
-                border.width: Theme.lineWidth
-
-                MouseArea {
-                    id: closeArea
-
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: ExpansionService.close()
-                }
-
-                TacticalLabel {
-                    anchors.centerIn: parent
-                    text: "CLOSE"
-                    accent: closeArea.containsMouse
-                }
+            PanelCloseButton {
+                Layout.preferredWidth: implicitWidth
+                Layout.preferredHeight: implicitHeight
+                onCloseRequested: ExpansionService.close()
             }
         }
 

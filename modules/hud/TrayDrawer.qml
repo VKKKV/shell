@@ -14,11 +14,17 @@ ColumnLayout {
 
     spacing: 8
 
-    function openMenu(item: SystemTrayItem, target: Item): void {
-        if (item.hasMenu)
-            item.display(target, target.width, target.height);
-        else
+    function activateItem(item: SystemTrayItem): void {
+        if (item.onlyMenu && item.hasMenu) {
             item.secondaryActivate();
+            return;
+        }
+        item.activate();
+    }
+
+    function openMenu(item: SystemTrayItem): void {
+        // Avoid PlatformMenuEntry.display() until a Window-backed/custom menu surface exists.
+        item.secondaryActivate();
     }
 
     TacticalLabel {
@@ -63,9 +69,9 @@ ColumnLayout {
                 hoverEnabled: true
                 onClicked: (mouse) => {
                     if (mouse.button === Qt.RightButton)
-                        root.openMenu(trayEntry.modelData, trayEntry);
+                        root.openMenu(trayEntry.modelData);
                     else
-                        trayEntry.modelData.activate();
+                        root.activateItem(trayEntry.modelData);
                 }
             }
 

@@ -9,8 +9,8 @@ QtObject {
     readonly property color background: "#000000"
     readonly property color panel: "#cc030303"
     readonly property color panelSoft: "#99080808"
-    readonly property color line: profile === "green" ? "#96BF48" : (profile === "blue" ? "#55b7ff" : (profile === "red" ? "#ff4d2e" : "#F2C94C"))
-    readonly property color lineDim: profile === "green" ? "#66374a1f" : (profile === "blue" ? "#66333333" : (profile === "red" ? "#66441a12" : "#665b4b1d"))
+    readonly property color line: SettingsService.accentColor
+    readonly property color lineDim: dimAccent(SettingsService.accentColor)
     readonly property color text: "#E0E0E0"
     readonly property color textDim: "#828282"
     readonly property color border: "#333333"
@@ -41,4 +41,8 @@ QtObject {
     readonly property int fontNormal: 14
     readonly property int fontLarge: 22
     readonly property int fontClock: 34
+
+    function dimAccent(value: string): string {
+        return /^#[0-9a-fA-F]{6}$/.test(value) ? "#66" + value.slice(1) : "#66F2C94C";
+    }
 }

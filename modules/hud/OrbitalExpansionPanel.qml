@@ -290,30 +290,10 @@ Item {
         }
     }
 
-    Rectangle {
+    PanelCloseButton {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.margins: 10
-        width: 86
-        height: 28
-        color: closeArea.containsMouse ? Theme.lineDim : "#33000000"
-        border.color: closeArea.containsMouse ? Theme.line : Theme.border
-        border.width: Theme.lineWidth
-
-        MouseArea {
-            id: closeArea
-
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            hoverEnabled: true
-            onClicked: ExpansionService.close()
-        }
-
-        TacticalLabel {
-            anchors.centerIn: parent
-            text: "CLOSE"
-            accent: closeArea.containsMouse
-            size: Theme.fontTiny
-        }
+        onCloseRequested: ExpansionService.close()
     }
 }

@@ -15,6 +15,7 @@ Singleton {
     property bool centerVisible: true
     property bool rightVisible: true
     property string themeProfile: "amber"
+    property string accentColor: "#F2C94C"
     property string backgroundMode: "void"
     property real intensity: 1
     property int updateIntervalMs: 5000
@@ -44,6 +45,10 @@ Singleton {
         return ["void", "grid", "radar"].indexOf(value) >= 0 ? value : "void";
     }
 
+    function normalizeAccentColor(value: string): string {
+        return /^#[0-9a-fA-F]{6}$/.test(value) ? value.toUpperCase() : "#F2C94C";
+    }
+
     function applySettings(settings: var): void {
         if (!settings || typeof settings !== "object")
             return;
@@ -56,6 +61,8 @@ Singleton {
                 intensity = clampIntensity(settings.visual.intensity);
             if (typeof settings.visual.profile === "string")
                 themeProfile = normalizeThemeProfile(settings.visual.profile);
+            if (typeof settings.visual.accentColor === "string")
+                accentColor = normalizeAccentColor(settings.visual.accentColor);
             if (typeof settings.visual.backgroundMode === "string")
                 backgroundMode = normalizeBackgroundMode(settings.visual.backgroundMode);
         }
@@ -83,6 +90,7 @@ Singleton {
                 scanlinesEnabled: scanlinesEnabled,
                 intensity: clampIntensity(intensity),
                 profile: normalizeThemeProfile(themeProfile),
+                accentColor: normalizeAccentColor(accentColor),
                 backgroundMode: normalizeBackgroundMode(backgroundMode)
             },
             data: {
@@ -126,6 +134,14 @@ Singleton {
         const normalized = normalizeThemeProfile(themeProfile);
         if (normalized !== themeProfile) {
             themeProfile = normalized;
+            return;
+        }
+        scheduleSave();
+    }
+    onAccentColorChanged: {
+        const normalized = normalizeAccentColor(accentColor);
+        if (normalized !== accentColor) {
+            accentColor = normalized;
             return;
         }
         scheduleSave();
