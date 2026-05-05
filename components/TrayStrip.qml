@@ -24,6 +24,10 @@ RowLayout {
     function openMenu(item: SystemTrayItem): void {
         // Native platform menu display requires a Window, not an Item. Until we own a
         // custom menu surface, use secondary activation like reference shells do.
+        if (!item.hasMenu) {
+            item.activate();
+            return;
+        }
         item.secondaryActivate();
     }
 
@@ -44,7 +48,7 @@ RowLayout {
             width: 22
             height: 18
             color: trayArea.containsMouse ? Theme.panelSoft : "transparent"
-            border.color: Theme.lineDim
+            border.color: trayCell.modelData.onlyMenu ? Theme.line : (trayCell.modelData.hasMenu ? Theme.lineDim : Theme.border)
             border.width: Theme.lineWidth
 
             IconImage {
@@ -62,6 +66,15 @@ RowLayout {
                 visible: !trayIcon.visible
                 text: (trayCell.modelData.id || "?").charAt(0).toUpperCase()
                 accent: true
+            }
+
+            Rectangle {
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                width: 5
+                height: 5
+                visible: trayCell.modelData.hasMenu || trayCell.modelData.onlyMenu
+                color: trayCell.modelData.onlyMenu ? Theme.line : Theme.lineDim
             }
 
             MouseArea {

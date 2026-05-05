@@ -24,7 +24,19 @@ ColumnLayout {
 
     function openMenu(item: SystemTrayItem): void {
         // Avoid PlatformMenuEntry.display() until a Window-backed/custom menu surface exists.
+        if (!item.hasMenu) {
+            item.activate();
+            return;
+        }
         item.secondaryActivate();
+    }
+
+    function affordanceText(item: SystemTrayItem): string {
+        if (item.onlyMenu)
+            return "ONLY";
+        if (item.hasMenu)
+            return "MENU";
+        return "ACT";
     }
 
     TacticalLabel {
@@ -37,13 +49,13 @@ ColumnLayout {
     TextBlock {
         visible: root.items.length === 0
         title: "STATUS NOTIFIER"
-        lines: ["no registered tray clients", "waiting for background apps", "left: activate // right: native menu"]
+        lines: ["no registered tray clients", "waiting for background apps", "left: activate // right: menu when advertised"]
     }
 
     TextBlock {
         visible: root.items.length > 0
         title: "TRAY PROTOCOL"
-        lines: ["left click activates item", "right click opens native menu when exposed", "menu styling is delegated to platform bridge"]
+        lines: ["MENU: right click sends secondary activation", "ONLY: item primarily exposes a menu", "ACT: no menu advertised; right click falls back to activate", "native menu styling is delegated to platform bridge"]
     }
 
     Repeater {
@@ -85,7 +97,7 @@ ColumnLayout {
                     Layout.preferredWidth: 22
                     Layout.preferredHeight: 22
                     color: "transparent"
-                    border.color: Theme.lineDim
+                    border.color: trayEntry.modelData.onlyMenu ? Theme.line : (trayEntry.modelData.hasMenu ? Theme.lineDim : Theme.border)
                     border.width: Theme.lineWidth
 
                     IconImage {
@@ -114,9 +126,9 @@ ColumnLayout {
                 }
 
                 TacticalLabel {
-                    text: trayEntry.modelData.hasMenu ? "MENU" : "L/R"
-                    accent: trayEntry.modelData.hasMenu
-                    dim: !trayEntry.modelData.hasMenu
+                    text: root.affordanceText(trayEntry.modelData)
+                    accent: trayEntry.modelData.hasMenu || trayEntry.modelData.onlyMenu
+                    dim: !trayEntry.modelData.hasMenu && !trayEntry.modelData.onlyMenu
                 }
             }
         }

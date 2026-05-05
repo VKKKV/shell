@@ -182,6 +182,7 @@ This project is visual-first and desktop-shell-specific, but minimum interaction
 - clickable areas should have obvious hover/active feedback
 - labels should elide rather than overflow
 - fallback states should render readable text, not blank panels
+- tray controls should show whether an item advertises a menu and should not call native menu display APIs without a real Window-backed surface
 
 ---
 

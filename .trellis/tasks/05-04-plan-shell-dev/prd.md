@@ -466,3 +466,30 @@ Decision (ADR-lite):
 - Context: central expansion surfaces already deploy from source widgets, but animation durations are repeated and orbital uses slightly different timing from the other panels.
 - Decision: introduce small motion constants in `Theme.qml` and reuse them across the expansion layer.
 - Consequences: improves consistency and keeps future expansion surfaces from copying magic animation values. The trade-off is not adding more advanced keyframed mechanical motion yet; that can follow if visual feedback calls for it.
+
+### Next Optimization MVP: Tray Menu Affordance Polish
+
+Plan source: refinement backlog item for tray UX hints and safer fallback text when a tray item lacks native menu support.
+
+Requirements:
+
+- Add visible state hints for tray items that expose native menus or are menu-only.
+- Avoid attempting secondary/native menu activation when a tray item reports no menu.
+- Keep using `activate()`/`secondaryActivate()` only; do not reintroduce `PlatformMenuEntry.display(item, ...)` until a Window-backed or custom tray menu surface exists.
+- Improve drawer fallback copy so users understand left/right click behavior and menu availability.
+- Preserve current tray strip and command-center drawer layout.
+
+Acceptance Criteria:
+
+- [x] Top tray strip visually differentiates menu-capable and menu-only items.
+- [x] Tray drawer shows explicit `MENU`, `ONLY`, or `ACT` affordance per item.
+- [x] Right-click on items without menus falls back to normal activation instead of unsafe menu display attempts.
+- [x] No `PlatformMenuEntry.display(item, ...)` calls are introduced.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: tray menus previously failed when display was called with an item delegate. The current implementation avoids that by using activation fallbacks, but users still need clearer per-item affordance hints.
+- Decision: keep the safe activation path and improve visible protocol labels instead of building custom menu rendering.
+- Consequences: tray UX becomes clearer without risking native menu runtime errors. The trade-off is that menu styling and deeper menu browsing remain delegated/deferred.

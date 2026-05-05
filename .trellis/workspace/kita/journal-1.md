@@ -465,3 +465,10 @@
 - Added shared motion constants to `Theme.qml` for resize timing, deploy timing, fade timing, and collapsed expansion scale.
 - Updated `HudLayout.qml` to use the shared motion constants for top/bottom/side resizing and all orbital/CPU/network/filesystem/log expansion deploy animations.
 - Added a fade behavior to the expansion backdrop layer while preserving backdrop click close, close buttons, and `Escape` close routing.
+
+## 2026-05-05 - Tray Menu Affordance Polish
+
+- Added the next PRD phase for safer tray menu affordance hints without reintroducing unsafe `PlatformMenuEntry.display(item, ...)` calls.
+- Updated `TrayStrip.qml` to visually mark menu-capable and menu-only tray items with border/indicator hints.
+- Updated `TrayDrawer.qml` to show per-item `MENU`, `ONLY`, or `ACT` affordance text and clearer tray protocol copy.
+- Right-clicking tray items without advertised menus now falls back to normal activation instead of attempting secondary/native menu behavior.
