@@ -36,13 +36,17 @@ QtObject {
     readonly property int compactWidth: 1500
 
     readonly property string fontFamily: "monospace"
-    readonly property int fontTiny: 10
-    readonly property int fontSmall: 12
-    readonly property int fontNormal: 14
-    readonly property int fontLarge: 22
-    readonly property int fontClock: 34
+    readonly property int fontTiny: scaledFont(10)
+    readonly property int fontSmall: scaledFont(12)
+    readonly property int fontNormal: scaledFont(14)
+    readonly property int fontLarge: scaledFont(22)
+    readonly property int fontClock: scaledFont(34)
 
     function dimAccent(value: string): string {
         return /^#[0-9a-fA-F]{6}$/.test(value) ? "#66" + value.slice(1) : "#66F2C94C";
+    }
+
+    function scaledFont(value: int): int {
+        return Math.max(8, Math.round(value * SettingsService.fontScale));
     }
 }

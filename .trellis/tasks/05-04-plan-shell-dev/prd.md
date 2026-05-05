@@ -262,6 +262,35 @@ Decision (ADR-lite):
 - Decision: replace the globe entry with a dedicated tactical clock component that owns its visual dial but delegates click behavior to the existing left-panel `ExpansionService.show("orbital", ...)` path.
 - Consequences: improves discoverability and semantic fit for the orbital map. The trade-off is losing the standalone globe visual; if desired later, globe imagery can return as secondary decoration inside the clock or orbital panel.
 
+### Next Optimization MVP: Appearance Font Size Control
+
+User instruction captured 2026-05-05: add a development phase for adjusting font size from the settings panel. Future settings should be able to tune all appearance-related controls, including fonts and similar visual parameters.
+
+Requirements:
+
+- Add a settings-panel control for global font scale/size.
+- Persist the font setting through the existing settings pipeline instead of keeping it session-only.
+- Apply the setting through `Theme.qml` so existing `Theme.fontTiny`, `Theme.fontSmall`, `Theme.fontNormal`, `Theme.fontLarge`, and `Theme.fontClock` consumers update consistently.
+- Keep defaults matching the current visual size.
+- Clamp allowed values to a safe range so panels remain usable.
+- Treat this as the first step toward broader appearance settings; do not implement every appearance option in this phase.
+
+Acceptance Criteria:
+
+- [x] Command-center settings expose a font size/scale control.
+- [x] Font scale persists via `SettingsService.qml` and `void-shell-settings`.
+- [x] Theme font properties respond to the setting without changing every consumer manually.
+- [x] Invalid persisted font scale values are normalized/clamped to safe defaults.
+- [x] Existing panel layout remains usable at minimum/default/maximum font scale.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: visual tuning currently covers accent/profile/background/intensity but not typography size, which is a core appearance control for dense HUD readability.
+- Decision: add a single persisted `visual.fontScale` control first and derive existing theme font sizes from it. This is smaller and safer than introducing many per-font settings.
+- Consequences: users can tune readability immediately, and future appearance controls can follow the same settings-service/helper/theme pattern. The trade-off is coarse global scaling rather than independent per-surface typography control.
+
 ### Panel Control Standardization
 
 - Central overlays should close with a consistent shortcut: `Escape`.

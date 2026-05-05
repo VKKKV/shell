@@ -390,6 +390,56 @@ ColumnLayout {
     }
 
     MetricRow {
+        label: "FONT SCALE"
+        value: Math.round(SettingsService.fontScale * 100) + "%"
+        progress: (SettingsService.fontScale - 0.85) / 0.4
+        accent: true
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.fontScale = Math.max(0.85, SettingsService.fontScale - 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "FONT -"
+                accent: true
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.fontScale = Math.min(1.25, SettingsService.fontScale + 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "FONT +"
+                accent: true
+            }
+        }
+    }
+
+    MetricRow {
         label: "POLL RATE"
         value: (SettingsService.updateIntervalMs / 1000).toFixed(0) + "S"
         progress: (SettingsService.updateIntervalMs - 1000) / 29000

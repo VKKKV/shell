@@ -18,6 +18,7 @@ Singleton {
     property string accentColor: "#F2C94C"
     property string backgroundMode: "void"
     property real intensity: 1
+    property real fontScale: 1
     property int updateIntervalMs: 5000
     property string statusLine: "settings: defaults active"
     property string helperPath: "./zig-out/bin/void-shell-settings"
@@ -31,6 +32,10 @@ Singleton {
 
     function clampIntensity(value: real): real {
         return Math.max(0.5, Math.min(1.5, value));
+    }
+
+    function clampFontScale(value: real): real {
+        return Math.max(0.85, Math.min(1.25, value));
     }
 
     function clampUpdateInterval(value: int): int {
@@ -59,6 +64,8 @@ Singleton {
                 scanlinesEnabled = settings.visual.scanlinesEnabled;
             if (typeof settings.visual.intensity === "number")
                 intensity = clampIntensity(settings.visual.intensity);
+            if (typeof settings.visual.fontScale === "number")
+                fontScale = clampFontScale(settings.visual.fontScale);
             if (typeof settings.visual.profile === "string")
                 themeProfile = normalizeThemeProfile(settings.visual.profile);
             if (typeof settings.visual.accentColor === "string")
@@ -89,6 +96,7 @@ Singleton {
             visual: {
                 scanlinesEnabled: scanlinesEnabled,
                 intensity: clampIntensity(intensity),
+                fontScale: clampFontScale(fontScale),
                 profile: normalizeThemeProfile(themeProfile),
                 accentColor: normalizeAccentColor(accentColor),
                 backgroundMode: normalizeBackgroundMode(backgroundMode)
@@ -158,6 +166,14 @@ Singleton {
         const clamped = clampIntensity(intensity);
         if (clamped !== intensity) {
             intensity = clamped;
+            return;
+        }
+        scheduleSave();
+    }
+    onFontScaleChanged: {
+        const clamped = clampFontScale(fontScale);
+        if (clamped !== fontScale) {
+            fontScale = clamped;
             return;
         }
         scheduleSave();

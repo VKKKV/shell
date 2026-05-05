@@ -3,6 +3,7 @@ const std = @import("std");
 const Settings = struct {
     scanlines_enabled: bool = true,
     intensity: f64 = 1.0,
+    font_scale: f64 = 1.0,
     profile: []const u8 = "amber",
     accent_color: []const u8 = "#F2C94C",
     background_mode: []const u8 = "void",
@@ -19,6 +20,7 @@ const defaults_json =
     \\  "visual": {
     \\    "scanlinesEnabled": true,
     \\    "intensity": 1.0,
+    \\    "fontScale": 1.0,
     \\    "profile": "amber",
     \\    "accentColor": "#F2C94C",
     \\    "backgroundMode": "void"
@@ -126,6 +128,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
     if (objectField(root, "visual")) |visual| {
         settings.scanlines_enabled = boolField(visual, "scanlinesEnabled") orelse settings.scanlines_enabled;
         settings.intensity = clampFloat(numberField(visual, "intensity") orelse settings.intensity, 0.5, 1.5);
+        settings.font_scale = clampFloat(numberField(visual, "fontScale") orelse settings.font_scale, 0.85, 1.25);
         settings.profile = themeProfileField(visual, "profile") orelse settings.profile;
         settings.accent_color = accentColorField(visual, "accentColor") orelse settings.accent_color;
         settings.background_mode = backgroundModeField(visual, "backgroundMode") orelse settings.background_mode;
@@ -148,6 +151,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\  "visual": {{
         \\    "scanlinesEnabled": {},
         \\    "intensity": {d:.1},
+        \\    "fontScale": {d:.2},
         \\    "profile": "{s}",
         \\    "accentColor": "{s}",
         \\    "backgroundMode": "{s}"
@@ -165,6 +169,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
     , .{
         settings.scanlines_enabled,
         settings.intensity,
+        settings.font_scale,
         settings.profile,
         settings.accent_color,
         settings.background_mode,

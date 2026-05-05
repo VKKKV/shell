@@ -386,3 +386,11 @@
 - Removed the second-driven rotating radial/laser scan spokes from `OrbitalExpansionPanel.qml` while keeping orbit rings, reticles, planet nodes, trails, labels, and ephemeris metadata.
 - Removed the now-unused `scanPhase` repaint dependency from the orbital canvas.
 - Verified the change with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
+
+## 2026-05-05 - Appearance Font Scale Setting
+
+- Added the next PRD/PLAN phase for settings-panel font size control and future broader appearance controls.
+- Added persisted `visual.fontScale` support in `SettingsService.qml`, `src/settings/main.zig`, `docs/settings.md`, and frontend type-safety code-specs.
+- Updated `Theme.qml` so `Theme.fontTiny`, `fontSmall`, `fontNormal`, `fontLarge`, and `fontClock` scale globally from `SettingsService.fontScale`.
+- Added command-center settings controls for `FONT SCALE` with `FONT -` and `FONT +` actions clamped to `0.85..1.25`.
+- Verified QML lint, Zig build, whitespace, settings helper defaults/clamp behavior with temporary `XDG_CONFIG_HOME`, and Quickshell startup smoke.

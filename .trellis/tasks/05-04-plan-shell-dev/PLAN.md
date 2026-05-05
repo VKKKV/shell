@@ -202,7 +202,7 @@ Current status: all concrete planned phases below are covered by first-party sli
 
 Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
 
-Current next phase: replace the left-panel orbital globe child surface with a mimetic tactical clock and move the click-to-open planetary map interaction onto that clock. Preserve the existing `OrbitalExpansionPanel` and `ExpansionService.show("orbital", ...)` route.
+Current next phase: add a settings-panel font size/scale control as the first broader appearance-setting slice. Persist it through `SettingsService.qml`/`void-shell-settings`, apply it through `Theme.qml`, and keep future appearance controls such as more detailed font and visual parameters deferred.
 
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.
