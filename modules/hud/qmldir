@@ -12,4 +12,5 @@ CommandCenterPanel 1.0 CommandCenterPanel.qml
 CommandCenterOverviewColumn 1.0 CommandCenterOverviewColumn.qml
 CommandCenterSettingsColumn 1.0 CommandCenterSettingsColumn.qml
 CommandCenterActionsColumn 1.0 CommandCenterActionsColumn.qml
+TrayDrawer 1.0 TrayDrawer.qml
 NotificationToast 1.0 NotificationToast.qml

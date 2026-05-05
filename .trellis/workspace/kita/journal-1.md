@@ -144,3 +144,9 @@
 - Added `services/PowerProfileService.qml` using `powerprofilesctl` for profile reads/writes and `systemd-inhibit` for an idle inhibitor toggle.
 - Added command center power profile controls and idle inhibitor status with fallback service lines.
 - Updated the roadmap to mark the first power-profile/idle control surface covered.
+
+## 2026-05-05 - Tray Drawer Slice
+
+- Added `modules/hud/TrayDrawer.qml` for command-center status notifier items with tactical icon cells.
+- Wired left-click activate and right-click secondary activate for tray entries.
+- Updated the roadmap to distinguish covered tray drawer behavior from future popout menu bridging.

@@ -112,6 +112,10 @@ ColumnLayout {
         lines: ["$XDG_CONFIG_HOME/void-shell/settings.json", "schema normalization: active", "helper: void-shell-settings"]
     }
 
+    TrayDrawer {
+        Layout.fillWidth: true
+    }
+
     TacticalLabel {
         Layout.fillWidth: true
         text: "CALENDAR // " + CalendarService.monthText
