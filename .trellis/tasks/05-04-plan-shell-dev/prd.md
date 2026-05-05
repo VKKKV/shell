@@ -291,6 +291,35 @@ Decision (ADR-lite):
 - Decision: add a single persisted `visual.fontScale` control first and derive existing theme font sizes from it. This is smaller and safer than introducing many per-font settings.
 - Consequences: users can tune readability immediately, and future appearance controls can follow the same settings-service/helper/theme pattern. The trade-off is coarse global scaling rather than independent per-surface typography control.
 
+### Next Optimization MVP: Appearance Opacity And Scanline Controls
+
+User instruction context: continue broadening settings-panel appearance controls after font scaling so visual parameters can be tuned from the UI rather than hard-coded.
+
+Requirements:
+
+- Add settings-panel controls for panel opacity and scanline strength.
+- Persist both settings through `SettingsService.qml` and `void-shell-settings`.
+- Apply panel opacity through `Theme.qml` so tactical frames and shared panel backgrounds update consistently.
+- Apply scanline strength through existing scanline rendering points without duplicating per-panel logic.
+- Keep current defaults visually equivalent to the existing shell.
+- Clamp values to safe ranges so panels remain readable.
+
+Acceptance Criteria:
+
+- [x] Command-center settings expose `PANEL OPACITY` and `SCANLINE STRENGTH` controls.
+- [x] `visual.panelOpacity` and `visual.scanlineStrength` persist and normalize through the Zig helper.
+- [x] Tactical frame backgrounds respond to panel opacity without changing every panel manually.
+- [x] Existing scanline overlays respond to scanline strength and can still be disabled by `scanlinesEnabled`.
+- [x] Defaults match the current look closely.
+- [x] `qmllint`, `zig build`, `git diff --check`, settings helper clamp checks, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: after adding `visual.fontScale`, the next highest-value appearance controls are panel opacity and scanline strength because they affect global readability and visual density.
+- Decision: add two coarse global settings, `visual.panelOpacity` and `visual.scanlineStrength`, instead of many per-component opacity knobs.
+- Consequences: improves user-facing visual tuning while preserving simple global theme contracts. Fine-grained border/text/background opacity remains future work.
+
 ### Panel Control Standardization
 
 - Central overlays should close with a consistent shortcut: `Escape`.

@@ -4,6 +4,8 @@ const Settings = struct {
     scanlines_enabled: bool = true,
     intensity: f64 = 1.0,
     font_scale: f64 = 1.0,
+    panel_opacity: f64 = 0.8,
+    scanline_strength: f64 = 1.0,
     profile: []const u8 = "amber",
     accent_color: []const u8 = "#F2C94C",
     background_mode: []const u8 = "void",
@@ -21,6 +23,8 @@ const defaults_json =
     \\    "scanlinesEnabled": true,
     \\    "intensity": 1.0,
     \\    "fontScale": 1.0,
+    \\    "panelOpacity": 0.8,
+    \\    "scanlineStrength": 1.0,
     \\    "profile": "amber",
     \\    "accentColor": "#F2C94C",
     \\    "backgroundMode": "void"
@@ -129,6 +133,8 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.scanlines_enabled = boolField(visual, "scanlinesEnabled") orelse settings.scanlines_enabled;
         settings.intensity = clampFloat(numberField(visual, "intensity") orelse settings.intensity, 0.5, 1.5);
         settings.font_scale = clampFloat(numberField(visual, "fontScale") orelse settings.font_scale, 0.85, 1.25);
+        settings.panel_opacity = clampFloat(numberField(visual, "panelOpacity") orelse settings.panel_opacity, 0.55, 0.95);
+        settings.scanline_strength = clampFloat(numberField(visual, "scanlineStrength") orelse settings.scanline_strength, 0.25, 1.75);
         settings.profile = themeProfileField(visual, "profile") orelse settings.profile;
         settings.accent_color = accentColorField(visual, "accentColor") orelse settings.accent_color;
         settings.background_mode = backgroundModeField(visual, "backgroundMode") orelse settings.background_mode;
@@ -152,6 +158,8 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\    "scanlinesEnabled": {},
         \\    "intensity": {d:.1},
         \\    "fontScale": {d:.2},
+        \\    "panelOpacity": {d:.2},
+        \\    "scanlineStrength": {d:.2},
         \\    "profile": "{s}",
         \\    "accentColor": "{s}",
         \\    "backgroundMode": "{s}"
@@ -170,6 +178,8 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.scanlines_enabled,
         settings.intensity,
         settings.font_scale,
+        settings.panel_opacity,
+        settings.scanline_strength,
         settings.profile,
         settings.accent_color,
         settings.background_mode,

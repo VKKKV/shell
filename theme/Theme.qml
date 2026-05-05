@@ -7,8 +7,8 @@ import "../services"
 QtObject {
     readonly property string profile: SettingsService.themeProfile
     readonly property color background: "#000000"
-    readonly property color panel: "#cc030303"
-    readonly property color panelSoft: "#99080808"
+    readonly property color panel: alphaColor("#030303", SettingsService.panelOpacity)
+    readonly property color panelSoft: alphaColor("#080808", Math.max(0.35, SettingsService.panelOpacity * 0.75))
     readonly property color line: SettingsService.accentColor
     readonly property color lineDim: dimAccent(SettingsService.accentColor)
     readonly property color text: "#E0E0E0"
@@ -48,5 +48,10 @@ QtObject {
 
     function scaledFont(value: int): int {
         return Math.max(8, Math.round(value * SettingsService.fontScale));
+    }
+
+    function alphaColor(rgb: string, opacity: real): string {
+        const alpha = Math.max(0, Math.min(255, Math.round(opacity * 255)));
+        return "#" + alpha.toString(16).padStart(2, "0") + rgb.slice(1);
     }
 }

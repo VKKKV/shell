@@ -65,7 +65,8 @@ Item {
 
     ScanlineOverlay {
         anchors.fill: parent
-        lineOpacity: 0.035 * SettingsService.intensity
+        visible: SettingsService.scanlinesEnabled
+        lineOpacity: 0.035 * SettingsService.intensity * SettingsService.scanlineStrength
     }
 
     Canvas {

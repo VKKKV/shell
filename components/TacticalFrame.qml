@@ -1,4 +1,5 @@
 import "../theme"
+import "../services"
 import QtQuick
 
 Rectangle {
@@ -26,7 +27,7 @@ Rectangle {
     ScanlineOverlay {
         visible: root.scanlines
         anchors.fill: parent
-        lineOpacity: root.highlighted ? 0.065 : 0.04
+        lineOpacity: (root.highlighted ? 0.065 : 0.04) * SettingsService.scanlineStrength
     }
 
     Rectangle {

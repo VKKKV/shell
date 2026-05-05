@@ -440,6 +440,106 @@ ColumnLayout {
     }
 
     MetricRow {
+        label: "PANEL OPACITY"
+        value: Math.round(SettingsService.panelOpacity * 100) + "%"
+        progress: (SettingsService.panelOpacity - 0.55) / 0.4
+        accent: true
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.panelOpacity = Math.max(0.55, SettingsService.panelOpacity - 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "PANEL -"
+                accent: true
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.panelOpacity = Math.min(0.95, SettingsService.panelOpacity + 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "PANEL +"
+                accent: true
+            }
+        }
+    }
+
+    MetricRow {
+        label: "SCANLINE STRENGTH"
+        value: Math.round(SettingsService.scanlineStrength * 100) + "%"
+        progress: (SettingsService.scanlineStrength - 0.25) / 1.5
+        accent: SettingsService.scanlinesEnabled
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.scanlineStrength = Math.max(0.25, SettingsService.scanlineStrength - 0.25)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "SCAN -"
+                accent: true
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.scanlineStrength = Math.min(1.75, SettingsService.scanlineStrength + 0.25)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "SCAN +"
+                accent: true
+            }
+        }
+    }
+
+    MetricRow {
         label: "POLL RATE"
         value: (SettingsService.updateIntervalMs / 1000).toFixed(0) + "S"
         progress: (SettingsService.updateIntervalMs - 1000) / 29000

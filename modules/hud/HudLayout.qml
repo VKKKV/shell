@@ -55,7 +55,7 @@ Item {
     ScanlineOverlay {
         visible: SettingsService.scanlinesEnabled
         anchors.fill: parent
-        lineOpacity: 0.025 * SettingsService.intensity
+        lineOpacity: 0.025 * SettingsService.intensity * SettingsService.scanlineStrength
     }
 
     Rectangle {

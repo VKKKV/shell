@@ -401,3 +401,11 @@
 - Updated README controls/features to mention the analog orbital clock, time-based orbital sensor, and font scale setting.
 - Updated frontend directory/component specs to include `AnalogOrbitClock.qml`, `CentralPanelChrome.qml`, current service granularity, and shared central chrome contract details.
 - Updated `PLAN.md` architecture/current-status sections to treat the analog clock entry, graphical time-based ephemeris, central panel chrome, and `visual.fontScale` as the current implementation baseline.
+
+## 2026-05-05 - Appearance Opacity And Scanline Controls
+
+- Added the next PRD/PLAN phase for broader appearance controls after font scaling: `visual.panelOpacity` and `visual.scanlineStrength`.
+- Added persisted settings support in `SettingsService.qml`, `src/settings/main.zig`, `docs/settings.md`, and frontend type-safety specs.
+- Updated `Theme.qml` to derive `Theme.panel` and `Theme.panelSoft` from `SettingsService.panelOpacity`, preserving the default `#cc030303` look at `0.8`.
+- Wired `SettingsService.scanlineStrength` into global, frame, and orbital `ScanlineOverlay` call sites while preserving the `scanlinesEnabled` toggle.
+- Added command-center settings controls for `PANEL OPACITY` and `SCANLINE STRENGTH`.

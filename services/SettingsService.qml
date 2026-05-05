@@ -19,6 +19,8 @@ Singleton {
     property string backgroundMode: "void"
     property real intensity: 1
     property real fontScale: 1
+    property real panelOpacity: 0.8
+    property real scanlineStrength: 1
     property int updateIntervalMs: 5000
     property string statusLine: "settings: defaults active"
     property string helperPath: "./zig-out/bin/void-shell-settings"
@@ -36,6 +38,14 @@ Singleton {
 
     function clampFontScale(value: real): real {
         return Math.max(0.85, Math.min(1.25, value));
+    }
+
+    function clampPanelOpacity(value: real): real {
+        return Math.max(0.55, Math.min(0.95, value));
+    }
+
+    function clampScanlineStrength(value: real): real {
+        return Math.max(0.25, Math.min(1.75, value));
     }
 
     function clampUpdateInterval(value: int): int {
@@ -66,6 +76,10 @@ Singleton {
                 intensity = clampIntensity(settings.visual.intensity);
             if (typeof settings.visual.fontScale === "number")
                 fontScale = clampFontScale(settings.visual.fontScale);
+            if (typeof settings.visual.panelOpacity === "number")
+                panelOpacity = clampPanelOpacity(settings.visual.panelOpacity);
+            if (typeof settings.visual.scanlineStrength === "number")
+                scanlineStrength = clampScanlineStrength(settings.visual.scanlineStrength);
             if (typeof settings.visual.profile === "string")
                 themeProfile = normalizeThemeProfile(settings.visual.profile);
             if (typeof settings.visual.accentColor === "string")
@@ -97,6 +111,8 @@ Singleton {
                 scanlinesEnabled: scanlinesEnabled,
                 intensity: clampIntensity(intensity),
                 fontScale: clampFontScale(fontScale),
+                panelOpacity: clampPanelOpacity(panelOpacity),
+                scanlineStrength: clampScanlineStrength(scanlineStrength),
                 profile: normalizeThemeProfile(themeProfile),
                 accentColor: normalizeAccentColor(accentColor),
                 backgroundMode: normalizeBackgroundMode(backgroundMode)
@@ -174,6 +190,22 @@ Singleton {
         const clamped = clampFontScale(fontScale);
         if (clamped !== fontScale) {
             fontScale = clamped;
+            return;
+        }
+        scheduleSave();
+    }
+    onPanelOpacityChanged: {
+        const clamped = clampPanelOpacity(panelOpacity);
+        if (clamped !== panelOpacity) {
+            panelOpacity = clamped;
+            return;
+        }
+        scheduleSave();
+    }
+    onScanlineStrengthChanged: {
+        const clamped = clampScanlineStrength(scanlineStrength);
+        if (clamped !== scanlineStrength) {
+            scanlineStrength = clamped;
             return;
         }
         scheduleSave();
