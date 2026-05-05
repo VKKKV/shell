@@ -547,7 +547,7 @@ Decision (ADR-lite):
 - Decision: plan Niri behind a shared service boundary and defer implementation until the contract is explicit.
 - Consequences: reduces future cross-compositor churn. The trade-off is one extra abstraction layer when Niri work starts.
 
-### Planned Future Work: Orbital Planet Map Optimization
+### Next Optimization MVP: Orbital Planet Map Optimization
 
 User instruction captured 2026-05-05: add planetary map optimization to the development plan.
 
@@ -561,11 +561,11 @@ Requirements:
 
 Acceptance Criteria:
 
-- [ ] Planet positions still derive from current time and local orbital-period data.
-- [ ] Rendering avoids unnecessary full-canvas repaint loops when visual state is unchanged.
-- [ ] Labels remain readable at common 1080p and 1440p central safe-area sizes.
-- [ ] The orbital panel keeps the shared close behavior, safe-area sizing, and expansion motion.
-- [ ] `qmllint`, `git diff --check`, `quickshell -p .`, and a short manual open/close orbital smoke check pass before commit.
+- [x] Planet positions still derive from current time and local orbital-period data.
+- [x] Rendering avoids unnecessary full-canvas repaint loops when visual state is unchanged.
+- [x] Labels remain readable at common 1080p and 1440p central safe-area sizes.
+- [x] The orbital panel keeps the shared close behavior, safe-area sizing, and expansion motion.
+- [x] `qmllint`, `git diff --check`, `quickshell -p .`, and a short manual open/close orbital smoke check pass before commit.
 
 Decision (ADR-lite):
 

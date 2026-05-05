@@ -486,3 +486,10 @@
 - Added a planned orbital planet map optimization phase to the PRD/PLAN focused on visual hierarchy and bounded repaint behavior.
 - Added a frontend state-management code-spec scenario for a multi-compositor workspace contract, including QML-facing signatures, fallback behavior, validation matrix, tests, and wrong/correct examples.
 - Added a frontend component code-spec scenario for `OrbitalExpansionPanel.qml` rendering optimization, including planet-data fields, safe-area/deployment contracts, validation matrix, tests, and wrong/correct examples.
+
+## 2026-05-05 - Orbital Planet Map Optimization
+
+- Promoted the planned orbital planet map optimization to the active development phase.
+- Added safe planet field helper functions in `OrbitalExpansionPanel.qml` so missing/invalid local planet data falls back without breaking the panel.
+- Improved orbit rendering hierarchy with alternating orbit weights, accent arc fragments, radial spokes, and clearer sensor-ring depth.
+- Improved planet labels with left/right side placement, clamping, connector lines, and helper-derived code/AU/period values while preserving time-derived orbital positions.

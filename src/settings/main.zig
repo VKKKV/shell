@@ -49,83 +49,74 @@ const defaults_json =
     \\}
 ;
 
-pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
+pub fn main(init: std.process.Init) !void {
+    const allocator = init.gpa;
+    const io = init.io;
 
-    var args = try std.process.argsWithAllocator(allocator);
-    defer args.deinit();
-
-    _ = args.next();
-    const command = args.next() orelse "defaults";
+    const args = try init.minimal.args.toSlice(init.arena.allocator());
+    const command = if (args.len > 1) args[1] else "defaults";
 
     if (std.mem.eql(u8, command, "defaults")) {
-        try writeStdout(defaults_json ++ "\n");
+        try writeStdout(io, defaults_json ++ "\n");
     } else if (std.mem.eql(u8, command, "read")) {
-        try readSettings(allocator);
+        try readSettings(allocator, io, init.environ_map);
     } else if (std.mem.eql(u8, command, "write")) {
-        const payload = args.next() orelse return error.MissingJsonPayload;
-        try writeSettings(allocator, payload);
+        if (args.len < 3)
+            return error.MissingJsonPayload;
+        const payload = args[2];
+        try writeSettings(allocator, io, init.environ_map, payload);
     } else {
-        try writeStderr("usage: void-shell-settings [defaults|read|write '<json>']\n");
+        try writeStderr(io, "usage: void-shell-settings [defaults|read|write '<json>']\n");
         return error.UnknownCommand;
     }
 }
 
-fn settingsPath(allocator: std.mem.Allocator) ![]u8 {
-    if (std.process.getEnvVarOwned(allocator, "XDG_CONFIG_HOME")) |config_home| {
-        defer allocator.free(config_home);
+fn settingsPath(allocator: std.mem.Allocator, environ_map: *const std.process.Environ.Map) ![]u8 {
+    if (environ_map.get("XDG_CONFIG_HOME")) |config_home|
         return std.fs.path.join(allocator, &.{ config_home, "void-shell", "settings.json" });
-    } else |_| {
-        const home = try std.process.getEnvVarOwned(allocator, "HOME");
-        defer allocator.free(home);
-        return std.fs.path.join(allocator, &.{ home, ".config", "void-shell", "settings.json" });
-    }
+    const home = environ_map.get("HOME") orelse return error.EnvironmentVariableMissing;
+    return std.fs.path.join(allocator, &.{ home, ".config", "void-shell", "settings.json" });
 }
 
-fn ensureSettingsDir(allocator: std.mem.Allocator, path: []const u8) !void {
+fn ensureSettingsDir(allocator: std.mem.Allocator, io: std.Io, path: []const u8) !void {
     const dir_path = std.fs.path.dirname(path) orelse return;
-    std.fs.cwd().makePath(dir_path) catch |err| {
-        try writeStderrAlloc(allocator, "warning: failed to create settings directory: {s}\n", .{@errorName(err)});
+    std.Io.Dir.cwd().createDirPath(io, dir_path) catch |err| {
+        try writeStderrAlloc(allocator, io, "warning: failed to create settings directory: {s}\n", .{@errorName(err)});
         return err;
     };
 }
 
-fn readSettings(allocator: std.mem.Allocator) !void {
-    const path = try settingsPath(allocator);
+fn readSettings(allocator: std.mem.Allocator, io: std.Io, environ_map: *const std.process.Environ.Map) !void {
+    const path = try settingsPath(allocator, environ_map);
     defer allocator.free(path);
 
-    const file = std.fs.cwd().openFile(path, .{}) catch |err| switch (err) {
+    const data = std.Io.Dir.cwd().readFileAlloc(io, path, allocator, .limited(1024 * 1024)) catch |err| switch (err) {
         error.FileNotFound => {
-            try writeStdout(defaults_json ++ "\n");
+            try writeStdout(io, defaults_json ++ "\n");
             return;
         },
         else => return err,
     };
-    defer file.close();
-
-    const data = try file.readToEndAlloc(allocator, 1024 * 1024);
     defer allocator.free(data);
-    try writeStdout(data);
+    try writeStdout(io, data);
     if (data.len == 0 or data[data.len - 1] != '\n')
-        try writeStdout("\n");
+        try writeStdout(io, "\n");
 }
 
-fn writeSettings(allocator: std.mem.Allocator, payload: []const u8) !void {
+fn writeSettings(allocator: std.mem.Allocator, io: std.Io, environ_map: *const std.process.Environ.Map, payload: []const u8) !void {
     const normalized = try normalizeSettings(allocator, payload);
     defer allocator.free(normalized);
 
-    const path = try settingsPath(allocator);
+    const path = try settingsPath(allocator, environ_map);
     defer allocator.free(path);
-    try ensureSettingsDir(allocator, path);
+    try ensureSettingsDir(allocator, io, path);
 
-    const file = try std.fs.cwd().createFile(path, .{ .truncate = true });
-    defer file.close();
-    try file.writeAll(normalized);
-    try file.writeAll("\n");
-    try writeStdout(normalized);
-    try writeStdout("\n");
+    var file = try std.Io.Dir.cwd().createFile(io, path, .{ .truncate = true });
+    defer file.close(io);
+    try file.writeStreamingAll(io, normalized);
+    try file.writeStreamingAll(io, "\n");
+    try writeStdout(io, normalized);
+    try writeStdout(io, "\n");
 }
 
 fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
@@ -296,16 +287,16 @@ fn clampInt(value: i64, min: i64, max: i64) i64 {
     return @max(min, @min(max, value));
 }
 
-fn writeStdout(bytes: []const u8) !void {
-    try std.fs.File.stdout().writeAll(bytes);
+fn writeStdout(io: std.Io, bytes: []const u8) !void {
+    try std.Io.File.stdout().writeStreamingAll(io, bytes);
 }
 
-fn writeStderr(bytes: []const u8) !void {
-    try std.fs.File.stderr().writeAll(bytes);
+fn writeStderr(io: std.Io, bytes: []const u8) !void {
+    try std.Io.File.stderr().writeStreamingAll(io, bytes);
 }
 
-fn writeStderrAlloc(allocator: std.mem.Allocator, comptime fmt: []const u8, args: anytype) !void {
+fn writeStderrAlloc(allocator: std.mem.Allocator, io: std.Io, comptime fmt: []const u8, args: anytype) !void {
     const message = try std.fmt.allocPrint(allocator, fmt, args);
     defer allocator.free(message);
-    try writeStderr(message);
+    try writeStderr(io, message);
 }

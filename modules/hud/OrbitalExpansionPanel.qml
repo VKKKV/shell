@@ -23,8 +23,36 @@ Item {
         { name: "NEPTUNE", code: "NE", radius: 0.93, au: 30.069, period: 60189.0, epochLongitude: 304.348, size: 10 }
     ]
 
+    function planetName(planet: var): string {
+        return typeof planet.name === "string" && planet.name.length > 0 ? planet.name : "UNKNOWN";
+    }
+
+    function planetCode(planet: var): string {
+        return typeof planet.code === "string" && planet.code.length > 0 ? planet.code : planetName(planet).slice(0, 2).toUpperCase();
+    }
+
+    function planetRadiusScale(planet: var): real {
+        return typeof planet.radius === "number" && planet.radius > 0 ? planet.radius : 0.5;
+    }
+
+    function planetPeriod(planet: var): real {
+        return typeof planet.period === "number" && planet.period > 0 ? planet.period : 365.256;
+    }
+
+    function planetSize(planet: var): real {
+        return typeof planet.size === "number" && planet.size > 0 ? planet.size : 7;
+    }
+
+    function planetAu(planet: var): real {
+        return typeof planet.au === "number" && planet.au > 0 ? planet.au : 1;
+    }
+
+    function planetEpochLongitude(planet: var): real {
+        return typeof planet.epochLongitude === "number" ? planet.epochLongitude : 0;
+    }
+
     function planetAngle(planet: var): real {
-        return positiveDegrees(planet.epochLongitude + daysSinceEpoch * 360 / planet.period);
+        return positiveDegrees(planetEpochLongitude(planet) + daysSinceEpoch * 360 / planetPeriod(planet));
     }
 
     function positiveDegrees(value: real): real {
@@ -33,7 +61,7 @@ Item {
     }
 
     function orbitalProgress(planet: var): real {
-        return positiveDegrees(planetAngle(planet) - planet.epochLongitude) / 360;
+        return positiveDegrees(planetAngle(planet) - planetEpochLongitude(planet)) / 360;
     }
 
     function formattedLongitude(planet: var): string {
@@ -41,21 +69,35 @@ Item {
     }
 
     function formattedPeriod(planet: var): string {
-        return planet.period >= 1000 ? (planet.period / 365.256).toFixed(1) + " Y" : planet.period.toFixed(1) + " D";
+        const period = planetPeriod(planet);
+        return period >= 1000 ? (period / 365.256).toFixed(1) + " Y" : period.toFixed(1) + " D";
     }
 
     function planetLine(planet: var): string {
-        return planet.code + " " + formattedLongitude(planet) + " // " + planet.au.toFixed(3) + " AU // " + formattedPeriod(planet);
+        return planetCode(planet) + " " + formattedLongitude(planet) + " // " + planetAu(planet).toFixed(3) + " AU // " + formattedPeriod(planet);
     }
 
     function planetX(planet: var, angleOffset: real): real {
         const angle = (planetAngle(planet) + angleOffset) * Math.PI / 180;
-        return width / 2 + Math.cos(angle) * orbitRadius * planet.radius;
+        return width / 2 + Math.cos(angle) * orbitRadius * planetRadiusScale(planet);
     }
 
     function planetY(planet: var, angleOffset: real): real {
         const angle = (planetAngle(planet) + angleOffset) * Math.PI / 180;
-        return height / 2 + Math.sin(angle) * orbitRadius * planet.radius * 0.58;
+        return height / 2 + Math.sin(angle) * orbitRadius * planetRadiusScale(planet) * 0.58;
+    }
+
+    function labelOnRight(planet: var): bool {
+        return Math.cos(planetAngle(planet) * Math.PI / 180) >= 0;
+    }
+
+    function labelX(planet: var, px: real, labelWidth: real): real {
+        const preferred = labelOnRight(planet) ? px + 16 : px - labelWidth - 16;
+        return Math.min(width - labelWidth - 10, Math.max(10, preferred));
+    }
+
+    function labelY(py: real, labelHeight: real): real {
+        return Math.min(height - labelHeight - 10, Math.max(42, py - labelHeight / 2));
     }
 
     Rectangle {
@@ -95,22 +137,32 @@ Item {
             const radius = root.orbitRadius;
             const dim = Theme.border.toString();
             const textDim = Theme.textDim.toString();
+            const accent = Theme.line.toString();
 
             ctx.save();
             ctx.translate(cx, cy);
 
             ctx.strokeStyle = dim;
-            ctx.lineWidth = 1;
-            ctx.globalAlpha = 0.7;
             for (let i = 0; i < root.planets.length; i++) {
-                const orbit = root.planets[i].radius * radius;
+                const orbit = root.planetRadiusScale(root.planets[i]) * radius;
+                ctx.lineWidth = i % 2 === 0 ? 1.3 : 0.8;
+                ctx.globalAlpha = 0.34 + i * 0.045;
                 ctx.beginPath();
                 ctx.ellipse(0, 0, orbit, orbit * 0.58, 0, 0, Math.PI * 2);
                 ctx.stroke();
+
+                if (i % 2 === 0) {
+                    ctx.globalAlpha = 0.12;
+                    ctx.strokeStyle = accent;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, orbit + 4, orbit * 0.58 + 2, 0, -Math.PI * 0.08, Math.PI * 0.16);
+                    ctx.stroke();
+                    ctx.strokeStyle = dim;
+                }
             }
 
-            ctx.globalAlpha = 0.32;
-            ctx.strokeStyle = Theme.line.toString();
+            ctx.globalAlpha = 0.36;
+            ctx.strokeStyle = accent;
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.arc(0, 0, 24, 0, Math.PI * 2);
@@ -131,6 +183,17 @@ Item {
                 ctx.beginPath();
                 ctx.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner * 0.58);
                 ctx.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer * 0.58);
+                ctx.stroke();
+            }
+
+            ctx.globalAlpha = 0.16;
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = 1;
+            for (let spoke = 0; spoke < 8; spoke++) {
+                const angle = spoke * Math.PI / 4;
+                ctx.beginPath();
+                ctx.moveTo(Math.cos(angle) * 52, Math.sin(angle) * 52 * 0.58);
+                ctx.lineTo(Math.cos(angle) * radius * 0.98, Math.sin(angle) * radius * 0.98 * 0.58);
                 ctx.stroke();
             }
 
@@ -163,13 +226,13 @@ Item {
                 Rectangle {
                     required property int index
 
-                    readonly property real trailStep: (index + 1) * Math.max(2, 720 / parent.modelData.period)
+                    readonly property real trailStep: (index + 1) * Math.max(2, 720 / root.planetPeriod(parent.modelData))
                     readonly property real trailX: root.planetX(parent.modelData, -trailStep)
                     readonly property real trailY: root.planetY(parent.modelData, -trailStep)
 
                     x: trailX - width / 2
                     y: trailY - height / 2
-                    width: Math.max(2, parent.modelData.size - index * 1.6)
+                    width: Math.max(2, root.planetSize(parent.modelData) - index * 1.6)
                     height: width
                     radius: width / 2
                     color: Theme.line
@@ -180,7 +243,7 @@ Item {
             Rectangle {
                 x: parent.px - width / 2
                 y: parent.py - height / 2
-                width: modelData.size + 10
+                width: root.planetSize(modelData) + 10
                 height: width
                 radius: width / 2
                 color: "transparent"
@@ -192,7 +255,7 @@ Item {
             Rectangle {
                 x: parent.px - width / 2
                 y: parent.py - height / 2
-                width: modelData.size
+                width: root.planetSize(modelData)
                 height: width
                 radius: width / 2
                 color: Theme.line
@@ -218,10 +281,27 @@ Item {
             }
 
             TacticalLabel {
-                x: Math.min(root.width - implicitWidth - 8, Math.max(8, parent.px + 12))
-                y: Math.min(root.height - implicitHeight - 8, Math.max(8, parent.py - 18))
-                text: modelData.code + " // " + Math.round(root.planetAngle(modelData)) + "° // " + modelData.au.toFixed(1) + "AU"
+                x: root.labelX(modelData, parent.px, implicitWidth)
+                y: root.labelY(parent.py, implicitHeight)
+                text: root.planetCode(modelData) + " // " + Math.round(root.planetAngle(modelData)) + "° // " + root.planetAu(modelData).toFixed(1) + "AU"
                 accent: true
+                size: Theme.fontTiny
+            }
+
+            Rectangle {
+                x: root.labelOnRight(modelData) ? parent.px + 6 : root.labelX(modelData, parent.px, labelProbe.implicitWidth) + labelProbe.implicitWidth
+                y: parent.py
+                width: Math.max(8, Math.abs(root.labelX(modelData, parent.px, labelProbe.implicitWidth) - parent.px) - 10)
+                height: Theme.lineWidth
+                color: Theme.lineDim
+                opacity: 0.42
+            }
+
+            TacticalLabel {
+                id: labelProbe
+
+                visible: false
+                text: root.planetCode(modelData) + " // " + Math.round(root.planetAngle(modelData)) + "° // " + root.planetAu(modelData).toFixed(1) + "AU"
                 size: Theme.fontTiny
             }
         }
@@ -262,7 +342,7 @@ Item {
                     spacing: 8
 
                     TacticalLabel {
-                        text: modelData.code
+                        text: root.planetCode(modelData)
                         accent: true
                         size: Theme.fontTiny
                     }
@@ -270,8 +350,8 @@ Item {
                     TacticalLabel {
                         Layout.fillWidth: true
                         text: root.planetLine(modelData)
-                        dim: modelData.code !== "EA"
-                        accent: modelData.code === "EA"
+                        dim: root.planetCode(modelData) !== "EA"
+                        accent: root.planetCode(modelData) === "EA"
                         size: Theme.fontTiny
                         elide: Text.ElideRight
                     }
