@@ -13,6 +13,13 @@ RowLayout {
 
     spacing: 6
 
+    function openMenu(item: SystemTrayItem, target: Item): void {
+        if (item.hasMenu)
+            item.display(target, target.width, target.height);
+        else
+            item.secondaryActivate();
+    }
+
     TacticalLabel {
         text: "TRAY " + root.items.length
         accent: root.items.length > 0
@@ -59,7 +66,7 @@ RowLayout {
                 hoverEnabled: true
                 onClicked: (mouse) => {
                     if (mouse.button === Qt.RightButton)
-                        trayCell.modelData.secondaryActivate();
+                        root.openMenu(trayCell.modelData, trayCell);
                     else
                         trayCell.modelData.activate();
                 }

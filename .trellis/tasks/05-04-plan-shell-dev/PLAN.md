@@ -298,7 +298,7 @@ The reference shells provide a much broader desktop environment than the current
 - Power profile and idle inhibitor controls with command fallback.
 - Battery/power-source display with AC/no-battery fallback.
 - Media/MPRIS display and previous/play-pause/next controls via `playerctl`.
-- Minimal system tray strip and command-center tray drawer using Quickshell status notifier items.
+- Minimal system tray strip and command-center tray drawer using Quickshell status notifier items, including Quickshell v0.3 menu display bridging.
 - Edge exclusion zones that reserve real screen space and push Hyprland windows into the center safe area.
 - Command center foundation with app/action launcher search.
 - Notification server fallback, DND/history controls, and tactical toast UI.
@@ -357,7 +357,7 @@ The reference shells provide a much broader desktop environment than the current
 
 - System tray.
   - References: Caelestia tray, Noctalia tray panel/widget settings, Dank system tray bar.
-  - Tactical version: tray drawer with square tactical icon cells and activate/secondary-activate controls. Current remaining gap is deeper popout menu bridging.
+  - Tactical version: tray drawer with square tactical icon cells, activate/secondary-activate controls, and `SystemTrayItem.display()` menu bridging. Current remaining gap is deeper custom menu styling only.
 
 - Session/power/idle/lock controls.
   - References: Caelestia session/idle/lock, Noctalia session menu/idle/power profile, Dank session/power sleep/idle services.

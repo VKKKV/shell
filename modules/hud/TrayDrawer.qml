@@ -14,6 +14,13 @@ ColumnLayout {
 
     spacing: 8
 
+    function openMenu(item: SystemTrayItem, target: Item): void {
+        if (item.hasMenu)
+            item.display(target, target.width, target.height);
+        else
+            item.secondaryActivate();
+    }
+
     TacticalLabel {
         Layout.fillWidth: true
         text: "TRAY DRAWER // " + root.items.length + " ITEMS"
@@ -50,7 +57,7 @@ ColumnLayout {
                 hoverEnabled: true
                 onClicked: (mouse) => {
                     if (mouse.button === Qt.RightButton)
-                        trayEntry.modelData.secondaryActivate();
+                        root.openMenu(trayEntry.modelData, trayEntry);
                     else
                         trayEntry.modelData.activate();
                 }
@@ -95,8 +102,9 @@ ColumnLayout {
                 }
 
                 TacticalLabel {
-                    text: "L/R"
-                    dim: true
+                    text: trayEntry.modelData.hasMenu ? "MENU" : "L/R"
+                    accent: trayEntry.modelData.hasMenu
+                    dim: !trayEntry.modelData.hasMenu
                 }
             }
         }

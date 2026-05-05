@@ -234,3 +234,9 @@
 - Added `services/EmojiService.qml` with a local tactical emoji palette and `wl-copy` copy action.
 - Added emoji cells to the command center actions column and emoji status to the overview.
 - Updated the roadmap to mark local emoji palette covered while leaving keybind recorder deferred.
+
+## 2026-05-05 - Tray Menu Bridge Slice
+
+- Confirmed Quickshell v0.3 `SystemTrayItem` exposes `hasMenu` and `display(parentWindow, relativeX, relativeY)` for platform menu bridging.
+- Updated `TrayStrip.qml` and `TrayDrawer.qml` right-click handling to open tray menus through `display()` when available, falling back to secondary activation.
+- Updated the roadmap to mark tray menu bridging covered while leaving only deeper custom menu styling deferred.
