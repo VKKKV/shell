@@ -222,3 +222,9 @@
 - Added persistent `visual.backgroundMode` settings support for `void`, `grid`, and `radar`.
 - Added grid/radar background rendering behind the HUD and command center controls for selecting background mode.
 - Updated the settings contract and roadmap to mark local background mode management covered while leaving external wallpaper browsing/dynamic color deferred.
+
+## 2026-05-05 - Keybind List Slice
+
+- Added `services/KeybindService.qml` using `hyprctl binds -j` to expose Hyprland keybind rows with fallback status.
+- Added keybind list telemetry to the command center actions column and service status overview.
+- Updated the roadmap to mark keybind list covered while leaving recorder and emoji deferred.

@@ -123,6 +123,45 @@ ColumnLayout {
         dim: !KeyboardService.available
     }
 
+    TextBlock {
+        title: "KEYBINDS // HYPRLAND"
+        lines: [KeybindService.statusLine]
+    }
+
+    Repeater {
+        model: KeybindService.keybinds.slice(0, 4)
+
+        Rectangle {
+            required property var modelData
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 28
+            color: "transparent"
+            border.color: Theme.lineDim
+            border.width: Theme.lineWidth
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: 8
+
+                TacticalLabel {
+                    text: modelData.combo
+                    accent: true
+                    elide: Text.ElideRight
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: modelData.action
+                    dim: true
+                    elide: Text.ElideRight
+                }
+            }
+        }
+    }
+
     Repeater {
         model: KeyboardService.keyboards.slice(0, 3)
 
