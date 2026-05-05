@@ -486,7 +486,7 @@ Acceptance Criteria:
 - [x] Right-click on items without menus falls back to normal activation instead of unsafe menu display attempts.
 - [x] No `PlatformMenuEntry.display(item, ...)` calls are introduced.
 - [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
-- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
 
 Decision (ADR-lite):
 
