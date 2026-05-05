@@ -119,8 +119,22 @@ TacticalFrame {
             lines: ["NODE_01  ONLINE", "NODE_02  ACTIVE 10.0.0.12", "NODE_03  ONLINE", "NODE_04  IDLE", "NODE_05  ONLINE"]
         }
 
-        LogStream {
-            lines: [HyprlandService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: logStream.implicitHeight
+
+            LogStream {
+                id: logStream
+
+                lines: [HyprlandService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: ExpansionService.show("logs", "right-logs")
+            }
         }
 
     }

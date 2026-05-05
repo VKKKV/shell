@@ -204,3 +204,9 @@
 - Added `modules/hud/FilesystemExpansionPanel.qml` as a right-panel drill-down surface for mount usage, storage state, and memory coupling.
 - Made the right monitor filesystem block clickable and routed it through `ExpansionService.show("filesystem", "right-filesystem")`.
 - Updated the roadmap to mark filesystem expansion covered and leave log stream drill-down next.
+
+## 2026-05-05 - Log Stream Expansion Slice
+
+- Added `modules/hud/LogExpansionPanel.qml` as a right-panel drill-down surface for service status events and warning classification.
+- Made the right monitor log stream clickable and routed it through `ExpansionService.show("logs", "right-logs")`.
+- Updated the roadmap to mark the current interactive expansion MVP covered.

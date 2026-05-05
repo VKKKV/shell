@@ -313,6 +313,7 @@ The reference shells provide a much broader desktop environment than the current
 - CPU core matrix drill-down expansion using the shared central overlay pattern.
 - Network matrix drill-down expansion using the shared central overlay pattern.
 - Filesystem matrix drill-down expansion using the shared central overlay pattern.
+- Log stream drill-down expansion using the shared central overlay pattern.
 - Tactical settings panel foundation.
 - Zig settings helper with JSON normalization.
 - Hyprland namespace/blur documentation.
@@ -320,7 +321,7 @@ The reference shells provide a much broader desktop environment than the current
 ### Missing High-Value Features From References
 - Interactive tactical expansion surfaces.
   - References: dashboard popouts, detail drawers, and desktop widget overlays in Caelestia/Noctalia/DankMaterialShell.
-  - Tactical version: click left/right panel child elements to deploy central enlarged machine-interface panels. Orbital globe to ASCII solar-system analysis, CPU core matrix, network matrix, and filesystem matrix drill-downs are implemented; later surfaces can drill into logs, tray, or weather.
+  - Tactical version: click left/right panel child elements to deploy central enlarged machine-interface panels. Orbital globe to ASCII solar-system analysis plus CPU, network, filesystem, and log stream drill-downs are implemented; later surfaces can drill into tray or weather if needed.
 
 - Dashboard/control center popout.
   - References: Caelestia dashboard, Noctalia panels, DankDash/control center.
@@ -377,7 +378,8 @@ The reference shells provide a much broader desktop environment than the current
    - Covered: right-panel CPU matrix drill-down using the shared central overlay pattern.
    - Covered: right-panel network matrix drill-down using the shared central overlay pattern.
    - Covered: right-panel filesystem matrix drill-down using the shared central overlay pattern.
-   - Next expansion: apply the same overlay pattern to log stream drill-down.
+   - Covered: right-panel log stream drill-down using the shared central overlay pattern.
+   - Next expansions are optional polish or new domains, not required for the current interactive expansion MVP.
 
 1. Settings persistence wiring.
    - Connect QML `SettingsService` to `void-shell-settings` read/write.
