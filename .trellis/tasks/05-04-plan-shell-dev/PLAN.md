@@ -341,15 +341,15 @@ The reference shells provide a much broader desktop environment than the current
 
 - Audio, microphone, and media/MPRIS.
   - References: Caelestia Audio/Players/Lyrics, Noctalia AudioService/MediaService/SpectrumService, Dank AudioService/MprisController/MediaPlayerTab.
-  - Tactical version: audio levels, microphone controls, mute controls, MPRIS track display, and local spectrum/visualizer. Current remaining gap is optional lyrics only.
+  - Tactical version: audio levels, microphone controls, mute controls, MPRIS track display, local spectrum/visualizer, and local lyrics file fallback.
 
 - Network detail, VPN, Bluetooth.
   - References: Caelestia Network/Nmcli/VPN/Bluetooth popouts, Noctalia Network/VPN/Bluetooth services, Dank Network/VPN/Bluetooth services.
-  - Tactical version: network detail panel, Wi-Fi list, VPN status, Bluetooth device monitor. Current remaining gap is actionable Wi-Fi/VPN/Bluetooth connection flows.
+  - Tactical version: network detail panel, Wi-Fi list, VPN status, Bluetooth device monitor, Wi-Fi rescan/connect actions, active connection reconnect/drop actions, and Bluetooth power toggle.
 
 - Wallpaper/theme/color management.
   - References: Caelestia wallpapers/colours, Noctalia theme/color/wallpaper services, Dank wallpaper/theme browser.
-  - Tactical version: theme profile selector, warning-yellow palette tuning, local tactical background modes, wallpaper/background integration, optional dynamic color extraction. Current remaining gap is external wallpaper browser and dynamic color extraction.
+  - Tactical version: theme profile selector, warning-yellow palette tuning, local tactical background modes, local wallpaper scan/apply integration, and sampled color-to-profile suggestion.
 
 - Dock/taskbar/active window overview.
   - References: Dank dock/taskbar/overview, Noctalia dock/desktop widgets, Caelestia active window/window info.
@@ -357,15 +357,15 @@ The reference shells provide a much broader desktop environment than the current
 
 - System tray.
   - References: Caelestia tray, Noctalia tray panel/widget settings, Dank system tray bar.
-  - Tactical version: tray drawer with square tactical icon cells, activate/secondary-activate controls, and `SystemTrayItem.display()` menu bridging. Current remaining gap is deeper custom menu styling only.
+  - Tactical version: tray drawer with square tactical icon cells, activate/secondary-activate controls, `SystemTrayItem.display()` menu bridging, and explicit protocol affordance text. Native menu styling remains delegated to the platform bridge by design.
 
 - Session/power/idle/lock controls.
   - References: Caelestia session/idle/lock, Noctalia session menu/idle/power profile, Dank session/power sleep/idle services.
-  - Tactical version: authenticated power menu, idle inhibitor, power profile, lock/logout/reboot/shutdown actions. Current remaining gap is deeper idle/power-profile polish rather than the first control surface.
+  - Tactical version: authenticated power menu, idle inhibitor, power profile, profile hints, and lock/logout/reboot/shutdown actions.
 
 - Clipboard, keyboard layout, emoji, keybinds.
   - References: Noctalia clipboard/emoji/keyboard services, Dank keybinds/clipboard, Caelestia keyboard layout popout.
-  - Tactical version: clipboard buffer panel, keyboard layout indicator, keybind list, and local emoji palette. Current remaining gap is keybind recorder.
+  - Tactical version: clipboard buffer panel, keyboard layout indicator, keybind list, local keybind recorder/template copier, and local emoji palette.
 
 - Weather, calendar, location/night light.
   - References: all three have weather/calendar/location-related panels or services.
@@ -373,7 +373,11 @@ The reference shells provide a much broader desktop environment than the current
 
 - Desktop widgets and plugin/IPC system.
   - References: Noctalia plugins/desktop widgets/IPC, Dank plugins/desktop widgets/IPC, Caelestia utilities/drawers.
-  - Tactical version: defer until core shell is stable; add only after several first-party widgets prove registry value.
+  - Tactical version: intentionally out of scope for this task. The current shell uses first-party modules/services only; no plugin registry or IPC layer is needed until external consumers or user-configurable third-party widgets are explicitly required.
+
+### Remaining Scope Decision
+
+All concrete high-value roadmap gaps for this planning task are now covered as first-party tactical slices. Further work should be opened as new Trellis tasks only if it introduces a new product direction, such as third-party widget plugins, custom tray menu rendering beyond Quickshell's native bridge, or deeper network credential management.
 
 ### Recommended Feature Build Order
 

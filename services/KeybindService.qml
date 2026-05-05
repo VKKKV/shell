@@ -11,6 +11,72 @@ Singleton {
     property var keybinds: []
     property bool available: false
     property string statusLine: "keybinds: initializing"
+    property bool recording: false
+    property string recordedCombo: ""
+    property string recordStatusLine: "recorder: standby"
+    property string pendingCopyText: ""
+
+    function startRecording(): void {
+        recording = true;
+        recordedCombo = "";
+        recordStatusLine = "recorder: armed, press key chord";
+    }
+
+    function cancelRecording(): void {
+        recording = false;
+        recordStatusLine = recordedCombo.length > 0 ? "recorder: captured " + recordedCombo : "recorder: standby";
+    }
+
+    function formatEvent(event: var): string {
+        const parts = [];
+        if (event.modifiers & Qt.ControlModifier)
+            parts.push("CTRL");
+        if (event.modifiers & Qt.AltModifier)
+            parts.push("ALT");
+        if (event.modifiers & Qt.ShiftModifier)
+            parts.push("SHIFT");
+        if (event.modifiers & Qt.MetaModifier)
+            parts.push("SUPER");
+
+        const key = event.text && event.text.length > 0 ? event.text.toUpperCase() : event.key.toString();
+        if (key.length > 0 && parts.indexOf(key) < 0)
+            parts.push(key);
+
+        return parts.join("+");
+    }
+
+    function captureEvent(event: var): void {
+        if (!recording)
+            return;
+
+        if (event.key === Qt.Key_Escape) {
+            cancelRecording();
+            event.accepted = true;
+            return;
+        }
+
+        const combo = formatEvent(event);
+        if (combo.length === 0)
+            return;
+
+        recordedCombo = combo;
+        recording = false;
+        recordStatusLine = "recorder: captured " + combo;
+        event.accepted = true;
+    }
+
+    function copyBindTemplate(): void {
+        if (recordedCombo.length === 0) {
+            recordStatusLine = "recorder: no chord captured";
+            return;
+        }
+
+        const parts = recordedCombo.split("+");
+        const key = parts.pop() || "KEY";
+        const mods = parts.join(" ");
+        pendingCopyText = "bind = " + (mods.length > 0 ? mods + ", " : "") + key + ", exec, <command>";
+        copyProcess.running = true;
+    }
 
     function updateBinds(output: string): void {
         try {
@@ -70,6 +136,13 @@ Singleton {
                 root.available = false;
                 root.statusLine = "keybinds: hyprctl fallback";
             }
+        }
+    }
+
+    property Process copyProcess: Process {
+        command: ["sh", "-c", "printf %s \"$1\" | wl-copy", "void-shell-keybind", root.pendingCopyText]
+        onExited: (exitCode) => {
+            root.recordStatusLine = exitCode === 0 ? "recorder: template copied" : "recorder: wl-copy fallback";
         }
     }
 }

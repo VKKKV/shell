@@ -9,7 +9,7 @@ ColumnLayout {
 
     TextBlock {
         title: "SESSION // POWER"
-        lines: [SessionService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine, "click once to arm, click same action again to execute"]
+        lines: [SessionService.statusLine, PowerProfileService.statusLine, PowerProfileService.powerHintLine, PowerProfileService.idleStatusLine, "click once to arm, click same action again to execute"]
     }
 
     TacticalLabel {
@@ -125,7 +125,82 @@ ColumnLayout {
 
     TextBlock {
         title: "KEYBINDS // HYPRLAND"
-        lines: [KeybindService.statusLine]
+        lines: [KeybindService.statusLine, KeybindService.recordStatusLine]
+    }
+
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 58
+        color: recorderArea.containsMouse || KeybindService.recording ? Theme.panelSoft : "transparent"
+        border.color: KeybindService.recording || KeybindService.recordedCombo.length > 0 ? Theme.line : Theme.lineDim
+        border.width: Theme.lineWidth
+        focus: KeybindService.recording
+        Keys.onPressed: event => KeybindService.captureEvent(event)
+
+        MouseArea {
+            id: recorderArea
+
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+            onClicked: {
+                parent.forceActiveFocus();
+                KeybindService.startRecording();
+            }
+        }
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            spacing: 8
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 0
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: KeybindService.recording ? "KEYBIND RECORDER // ARMED" : "KEYBIND RECORDER // CLICK TO ARM"
+                    accent: KeybindService.recording
+                    elide: Text.ElideRight
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: KeybindService.recordedCombo.length > 0 ? KeybindService.recordedCombo : "ESC cancels // captured chord becomes bind template"
+                    accent: KeybindService.recordedCombo.length > 0
+                    dim: KeybindService.recordedCombo.length === 0
+                    elide: Text.ElideRight
+                }
+            }
+
+            Rectangle {
+                Layout.preferredWidth: 78
+                Layout.preferredHeight: 26
+                color: copyArea.containsMouse ? Theme.lineDim : "transparent"
+                border.color: KeybindService.recordedCombo.length > 0 ? Theme.line : Theme.lineDim
+                border.width: Theme.lineWidth
+                opacity: KeybindService.recordedCombo.length > 0 ? 1 : 0.45
+
+                MouseArea {
+                    id: copyArea
+
+                    anchors.fill: parent
+                    cursorShape: KeybindService.recordedCombo.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    enabled: KeybindService.recordedCombo.length > 0
+                    hoverEnabled: true
+                    onClicked: KeybindService.copyBindTemplate()
+                }
+
+                TacticalLabel {
+                    anchors.centerIn: parent
+                    text: "COPY"
+                    accent: copyArea.containsMouse
+                    dim: KeybindService.recordedCombo.length === 0
+                }
+            }
+        }
     }
 
     Repeater {

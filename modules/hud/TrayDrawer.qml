@@ -31,7 +31,13 @@ ColumnLayout {
     TextBlock {
         visible: root.items.length === 0
         title: "STATUS NOTIFIER"
-        lines: ["no registered tray clients", "waiting for background apps"]
+        lines: ["no registered tray clients", "waiting for background apps", "left: activate // right: native menu"]
+    }
+
+    TextBlock {
+        visible: root.items.length > 0
+        title: "TRAY PROTOCOL"
+        lines: ["left click activates item", "right click opens native menu when exposed", "menu styling is delegated to platform bridge"]
     }
 
     Repeater {

@@ -15,6 +15,8 @@ Singleton {
     property string title: "NO ACTIVE MEDIA"
     property string displayText: "MEDIA // IDLE"
     property string statusLine: "media: fallback"
+    property var lyricLines: ["lyrics: no active media"]
+    property string lyricStatusLine: "lyrics: standby"
 
     function compact(text: string, maxLength: int): string {
         if (text.length <= maxLength)
@@ -41,6 +43,19 @@ Singleton {
         const track = artist.length > 0 ? artist + " - " + title : title;
         displayText = compact(status + " // " + track, 44);
         statusLine = "media: " + player + " " + status.toLowerCase();
+        lyricsProcess.running = true;
+    }
+
+    function updateLyrics(output: string): void {
+        const next = [];
+        for (const line of output.trim().split("\n")) {
+            const clean = line.replace(/^\[[^\]]*\]/, "").trim();
+            if (clean.length > 0)
+                next.push(compact(clean, 58));
+        }
+
+        lyricLines = next.length > 0 ? next.slice(0, 5) : ["lyrics: local file not indexed", "place .lrc/.txt under ~/Music/Lyrics", "format: Artist - Title.lrc"];
+        lyricStatusLine = next.length > 0 ? "lyrics: local file" : "lyrics: local fallback";
     }
 
     function refresh(): void {
@@ -94,5 +109,16 @@ Singleton {
     property Process actionProcess: Process {
         command: ["playerctl", "metadata"]
         onExited: root.refresh()
+    }
+
+    property Process lyricsProcess: Process {
+        command: ["sh", "-c", "artist=$(printf '%s' \"$1\" | tr '/:' '__'); title=$(printf '%s' \"$2\" | tr '/:' '__'); for dir in \"$HOME/Music/Lyrics\" \"$HOME/.local/share/lyrics\"; do for ext in lrc txt; do file=\"$dir/$artist - $title.$ext\"; [ -f \"$file\" ] && { sed -n '1,12p' \"$file\"; exit 0; }; file=\"$dir/$title.$ext\"; [ -f \"$file\" ] && { sed -n '1,12p' \"$file\"; exit 0; }; done; done", "void-shell-lyrics", root.artist, root.title]
+        stdout: StdioCollector {
+            onStreamFinished: root.updateLyrics(text)
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0)
+                root.lyricStatusLine = "lyrics: local fallback";
+        }
     }
 }

@@ -240,3 +240,17 @@
 - Confirmed Quickshell v0.3 `SystemTrayItem` exposes `hasMenu` and `display(parentWindow, relativeX, relativeY)` for platform menu bridging.
 - Updated `TrayStrip.qml` and `TrayDrawer.qml` right-click handling to open tray menus through `display()` when available, falling back to secondary activation.
 - Updated the roadmap to mark tray menu bridging covered while leaving only deeper custom menu styling deferred.
+
+## 2026-05-05 - Keybind Recorder Slice
+
+- Extended `services/KeybindService.qml` with transient key chord recording state, Escape cancellation, and Hyprland bind template copying through `wl-copy`.
+- Added a tactical keybind recorder cell to the command center actions column with armed/captured states and copy affordance.
+- Updated the roadmap to mark the clipboard/keyboard/emoji/keybind feature group covered.
+
+## 2026-05-05 - Roadmap Completion Slices
+
+- Extended `NetworkDetailService.qml` with Wi-Fi rescan/connect, active connection reconnect/drop, Bluetooth power toggle actions, and command-center controls.
+- Added `services/WallpaperService.qml` for local wallpaper indexing, `swww`/`hyprpaper` apply fallback, sampled color telemetry, and theme-profile suggestion controls.
+- Added local lyrics fallback support to `MediaService.qml` and displayed lyrics telemetry in the command center.
+- Added power-profile hint text and tray protocol affordance text to close polish-only roadmap gaps.
+- Updated `PLAN.md` to mark concrete high-value gaps covered and explicitly keep plugin/IPC/third-party desktop widgets out of scope for this task.

@@ -19,6 +19,62 @@ ColumnLayout {
         dim: NetworkDetailService.wifiNetworks.length === 0
     }
 
+    TextBlock {
+        title: "NETWORK ACTIONS"
+        lines: [NetworkDetailService.actionStatusLine, "click AP to connect saved/open profile", "active links can reconnect or drop"]
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 26
+            color: wifiRescanArea.containsMouse ? Theme.panelSoft : "transparent"
+            border.color: Theme.lineDim
+            border.width: Theme.lineWidth
+
+            MouseArea {
+                id: wifiRescanArea
+
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: NetworkDetailService.rescanWifi()
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "WIFI RESCAN"
+                accent: wifiRescanArea.containsMouse
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 26
+            color: NetworkDetailService.bluetoothStatus === "POWERED" ? Theme.lineDim : "transparent"
+            border.color: NetworkDetailService.bluetoothStatus !== "OFFLINE" ? Theme.line : Theme.lineDim
+            border.width: Theme.lineWidth
+            opacity: NetworkDetailService.bluetoothStatus !== "OFFLINE" ? 1 : 0.45
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: NetworkDetailService.bluetoothStatus !== "OFFLINE" ? Qt.PointingHandCursor : Qt.ArrowCursor
+                enabled: NetworkDetailService.bluetoothStatus !== "OFFLINE"
+                onClicked: NetworkDetailService.toggleBluetoothPower()
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "BT // " + NetworkDetailService.bluetoothStatus
+                accent: NetworkDetailService.bluetoothStatus === "POWERED"
+                dim: NetworkDetailService.bluetoothStatus !== "POWERED"
+            }
+        }
+    }
+
     Repeater {
         model: NetworkDetailService.wifiNetworks.slice(0, 3)
 
@@ -54,6 +110,69 @@ ColumnLayout {
                     text: modelData.security
                     dim: true
                     elide: Text.ElideRight
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: mouse => {
+                    if (mouse.button === Qt.LeftButton)
+                        NetworkDetailService.connectWifi(parent.modelData.ssid);
+                }
+            }
+        }
+    }
+
+    Repeater {
+        model: NetworkDetailService.activeConnections.slice(0, 3)
+
+        Rectangle {
+            required property var modelData
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 26
+            color: linkArea.containsMouse ? Theme.panelSoft : "transparent"
+            border.color: Theme.lineDim
+            border.width: Theme.lineWidth
+
+            MouseArea {
+                id: linkArea
+
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                hoverEnabled: true
+                onClicked: mouse => {
+                    if (mouse.button === Qt.RightButton)
+                        NetworkDetailService.deactivateConnection(parent.modelData.name);
+                    else
+                        NetworkDetailService.refreshConnection(parent.modelData.name);
+                }
+            }
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: 8
+
+                TacticalLabel {
+                    text: modelData.type.toUpperCase()
+                    accent: true
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: modelData.name + " // " + modelData.device
+                    elide: Text.ElideRight
+                    accent: linkArea.containsMouse
+                }
+
+                TacticalLabel {
+                    text: "L:UP R:DOWN"
+                    dim: true
                 }
             }
         }
@@ -123,6 +242,11 @@ ColumnLayout {
         Layout.preferredHeight: 38
         values: AudioService.spectrum
         barColor: AudioService.available && !AudioService.muted ? Theme.line : Theme.lineDim
+    }
+
+    TextBlock {
+        title: "LYRICS // LOCAL"
+        lines: [MediaService.lyricStatusLine].concat(MediaService.lyricLines)
     }
 
     TextBlock {

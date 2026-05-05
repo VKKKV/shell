@@ -15,6 +15,7 @@ Singleton {
     property bool commandAvailable: false
     property string statusLine: "power profile: initializing"
     property string idleStatusLine: "idle inhibitor: initializing"
+    property string powerHintLine: "power hint: probing"
 
     function updateProfile(output: string): void {
         const text = output.trim();
@@ -28,6 +29,7 @@ Singleton {
         available = true;
         profile = text.toUpperCase();
         statusLine = "power profile: " + profile;
+        powerHintLine = profile === "PERFORMANCE" ? "power hint: maximum clocks, higher drain" : (profile === "POWER-SAVER" ? "power hint: reduced clocks, extended runtime" : "power hint: balanced tactical envelope");
     }
 
     function setProfile(next: string): void {
@@ -81,6 +83,7 @@ Singleton {
                 root.available = false;
                 root.profile = "UNAVAILABLE";
                 root.statusLine = "power profile: command missing";
+                root.powerHintLine = "power hint: install powerprofilesctl";
             }
         }
     }
@@ -95,6 +98,7 @@ Singleton {
                 root.available = false;
                 root.profile = "UNAVAILABLE";
                 root.statusLine = "power profile: command fallback";
+                root.powerHintLine = "power hint: profile read failed";
             }
         }
     }

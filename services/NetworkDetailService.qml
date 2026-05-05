@@ -16,7 +16,47 @@ Singleton {
     property string bluetoothStatus: "UNKNOWN"
     property var wifiNetworks: []
     property string wifiStatus: "SCANNING"
+    property string actionStatusLine: "network actions: standby"
+    property string pendingConnection: ""
+    property string pendingWifiSsid: ""
     property string statusLine: "network detail: initializing"
+
+    function refreshConnection(name: string): void {
+        pendingConnection = name;
+        actionProcess.command = ["nmcli", "connection", "up", name];
+        actionProcess.running = true;
+        actionStatusLine = "network actions: reconnect " + name;
+    }
+
+    function deactivateConnection(name: string): void {
+        pendingConnection = name;
+        actionProcess.command = ["nmcli", "connection", "down", name];
+        actionProcess.running = true;
+        actionStatusLine = "network actions: down " + name;
+    }
+
+    function connectWifi(ssid: string): void {
+        if (ssid.length === 0 || ssid === "HIDDEN") {
+            actionStatusLine = "network actions: hidden SSID skipped";
+            return;
+        }
+
+        pendingWifiSsid = ssid;
+        wifiConnectProcess.command = ["nmcli", "device", "wifi", "connect", ssid];
+        wifiConnectProcess.running = true;
+        actionStatusLine = "network actions: wifi connect " + ssid;
+    }
+
+    function rescanWifi(): void {
+        wifiRescanProcess.running = true;
+        actionStatusLine = "network actions: wifi rescan";
+    }
+
+    function toggleBluetoothPower(): void {
+        bluetoothToggleProcess.command = ["bluetoothctl", "power", bluetoothStatus === "POWERED" ? "off" : "on"];
+        bluetoothToggleProcess.running = true;
+        actionStatusLine = bluetoothStatus === "POWERED" ? "network actions: bluetooth off" : "network actions: bluetooth on";
+    }
 
     function updateNetwork(output: string): void {
         const next = [];
@@ -157,6 +197,38 @@ Singleton {
                 root.wifiNetworks = [];
                 root.wifiStatus = "WIFI FALLBACK";
             }
+        }
+    }
+
+    property Process actionProcess: Process {
+        command: ["true"]
+        onExited: (exitCode) => {
+            root.actionStatusLine = exitCode === 0 ? "network actions: ok " + root.pendingConnection : "network actions: nmcli action fallback";
+            root.refresh();
+        }
+    }
+
+    property Process wifiConnectProcess: Process {
+        command: ["true"]
+        onExited: (exitCode) => {
+            root.actionStatusLine = exitCode === 0 ? "network actions: wifi ok " + root.pendingWifiSsid : "network actions: wifi password/manual required";
+            root.refresh();
+        }
+    }
+
+    property Process wifiRescanProcess: Process {
+        command: ["nmcli", "device", "wifi", "rescan"]
+        onExited: (exitCode) => {
+            root.actionStatusLine = exitCode === 0 ? "network actions: rescan ok" : "network actions: rescan fallback";
+            root.refresh();
+        }
+    }
+
+    property Process bluetoothToggleProcess: Process {
+        command: ["true"]
+        onExited: (exitCode) => {
+            root.actionStatusLine = exitCode === 0 ? "network actions: bluetooth toggled" : "network actions: bluetooth fallback";
+            root.refresh();
         }
     }
 }
