@@ -53,6 +53,53 @@ ColumnLayout {
 
     TacticalLabel {
         Layout.fillWidth: true
+        text: "CALENDAR // " + CalendarService.monthText
+        accent: true
+    }
+
+    GridLayout {
+        Layout.fillWidth: true
+        columns: 7
+        rowSpacing: 4
+        columnSpacing: 4
+
+        Repeater {
+            model: ["S", "M", "T", "W", "T", "F", "S"]
+
+            TacticalLabel {
+                required property string modelData
+
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                text: modelData
+                dim: true
+            }
+        }
+
+        Repeater {
+            model: CalendarService.monthCells
+
+            Rectangle {
+                required property var modelData
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 18
+                color: modelData.active ? Theme.lineDim : "transparent"
+                border.color: modelData.active ? Theme.line : "transparent"
+                border.width: Theme.lineWidth
+
+                TacticalLabel {
+                    anchors.centerIn: parent
+                    text: modelData.label
+                    accent: modelData.active
+                    dim: modelData.dim
+                }
+            }
+        }
+    }
+
+    TacticalLabel {
+        Layout.fillWidth: true
         text: "CLIPBOARD BUFFER"
         accent: true
     }

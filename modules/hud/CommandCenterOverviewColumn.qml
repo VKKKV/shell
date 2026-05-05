@@ -9,7 +9,61 @@ ColumnLayout {
 
     TextBlock {
         title: "SYSTEM OVERVIEW"
-        lines: ["workspace: " + HyprlandService.activeWorkspace, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "media: " + MediaService.displayText]
+        lines: ["workspace: " + HyprlandService.activeWorkspace, "active: " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "media: " + MediaService.displayText]
+    }
+
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "WINDOWS // WORKSPACE " + HyprlandService.activeWorkspace
+        accent: true
+    }
+
+    Repeater {
+        model: HyprlandService.currentWorkspaceWindows
+
+        Rectangle {
+            required property var modelData
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 28
+            color: modelData.active ? Theme.lineDim : (windowArea.containsMouse ? Theme.panelSoft : "transparent")
+            border.color: modelData.active ? Theme.line : Theme.lineDim
+            border.width: Theme.lineWidth
+
+            MouseArea {
+                id: windowArea
+
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: HyprlandService.focusWindow(parent.modelData.title)
+            }
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: 8
+
+                TacticalLabel {
+                    text: modelData.appClass.toUpperCase()
+                    accent: modelData.active
+                    dim: !modelData.active
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: modelData.title
+                    accent: modelData.active
+                    elide: Text.ElideRight
+                }
+            }
+        }
+    }
+
+    TextBlock {
+        title: "AGENDA // LOCAL"
+        lines: CalendarService.agenda
     }
 
     MetricBlock {

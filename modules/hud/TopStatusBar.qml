@@ -108,6 +108,15 @@ TacticalFrame {
                 spacing: 6
 
                 TacticalLabel {
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                    elide: Text.ElideRight
+                    text: "ACTIVE // " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle
+                    accent: HyprlandService.activeToplevel !== null
+                    dim: HyprlandService.activeToplevel === null
+                }
+
+                TacticalLabel {
                     text: "AUDIO " + AudioService.volumeText
                     accent: AudioService.available && !AudioService.muted
                     dim: !AudioService.available || AudioService.muted

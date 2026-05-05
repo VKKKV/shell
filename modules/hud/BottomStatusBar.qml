@@ -1,4 +1,5 @@
 import "../../components"
+import "../../services"
 import "../../theme"
 import QtQuick
 import QtQuick.Layouts
@@ -24,7 +25,7 @@ TacticalFrame {
         TacticalLabel {
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
-            text: "[ROOT_ACCESS_GRANTED]"
+            text: "[" + CalendarService.dayText + " // " + CalendarService.dateText + "]"
             accent: true
             size: Theme.fontNormal
         }

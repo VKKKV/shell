@@ -109,3 +109,9 @@
 - Added `services/ClipboardService.qml` using `wl-paste` polling and `wl-copy` restore actions.
 - Added command center clipboard buffer controls with refresh, clear, and click-to-copy history entries.
 - Added clipboard service status to command center overview and updated the roadmap.
+
+## 2026-05-04 - Calendar Agenda Slice
+
+- Added `services/CalendarService.qml` with local date, month grid, and generated agenda state.
+- Added local agenda and calendar grid to the command center.
+- Replaced the bottom center access text with compact day/date telemetry.
