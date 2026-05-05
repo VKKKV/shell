@@ -540,6 +540,156 @@ ColumnLayout {
     }
 
     MetricRow {
+        label: "BORDER OPACITY"
+        value: Math.round(SettingsService.borderOpacity * 100) + "%"
+        progress: (SettingsService.borderOpacity - 0.35) / 0.65
+        accent: true
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.borderOpacity = Math.max(0.35, SettingsService.borderOpacity - 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "BORDER -"
+                accent: true
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.borderOpacity = Math.min(1, SettingsService.borderOpacity + 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "BORDER +"
+                accent: true
+            }
+        }
+    }
+
+    MetricRow {
+        label: "DIM TEXT"
+        value: Math.round(SettingsService.dimTextOpacity * 100) + "%"
+        progress: (SettingsService.dimTextOpacity - 0.45) / 0.55
+        accent: true
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.dimTextOpacity = Math.max(0.45, SettingsService.dimTextOpacity - 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "DIM -"
+                accent: true
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.dimTextOpacity = Math.min(1, SettingsService.dimTextOpacity + 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "DIM +"
+                accent: true
+            }
+        }
+    }
+
+    MetricRow {
+        label: "LINE CONTRAST"
+        value: Math.round(SettingsService.lineContrast * 100) + "%"
+        progress: (SettingsService.lineContrast - 0.65) / 0.7
+        accent: true
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.lineContrast = Math.max(0.65, SettingsService.lineContrast - 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "LINE -"
+                accent: true
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: SettingsService.lineContrast = Math.min(1.35, SettingsService.lineContrast + 0.05)
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "LINE +"
+                accent: true
+            }
+        }
+    }
+
+    MetricRow {
         label: "POLL RATE"
         value: (SettingsService.updateIntervalMs / 1000).toFixed(0) + "S"
         progress: (SettingsService.updateIntervalMs - 1000) / 29000

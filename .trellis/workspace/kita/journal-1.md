@@ -409,6 +409,14 @@
 - Preserved the orbital sensor body, time-based ephemeris metadata, planet nodes, trails, labels, close behavior, and safe-area deployment.
 - Verified the phase with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
 
+## 2026-05-05 - Fine Appearance Contrast Controls
+
+- Added persisted `visual.borderOpacity`, `visual.dimTextOpacity`, and `visual.lineContrast` settings after the orbital chrome alignment priority insert.
+- Added command-center controls for `BORDER OPACITY`, `DIM TEXT`, and `LINE CONTRAST`.
+- Updated `Theme.qml` so `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim` derive from the new settings while preserving defaults.
+- Updated `src/settings/main.zig`, `docs/settings.md`, and frontend type-safety specs with clamp ranges and contract details.
+- Verified QML lint, Zig build, whitespace, settings helper low/high clamp behavior with temporary `XDG_CONFIG_HOME`, and Quickshell startup smoke.
+
 ## 2026-05-05 - Appearance Opacity And Scanline Controls
 
 - Added the next PRD/PLAN phase for broader appearance controls after font scaling: `visual.panelOpacity` and `visual.scanlineStrength`.

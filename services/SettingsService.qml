@@ -21,6 +21,9 @@ Singleton {
     property real fontScale: 1
     property real panelOpacity: 0.8
     property real scanlineStrength: 1
+    property real borderOpacity: 1
+    property real dimTextOpacity: 1
+    property real lineContrast: 1
     property int updateIntervalMs: 5000
     property string statusLine: "settings: defaults active"
     property string helperPath: "./zig-out/bin/void-shell-settings"
@@ -46,6 +49,18 @@ Singleton {
 
     function clampScanlineStrength(value: real): real {
         return Math.max(0.25, Math.min(1.75, value));
+    }
+
+    function clampBorderOpacity(value: real): real {
+        return Math.max(0.35, Math.min(1, value));
+    }
+
+    function clampDimTextOpacity(value: real): real {
+        return Math.max(0.45, Math.min(1, value));
+    }
+
+    function clampLineContrast(value: real): real {
+        return Math.max(0.65, Math.min(1.35, value));
     }
 
     function clampUpdateInterval(value: int): int {
@@ -80,6 +95,12 @@ Singleton {
                 panelOpacity = clampPanelOpacity(settings.visual.panelOpacity);
             if (typeof settings.visual.scanlineStrength === "number")
                 scanlineStrength = clampScanlineStrength(settings.visual.scanlineStrength);
+            if (typeof settings.visual.borderOpacity === "number")
+                borderOpacity = clampBorderOpacity(settings.visual.borderOpacity);
+            if (typeof settings.visual.dimTextOpacity === "number")
+                dimTextOpacity = clampDimTextOpacity(settings.visual.dimTextOpacity);
+            if (typeof settings.visual.lineContrast === "number")
+                lineContrast = clampLineContrast(settings.visual.lineContrast);
             if (typeof settings.visual.profile === "string")
                 themeProfile = normalizeThemeProfile(settings.visual.profile);
             if (typeof settings.visual.accentColor === "string")
@@ -113,6 +134,9 @@ Singleton {
                 fontScale: clampFontScale(fontScale),
                 panelOpacity: clampPanelOpacity(panelOpacity),
                 scanlineStrength: clampScanlineStrength(scanlineStrength),
+                borderOpacity: clampBorderOpacity(borderOpacity),
+                dimTextOpacity: clampDimTextOpacity(dimTextOpacity),
+                lineContrast: clampLineContrast(lineContrast),
                 profile: normalizeThemeProfile(themeProfile),
                 accentColor: normalizeAccentColor(accentColor),
                 backgroundMode: normalizeBackgroundMode(backgroundMode)
@@ -206,6 +230,30 @@ Singleton {
         const clamped = clampScanlineStrength(scanlineStrength);
         if (clamped !== scanlineStrength) {
             scanlineStrength = clamped;
+            return;
+        }
+        scheduleSave();
+    }
+    onBorderOpacityChanged: {
+        const clamped = clampBorderOpacity(borderOpacity);
+        if (clamped !== borderOpacity) {
+            borderOpacity = clamped;
+            return;
+        }
+        scheduleSave();
+    }
+    onDimTextOpacityChanged: {
+        const clamped = clampDimTextOpacity(dimTextOpacity);
+        if (clamped !== dimTextOpacity) {
+            dimTextOpacity = clamped;
+            return;
+        }
+        scheduleSave();
+    }
+    onLineContrastChanged: {
+        const clamped = clampLineContrast(lineContrast);
+        if (clamped !== lineContrast) {
+            lineContrast = clamped;
             return;
         }
         scheduleSave();

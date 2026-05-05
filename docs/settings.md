@@ -29,6 +29,9 @@ Fallback if `XDG_CONFIG_HOME` is unset:
       "fontScale": 1.0,
       "panelOpacity": 0.8,
       "scanlineStrength": 1.0,
+      "borderOpacity": 1.0,
+      "dimTextOpacity": 1.0,
+      "lineContrast": 1.0,
       "profile": "amber",
     "accentColor": "#F2C94C",
     "backgroundMode": "void"
@@ -53,6 +56,9 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `visual.fontScale` is clamped to `0.85..1.25` and drives global QML theme font sizes.
 - `visual.panelOpacity` is clamped to `0.55..0.95` and drives tactical panel background opacity.
 - `visual.scanlineStrength` is clamped to `0.25..1.75` and multiplies enabled scanline overlays.
+- `visual.borderOpacity` is clamped to `0.35..1.0` and drives global border opacity.
+- `visual.dimTextOpacity` is clamped to `0.45..1.0` and drives secondary text opacity.
+- `visual.lineContrast` is clamped to `0.65..1.35` and adjusts the accent line color contrast.
 - `visual.profile` is one of `amber`, `green`, `blue`, or `red`.
 - `visual.accentColor` is a hex RGB color (`#RRGGBB`) and defaults to `#F2C94C`.
 - `visual.backgroundMode` is one of `void`, `grid`, or `radar`.

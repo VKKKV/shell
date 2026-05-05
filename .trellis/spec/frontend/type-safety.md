@@ -51,9 +51,15 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - Durable JSON field: `visual.fontScale: number`.
 - Durable JSON field: `visual.panelOpacity: number`.
 - Durable JSON field: `visual.scanlineStrength: number`.
+- Durable JSON field: `visual.borderOpacity: number`.
+- Durable JSON field: `visual.dimTextOpacity: number`.
+- Durable JSON field: `visual.lineContrast: number`.
 - Zig setting field: `Settings.font_scale: f64`.
 - Zig setting field: `Settings.panel_opacity: f64`.
 - Zig setting field: `Settings.scanline_strength: f64`.
+- Zig setting field: `Settings.border_opacity: f64`.
+- Zig setting field: `Settings.dim_text_opacity: f64`.
+- Zig setting field: `Settings.line_contrast: f64`.
 - Zig helper commands: `void-shell-settings defaults`, `void-shell-settings read`, `void-shell-settings write '<json>'`.
 
 ### 3. Contracts
@@ -64,10 +70,17 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - `visual.panelOpacity` range is `0.55..0.95`.
 - `visual.scanlineStrength` default is `1.0`, preserving existing scanline intensity.
 - `visual.scanlineStrength` range is `0.25..1.75`.
+- `visual.borderOpacity` default is `1.0`, preserving the existing `#333333` border appearance.
+- `visual.borderOpacity` range is `0.35..1.0`.
+- `visual.dimTextOpacity` default is `1.0`, preserving the existing secondary text appearance.
+- `visual.dimTextOpacity` range is `0.45..1.0`.
+- `visual.lineContrast` default is `1.0`, preserving the selected accent color.
+- `visual.lineContrast` range is `0.65..1.35`.
 - QML must clamp immediate UI writes before scheduling persistence.
 - Zig must clamp persisted input and emit normalized JSON.
 - `Theme.qml` is the only place that multiplies base font sizes by `fontScale`; individual panels should keep using theme font properties.
 - `Theme.qml` is the only place that derives global tactical panel colors from `panelOpacity`; individual panels should keep using `Theme.panel`/`Theme.panelSoft`.
+- `Theme.qml` is the only place that derives `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim` from fine appearance controls.
 - Existing `ScanlineOverlay` call sites should multiply their base opacity by `SettingsService.scanlineStrength`; `scanlinesEnabled` remains the on/off switch.
 - Settings UI should adjust `fontScale` in small steps and show the current percent value.
 
@@ -81,6 +94,12 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - `visual.panelOpacity > 0.95` -> clamp to `0.95`.
 - `visual.scanlineStrength < 0.25` -> clamp to `0.25`.
 - `visual.scanlineStrength > 1.75` -> clamp to `1.75`.
+- `visual.borderOpacity < 0.35` -> clamp to `0.35`.
+- `visual.borderOpacity > 1.0` -> clamp to `1.0`.
+- `visual.dimTextOpacity < 0.45` -> clamp to `0.45`.
+- `visual.dimTextOpacity > 1.0` -> clamp to `1.0`.
+- `visual.lineContrast < 0.65` -> clamp to `0.65`.
+- `visual.lineContrast > 1.35` -> clamp to `1.35`.
 - Panel hard-codes new font sizes after this contract -> fail review; use `Theme.font*` instead.
 - Panel hard-codes global panel background alpha after this contract -> fail review; use `Theme.panel` or `Theme.panelSoft` instead.
 - Scanline call site ignores `SettingsService.scanlineStrength` -> fail review unless the overlay is explicitly decorative and not user-facing.
@@ -91,6 +110,7 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - Good: settings column changes `SettingsService.fontScale`, `Theme.fontNormal` updates globally, Zig writes normalized `visual.fontScale`.
 - Good: settings column changes `SettingsService.panelOpacity`, `Theme.panel` updates globally, panels keep using `Theme.panel`.
 - Good: settings column changes `SettingsService.scanlineStrength`, existing scanline overlays get stronger/weaker while the toggle still disables them.
+- Good: settings column changes fine contrast settings, and existing panels update through `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim`.
 - Base: a visual-only component uses `Theme.fontTiny`/`Theme.fontNormal` and automatically inherits scaling.
 - Bad: a panel implements its own `property int localFontSize` and bypasses `Theme.qml`, causing inconsistent scaling.
 
@@ -98,7 +118,7 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 
 - QML: run `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`.
 - Zig: run `zig build`.
-- Settings contract: run helper `defaults` and `write` clamp checks with a temporary `XDG_CONFIG_HOME`, asserting `fontScale`, `panelOpacity`, and `scanlineStrength` appear and clamp to their documented ranges.
+- Settings contract: run helper `defaults` and `write` clamp checks with a temporary `XDG_CONFIG_HOME`, asserting all `visual.*` appearance fields appear and clamp to their documented ranges.
 - Runtime: run a short `quickshell -p .` smoke check and verify startup has no QML errors.
 - Whitespace: run `git diff --check`.
 

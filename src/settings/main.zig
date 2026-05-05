@@ -6,6 +6,9 @@ const Settings = struct {
     font_scale: f64 = 1.0,
     panel_opacity: f64 = 0.8,
     scanline_strength: f64 = 1.0,
+    border_opacity: f64 = 1.0,
+    dim_text_opacity: f64 = 1.0,
+    line_contrast: f64 = 1.0,
     profile: []const u8 = "amber",
     accent_color: []const u8 = "#F2C94C",
     background_mode: []const u8 = "void",
@@ -25,6 +28,9 @@ const defaults_json =
     \\    "fontScale": 1.0,
     \\    "panelOpacity": 0.8,
     \\    "scanlineStrength": 1.0,
+    \\    "borderOpacity": 1.0,
+    \\    "dimTextOpacity": 1.0,
+    \\    "lineContrast": 1.0,
     \\    "profile": "amber",
     \\    "accentColor": "#F2C94C",
     \\    "backgroundMode": "void"
@@ -135,6 +141,9 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.font_scale = clampFloat(numberField(visual, "fontScale") orelse settings.font_scale, 0.85, 1.25);
         settings.panel_opacity = clampFloat(numberField(visual, "panelOpacity") orelse settings.panel_opacity, 0.55, 0.95);
         settings.scanline_strength = clampFloat(numberField(visual, "scanlineStrength") orelse settings.scanline_strength, 0.25, 1.75);
+        settings.border_opacity = clampFloat(numberField(visual, "borderOpacity") orelse settings.border_opacity, 0.35, 1.0);
+        settings.dim_text_opacity = clampFloat(numberField(visual, "dimTextOpacity") orelse settings.dim_text_opacity, 0.45, 1.0);
+        settings.line_contrast = clampFloat(numberField(visual, "lineContrast") orelse settings.line_contrast, 0.65, 1.35);
         settings.profile = themeProfileField(visual, "profile") orelse settings.profile;
         settings.accent_color = accentColorField(visual, "accentColor") orelse settings.accent_color;
         settings.background_mode = backgroundModeField(visual, "backgroundMode") orelse settings.background_mode;
@@ -160,6 +169,9 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\    "fontScale": {d:.2},
         \\    "panelOpacity": {d:.2},
         \\    "scanlineStrength": {d:.2},
+        \\    "borderOpacity": {d:.2},
+        \\    "dimTextOpacity": {d:.2},
+        \\    "lineContrast": {d:.2},
         \\    "profile": "{s}",
         \\    "accentColor": "{s}",
         \\    "backgroundMode": "{s}"
@@ -180,6 +192,9 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.font_scale,
         settings.panel_opacity,
         settings.scanline_strength,
+        settings.border_opacity,
+        settings.dim_text_opacity,
+        settings.line_contrast,
         settings.profile,
         settings.accent_color,
         settings.background_mode,

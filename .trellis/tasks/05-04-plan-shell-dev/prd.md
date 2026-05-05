@@ -335,12 +335,12 @@ Requirements:
 
 Acceptance Criteria:
 
-- [ ] Command-center settings expose `BORDER OPACITY`, `DIM TEXT`, and `LINE CONTRAST` controls.
-- [ ] `visual.borderOpacity`, `visual.dimTextOpacity`, and `visual.lineContrast` persist and normalize through the Zig helper.
-- [ ] `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim` respond through central theme derivation.
-- [ ] Defaults match the current look closely.
-- [ ] `qmllint`, `zig build`, `git diff --check`, settings helper clamp checks, and a short `quickshell -p .` smoke check pass before commit.
-- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+- [x] Command-center settings expose `BORDER OPACITY`, `DIM TEXT`, and `LINE CONTRAST` controls.
+- [x] `visual.borderOpacity`, `visual.dimTextOpacity`, and `visual.lineContrast` persist and normalize through the Zig helper.
+- [x] `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim` respond through central theme derivation.
+- [x] Defaults match the current look closely.
+- [x] `qmllint`, `zig build`, `git diff --check`, settings helper clamp checks, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
 
 Decision (ADR-lite):
 
