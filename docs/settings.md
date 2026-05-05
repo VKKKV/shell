@@ -2,7 +2,7 @@
 
 This document defines the first persistent settings contract for the tactical shell.
 
-The current QML implementation keeps settings in `services/SettingsService.qml`. Persistence is intentionally not implemented yet; this contract defines what a future helper should read/write.
+The current QML implementation keeps presentation-facing settings in `services/SettingsService.qml`. Persistence is implemented by the Zig helper `void-shell-settings`, which reads, writes, validates, and normalizes this contract.
 
 ## Location
 
@@ -51,17 +51,17 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - panel visibility fields are booleans.
 - Unknown fields are currently dropped by the Zig helper during normalization. Preserving unknown fields is a future compatibility improvement.
 
-## Zig Helper Plan
+## Zig Helper
 
-Prefer Zig for the persistence helper once QML live state is stable.
+Zig owns persistence because settings are durable state and should not be written directly from random QML modules.
 
-Candidate binary:
+Binary:
 
 ```text
 void-shell-settings
 ```
 
-Initial commands:
+Commands:
 
 ```bash
 void-shell-settings read
@@ -87,7 +87,7 @@ zig build
 ./zig-out/bin/void-shell-settings read
 ```
 
-The initial helper is intentionally small. `read` falls back to defaults when no settings file exists. `write` validates and normalizes known fields, clamps numeric values, writes the normalized JSON, and prints the normalized JSON to stdout.
+The helper is intentionally small. `read` falls back to defaults when no settings file exists. `write` validates and normalizes known fields, clamps numeric values, writes the normalized JSON, and prints the normalized JSON to stdout.
 
 ## QML Boundary
 

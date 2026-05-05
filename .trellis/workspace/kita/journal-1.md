@@ -127,3 +127,14 @@
 - Reviewed architecture before continuing; no blocking refactor was needed after command center decomposition.
 - Added `modules/hud/MissionDock.qml` to render current workspace windows as compact bottom-bar targets.
 - Mounted `MissionDock` in `BottomStatusBar.qml` and updated the roadmap.
+
+## 2026-05-04 - Weather Slice
+
+- Added `services/WeatherService.qml` using `wttr.in` via `curl` for local weather data with network fallback.
+- Added weather status to command center overview and updated the roadmap.
+
+## 2026-05-05 - Project Granularity Alignment
+
+- Checked the active shell task against the current code structure and uncommitted weather slice.
+- Aligned frontend Trellis guidelines with the existing `components/`, `modules/hud/`, `services/`, `theme/`, and Zig helper boundaries.
+- Updated settings documentation to reflect implemented Zig persistence instead of a future helper plan.

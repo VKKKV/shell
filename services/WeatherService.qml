@@ -1,0 +1,76 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import Quickshell
+import Quickshell.Io
+
+Singleton {
+    id: root
+
+    property string condition: "UNKNOWN"
+    property string temp: "--"
+    property string humidity: "--"
+    property string wind: "--"
+    property bool available: false
+    property string displayText: "WEATHER // NO DATA"
+    property string statusLine: "weather: initializing"
+
+    function updateWeather(output: string): void {
+        const parts = output.trim().split("|");
+        if (parts.length < 3) {
+            available = false;
+            displayText = "WEATHER // NO DATA";
+            statusLine = "weather: parse fallback";
+            return;
+        }
+
+        condition = parts[0] || "UNKNOWN";
+        temp = parts[1] || "--";
+        humidity = parts[2] || "--";
+        wind = parts[3] || "--";
+        available = true;
+        displayText = "WEATHER // " + condition + " // " + temp;
+        statusLine = "weather: " + condition + " " + temp;
+    }
+
+    function refresh(): void {
+        fetchProcess.running = true;
+    }
+
+    Component.onCompleted: refresh()
+
+    property Timer poller: Timer {
+        interval: 300000
+        repeat: true
+        running: SettingsService.liveDataEnabled
+        triggeredOnStart: true
+        onTriggered: root.refresh()
+    }
+
+    Connections {
+        target: SettingsService
+        function onLiveDataEnabledChanged(): void {
+            if (SettingsService.liveDataEnabled)
+                root.poller.restart();
+        }
+    }
+
+    property string location: Quickshell.env("WTTR_LOCATION") || ""
+
+    property Process fetchProcess: Process {
+        command: location.length > 0
+            ? ["sh", "-c", "curl -m 6 -s 'https://wttr.in/" + location + "?format=%C|%t|%h|%w' 2>/dev/null || echo ''"]
+            : ["sh", "-c", "curl -m 6 -s 'https://wttr.in/?format=%C|%t|%h|%w' 2>/dev/null || echo ''"]
+        stdout: StdioCollector {
+            onStreamFinished: root.updateWeather(text)
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0 || !root.available) {
+                root.available = false;
+                root.displayText = "WEATHER // OFFLINE";
+                root.statusLine = "weather: fetch fallback";
+            }
+        }
+    }
+}

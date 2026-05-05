@@ -6,49 +6,80 @@
 
 ## Overview
 
-<!--
-Document your project's frontend directory structure here.
+This is a Quickshell/QML desktop shell with a tactical HUD architecture. The current granularity is intentionally simple:
 
-Questions to answer:
-- Where do components live?
-- How are features/modules organized?
-- Where are shared utilities?
-- How are assets organized?
--->
-
-(To be filled by the team)
+- `shell.qml` starts the shell and instantiates top-level HUD windows/zones.
+- `components/` contains reusable visual primitives.
+- `modules/hud/` contains composed product surfaces and vertical feature slices.
+- `services/` contains QML singleton state, polling, command execution, parsing, and fallback behavior.
+- `theme/` contains global colors, spacing, typography, and sizing constants.
+- `src/` contains optional Zig helpers for durable backend concerns.
+- `docs/` contains user-facing integration contracts and compositor/settings notes.
 
 ---
 
 ## Directory Layout
 
 ```
-<!-- Replace with your actual structure -->
-src/
-├── ...
-└── ...
+shell.qml
+components/
+├── TacticalFrame.qml
+├── TacticalLabel.qml
+├── MetricBlock.qml
+├── Sparkline.qml
+└── qmldir
+modules/hud/
+├── HudWindow.qml
+├── HudLayout.qml
+├── TopStatusBar.qml
+├── BottomStatusBar.qml
+├── CommandCenterPanel.qml
+├── CommandCenterOverviewColumn.qml
+└── qmldir
+services/
+├── SystemStats.qml
+├── HyprlandService.qml
+├── SettingsService.qml
+├── WeatherService.qml
+└── qmldir
+theme/
+├── Theme.qml
+└── qmldir
+src/settings/
+└── main.zig
+docs/
+├── hyprland.md
+└── settings.md
 ```
 
 ---
 
 ## Module Organization
 
-<!-- How should new features be organized? -->
+Add new features as vertical slices, not as registries or broad rewrites.
 
-(To be filled by the team)
+- If a feature has reusable visuals, add or reuse a small `components/*.qml` primitive.
+- If a feature creates a visible HUD surface, put the composed UI in `modules/hud/*.qml`.
+- If a feature reads external state, polls, parses command output, or exposes shared values, put that in `services/*.qml` and register it in `services/qmldir`.
+- If a feature needs durable validation/persistence or command parsing becomes too complex for QML, add a focused Zig helper under `src/<feature>/`.
+- Update `qmldir` when adding importable QML files.
+- Update task docs and the journal after each completed slice.
 
 ---
 
 ## Naming Conventions
 
-<!-- File and folder naming rules -->
-
-(To be filled by the team)
+- QML files use PascalCase, matching the exported component/singleton name.
+- Services end with `Service.qml` when they represent an external integration or domain state boundary.
+- Shared metrics/state singletons may use a short domain name when already clear, such as `Time.qml` or `HudMetrics.qml`.
+- HUD modules use product-surface names, such as `TopStatusBar.qml`, `MissionDock.qml`, or `CommandCenterPanel.qml`.
+- Zig helpers use lowercase executable-oriented names, such as `void-shell-settings`.
 
 ---
 
 ## Examples
 
-<!-- Link to well-organized modules as examples -->
-
-(To be filled by the team)
+- `services/SettingsService.qml` plus `src/settings/main.zig`: QML owns presentation state while Zig owns durable normalization.
+- `services/WeatherService.qml` plus `modules/hud/CommandCenterOverviewColumn.qml`: service-backed data appears in a composed command-center surface.
+- `modules/hud/SettingsPanel.qml` plus `CommandCenterPanel.qml`: thin overlay wrapper around a larger product panel.
+- `components/MetricBlock.qml`: reusable display primitive fed by already-shaped rows.
