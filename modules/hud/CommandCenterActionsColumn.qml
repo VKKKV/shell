@@ -162,6 +162,48 @@ ColumnLayout {
         }
     }
 
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "EMOJI PALETTE // LOCAL"
+        accent: true
+    }
+
+    GridLayout {
+        Layout.fillWidth: true
+        columns: 6
+        rowSpacing: 6
+        columnSpacing: 6
+
+        Repeater {
+            model: EmojiService.entries
+
+            Rectangle {
+                required property var modelData
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 30
+                color: emojiArea.containsMouse ? Theme.lineDim : "transparent"
+                border.color: emojiArea.containsMouse ? Theme.line : Theme.lineDim
+                border.width: Theme.lineWidth
+
+                MouseArea {
+                    id: emojiArea
+
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: EmojiService.copy(parent.modelData.glyph)
+                }
+
+                TacticalLabel {
+                    anchors.centerIn: parent
+                    text: parent.modelData.glyph
+                    accent: emojiArea.containsMouse
+                }
+            }
+        }
+    }
+
     Repeater {
         model: KeyboardService.keyboards.slice(0, 3)
 

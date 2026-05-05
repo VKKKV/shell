@@ -312,6 +312,7 @@ The reference shells provide a much broader desktop environment than the current
 - Local weather via wttr.in with safe fetch fallback.
 - Keyboard layout telemetry from Hyprland devices with command fallback.
 - Hyprland keybind list telemetry with command fallback.
+- Local emoji palette with clipboard copy fallback.
 - Interactive orbital expansion overlay with ASCII solar-system telemetry.
 - CPU core matrix drill-down expansion using the shared central overlay pattern.
 - Network matrix drill-down expansion using the shared central overlay pattern.
@@ -364,7 +365,7 @@ The reference shells provide a much broader desktop environment than the current
 
 - Clipboard, keyboard layout, emoji, keybinds.
   - References: Noctalia clipboard/emoji/keyboard services, Dank keybinds/clipboard, Caelestia keyboard layout popout.
-  - Tactical version: clipboard buffer panel, keyboard layout indicator, and keybind list. Current remaining gap is keybind recorder and emoji.
+  - Tactical version: clipboard buffer panel, keyboard layout indicator, keybind list, and local emoji palette. Current remaining gap is keybind recorder.
 
 - Weather, calendar, location/night light.
   - References: all three have weather/calendar/location-related panels or services.

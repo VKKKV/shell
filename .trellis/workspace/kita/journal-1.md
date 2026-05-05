@@ -228,3 +228,9 @@
 - Added `services/KeybindService.qml` using `hyprctl binds -j` to expose Hyprland keybind rows with fallback status.
 - Added keybind list telemetry to the command center actions column and service status overview.
 - Updated the roadmap to mark keybind list covered while leaving recorder and emoji deferred.
+
+## 2026-05-05 - Emoji Palette Slice
+
+- Added `services/EmojiService.qml` with a local tactical emoji palette and `wl-copy` copy action.
+- Added emoji cells to the command center actions column and emoji status to the overview.
+- Updated the roadmap to mark local emoji palette covered while leaving keybind recorder deferred.
