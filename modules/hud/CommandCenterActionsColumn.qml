@@ -53,6 +53,99 @@ ColumnLayout {
 
     TacticalLabel {
         Layout.fillWidth: true
+        text: "CLIPBOARD BUFFER"
+        accent: true
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+            border.width: Theme.lineWidth
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: ClipboardService.refresh()
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "REFRESH"
+                accent: true
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 24
+            color: "transparent"
+            border.color: Theme.lineDim
+            border.width: Theme.lineWidth
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: ClipboardService.clear()
+            }
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "CLEAR"
+                dim: true
+            }
+        }
+    }
+
+    Repeater {
+        model: ClipboardService.history.slice(0, 4)
+
+        Rectangle {
+            required property var modelData
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            color: clipArea.containsMouse ? Theme.panelSoft : "transparent"
+            border.color: Theme.lineDim
+            border.width: Theme.lineWidth
+
+            MouseArea {
+                id: clipArea
+
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: ClipboardService.copy(parent.modelData.text)
+            }
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: 8
+
+                TacticalLabel {
+                    text: modelData.time
+                    dim: true
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: modelData.preview
+                    accent: clipArea.containsMouse
+                    elide: Text.ElideRight
+                }
+            }
+        }
+    }
+
+    TacticalLabel {
+        Layout.fillWidth: true
         text: "NOTIFICATION HISTORY"
         accent: true
     }

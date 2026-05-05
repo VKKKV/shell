@@ -103,3 +103,9 @@
 - Reviewed architecture before continuing; `SettingsPanel.qml` had become too broad and needed a seam before more feature work.
 - Split command center implementation into `CommandCenterPanel.qml`, `CommandCenterOverviewColumn.qml`, `CommandCenterSettingsColumn.qml`, and `CommandCenterActionsColumn.qml`.
 - Reduced `SettingsPanel.qml` back to a thin overlay wrapper that centers `CommandCenterPanel`.
+
+## 2026-05-04 - Clipboard Buffer Slice
+
+- Added `services/ClipboardService.qml` using `wl-paste` polling and `wl-copy` restore actions.
+- Added command center clipboard buffer controls with refresh, clear, and click-to-copy history entries.
+- Added clipboard service status to command center overview and updated the roadmap.

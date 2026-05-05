@@ -10,3 +10,4 @@ singleton HudMetrics 1.0 HudMetrics.qml
 singleton LauncherService 1.0 LauncherService.qml
 singleton NotificationService 1.0 NotificationService.qml
 singleton NetworkDetailService 1.0 NetworkDetailService.qml
+singleton ClipboardService 1.0 ClipboardService.qml
