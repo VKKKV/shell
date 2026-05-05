@@ -458,3 +458,10 @@
 - Added `modules/hud/CommandCenterDiagnosticsColumn.qml` as a read-only health surface composed from existing service status lines, `HudMetrics`, tray item count, settings helper state, and structured `ServiceLogService` events.
 - Embedded diagnostics at the top of the command-center third column while preserving the existing actions/power/tray controls below it.
 - Registered the new QML module in `modules/hud/qmldir` and updated frontend directory/component specs.
+
+## 2026-05-05 - Mechanical Expansion Motion Pass
+
+- Added the next PRD phase for consistent mechanical deploy/close motion across central expansion panels.
+- Added shared motion constants to `Theme.qml` for resize timing, deploy timing, fade timing, and collapsed expansion scale.
+- Updated `HudLayout.qml` to use the shared motion constants for top/bottom/side resizing and all orbital/CPU/network/filesystem/log expansion deploy animations.
+- Added a fade behavior to the expansion backdrop layer while preserving backdrop click close, close buttons, and `Escape` close routing.

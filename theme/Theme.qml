@@ -42,6 +42,10 @@ QtObject {
     readonly property int densityCardHeight: scaledDensity(74, 60, 88)
     readonly property int densityGraphHeight: scaledDensity(96, 72, 128)
     readonly property int densityProgressHeight: scaledDensity(8, 5, 12)
+    readonly property int motionResizeMs: 180
+    readonly property int motionDeployMs: 230
+    readonly property int motionFadeMs: 170
+    readonly property real motionCollapsedScale: 0.08
 
     readonly property string fontFamily: "monospace"
     readonly property int fontTiny: scaledFont(10)

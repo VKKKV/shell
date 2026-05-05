@@ -439,3 +439,30 @@ Decision (ADR-lite):
 - Context: service fallbacks now exist across many integrations, but runtime health is distributed across overview/actions/log panels. A single diagnostics page makes missing command and fallback state easier to inspect.
 - Decision: add diagnostics as a command-center module that composes existing service status fields and `ServiceLogService` events instead of adding a new backend helper.
 - Consequences: improves operability with low implementation risk. The trade-off is that diagnostics are read-only and coarse; deeper profiling or raw log tailing remains future work.
+
+### Next Optimization MVP: Mechanical Expansion Motion Pass
+
+Plan source: refinement backlog item to make deploy/close transitions, scan sweeps, and graph animations feel consistently mechanical rather than generic fade/scale.
+
+Requirements:
+
+- Centralize common motion constants in `Theme.qml` instead of repeating one-off durations in `HudLayout.qml`.
+- Apply the same expansion deploy timing to orbital, CPU, network, filesystem, and log expansion panels.
+- Preserve origin-aware deployment from the clicked edge widget into the center safe area.
+- Add a subtle overlay backdrop fade so expansion deploy/close feels staged instead of a hard flash.
+- Keep the phase focused on motion consistency; do not redesign panel internals.
+
+Acceptance Criteria:
+
+- [x] Expansion panel `x`, `y`, `scale`, and `opacity` animations use shared theme motion constants.
+- [x] Orbital and right-panel drill-downs use the same base timing/easing language while preserving their existing origins.
+- [x] Expansion backdrop has a transition that does not block close behavior.
+- [x] No click-to-open, close button, backdrop-close, or `Escape` close behavior regresses.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: central expansion surfaces already deploy from source widgets, but animation durations are repeated and orbital uses slightly different timing from the other panels.
+- Decision: introduce small motion constants in `Theme.qml` and reuse them across the expansion layer.
+- Consequences: improves consistency and keeps future expansion surfaces from copying magic animation values. The trade-off is not adding more advanced keyframed mechanical motion yet; that can follow if visual feedback calls for it.

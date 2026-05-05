@@ -127,7 +127,7 @@ Item {
         height: root.topHeight
 
         Behavior on height {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: Theme.motionResizeMs; easing.type: Easing.OutCubic }
         }
     }
 
@@ -142,11 +142,11 @@ Item {
         anchors.margins: Theme.margin
 
         Behavior on width {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: Theme.motionResizeMs; easing.type: Easing.OutCubic }
         }
 
         Behavior on height {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: Theme.motionResizeMs; easing.type: Easing.OutCubic }
         }
     }
 
@@ -161,11 +161,11 @@ Item {
         anchors.margins: Theme.margin
 
         Behavior on width {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: Theme.motionResizeMs; easing.type: Easing.OutCubic }
         }
 
         Behavior on height {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: Theme.motionResizeMs; easing.type: Easing.OutCubic }
         }
     }
 
@@ -179,7 +179,7 @@ Item {
         height: root.bottomHeight
 
         Behavior on height {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: Theme.motionResizeMs; easing.type: Easing.OutCubic }
         }
     }
 
@@ -200,6 +200,10 @@ Item {
         opacity: visible ? 1 : 0
         anchors.fill: parent
 
+        Behavior on opacity {
+            NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+        }
+
         Rectangle {
             anchors.fill: parent
             color: "#66000000"
@@ -218,21 +222,21 @@ Item {
             height: root.expansionHeight
             x: visible ? root.expansionTargetX : root.orbitalOriginX - width / 2
             y: visible ? root.expansionTargetY : root.orbitalOriginY - height / 2
-            scale: visible ? 1 : 0.08
+            scale: visible ? 1 : Theme.motionCollapsedScale
             opacity: visible ? 1 : 0
             transformOrigin: Item.Center
 
             Behavior on x {
-                NumberAnimation { duration: 240; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on y {
-                NumberAnimation { duration: 240; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on scale {
-                NumberAnimation { duration: 240; easing.type: Easing.OutBack }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
             }
             Behavior on opacity {
-                NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
             }
         }
 
@@ -242,21 +246,21 @@ Item {
             height: root.expansionHeight
             x: visible ? root.expansionTargetX : root.cpuOriginX - width / 2
             y: visible ? root.expansionTargetY : root.cpuOriginY - height / 2
-            scale: visible ? 1 : 0.08
+            scale: visible ? 1 : Theme.motionCollapsedScale
             opacity: visible ? 1 : 0
             transformOrigin: Item.Center
 
             Behavior on x {
-                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on y {
-                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on scale {
-                NumberAnimation { duration: 220; easing.type: Easing.OutBack }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
             }
             Behavior on opacity {
-                NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
             }
         }
 
@@ -266,21 +270,21 @@ Item {
             height: root.expansionHeight
             x: visible ? root.expansionTargetX : root.networkOriginX - width / 2
             y: visible ? root.expansionTargetY : root.networkOriginY - height / 2
-            scale: visible ? 1 : 0.08
+            scale: visible ? 1 : Theme.motionCollapsedScale
             opacity: visible ? 1 : 0
             transformOrigin: Item.Center
 
             Behavior on x {
-                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on y {
-                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on scale {
-                NumberAnimation { duration: 220; easing.type: Easing.OutBack }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
             }
             Behavior on opacity {
-                NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
             }
         }
 
@@ -290,21 +294,21 @@ Item {
             height: root.expansionHeight
             x: visible ? root.expansionTargetX : root.filesystemOriginX - width / 2
             y: visible ? root.expansionTargetY : root.filesystemOriginY - height / 2
-            scale: visible ? 1 : 0.08
+            scale: visible ? 1 : Theme.motionCollapsedScale
             opacity: visible ? 1 : 0
             transformOrigin: Item.Center
 
             Behavior on x {
-                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on y {
-                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on scale {
-                NumberAnimation { duration: 220; easing.type: Easing.OutBack }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
             }
             Behavior on opacity {
-                NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
             }
         }
 
@@ -314,21 +318,21 @@ Item {
             height: root.expansionHeight
             x: visible ? root.expansionTargetX : root.logOriginX - width / 2
             y: visible ? root.expansionTargetY : root.logOriginY - height / 2
-            scale: visible ? 1 : 0.08
+            scale: visible ? 1 : Theme.motionCollapsedScale
             opacity: visible ? 1 : 0
             transformOrigin: Item.Center
 
             Behavior on x {
-                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on y {
-                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
             }
             Behavior on scale {
-                NumberAnimation { duration: 220; easing.type: Easing.OutBack }
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
             }
             Behavior on opacity {
-                NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
             }
         }
     }

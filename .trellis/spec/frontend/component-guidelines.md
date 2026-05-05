@@ -167,6 +167,7 @@ Examples:
 ## Styling Patterns
 
 - Centralize colors, spacing, sizing, and breakpoints in `theme/Theme.qml`.
+- Centralize repeated motion timings and collapsed scale values in `theme/Theme.qml`.
 - Do not scatter hard-coded tactical yellow/gray values across modules.
 - Preserve the hard-edged machine-interface style: sharp corners, dense typography, thin borders, warning-yellow highlights, and translucent HUD layers.
 - Scanline and polish effects should stay optional and controllable through settings state.
