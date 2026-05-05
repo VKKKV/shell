@@ -7,7 +7,7 @@ import QtQuick.Layouts
 TacticalFrame {
     id: root
 
-    title: "ORBITAL // GLOBE"
+    title: "ORBITAL // CLOCK"
     implicitWidth: Math.max(Theme.sidePanelMinWidth, content.implicitWidth + Theme.panelPadding * 2)
     implicitHeight: content.implicitHeight + Theme.panelPadding + 38
 
@@ -27,10 +27,10 @@ TacticalFrame {
             width: parent.width
             spacing: 12
 
-            RotatingGlobe {
+            AnalogOrbitClock {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Math.min(260, Math.max(180, root.height * 0.36))
-                onActivated: ExpansionService.show("orbital", "left-globe")
+                onActivated: ExpansionService.show("orbital", "left-clock")
             }
 
             MetricBlock {

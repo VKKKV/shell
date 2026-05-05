@@ -202,7 +202,7 @@ Current status: all concrete planned phases below are covered by first-party sli
 
 Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
 
-Current next phase: implement time-based approximate orbital ephemerides in `OrbitalExpansionPanel.qml`, using current date/time plus offline orbital period/epoch constants to place planets and show related metadata. Preserve the existing graphical sci-fi sensor surface and keep precision astronomy/network ephemerides out of scope.
+Current next phase: replace the left-panel orbital globe child surface with a mimetic tactical clock and move the click-to-open planetary map interaction onto that clock. Preserve the existing `OrbitalExpansionPanel` and `ExpansionService.show("orbital", ...)` route.
 
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.

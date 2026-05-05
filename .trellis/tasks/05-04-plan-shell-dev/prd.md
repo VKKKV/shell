@@ -233,6 +233,35 @@ Decision (ADR-lite):
 - Decision: use simple circular heliocentric ephemeris approximations seeded from J2000-style epoch longitudes and sidereal orbital periods. This gives stable, time-derived top-down positions without adding network or precision ephemeris dependencies.
 - Consequences: the visualization becomes more meaningful and explainable while remaining lightweight. The trade-off is limited astronomical precision; eccentricity, inclination, retrograde effects, and real ephemeris corrections remain out of scope unless a future task requires them.
 
+### Next Optimization MVP: Orbital Entry Clock Rework
+
+User instruction captured 2026-05-05: replace the original globe child panel with a mimetic/skeuomorphic clock, then move the click-to-open planetary map interaction onto that clock.
+
+Requirements:
+
+- Replace the left tactical panel's small orbital/globe child surface with a clock-like tactical instrument.
+- The clock should read as a physical/mechanical HUD clock rather than plain text: circular dial, tick marks, hands/sweep, reticle or bezel language, and current time labels.
+- Clicking the clock opens the existing `OrbitalExpansionPanel` planetary map.
+- Remove or stop using the old globe affordance as the primary orbital expansion entry.
+- Preserve left-panel sizing/scroll behavior and `ExpansionService.show("orbital", ...)` semantics.
+- Keep implementation local and minimal: reuse `Time.qml`, `Theme.qml`, `TacticalLabel`, and existing component boundaries.
+
+Acceptance Criteria:
+
+- [x] The left panel shows a mimetic/skeuomorphic clock where the globe entry used to be.
+- [x] The clock displays current time using `Time.now` and updates live.
+- [x] Clicking the clock opens the existing orbital/planetary expansion panel.
+- [x] The old globe is no longer the primary visible click target for orbital expansion.
+- [x] Left-panel adaptive height/scrolling remains intact.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: after adding time-based planetary positions, the expansion entry should visually communicate time/orbital mechanics more directly than a decorative globe.
+- Decision: replace the globe entry with a dedicated tactical clock component that owns its visual dial but delegates click behavior to the existing left-panel `ExpansionService.show("orbital", ...)` path.
+- Consequences: improves discoverability and semantic fit for the orbital map. The trade-off is losing the standalone globe visual; if desired later, globe imagery can return as secondary decoration inside the clock or orbital panel.
+
 ### Panel Control Standardization
 
 - Central overlays should close with a consistent shortcut: `Escape`.

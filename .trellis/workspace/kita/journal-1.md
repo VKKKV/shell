@@ -365,3 +365,11 @@
 - Added per-planet on-panel ephemeris metadata: longitude, AU scale, period, UTC timestamp, and J2000 day count.
 - Preserved the translucent graphical sensor surface, trails, labels, reticles, close affordance, and central safe-area deployment behavior.
 - Verified the phase with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
+
+## 2026-05-05 - Orbital Entry Clock Rework
+
+- Added the next development phase to the PRD/PLAN for replacing the left-panel globe entry with a mimetic tactical clock.
+- Added `components/AnalogOrbitClock.qml` with circular bezel, tick marks, hour/minute/second hands, reticle lines, live `Time.now` labels, hover feedback, and an `activated()` signal.
+- Replaced `RotatingGlobe` in `LeftTacticalPanel.qml` with `AnalogOrbitClock` and moved the orbital expansion click route to `ExpansionService.show("orbital", "left-clock")`.
+- Registered `AnalogOrbitClock` in `components/qmldir` while leaving `RotatingGlobe.qml` available but no longer the primary orbital entry.
+- Verified the phase with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
