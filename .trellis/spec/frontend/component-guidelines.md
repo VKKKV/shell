@@ -28,6 +28,8 @@ Examples:
 - `MetricRow.qml`
 - `Sparkline.qml`
 - `ToggleRow.qml`
+- `AnalogOrbitClock.qml`
+- `CentralPanelChrome.qml`
 
 Good component traits:
 
@@ -36,6 +38,7 @@ Good component traits:
 - no direct Hyprland/system parsing
 - reusable across multiple modules
 - uses `Theme.qml` for repeated colors/sizes
+- exposes signals for user intent, such as `activated()`, rather than directly owning cross-surface state
 
 ### Modules
 
@@ -73,11 +76,12 @@ Rules:
 ### 1. Scope / Trigger
 
 - Trigger: adding or refactoring command-center or central expansion panel chrome.
-- Applies to: `modules/hud/CommandCenterPanel.qml` and non-orbital `modules/hud/*ExpansionPanel.qml` surfaces.
+- Applies to: `modules/hud/CommandCenterPanel.qml` and non-orbital `modules/hud/*ExpansionPanel.qml` surfaces, currently through `components/CentralPanelChrome.qml`.
 - Exception: `OrbitalExpansionPanel.qml` may keep a custom translucent sensor-overlay layout when a full framed card would weaken the intended sci-fi sensor surface.
 
 ### 2. Signatures
 
+- Shared chrome component: `CentralPanelChrome { property alias headerText; default property alias content; property bool commandCenter }`.
 - Close affordance component: `PanelCloseButton { signal closeRequested() }`.
 - Command center close action: `onCloseRequested: SettingsService.panelOpen = false`.
 - Expansion close action: `onCloseRequested: ExpansionService.close()`.

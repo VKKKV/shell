@@ -19,11 +19,11 @@ To help with development and visual debugging, here is the comparison between th
 ## Features
 
 - **Techwear Aesthetic:** High-contrast tactical HUD styling with pure-black surfaces, sharp frames, scanlines, and a default `#F2C94C` warning-yellow accent.
-- **Runtime Theme Controls:** Command-center settings for accent color, theme profile, scanlines, background mode, panel visibility, intensity, and polling interval.
+- **Runtime Appearance Controls:** Command-center settings for accent color, theme profile, scanlines, background mode, font scale, panel visibility, intensity, and polling interval.
 - **Adaptive Edge Panels:** Left/right panels grow to fit content until they hit the top/bottom bars, then switch to internal scrolling.
 - **Integrated Monitoring:** Live CPU, memory, swap, network, filesystem, power, battery, weather, environment/night-light, and service fallback telemetry.
 - **Central Tactical Expansions:** Clickable orbital, CPU, network, filesystem, and log drill-downs deploy into the central safe area.
-- **Graphical Orbital Sensor:** The left globe opens a translucent sci-fi solar orbit view with animated planets, trails, reticles, scanlines, and warning-yellow labels.
+- **Graphical Orbital Sensor:** The left analog orbital clock opens a translucent sci-fi solar orbit view with time-based approximate planet positions, trails, reticles, and warning-yellow labels.
 - **Command Center:** Unified central panel for system overview, settings, launcher/search, service status, service logs, tray drawer, clipboard history, calendar, notifications, keybinds, emoji, media, and power/session controls.
 - **Launcher Providers:** Search installed desktop apps, built-in actions, calculator expressions via `=<expr>`, and shell commands via `$ <command>`.
 - **Audio, Media, And Controls:** `wpctl` volume/microphone controls, local spectrum visualizer, MPRIS controls through `playerctl`, and local lyrics fallback.
@@ -132,7 +132,7 @@ Common interactions:
 
 - `Escape`: close the active central panel or command center
 - Top workspace cells: switch Hyprland workspace
-- Left orbital globe: open graphical orbital sensor
+- Left analog orbital clock: open graphical orbital sensor
 - Right CPU/network/filesystem/log sections: open central drill-down panels
 - Tray left click: activate item
 - Tray right click: secondary activate/menu fallback
@@ -150,6 +150,7 @@ Open the command center and use the settings column to adjust:
 - accent color, defaulting to `#F2C94C`
 - theme profile
 - tactical background mode
+- font scale
 - scanline overlay
 - live data polling
 - microphone controls

@@ -28,7 +28,8 @@ components/
 ├── MetricBlock.qml
 ├── Sparkline.qml
 ├── TrayStrip.qml
-├── RotatingGlobe.qml
+├── AnalogOrbitClock.qml
+├── CentralPanelChrome.qml
 └── qmldir
 modules/hud/
 ├── HudWindow.qml
@@ -55,6 +56,8 @@ services/
 ├── MediaService.qml
 ├── NetworkDetailService.qml
 ├── WallpaperService.qml
+├── ServiceLogService.qml
+├── EnvironmentService.qml
 ├── WeatherService.qml
 └── qmldir
 theme/
@@ -102,4 +105,6 @@ Add new features as vertical slices, not as registries or broad rewrites.
 - `modules/hud/SettingsPanel.qml` plus `CommandCenterPanel.qml`: thin overlay wrapper around a larger product panel.
 - `components/MetricBlock.qml`: reusable display primitive fed by already-shaped rows.
 - `services/ExpansionService.qml` plus `modules/hud/OrbitalExpansionPanel.qml`: edge-panel click targets deploy central safe-area surfaces.
+- `components/AnalogOrbitClock.qml` plus `modules/hud/LeftTacticalPanel.qml`: a reusable tactical clock acts as the current orbital expansion entry.
+- `components/CentralPanelChrome.qml`: shared central-panel header/close/content chrome for command center and non-orbital drill-downs.
 - `services/WallpaperService.qml` plus `CommandCenterSettingsColumn.qml`: local external command integration appears as a settings/control surface.

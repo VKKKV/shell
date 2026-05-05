@@ -394,3 +394,10 @@
 - Updated `Theme.qml` so `Theme.fontTiny`, `fontSmall`, `fontNormal`, `fontLarge`, and `fontClock` scale globally from `SettingsService.fontScale`.
 - Added command-center settings controls for `FONT SCALE` with `FONT -` and `FONT +` actions clamped to `0.85..1.25`.
 - Verified QML lint, Zig build, whitespace, settings helper defaults/clamp behavior with temporary `XDG_CONFIG_HOME`, and Quickshell startup smoke.
+
+## 2026-05-05 - Documentation Granularity Alignment
+
+- Compared current `components/`, `modules/hud/`, `services/`, `qmldir` files, README, PRD/PLAN, and frontend specs to identify stale globe/ASCII/orbital and settings-granularity references.
+- Updated README controls/features to mention the analog orbital clock, time-based orbital sensor, and font scale setting.
+- Updated frontend directory/component specs to include `AnalogOrbitClock.qml`, `CentralPanelChrome.qml`, current service granularity, and shared central chrome contract details.
+- Updated `PLAN.md` architecture/current-status sections to treat the analog clock entry, graphical time-based ephemeris, central panel chrome, and `visual.fontScale` as the current implementation baseline.

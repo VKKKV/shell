@@ -30,7 +30,9 @@ components/
   ProgressBar.qml
   Sparkline.qml
   ToggleRow.qml
-  RotatingGlobe.qml
+  AnalogOrbitClock.qml
+  CentralPanelChrome.qml
+  PanelCloseButton.qml
   TrayStrip.qml
   TerminalLine.qml
   TerminalSection.qml
@@ -63,6 +65,11 @@ services/
   MediaService.qml
   NetworkDetailService.qml
   WallpaperService.qml
+  ServiceLogService.qml
+  EnvironmentService.qml
+  KeyboardService.qml
+  KeybindService.qml
+  EmojiService.qml
 theme/
   Theme.qml
 src/settings/
@@ -78,6 +85,8 @@ src/settings/
 - `components/` contains reusable presentational primitives only. Keep business logic out of these files.
 - `services/` contains external state and command integration. A widget should read state from services and dispatch user actions, not parse command output inline unless it is a temporary spike.
 - `services/ExpansionService.qml` is the single owner for central expansion state; edge panels should call it instead of owning popups directly.
+- `components/AnalogOrbitClock.qml` is the current left-panel orbital expansion affordance. `RotatingGlobe.qml` remains available as a visual primitive but is not the primary orbital entry.
+- `components/CentralPanelChrome.qml` owns shared command-center/non-orbital expansion panel chrome; `HudLayout.qml` still owns deployment geometry and animation.
 - `src/settings/main.zig` provides the first backend helper for settings persistence/normalization; keep QML as presentation state and Zig as durable data validation/persistence.
 - Do not create plugin registries, settings migrations, or dynamic widget ordering in the first implementation. Add those only after the shell works visually.
 - Create a git commit at each necessary checkpoint: after a slice is implemented, formatted, linted, and runtime-checked enough to be safely resumed later.
@@ -202,7 +211,7 @@ Current status: all concrete planned phases below are covered by first-party sli
 
 Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
 
-Current next phase: add a settings-panel font size/scale control as the first broader appearance-setting slice. Persist it through `SettingsService.qml`/`void-shell-settings`, apply it through `Theme.qml`, and keep future appearance controls such as more detailed font and visual parameters deferred.
+Current next phase: documentation/implementation granularity has been realigned after adding `AnalogOrbitClock`, `CentralPanelChrome`, `visual.fontScale`, and time-based orbital ephemerides. Future phases should start from current feedback rather than the older globe/ASCII descriptions.
 
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.
@@ -287,19 +296,18 @@ Status: covered for settings persistence via `src/settings/main.zig`; further Zi
 
 ### Phase H: Interactive Tactical Expansion Surfaces
 - Turn selected left/right panel child elements into click targets that open central enlarged tactical panels.
-- First target: `LeftTacticalPanel` orbital globe opens an enlarged orbital analysis panel in the center safe area.
-- Expanded orbital panel should show a top-down solar-system view using ASCII/monospace labels, orbit rings/lines, planet abbreviations, and animated/deterministic orbital phase data.
-- Graphical orbital rendering replaces the previous ASCII prototype using QML drawing primitives, glowing orbit paths, animated planets, trails, reticles, translucent overlays, and tactical warning-yellow labels.
+- Current target: `LeftTacticalPanel` uses `AnalogOrbitClock` as the orbital entry; clicking it opens an enlarged orbital analysis panel in the center safe area.
+- Expanded orbital panel shows a graphical top-down solar-system view using QML drawing primitives, approximate time-based planet positions, orbit rings, trails, reticles, translucent overlays, and tactical warning-yellow labels.
+- The previous ASCII/globe direction is superseded and preserved only as historical context.
 - The transition should feel mechanical/cybernetic: the expanded panel should visibly deploy from the clicked source widget using origin-aware scale/position motion, then lock into the center safe area with hard-frame deployment, warning accent flashes, scanline continuity, and dense diagnostic labels.
 - Use a reusable overlay pattern in `modules/hud/` instead of folding expansion logic into individual components.
 - Keep data local/deterministic for the MVP; real astronomy ephemeris or network-backed space data is deferred.
 
 Acceptance:
-- Clicking the small `RotatingGlobe` region opens a central expanded orbital panel that scales/moves out from the globe's left-panel origin instead of flashing in at the center.
+- Clicking the left `AnalogOrbitClock` opens a central expanded orbital panel that scales/moves out from the left-panel origin instead of flashing in at the center.
 - Closing the expanded panel restores normal HUD interaction and input regions.
 - Overlay remains inside the center safe area and does not invalidate edge exclusion-zone behavior.
-- ASCII/monospace solar-system content is legible and styled consistently with the VOID tactical language.
-- Graphical orbital content replaces ASCII with high-density sci-fi visual language while preserving deterministic local motion and central safe-area sizing.
+- Graphical orbital content replaces ASCII with high-density sci-fi visual language while preserving approximate time-based local ephemeris motion and central safe-area sizing.
 - The first implementation is reusable for later right-panel expansions such as CPU core matrix, network graph, filesystem matrix, or log stream drill-down.
 
 Status: covered by `ExpansionService`, graphical `OrbitalExpansionPanel`, and CPU/network/filesystem/log expansion panels using shared central safe-area deployment. ASCII acceptance is superseded by the graphical orbital requirement.
@@ -321,9 +329,9 @@ Status: covered by `ExpansionService`, graphical `OrbitalExpansionPanel`, and CP
    - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
 
 4. Left/right panel interaction model.
-   - Start with left orbital globe click-to-expand because it already has a strong visual affordance and isolated component boundary.
+   - Current left orbital entry is `AnalogOrbitClock`; it replaced the original globe affordance after time-based orbital ephemeris work.
    - Use a central overlay module controlled by small shared state instead of turning each edge panel into a separate popup owner.
-   - After the globe MVP, apply the same interaction pattern to right-panel drill-downs: CPU matrix, network graph, filesystem rows, and log stream.
+   - Apply the same interaction pattern to additional right/edge drill-downs when new domains need central detail surfaces.
 
 ## Reference Feature Gap Analysis
 
@@ -356,8 +364,9 @@ The reference shells provide a much broader desktop environment than the current
 - Keyboard layout telemetry from Hyprland devices with command fallback.
 - Hyprland keybind list telemetry with command fallback.
 - Local emoji palette with clipboard copy fallback.
-- Interactive orbital expansion overlay with ASCII solar-system telemetry.
-- Interactive orbital expansion overlay uses a graphical sci-fi orbit/sensor view with deterministic local motion.
+- Interactive orbital expansion overlay originally had ASCII solar-system telemetry, now superseded by the graphical surface.
+- Interactive orbital expansion overlay uses a graphical sci-fi orbit/sensor view with approximate time-based ephemeris positions.
+- Left orbital entry uses a mimetic analog clock instead of the original globe.
 - CPU core matrix drill-down expansion using the shared central overlay pattern.
 - Network matrix drill-down expansion using the shared central overlay pattern.
 - Filesystem matrix drill-down expansion using the shared central overlay pattern.
@@ -371,8 +380,8 @@ The reference shells provide a much broader desktop environment than the current
 ### Missing High-Value Features From References
 - Interactive tactical expansion surfaces.
   - References: dashboard popouts, detail drawers, and desktop widget overlays in Caelestia/Noctalia/DankMaterialShell.
-  - Tactical version: click left/right panel child elements to deploy central enlarged machine-interface panels. Orbital globe to ASCII solar-system analysis plus CPU, network, filesystem, and log stream drill-downs are implemented; later surfaces can drill into tray or weather if needed.
-  - Covered: orbital ASCII prototype has been replaced with a graphical sci-fi orbit/sensor surface.
+  - Tactical version: click left/right panel child elements to deploy central enlarged machine-interface panels. The orbital clock opens a graphical time-based ephemeris surface, and CPU, network, filesystem, and log stream drill-downs are implemented; later surfaces can drill into tray or weather if needed.
+  - Covered: the orbital ASCII/globe prototype has been replaced with an analog-clock entry and a graphical sci-fi orbit/sensor surface.
 
 - Dashboard/control center popout.
   - References: Caelestia dashboard, Noctalia panels, DankDash/control center.
@@ -429,7 +438,7 @@ All concrete high-value roadmap gaps for this planning task are now covered as f
 ### Recommended Feature Build Order
 
 0. Interactive panel expansion MVP.
-   - Covered: central expansion overlay state and module, left orbital globe click target, origin-aware cyber/mechanical orbital deployment animation, local deterministic ASCII solar-system telemetry.
+- Covered: central expansion overlay state and module, left analog clock click target, origin-aware cyber/mechanical orbital deployment animation, and approximate time-based orbital ephemeris telemetry.
    - Covered: orbital surface rewritten as graphical sci-fi orbit visualization; ASCII prototype removed from the active surface.
    - Covered: right-panel CPU matrix drill-down using the shared central overlay pattern.
    - Covered: right-panel network matrix drill-down using the shared central overlay pattern.
