@@ -288,6 +288,7 @@ The reference shells provide a much broader desktop environment than the current
 - Active window telemetry and current workspace window overview.
 - Compact mission dock in the bottom bar for current workspace windows.
 - Local weather via wttr.in with safe fetch fallback.
+- Keyboard layout telemetry from Hyprland devices with command fallback.
 - Tactical settings panel foundation.
 - Zig settings helper with JSON normalization.
 - Hyprland namespace/blur documentation.
@@ -331,7 +332,7 @@ The reference shells provide a much broader desktop environment than the current
 
 - Clipboard, keyboard layout, emoji, keybinds.
   - References: Noctalia clipboard/emoji/keyboard services, Dank keybinds/clipboard, Caelestia keyboard layout popout.
-  - Tactical version: clipboard buffer panel, keyboard layout indicator, keybind recorder/list.
+  - Tactical version: clipboard buffer panel, keyboard layout indicator, keybind recorder/list. Current remaining gap is keybind recorder/list and emoji.
 
 - Weather, calendar, location/night light.
   - References: all three have weather/calendar/location-related panels or services.

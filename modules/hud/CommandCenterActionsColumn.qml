@@ -118,6 +118,47 @@ ColumnLayout {
 
     TacticalLabel {
         Layout.fillWidth: true
+        text: "KEYBOARD // " + KeyboardService.activeLayout
+        accent: KeyboardService.available
+        dim: !KeyboardService.available
+    }
+
+    Repeater {
+        model: KeyboardService.keyboards.slice(0, 3)
+
+        Rectangle {
+            required property var modelData
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 28
+            color: modelData.main ? Theme.lineDim : "transparent"
+            border.color: modelData.main ? Theme.line : Theme.lineDim
+            border.width: Theme.lineWidth
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: 8
+
+                TacticalLabel {
+                    text: modelData.layout
+                    accent: modelData.main
+                    dim: !modelData.main
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: modelData.name
+                    elide: Text.ElideRight
+                    dim: true
+                }
+            }
+        }
+    }
+
+    TacticalLabel {
+        Layout.fillWidth: true
         text: "CALENDAR // " + CalendarService.monthText
         accent: true
     }

@@ -150,3 +150,9 @@
 - Added `modules/hud/TrayDrawer.qml` for command-center status notifier items with tactical icon cells.
 - Wired left-click activate and right-click secondary activate for tray entries.
 - Updated the roadmap to distinguish covered tray drawer behavior from future popout menu bridging.
+
+## 2026-05-05 - Keyboard Layout Slice
+
+- Added `services/KeyboardService.qml` using `hyprctl devices -j` to expose active keyboard layout and keyboard rows.
+- Added keyboard telemetry to command center overview and actions surfaces with Hyprland command fallback.
+- Updated the roadmap to mark keyboard layout telemetry covered while leaving keybind recorder/list and emoji deferred.
