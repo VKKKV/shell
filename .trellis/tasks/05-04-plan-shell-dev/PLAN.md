@@ -274,6 +274,7 @@ The reference shells provide a much broader desktop environment than the current
 - Live CPU, memory, network, and filesystem stats.
 - Audio volume/mute polling and controls via `wpctl`.
 - Session lock/logout/reboot/shutdown controls with confirmation.
+- Power profile and idle inhibitor controls with command fallback.
 - Battery/power-source display with AC/no-battery fallback.
 - Media/MPRIS display and previous/play-pause/next controls via `playerctl`.
 - Minimal system tray strip using Quickshell status notifier items.
@@ -326,7 +327,7 @@ The reference shells provide a much broader desktop environment than the current
 
 - Session/power/idle/lock controls.
   - References: Caelestia session/idle/lock, Noctalia session menu/idle/power profile, Dank session/power sleep/idle services.
-  - Tactical version: authenticated power menu, idle inhibitor, power profile, lock/logout/reboot/shutdown actions.
+  - Tactical version: authenticated power menu, idle inhibitor, power profile, lock/logout/reboot/shutdown actions. Current remaining gap is deeper idle/power-profile polish rather than the first control surface.
 
 - Clipboard, keyboard layout, emoji, keybinds.
   - References: Noctalia clipboard/emoji/keyboard services, Dank keybinds/clipboard, Caelestia keyboard layout popout.

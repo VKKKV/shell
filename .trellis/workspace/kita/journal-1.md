@@ -138,3 +138,9 @@
 - Checked the active shell task against the current code structure and uncommitted weather slice.
 - Aligned frontend Trellis guidelines with the existing `components/`, `modules/hud/`, `services/`, `theme/`, and Zig helper boundaries.
 - Updated settings documentation to reflect implemented Zig persistence instead of a future helper plan.
+
+## 2026-05-05 - Power Profile And Idle Slice
+
+- Added `services/PowerProfileService.qml` using `powerprofilesctl` for profile reads/writes and `systemd-inhibit` for an idle inhibitor toggle.
+- Added command center power profile controls and idle inhibitor status with fallback service lines.
+- Updated the roadmap to mark the first power-profile/idle control surface covered.

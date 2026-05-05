@@ -9,7 +9,68 @@ ColumnLayout {
 
     TextBlock {
         title: "SESSION // POWER"
-        lines: [SessionService.statusLine, "click once to arm, click same action again to execute"]
+        lines: [SessionService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine, "click once to arm, click same action again to execute"]
+    }
+
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "POWER PROFILE // " + PowerProfileService.profile
+        accent: PowerProfileService.available
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 8
+
+        Repeater {
+            model: ["power-saver", "balanced", "performance"]
+
+            Rectangle {
+                required property string modelData
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 26
+                color: PowerProfileService.profile.toLowerCase() === modelData ? Theme.lineDim : "transparent"
+                border.color: PowerProfileService.profile.toLowerCase() === modelData ? Theme.line : Theme.lineDim
+                border.width: Theme.lineWidth
+                opacity: PowerProfileService.available ? 1 : 0.45
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: PowerProfileService.available ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    enabled: PowerProfileService.available
+                    onClicked: PowerProfileService.setProfile(parent.modelData)
+                }
+
+                TacticalLabel {
+                    anchors.centerIn: parent
+                    text: parent.modelData.toUpperCase()
+                    accent: PowerProfileService.profile.toLowerCase() === parent.modelData
+                    dim: PowerProfileService.profile.toLowerCase() !== parent.modelData
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 28
+        color: PowerProfileService.idleInhibited ? Theme.lineDim : "transparent"
+        border.color: PowerProfileService.idleInhibited ? Theme.line : Theme.lineDim
+        border.width: Theme.lineWidth
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: PowerProfileService.toggleIdleInhibitor()
+        }
+
+        TacticalLabel {
+            anchors.centerIn: parent
+            text: PowerProfileService.idleInhibited ? "IDLE INHIBITOR // ACTIVE" : "IDLE INHIBITOR // STANDBY"
+            accent: PowerProfileService.idleInhibited
+            dim: !PowerProfileService.idleInhibited
+        }
     }
 
     GridLayout {
