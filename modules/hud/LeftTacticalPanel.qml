@@ -1,30 +1,35 @@
 import "../../components"
+import "../../services"
 import "../../theme"
 import QtQuick
 import QtQuick.Layouts
 
 TacticalFrame {
-    title: "TACTICAL // THERMAL"
+    title: "ORBITAL // GLOBE"
+    implicitWidth: Math.max(Theme.sidePanelMinWidth, content.implicitWidth + Theme.panelPadding * 2)
+    implicitHeight: Math.min(Theme.sidePanelMaxHeight, content.implicitHeight + Theme.panelPadding + 38)
 
     ColumnLayout {
+        id: content
+
         anchors.fill: parent
         anchors.margins: Theme.panelPadding
         anchors.topMargin: 38
         spacing: 12
 
-        MetricBlock {
-            title: "TACTICAL LAYER"
-            rows: [["STATUS", "ONLINE", -1, true], ["SYNC RATE", "100%", 1, false], ["SIGNAL STR", "98%", 0.98, false], ["ENCRYPTION", "AES-256", -1, false]]
-        }
-
-        RadarDisplay {
+        RotatingGlobe {
             Layout.fillWidth: true
-            Layout.preferredHeight: 88
+            Layout.preferredHeight: Math.min(260, parent.height * 0.42)
         }
 
         MetricBlock {
-            title: "THERMAL MAP"
-            rows: [["CPU", "54C", 0.54, false], ["GPU", "48C", 0.48, false], ["VRM", "46C", 0.46, false], ["PCH", "42C", 0.42, false], ["SSD", "39C", 0.39, false]]
+            title: "GLOBAL LINK"
+            rows: [["STATUS", "TRACKING", -1, true], ["ORBIT", "LEO", -1, false], ["SIGNAL", "98%", 0.98, false], ["LATENCY", "18MS", 0.18, false]]
+        }
+
+        MetricBlock {
+            title: "WINDOW AREA"
+            rows: [["CENTER", "HYPRLAND", -1, true], ["HUD", "EDGE ONLY", -1, false], ["INPUT", "PASSTHRU", -1, false]]
         }
 
         Sparkline {
@@ -34,8 +39,8 @@ TacticalFrame {
         }
 
         MetricBlock {
-            title: "POWER GRID"
-            rows: [["TOTAL", "425W", 0.85, true], ["GPU", "186W", 0.62, false], ["CPU", "92W", 0.38, false]]
+            title: "TELEMETRY"
+            rows: [["AUDIO", AudioService.volumeText, AudioService.available ? AudioService.volume : -1, AudioService.available], ["POWER", BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available], ["MEDIA", MediaService.status, -1, MediaService.available]]
         }
 
     }

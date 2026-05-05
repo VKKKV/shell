@@ -9,9 +9,12 @@ TacticalFrame {
 
     property int activeWorkspace: HyprlandService.activeWorkspace
 
+    implicitHeight: Math.min(Theme.topBarMaxHeight, Math.max(Theme.topBarMinHeight, content.implicitHeight + Theme.panelPadding * 2))
     highlighted: true
 
     RowLayout {
+        id: content
+
         anchors.fill: parent
         anchors.margins: Theme.panelPadding
         spacing: Theme.gap
@@ -79,9 +82,9 @@ TacticalFrame {
         }
 
         ColumnLayout {
-            Layout.preferredWidth: 310
+            Layout.preferredWidth: 500
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-            spacing: 4
+            spacing: 6
 
             TacticalLabel {
                 Layout.fillWidth: true
@@ -94,11 +97,13 @@ TacticalFrame {
             TacticalLabel {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
+                elide: Text.ElideRight
                 text: HyprlandService.available ? "HYPRLAND // QML RENDERER" : "HYPRLAND // FALLBACK MODE"
                 dim: true
             }
 
             RowLayout {
+                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignRight
                 spacing: 6
 
@@ -174,13 +179,12 @@ TacticalFrame {
 
             }
 
-            TrayStrip {
-                Layout.alignment: Qt.AlignRight
-            }
-
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 6
+
+                TrayStrip {
+                }
 
                 TacticalLabel {
                     Layout.fillWidth: true

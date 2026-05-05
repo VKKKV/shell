@@ -18,8 +18,11 @@ QtObject {
     readonly property int panelPadding: 14
     readonly property int lineWidth: 1
     readonly property int heavyLineWidth: 2
-    readonly property int topBarHeight: 70
-    readonly property int bottomBarHeight: 42
+    readonly property int topBarMinHeight: 70
+    readonly property int topBarMaxHeight: 180
+    readonly property int bottomBarMinHeight: 42
+    readonly property int bottomBarMaxHeight: 96
+    readonly property int sidePanelMaxHeight: 760
     readonly property int sidePanelWidth: 300
     readonly property int rightPanelWidth: 410
     readonly property int sidePanelMinWidth: 240

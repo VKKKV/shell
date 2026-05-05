@@ -6,8 +6,12 @@ import QtQuick.Layouts
 
 TacticalFrame {
     title: "SYSTEM MONITOR MATRIX"
+    implicitWidth: Math.max(Theme.rightPanelMinWidth, content.implicitWidth + Theme.panelPadding * 2)
+    implicitHeight: Math.min(Theme.sidePanelMaxHeight, content.implicitHeight + Theme.panelPadding + 38)
 
     ColumnLayout {
+        id: content
+
         anchors.fill: parent
         anchors.margins: Theme.panelPadding
         anchors.topMargin: 38

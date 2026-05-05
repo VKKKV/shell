@@ -44,3 +44,18 @@
 - Confirmed local Quickshell exposes `Quickshell.Services.SystemTray` through reference shell usage.
 - Added `components/TrayStrip.qml` with item count, icon cells, left-click activate, and right-click secondary activate.
 - Registered `TrayStrip` in `components/qmldir` and mounted it in the top status bar.
+
+## 2026-05-04 - HUD Edge Overlay Refactor
+
+- Responded to screenshot feedback: top bar content was clipped, fullscreen HUD obscured real Hyprland windows, and center terminal should be a real compositor-managed window.
+- Removed the opaque fullscreen HUD background and removed the central terminal panel from the active layout.
+- Refactored `HudLayout.qml` into edge-anchored top/left/right/bottom panels with center area left transparent for real windows.
+- Added `PanelWindow.mask` regions so only edge panels and settings overlay receive pointer input; center area passes through.
+- Increased top bar height and compacted top-right media/audio/tray layout to avoid clipping.
+- Replaced the left tactical mock panel with an orbital globe-style telemetry panel using `components/RotatingGlobe.qml`.
+
+## 2026-05-04 - Dynamic Edge Expansion
+
+- Replaced fixed top/bottom bar heights with implicit content-driven heights clamped by theme min/max values.
+- Updated left/right side panels to expose implicit sizes and expand inward based on content width/height.
+- Added size animations so top expands downward, bottom expands upward, and side panels expand toward the center without abrupt jumps.

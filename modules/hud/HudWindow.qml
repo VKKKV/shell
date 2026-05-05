@@ -8,6 +8,8 @@ PanelWindow {
     color: "transparent"
     exclusiveZone: 0
     WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     WlrLayershell.namespace: "void-hud"
 
     anchors {
@@ -18,7 +20,18 @@ PanelWindow {
     }
 
     HudLayout {
+        id: layout
+
         anchors.fill: parent
+    }
+
+    mask: Region {
+        x: 0
+        y: 0
+        width: panel.width
+        height: panel.height
+        intersection: Intersection.Xor
+        regions: layout.inputRegions
     }
 
 }
