@@ -99,14 +99,29 @@ CentralPanelChrome {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 contentWidth: width
-                contentHeight: actionsColumn.implicitHeight
+                contentHeight: actionStack.implicitHeight
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
 
-                CommandCenterActionsColumn {
-                    id: actionsColumn
+                ColumnLayout {
+                    id: actionStack
 
                     width: parent.width
+                    spacing: Theme.densitySpacing
+
+                    CommandCenterDiagnosticsColumn {
+                        Layout.fillWidth: true
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: Theme.lineWidth
+                        color: Theme.lineDim
+                    }
+
+                    CommandCenterActionsColumn {
+                        Layout.fillWidth: true
+                    }
                 }
             }
         }

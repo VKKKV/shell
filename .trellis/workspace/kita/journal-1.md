@@ -451,3 +451,10 @@
 - Applied density sizing to the command-center settings controls plus CPU/network/filesystem/log expansion rows and graph surfaces.
 - Added `#FFB900` as an additional command-center accent color preset.
 - Updated `docs/settings.md` and the frontend type-safety spec with the density contract.
+
+## 2026-05-05 - Runtime Diagnostics Page
+
+- Added the next PRD phase for command-center runtime diagnostics after visual density profiles.
+- Added `modules/hud/CommandCenterDiagnosticsColumn.qml` as a read-only health surface composed from existing service status lines, `HudMetrics`, tray item count, settings helper state, and structured `ServiceLogService` events.
+- Embedded diagnostics at the top of the command-center third column while preserving the existing actions/power/tray controls below it.
+- Registered the new QML module in `modules/hud/qmldir` and updated frontend directory/component specs.

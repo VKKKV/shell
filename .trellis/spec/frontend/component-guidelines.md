@@ -51,6 +51,7 @@ Examples:
 - `CenterTerminalPanel.qml`
 - `RightMonitorPanel.qml`
 - `SettingsPanel.qml`
+- `CommandCenterDiagnosticsColumn.qml`
 
 Good module traits:
 
@@ -58,6 +59,7 @@ Good module traits:
 - reads shaped data from services
 - contains minimal glue logic only
 - owns layout for one product surface or one expansion panel
+- may compose many service status lines when the surface is explicitly a diagnostics/readout module
 
 ### Expansion Surfaces
 

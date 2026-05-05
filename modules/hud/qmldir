@@ -10,6 +10,7 @@ RightMonitorPanel 1.0 RightMonitorPanel.qml
 SettingsPanel 1.0 SettingsPanel.qml
 CommandCenterPanel 1.0 CommandCenterPanel.qml
 CommandCenterOverviewColumn 1.0 CommandCenterOverviewColumn.qml
+CommandCenterDiagnosticsColumn 1.0 CommandCenterDiagnosticsColumn.qml
 CommandCenterSettingsColumn 1.0 CommandCenterSettingsColumn.qml
 CommandCenterActionsColumn 1.0 CommandCenterActionsColumn.qml
 TrayDrawer 1.0 TrayDrawer.qml

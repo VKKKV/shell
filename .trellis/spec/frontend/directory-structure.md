@@ -39,6 +39,7 @@ modules/hud/
 ├── BottomStatusBar.qml
 ├── CommandCenterPanel.qml
 ├── CommandCenterOverviewColumn.qml
+├── CommandCenterDiagnosticsColumn.qml
 ├── CommandCenterSettingsColumn.qml
 ├── CommandCenterActionsColumn.qml
 ├── OrbitalExpansionPanel.qml
@@ -108,3 +109,4 @@ Add new features as vertical slices, not as registries or broad rewrites.
 - `components/AnalogOrbitClock.qml` plus `modules/hud/LeftTacticalPanel.qml`: a reusable tactical clock acts as the current orbital expansion entry.
 - `components/CentralPanelChrome.qml`: shared central-panel header/close/content chrome for command center and non-orbital drill-downs.
 - `services/WallpaperService.qml` plus `CommandCenterSettingsColumn.qml`: local external command integration appears as a settings/control surface.
+- `CommandCenterDiagnosticsColumn.qml`: read-only runtime/service health surface composed from existing service status lines and structured service log events.

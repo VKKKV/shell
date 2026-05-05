@@ -410,3 +410,32 @@ Decision (ADR-lite):
 - Context: typography, opacity, scanlines, and contrast are now tunable, but dense HUD surfaces still use fixed row/control/graph heights. Users need a coarse way to trade compactness against readability without editing QML.
 - Decision: add a single persisted `visual.density` profile and derive common layout sizes from `Theme.qml`.
 - Consequences: global density tuning becomes available with a small contract. The trade-off is that individual surfaces do not yet have independent density profiles; those can be added later only if real use shows a need.
+
+### Next Optimization MVP: Runtime Diagnostics Page
+
+Plan source: refinement backlog item for a runtime diagnostics page in command center showing Quickshell mode, enabled services, missing commands, and recent service log warnings.
+
+Requirements:
+
+- Add a command-center diagnostics surface/section using existing service state first.
+- Show runtime mode and shell health signals such as QApplication/native tray mode, settings helper status, live-data state, scanlines state, and update interval.
+- Show service availability/status lines for core integrations: Hyprland, system stats, network, audio/mic, media, weather, clipboard, launcher, tray, notifications, keyboard/keybinds, battery, and power/session.
+- Highlight fallback/missing/warning states without dumping raw stderr into the UI.
+- Include recent service log events from the existing structured log path.
+- Keep the slice QML-only unless a new backend contract proves necessary.
+
+Acceptance Criteria:
+
+- [x] Command center exposes a discoverable diagnostics section or column.
+- [x] Diagnostics include runtime mode/settings status and live-data/toggle state.
+- [x] Diagnostics list core service status/fallback lines with warning emphasis.
+- [x] Recent structured service log events are visible from the diagnostics surface.
+- [x] Dense content scrolls/elides and respects existing command-center safe-area sizing.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: service fallbacks now exist across many integrations, but runtime health is distributed across overview/actions/log panels. A single diagnostics page makes missing command and fallback state easier to inspect.
+- Decision: add diagnostics as a command-center module that composes existing service status fields and `ServiceLogService` events instead of adding a new backend helper.
+- Consequences: improves operability with low implementation risk. The trade-off is that diagnostics are read-only and coarse; deeper profiling or raw log tailing remains future work.
