@@ -48,6 +48,11 @@ TacticalFrame {
             rows: SystemStats.networkRows
         }
 
+        MetricBlock {
+            title: "NETWORK DETAIL"
+            rows: NetworkDetailService.rows
+        }
+
         Sparkline {
             Layout.fillWidth: true
             Layout.preferredHeight: 34
@@ -65,7 +70,7 @@ TacticalFrame {
         }
 
         LogStream {
-            lines: [HyprlandService.statusLine, SystemStats.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
+            lines: [HyprlandService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
         }
 
     }

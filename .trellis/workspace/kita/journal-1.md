@@ -72,3 +72,34 @@
 - Reviewed current shell structure and found no blocking optimization needs; verification passed before continuing.
 - Updated `PLAN.md` to move completed edge/settings/media/tray work out of the next-step list.
 - Refactored `SettingsPanel.qml` into a broader command center with system overview, live metrics, service status, settings controls, and session power actions in three columns.
+
+## 2026-05-04 - Launcher Search Slice
+
+- Added `services/LauncherService.qml` with built-in actions and `.desktop` app indexing through `gtk-launch`.
+- Added command center search input and launcher results list for apps/actions.
+- Updated `PLAN.md` to mark launcher/search foundation covered and move notifications/toasts up next.
+
+## 2026-05-04 - Notifications And Toasts Slice
+
+- Added `services/NotificationService.qml` using Quickshell notification APIs when no external notification daemon owns DBus.
+- Added DND state, notification history, latest notification state, and tactical toast visibility state.
+- Added `modules/hud/NotificationToast.qml`, command center DND/clear controls, and recent notification history.
+- Avoided startup warning by probing `org.freedesktop.Notifications` before enabling the built-in server.
+
+## 2026-05-04 - Network Detail Slice
+
+- Reviewed launcher/notification slices; no blocking optimization needed before continuing.
+- Added `services/NetworkDetailService.qml` using `nmcli` for active connections/VPN-like links and `bluetoothctl` for controller state.
+- Added `NETWORK DETAIL` rows to the right monitor panel and network/VPN status to the command center overview.
+
+## 2026-05-04 - Theme Profiles Slice
+
+- Added persistent `visual.profile` settings support for `amber`, `green`, `blue`, and `red`.
+- Updated `Theme.qml` to derive tactical accent/text colors from `SettingsService.themeProfile`.
+- Added command center profile controls and documented the settings contract update.
+
+## 2026-05-04 - Command Center Refactor
+
+- Reviewed architecture before continuing; `SettingsPanel.qml` had become too broad and needed a seam before more feature work.
+- Split command center implementation into `CommandCenterPanel.qml`, `CommandCenterOverviewColumn.qml`, `CommandCenterSettingsColumn.qml`, and `CommandCenterActionsColumn.qml`.
+- Reduced `SettingsPanel.qml` back to a thin overlay wrapper that centers `CommandCenterPanel`.

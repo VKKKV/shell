@@ -7,3 +7,8 @@ LeftTacticalPanel 1.0 LeftTacticalPanel.qml
 CenterTerminalPanel 1.0 CenterTerminalPanel.qml
 RightMonitorPanel 1.0 RightMonitorPanel.qml
 SettingsPanel 1.0 SettingsPanel.qml
+CommandCenterPanel 1.0 CommandCenterPanel.qml
+CommandCenterOverviewColumn 1.0 CommandCenterOverviewColumn.qml
+CommandCenterSettingsColumn 1.0 CommandCenterSettingsColumn.qml
+CommandCenterActionsColumn 1.0 CommandCenterActionsColumn.qml
+NotificationToast 1.0 NotificationToast.qml

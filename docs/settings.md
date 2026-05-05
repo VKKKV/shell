@@ -25,7 +25,8 @@ Fallback if `XDG_CONFIG_HOME` is unset:
   "version": 1,
   "visual": {
     "scanlinesEnabled": true,
-    "intensity": 1.0
+    "intensity": 1.0,
+    "profile": "amber"
   },
   "data": {
     "liveDataEnabled": true,
@@ -44,6 +45,7 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `version` must be `1` for this initial contract.
 - `visual.scanlinesEnabled` is boolean.
 - `visual.intensity` is clamped to `0.5..1.5`.
+- `visual.profile` is one of `amber`, `green`, `blue`, or `red`.
 - `data.liveDataEnabled` is boolean.
 - `data.updateIntervalMs` is clamped to `1000..30000`.
 - panel visibility fields are booleans.

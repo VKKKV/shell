@@ -2,15 +2,17 @@ pragma Singleton
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import "../services"
 
 QtObject {
+    readonly property string profile: SettingsService.themeProfile
     readonly property color background: "#000000"
     readonly property color panel: "#cc030303"
     readonly property color panelSoft: "#99080808"
-    readonly property color line: "#ffb900"
-    readonly property color lineDim: "#7f6f5200"
-    readonly property color text: "#e8e2c8"
-    readonly property color textDim: "#8f8a78"
+    readonly property color line: profile === "green" ? "#52ff7a" : (profile === "blue" ? "#55b7ff" : (profile === "red" ? "#ff4d2e" : "#ffb900"))
+    readonly property color lineDim: profile === "green" ? "#7f1f6f32" : (profile === "blue" ? "#7f1e577f" : (profile === "red" ? "#7f6f1d14" : "#7f6f5200"))
+    readonly property color text: profile === "green" ? "#d8ffe0" : (profile === "blue" ? "#d8ecff" : (profile === "red" ? "#ffe0d8" : "#e8e2c8"))
+    readonly property color textDim: profile === "green" ? "#82a88a" : (profile === "blue" ? "#8199aa" : (profile === "red" ? "#aa8179" : "#8f8a78"))
     readonly property color danger: "#ff4d2e"
 
     readonly property int margin: 18

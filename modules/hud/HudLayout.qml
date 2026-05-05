@@ -21,7 +21,7 @@ Item {
     readonly property int bottomReserved: bottomBar.height + Theme.margin * 2
     readonly property int leftReserved: leftPanel.visible ? leftPanel.width + Theme.margin * 2 : 0
     readonly property int rightReserved: rightPanel.visible ? rightPanel.width + Theme.margin * 2 : 0
-    readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion]
+    readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion, toastInputRegion]
 
     function syncMetrics(): void {
         HudMetrics.topReserved = topReserved;
@@ -114,6 +114,15 @@ Item {
         anchors.fill: parent
     }
 
+    NotificationToast {
+        id: notificationToast
+
+        anchors.right: parent.right
+        anchors.top: topBar.bottom
+        anchors.rightMargin: Theme.margin
+        anchors.topMargin: Theme.gap
+    }
+
     Region {
         id: topInputRegion
 
@@ -161,6 +170,16 @@ Item {
         y: 0
         width: settingsPanel.visible ? root.width : 0
         height: settingsPanel.visible ? root.height : 0
+        intersection: Intersection.Subtract
+    }
+
+    Region {
+        id: toastInputRegion
+
+        x: notificationToast.x
+        y: notificationToast.y
+        width: notificationToast.visible ? notificationToast.width : 0
+        height: notificationToast.visible ? notificationToast.height : 0
         intersection: Intersection.Subtract
     }
 

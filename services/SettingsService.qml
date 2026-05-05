@@ -14,6 +14,7 @@ Singleton {
     property bool leftVisible: true
     property bool centerVisible: true
     property bool rightVisible: true
+    property string themeProfile: "amber"
     property real intensity: 1
     property int updateIntervalMs: 5000
     property string statusLine: "settings: defaults active"
@@ -34,6 +35,10 @@ Singleton {
         return Math.max(1000, Math.min(30000, value));
     }
 
+    function normalizeThemeProfile(value: string): string {
+        return ["amber", "green", "blue", "red"].indexOf(value) >= 0 ? value : "amber";
+    }
+
     function applySettings(settings: var): void {
         if (!settings || typeof settings !== "object")
             return;
@@ -44,6 +49,8 @@ Singleton {
                 scanlinesEnabled = settings.visual.scanlinesEnabled;
             if (typeof settings.visual.intensity === "number")
                 intensity = clampIntensity(settings.visual.intensity);
+            if (typeof settings.visual.profile === "string")
+                themeProfile = normalizeThemeProfile(settings.visual.profile);
         }
         if (settings.data) {
             if (typeof settings.data.liveDataEnabled === "boolean")
@@ -67,7 +74,8 @@ Singleton {
             version: 1,
             visual: {
                 scanlinesEnabled: scanlinesEnabled,
-                intensity: clampIntensity(intensity)
+                intensity: clampIntensity(intensity),
+                profile: normalizeThemeProfile(themeProfile)
             },
             data: {
                 liveDataEnabled: liveDataEnabled,
@@ -106,6 +114,14 @@ Singleton {
     onLeftVisibleChanged: scheduleSave()
     onCenterVisibleChanged: scheduleSave()
     onRightVisibleChanged: scheduleSave()
+    onThemeProfileChanged: {
+        const normalized = normalizeThemeProfile(themeProfile);
+        if (normalized !== themeProfile) {
+            themeProfile = normalized;
+            return;
+        }
+        scheduleSave();
+    }
     onIntensityChanged: {
         const clamped = clampIntensity(intensity);
         if (clamped !== intensity) {

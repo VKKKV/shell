@@ -259,15 +259,8 @@ Acceptance:
    - Keep settings controls available, but group them so the panel does not become a long flat list.
    - Use existing services first; avoid adding plugin registries.
 
-3. Launcher/search.
-   - Add keyboard-first app/action/settings search.
-   - Start with app launch and built-in shell actions before calculator/providers.
-
-4. Notifications/toasts.
-   - Add notification capture, history, DND, and tactical toast visuals.
-
-5. Broader reference-shell features.
-   - Candidate features: network/VPN/Bluetooth detail, wallpaper/theme profiles, dock/taskbar, clipboard, calendar/weather.
+3. Broader reference-shell features.
+   - Candidate features: dock/taskbar, clipboard, calendar/weather.
    - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
 
 ## Reference Feature Gap Analysis
@@ -285,6 +278,10 @@ The reference shells provide a much broader desktop environment than the current
 - Media/MPRIS display and previous/play-pause/next controls via `playerctl`.
 - Minimal system tray strip using Quickshell status notifier items.
 - Edge exclusion zones that reserve real screen space and push Hyprland windows into the center safe area.
+- Command center foundation with app/action launcher search.
+- Notification server fallback, DND/history controls, and tactical toast UI.
+- Network/VPN/Bluetooth detail from `nmcli` and `bluetoothctl`.
+- Persistent theme profiles for amber/green/blue/red tactical palettes.
 - Tactical settings panel foundation.
 - Zig settings helper with JSON normalization.
 - Hyprland namespace/blur documentation.

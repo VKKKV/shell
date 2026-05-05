@@ -3,6 +3,7 @@ const std = @import("std");
 const Settings = struct {
     scanlines_enabled: bool = true,
     intensity: f64 = 1.0,
+    profile: []const u8 = "amber",
     live_data_enabled: bool = true,
     update_interval_ms: i64 = 5000,
     left_visible: bool = true,
@@ -15,7 +16,8 @@ const defaults_json =
     \\  "version": 1,
     \\  "visual": {
     \\    "scanlinesEnabled": true,
-    \\    "intensity": 1.0
+    \\    "intensity": 1.0,
+    \\    "profile": "amber"
     \\  },
     \\  "data": {
     \\    "liveDataEnabled": true,
@@ -120,6 +122,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
     if (objectField(root, "visual")) |visual| {
         settings.scanlines_enabled = boolField(visual, "scanlinesEnabled") orelse settings.scanlines_enabled;
         settings.intensity = clampFloat(numberField(visual, "intensity") orelse settings.intensity, 0.5, 1.5);
+        settings.profile = themeProfileField(visual, "profile") orelse settings.profile;
     }
 
     if (objectField(root, "data")) |data| {
@@ -138,7 +141,8 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\  "version": 1,
         \\  "visual": {{
         \\    "scanlinesEnabled": {},
-        \\    "intensity": {d:.1}
+        \\    "intensity": {d:.1},
+        \\    "profile": "{s}"
         \\  }},
         \\  "data": {{
         \\    "liveDataEnabled": {},
@@ -153,6 +157,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
     , .{
         settings.scanlines_enabled,
         settings.intensity,
+        settings.profile,
         settings.live_data_enabled,
         settings.update_interval_ms,
         settings.left_visible,
@@ -172,6 +177,16 @@ fn boolField(value: std.json.Value, key: []const u8) ?bool {
     if (field != .bool)
         return null;
     return field.bool;
+}
+
+fn themeProfileField(value: std.json.Value, key: []const u8) ?[]const u8 {
+    const field = objectField(value, key) orelse return null;
+    if (field != .string)
+        return null;
+    const profile = field.string;
+    if (std.mem.eql(u8, profile, "amber") or std.mem.eql(u8, profile, "green") or std.mem.eql(u8, profile, "blue") or std.mem.eql(u8, profile, "red"))
+        return profile;
+    return null;
 }
 
 fn numberField(value: std.json.Value, key: []const u8) ?f64 {
