@@ -247,6 +247,21 @@ Acceptance:
 - Zig is used where it simplifies reliability/performance, not as premature architecture.
 - QML remains responsible for presentation; Zig helpers own data collection or durable backend behavior.
 
+### Phase H: Interactive Tactical Expansion Surfaces
+- Turn selected left/right panel child elements into click targets that open central enlarged tactical panels.
+- First target: `LeftTacticalPanel` orbital globe opens an enlarged orbital analysis panel in the center safe area.
+- Expanded orbital panel should show a top-down solar-system view using ASCII/monospace labels, orbit rings/lines, planet abbreviations, and animated/deterministic orbital phase data.
+- The transition should feel mechanical/cybernetic: hard-frame deployment, warning accent flashes, scanline continuity, and dense diagnostic labels.
+- Use a reusable overlay pattern in `modules/hud/` instead of folding expansion logic into individual components.
+- Keep data local/deterministic for the MVP; real astronomy ephemeris or network-backed space data is deferred.
+
+Acceptance:
+- Clicking the small `RotatingGlobe` region opens a central expanded orbital panel.
+- Closing the expanded panel restores normal HUD interaction and input regions.
+- Overlay remains inside the center safe area and does not invalidate edge exclusion-zone behavior.
+- ASCII/monospace solar-system content is legible and styled consistently with the VOID tactical language.
+- The first implementation is reusable for later right-panel expansions such as CPU core matrix, network graph, filesystem matrix, or log stream drill-down.
+
 ## Prioritized Next Steps
 
 1. Screenshot-driven visual tuning.
@@ -260,8 +275,13 @@ Acceptance:
    - Use existing services first; avoid adding plugin registries.
 
 3. Broader reference-shell features.
-   - Candidate features: remaining reference-shell gaps after the current covered slices, such as richer tray drawers, idle/power profile controls, wallpaper/theme management, keyboard layout/keybind surfaces, and optional desktop widgets.
+   - Candidate features: interactive tactical expansion surfaces, richer tray drawers, idle/power profile controls, wallpaper/theme management, keyboard layout/keybind surfaces, and optional desktop widgets.
    - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
+
+4. Left/right panel interaction model.
+   - Start with left orbital globe click-to-expand because it already has a strong visual affordance and isolated component boundary.
+   - Use a central overlay module controlled by small shared state instead of turning each edge panel into a separate popup owner.
+   - After the globe MVP, apply the same interaction pattern to right-panel drill-downs: CPU matrix, network graph, filesystem rows, and log stream.
 
 ## Reference Feature Gap Analysis
 
@@ -294,6 +314,10 @@ The reference shells provide a much broader desktop environment than the current
 - Hyprland namespace/blur documentation.
 
 ### Missing High-Value Features From References
+- Interactive tactical expansion surfaces.
+  - References: dashboard popouts, detail drawers, and desktop widget overlays in Caelestia/Noctalia/DankMaterialShell.
+  - Tactical version: click left/right panel child elements to deploy central enlarged machine-interface panels. First MVP is orbital globe to ASCII solar-system analysis; later surfaces can drill into CPU, network, filesystem, logs, tray, or weather.
+
 - Dashboard/control center popout.
   - References: Caelestia dashboard, Noctalia panels, DankDash/control center.
   - Tactical version: command-center panel with quick toggles, system overview, media, calendar, weather, and power actions.
@@ -343,6 +367,11 @@ The reference shells provide a much broader desktop environment than the current
   - Tactical version: defer until core shell is stable; add only after several first-party widgets prove registry value.
 
 ### Recommended Feature Build Order
+
+0. Interactive panel expansion MVP.
+   - Add central expansion overlay state and module.
+   - Make the left orbital globe open a cyber/mechanical orbital analysis panel.
+   - Render local deterministic solar-system ASCII telemetry; no external ephemeris dependency yet.
 
 1. Settings persistence wiring.
    - Connect QML `SettingsService` to `void-shell-settings` read/write.

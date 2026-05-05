@@ -6,6 +6,7 @@ Develop a desktop shell (status bar and widgets) using the [Quickshell](https://
 ## 2. Visual & Functional Requirements
 - **Visuals**: Clean, modern aesthetic (transparency, rounded corners, consistent padding).
 - **Bar**: A top or bottom bar (based on `target.png`) containing various widgets.
+- **Panel Interactions**: Left/right HUD panel child elements should become interactive tactical entry points. Clicking high-signal widgets, starting with the orbital globe, should open an enlarged central analysis panel instead of only showing static telemetry.
 - **Widgets**:
     - **Workspaces**: Indicator for virtual desktops, showing active/inactive states.
     - **Clock**: Date and time display.
@@ -14,6 +15,7 @@ Develop a desktop shell (status bar and widgets) using the [Quickshell](https://
     - **Audio**: Volume control and indicator.
     - **Media**: Current playing track and controls.
     - **System Tray**: Integration for background apps.
+    - **Orbital Expansion**: Enlarged globe/solar-system panel with ASCII orbital telemetry and cyber/mechanical motion language.
 
 ## 3. Technical Architecture
 - **Language**: QML (Qt Quick) for UI, JavaScript for logic.
@@ -45,6 +47,20 @@ Develop a desktop shell (status bar and widgets) using the [Quickshell](https://
 - Hover effects and transitions.
 - Theming support (colors, fonts).
 - Final visual adjustments to match `target.png`.
+- Interactive left/right panel expansion surfaces.
+
+### Phase 6: Tactical Expansion Panels
+- Make selected left/right panel child elements clickable without breaking edge input pass-through.
+- Implement a central enlarged overlay opened from `LeftTacticalPanel`'s orbital globe.
+- Render a top-down solar-system/orbital view using ASCII/monospace labels and mechanical/cyber HUD framing.
+- Keep expanded panels modular so right-panel elements can reuse the same overlay pattern later.
+
+Acceptance:
+- Clicking the small orbital globe opens a central tactical expansion panel.
+- The panel can be closed with an obvious control and does not permanently block the normal HUD.
+- The expanded panel preserves the machine-interface visual language: hard frames, scanlines, dense labels, yellow/gray contrast, and monospaced ASCII content.
+- Planet/orbit positions update over time or expose deterministic live-looking phase movement without requiring network access.
+- The implementation is split into reusable expansion primitives and a specific orbital/solar-system surface.
 
 ## 5. References
 - Quickshell Docs: https://quickshell.org/docs/v0.3.0/

@@ -168,3 +168,9 @@
 - Extended `AudioService.qml` with default source volume, mute state, fallback status, and `wpctl` microphone controls.
 - Added microphone telemetry to command center overview metrics and microphone controls to settings.
 - Updated the roadmap to mark microphone controls covered while leaving spectrum/lyrics deferred.
+
+## 2026-05-05 - Interactive Panel Expansion Planning
+
+- Captured the new direction: left/right panel child elements should become interactive tactical entry points.
+- Planned the first MVP around clicking the left orbital globe to deploy a central enlarged orbital/solar-system analysis panel.
+- Defined the visual requirement for ASCII/monospace planet position telemetry with mechanical/cyber deployment language and reusable overlay architecture.
