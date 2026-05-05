@@ -4,37 +4,17 @@ import "../../theme"
 import QtQuick
 import QtQuick.Layouts
 
-TacticalFrame {
+CentralPanelChrome {
     id: root
 
     title: "LOG STREAM // EVENT DRILLDOWN"
-    highlighted: true
+    headerText: "DEPLOYED FROM RIGHT LOG NODE // SERVICE STATUS EVENT BUS"
 
     readonly property var logLines: [HyprlandService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, AudioService.micStatusLine, BatteryService.statusLine, MediaService.statusLine, WeatherService.statusLine, KeyboardService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine].concat(SystemStats.logLines)
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.panelPadding
-        anchors.topMargin: 42
         spacing: 12
-
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 10
-
-            TacticalLabel {
-                Layout.fillWidth: true
-                text: "DEPLOYED FROM RIGHT LOG NODE // SERVICE STATUS EVENT BUS"
-                accent: true
-                elide: Text.ElideRight
-            }
-
-            PanelCloseButton {
-                Layout.preferredWidth: implicitWidth
-                Layout.preferredHeight: implicitHeight
-                onCloseRequested: ExpansionService.close()
-            }
-        }
 
         RowLayout {
             Layout.fillWidth: true

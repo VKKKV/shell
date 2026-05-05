@@ -350,3 +350,10 @@
 
 - Added a frontend component code-spec scenario for central surface chrome: `PanelCloseButton` contract, `HudLayout` safe-area ownership, scroll/elide expectations, orbital sensor exception, validation matrix, tests, and wrong/correct examples.
 - Added a frontend quality code-spec scenario for phase checkpoint verification and git handoff: required checks, commit/push behavior, failure matrix, and command examples.
+
+## 2026-05-05 - Central Panel Chrome Unification
+
+- Added `components/CentralPanelChrome.qml` to centralize `TacticalFrame`, header label, top-right `PanelCloseButton`, close dispatch, margins, and content hosting for command center and non-orbital expansion panels.
+- Migrated `CommandCenterPanel.qml`, `CpuExpansionPanel.qml`, `NetworkExpansionPanel.qml`, `FilesystemExpansionPanel.qml`, and `LogExpansionPanel.qml` to the shared chrome while leaving `OrbitalExpansionPanel.qml` as a custom translucent sensor overlay.
+- Registered the new component in `components/qmldir`.
+- Verified the phase with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.

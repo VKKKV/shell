@@ -4,11 +4,11 @@ import "../../theme"
 import QtQuick
 import QtQuick.Layouts
 
-TacticalFrame {
+CentralPanelChrome {
     id: root
 
     title: "CPU MATRIX // CORE DRILLDOWN"
-    highlighted: true
+    headerText: "DEPLOYED FROM RIGHT MONITOR MATRIX // LIVE /PROC STAT TELEMETRY"
 
     function heatGlyph(value: real): string {
         if (value >= 0.8)
@@ -22,27 +22,7 @@ TacticalFrame {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.panelPadding
-        anchors.topMargin: 42
         spacing: 12
-
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 10
-
-            TacticalLabel {
-                Layout.fillWidth: true
-                text: "DEPLOYED FROM RIGHT MONITOR MATRIX // LIVE /PROC STAT TELEMETRY"
-                accent: true
-                elide: Text.ElideRight
-            }
-
-            PanelCloseButton {
-                Layout.preferredWidth: implicitWidth
-                Layout.preferredHeight: implicitHeight
-                onCloseRequested: ExpansionService.close()
-            }
-        }
 
         RowLayout {
             Layout.fillWidth: true

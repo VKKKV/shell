@@ -192,12 +192,12 @@ Requirements:
 
 Acceptance Criteria:
 
-- [ ] Command center and CPU/network/filesystem/log expansion panels use a consistent top-right close affordance and header placement.
-- [ ] Shared dimensions, margins, border behavior, and close-button positioning come from reusable code or theme constants instead of repeated one-off values.
-- [ ] Central surfaces retain safe-area sizing from `HudLayout.qml` and remain scrollable/elided where content is dense.
-- [ ] Orbital expansion still opens as a translucent sci-fi sensor surface and keeps its current visual priority.
-- [ ] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
-- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+- [x] Command center and CPU/network/filesystem/log expansion panels use a consistent top-right close affordance and header placement.
+- [x] Shared dimensions, margins, border behavior, and close-button positioning come from reusable code or theme constants instead of repeated one-off values.
+- [x] Central surfaces retain safe-area sizing from `HudLayout.qml` and remain scrollable/elided where content is dense.
+- [x] Orbital expansion still opens as a translucent sci-fi sensor surface and keeps its current visual priority.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
 
 Decision (ADR-lite):
 

@@ -4,35 +4,15 @@ import "../../theme"
 import QtQuick
 import QtQuick.Layouts
 
-TacticalFrame {
+CentralPanelChrome {
     id: root
 
     title: "NETWORK MATRIX // LINK DRILLDOWN"
-    highlighted: true
+    headerText: "DEPLOYED FROM RIGHT NETWORK NODE // NMCLI + /PROC/NET/DEV TELEMETRY"
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.panelPadding
-        anchors.topMargin: 42
         spacing: 12
-
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 10
-
-            TacticalLabel {
-                Layout.fillWidth: true
-                text: "DEPLOYED FROM RIGHT NETWORK NODE // NMCLI + /PROC/NET/DEV TELEMETRY"
-                accent: true
-                elide: Text.ElideRight
-            }
-
-            PanelCloseButton {
-                Layout.preferredWidth: implicitWidth
-                Layout.preferredHeight: implicitHeight
-                onCloseRequested: ExpansionService.close()
-            }
-        }
 
         RowLayout {
             Layout.fillWidth: true

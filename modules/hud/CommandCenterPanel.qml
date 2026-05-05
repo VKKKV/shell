@@ -4,23 +4,16 @@ import "../../theme"
 import QtQuick
 import QtQuick.Layouts
 
-TacticalFrame {
+CentralPanelChrome {
     id: root
 
     title: "COMMAND CENTER // TACTICAL CONTROL"
-    highlighted: true
+    headerText: "CTRL+ALT+S TO TOGGLE PANEL // TYPE TO FILTER ACTIONS/APPS"
+    commandCenter: true
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.panelPadding
-        anchors.topMargin: 40
         spacing: 14
-
-        TacticalLabel {
-            Layout.fillWidth: true
-            text: "CTRL+ALT+S TO TOGGLE PANEL // TYPE TO FILTER ACTIONS/APPS"
-            dim: true
-        }
 
         Rectangle {
             Layout.fillWidth: true
@@ -117,13 +110,5 @@ TacticalFrame {
                 }
             }
         }
-    }
-
-    PanelCloseButton {
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.rightMargin: Theme.panelPadding
-        anchors.topMargin: 8
-        onCloseRequested: SettingsService.panelOpen = false
     }
 }
