@@ -23,8 +23,24 @@ TacticalFrame {
             accent: true
         }
 
-        CoreGrid {
-            cores: SystemStats.cpuRows
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: cpuGrid.implicitHeight
+
+            CoreGrid {
+                id: cpuGrid
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                cores: SystemStats.cpuRows
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: ExpansionService.show("cpu")
+            }
         }
 
         Sparkline {

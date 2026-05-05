@@ -142,6 +142,14 @@ Item {
                 NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
             }
         }
+
+        CpuExpansionPanel {
+            visible: ExpansionService.activeSurface === "cpu"
+            width: Math.min(980, parent.width - HudMetrics.leftReserved - HudMetrics.rightReserved - Theme.margin * 2)
+            height: Math.min(620, parent.height - HudMetrics.topReserved - HudMetrics.bottomReserved - Theme.margin * 2)
+            x: HudMetrics.leftReserved + Math.max(0, parent.width - HudMetrics.leftReserved - HudMetrics.rightReserved - width) / 2
+            y: HudMetrics.topReserved + Math.max(0, parent.height - HudMetrics.topReserved - HudMetrics.bottomReserved - height) / 2
+        }
     }
 
     NotificationToast {

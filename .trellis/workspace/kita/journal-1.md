@@ -180,3 +180,9 @@
 - Added `services/ExpansionService.qml` to own central expansion overlay state.
 - Added `modules/hud/OrbitalExpansionPanel.qml` with deterministic animated ASCII solar-system telemetry and mechanical/cyber tactical framing.
 - Made `RotatingGlobe` clickable and wired `HudLayout.qml` to deploy/close the orbital overlay with a matching input region.
+
+## 2026-05-05 - CPU Matrix Expansion Slice
+
+- Added `modules/hud/CpuExpansionPanel.qml` as a right-panel drill-down surface using the shared expansion overlay pattern.
+- Made the right monitor CPU core grid clickable and routed it through `ExpansionService.show("cpu")`.
+- Updated the roadmap to mark CPU matrix expansion covered and leave network/filesystem/log drill-downs next.
