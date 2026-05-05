@@ -380,3 +380,9 @@
 - Removed the explicit `CLICK EPHEMERIS` text so the clock no longer displays clock-to-planet-panel wording while keeping the click target active.
 - Reduced second-hand jaggedness by using a 2px antialiased rounded hand plus a dim tail instead of a single-pixel line.
 - Verified the fix with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
+
+## 2026-05-05 - Orbital Scanline Removal
+
+- Removed the second-driven rotating radial/laser scan spokes from `OrbitalExpansionPanel.qml` while keeping orbit rings, reticles, planet nodes, trails, labels, and ephemeris metadata.
+- Removed the now-unused `scanPhase` repaint dependency from the orbital canvas.
+- Verified the change with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.

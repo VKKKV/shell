@@ -10,7 +10,6 @@ Item {
     readonly property real dayMs: 86400000
     readonly property date epochJ2000: new Date(Date.UTC(2000, 0, 1, 12, 0, 0))
     readonly property real daysSinceEpoch: (Time.now.getTime() - epochJ2000.getTime()) / dayMs
-    readonly property real scanPhase: (Time.now.getTime() / 72) % 360
     readonly property real coreSize: Math.min(width, height)
     readonly property real orbitRadius: coreSize * 0.42
     readonly property var planets: [
@@ -82,7 +81,6 @@ Item {
             const cx = width / 2;
             const cy = height / 2;
             const radius = root.orbitRadius;
-            const accent = Theme.line.toString();
             const dim = Theme.border.toString();
             const textDim = Theme.textDim.toString();
 
@@ -99,18 +97,8 @@ Item {
                 ctx.stroke();
             }
 
-            ctx.globalAlpha = 0.18;
-            ctx.strokeStyle = accent;
-            for (let spoke = 0; spoke < 12; spoke++) {
-                const angle = spoke * Math.PI / 6 + root.scanPhase * Math.PI / 720;
-                ctx.beginPath();
-                ctx.moveTo(Math.cos(angle) * 28, Math.sin(angle) * 16);
-                ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius * 0.58);
-                ctx.stroke();
-            }
-
             ctx.globalAlpha = 0.32;
-            ctx.strokeStyle = accent;
+            ctx.strokeStyle = Theme.line.toString();
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.arc(0, 0, 24, 0, Math.PI * 2);
@@ -139,9 +127,6 @@ Item {
 
         Connections {
             target: root
-            function onScanPhaseChanged(): void {
-                orbitCanvas.requestPaint();
-            }
             function onWidthChanged(): void {
                 orbitCanvas.requestPaint();
             }
