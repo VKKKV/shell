@@ -17,6 +17,7 @@ Current examples:
 - `services/Time.qml` owns live clock state.
 - `services/SystemStats.qml` owns CPU, memory, network, and filesystem polling state.
 - `services/HyprlandService.qml` owns workspace availability/occupancy state.
+- Planned Niri support must enter through the same service boundary rather than HUD-module conditionals.
 - `services/SettingsService.qml` owns in-session settings state.
 - `src/settings/main.zig` owns normalized settings persistence behavior.
 
@@ -93,3 +94,79 @@ Rules:
 - duplicating fallback logic in multiple QML files
 - treating settings as durable before the backend helper writes them
 - adding a backend helper before the QML state contract is clear
+
+## Scenario: Multi-Compositor Workspace Contract
+
+### 1. Scope / Trigger
+
+- Trigger: adding a compositor beyond Hyprland, starting with planned Niri support.
+- Applies to: workspace switching, active window telemetry, current workspace window lists, compositor status lines, and command/focus actions consumed by HUD modules.
+- This is a cross-service boundary because compositor-specific command/API behavior must be hidden behind stable QML-facing shaped state.
+
+### 2. Signatures
+
+- Shared QML-facing service state:
+  - `available: bool`
+  - `compositorName: string`
+  - `statusLine: string`
+  - `activeWorkspace: int|string`
+  - `workspaces: var` where each row has `{ id, label, active, occupied }` or an equivalent stable tuple documented before migration.
+  - `activeWindowClass: string`
+  - `activeWindowTitle: string`
+  - `currentWorkspaceWindows: var` where each item has `{ appClass, title, active }`.
+- Shared QML-facing actions:
+  - `switchWorkspace(workspaceId): void`
+  - `focusWindow(windowKey): void`
+- Existing Hyprland-specific service: `services/HyprlandService.qml`.
+- Planned Niri implementation must either adapt into the shared service or provide a private service consumed only by the shared compositor facade.
+
+### 3. Contracts
+
+- HUD modules must consume the shared compositor contract, not compositor-specific commands or imports.
+- Compositor-specific parsing belongs in `services/`, never in `modules/hud/` or `components/`.
+- Missing compositor support must produce readable fallback values such as `compositor: fallback`, empty window lists, and inactive workspace rows.
+- Workspace switch/focus actions must be no-op safe when the target compositor is unavailable.
+- Niri support must document the command/API source it uses before implementation, including any required binary names or environment assumptions.
+
+### 4. Validation & Error Matrix
+
+- Hyprland available -> shared state mirrors Hyprland workspace/window telemetry.
+- Niri available -> shared state mirrors Niri workspace/window telemetry through the same fields.
+- No supported compositor -> `available = false`, fallback status line, no thrown QML binding errors.
+- Command missing -> service logs warning/fallback and keeps shaped default values.
+- Workspace/focus action called while unavailable -> no-op with status/log update, no uncaught process error.
+- HUD module imports compositor-specific API directly -> fail review; violates service boundary.
+
+### 5. Good/Base/Bad Cases
+
+- Good: `TopStatusBar.qml` renders workspaces from a shared compositor service and does not know whether Hyprland or Niri produced the rows.
+- Base: during migration, `HyprlandService.qml` may remain the backing implementation if the facade contract is already documented and consumers are being moved intentionally.
+- Bad: adding `if niri` branches or shell command parsing inside `TopStatusBar.qml`, `MissionDock.qml`, or `CommandCenterOverviewColumn.qml`.
+
+### 6. Tests Required
+
+- QML lint: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`.
+- Runtime smoke: `timeout 8s quickshell -p .` must show `Configuration Loaded` without startup QML errors.
+- Fallback assertion: run or reason through startup without a supported compositor command and confirm status lines/window lists stay readable.
+- Action assertion: workspace/focus actions should not throw when unavailable.
+- Manual compositor assertion when available: active workspace and active window text update after switching/focusing.
+
+### 7. Wrong vs Correct
+
+#### Wrong
+
+```qml
+// Inside a HUD module
+Process { command: ["niri", "msg", "workspaces"] }
+```
+
+#### Correct
+
+```qml
+// Inside a HUD module
+Repeater {
+    model: CompositorService.workspaces
+}
+```
+
+The compositor-specific command parsing stays in `services/`, behind the shared shaped state contract.

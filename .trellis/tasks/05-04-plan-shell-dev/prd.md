@@ -520,3 +520,55 @@ Decision (ADR-lite):
 - Context: the command center has grown into a broader control surface, but the settings column is still a long flat list of controls.
 - Decision: add lightweight section dividers and group labels while preserving the current single-column scroll model.
 - Consequences: improves discoverability and scanning with low risk. The trade-off is that this is not a full settings navigation/sidebar redesign.
+
+### Planned Future Work: Niri Compositor Support
+
+User instruction captured 2026-05-05: add Niri support to the development plan.
+
+Requirements:
+
+- Add Niri as a first-class future compositor target alongside Hyprland.
+- Keep compositor-specific workspace/window parsing inside services, not HUD modules or visual components.
+- Introduce a compositor-agnostic workspace/window service contract before replacing `HyprlandService` consumers.
+- Preserve Hyprland behavior while adding Niri fallback/detection.
+- Document expected Niri command/API integration before implementing it.
+
+Acceptance Criteria:
+
+- [ ] Niri support has a scoped implementation phase before code changes begin.
+- [ ] A shared compositor state contract defines active workspace, workspace rows, active window, current workspace windows, status line, and focus/switch actions.
+- [ ] Hyprland and Niri implementations can degrade to readable fallback state without QML errors.
+- [ ] HUD modules consume the shared compositor contract rather than directly importing compositor-specific APIs.
+- [ ] `qmllint`, compositor fallback smoke checks, and relevant command availability checks pass before any Niri implementation commit.
+
+Decision (ADR-lite):
+
+- Context: current workspace/window behavior is Hyprland-first. Niri support would otherwise risk scattering compositor conditionals across HUD modules.
+- Decision: plan Niri behind a shared service boundary and defer implementation until the contract is explicit.
+- Consequences: reduces future cross-compositor churn. The trade-off is one extra abstraction layer when Niri work starts.
+
+### Planned Future Work: Orbital Planet Map Optimization
+
+User instruction captured 2026-05-05: add planetary map optimization to the development plan.
+
+Requirements:
+
+- Improve `OrbitalExpansionPanel.qml` visual quality and performance without changing the existing click-to-open route.
+- Preserve approximate time-based ephemeris calculations and visible orbital metadata.
+- Optimize rendering so Canvas/animation repaint work remains bounded and does not visibly increase shell CPU usage.
+- Improve visual depth with clearer orbit hierarchy, planet trails, labels, reticles, and warning-yellow tactical overlays.
+- Keep the panel offline/deterministic unless a future precision astronomy task explicitly introduces external ephemeris data.
+
+Acceptance Criteria:
+
+- [ ] Planet positions still derive from current time and local orbital-period data.
+- [ ] Rendering avoids unnecessary full-canvas repaint loops when visual state is unchanged.
+- [ ] Labels remain readable at common 1080p and 1440p central safe-area sizes.
+- [ ] The orbital panel keeps the shared close behavior, safe-area sizing, and expansion motion.
+- [ ] `qmllint`, `git diff --check`, `quickshell -p .`, and a short manual open/close orbital smoke check pass before commit.
+
+Decision (ADR-lite):
+
+- Context: the orbital panel is now graphical and time-derived, but future polish should improve visual hierarchy and performance together.
+- Decision: treat orbital optimization as a focused rendering contract, not a rewrite of `ExpansionService` or compositor layout.
+- Consequences: keeps the highest-impact visual surface improving while protecting existing central expansion behavior.

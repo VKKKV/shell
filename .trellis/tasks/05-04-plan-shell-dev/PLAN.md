@@ -195,13 +195,13 @@ Acceptance:
 
 ## Risks
 - Quickshell API details vary by version; confirm imports against v0.3.0 docs during implementation.
-- Hyprland-only workspace logic should be isolated so other compositors can be added later without rewriting the HUD.
+- Hyprland-only workspace logic should be isolated so other compositors can be added later without rewriting the HUD; Niri is now the next planned compositor target.
 - Polling system commands too often can create avoidable CPU overhead.
 - Dense tactical UI can become unreadable quickly; prioritize spacing, hierarchy, and monospaced alignment over adding more numbers.
 
 ## Deferred Work
 - Dynamic widget registry and user-configurable widget ordering.
-- Multi-compositor workspace support beyond Hyprland.
+- Multi-compositor workspace support beyond Hyprland, starting with planned Niri support.
 - Large plugin/IPC system until multiple first-party widgets need dynamic registration.
 - Persistent user configuration and migrations.
 
@@ -236,6 +236,19 @@ Acceptance:
 - No shell code depends on blur being enabled.
 
 Status: covered in `docs/hyprland.md`; blur remains optional.
+
+### Phase B2: Niri Compositor Support
+- Add Niri as the next compositor target without regressing Hyprland behavior.
+- Define a shared compositor service contract before changing HUD modules: active workspace, workspace rows, active window class/title, current workspace windows, status line, and switch/focus actions.
+- Keep Niri command/API parsing inside services and expose already-shaped values to HUD modules.
+- Add user-facing Niri compositor notes once commands and layer/exclusion behavior are confirmed.
+
+Acceptance:
+- Hyprland and Niri can each provide workspace/window state through the same QML-facing contract.
+- Missing compositor commands or unavailable compositor state produce readable fallback values, not QML errors.
+- HUD modules do not import compositor-specific APIs directly.
+
+Status: planned; implementation should start with the code-spec compositor contract and a small service slice.
 
 ### Phase C: Responsive And Monitor Fit
 - Add layout guardrails for smaller monitors and non-16:9 resolutions.
@@ -312,6 +325,19 @@ Acceptance:
 
 Status: covered by `ExpansionService`, graphical `OrbitalExpansionPanel`, and CPU/network/filesystem/log expansion panels using shared central safe-area deployment. ASCII acceptance is superseded by the graphical orbital requirement.
 
+### Phase I: Orbital Planet Map Optimization
+- Improve the graphical orbital map's visual hierarchy and performance as a dedicated rendering pass.
+- Preserve current-time approximate ephemeris, trails, labels, reticles, translucent overlays, close behavior, and central safe-area sizing.
+- Optimize Canvas/animation repaint behavior if CPU usage becomes visible; avoid unnecessary redraw loops.
+- Improve depth through clearer orbit hierarchy, label placement, glow/trail restraint, and tactical metadata density.
+
+Acceptance:
+- Planet positions remain deterministic and time-derived without network access.
+- Orbital labels and tracks stay readable at common 1080p/1440p central safe-area dimensions.
+- A short manual orbital open/close smoke check passes after `quickshell -p .`.
+
+Status: planned future visual/performance optimization.
+
 ## Prioritized Next Steps
 
 1. Screenshot-driven visual tuning.
@@ -332,6 +358,13 @@ Status: covered by `ExpansionService`, graphical `OrbitalExpansionPanel`, and CP
    - Current left orbital entry is `AnalogOrbitClock`; it replaced the original globe affordance after time-based orbital ephemeris work.
    - Use a central overlay module controlled by small shared state instead of turning each edge panel into a separate popup owner.
    - Apply the same interaction pattern to additional right/edge drill-downs when new domains need central detail surfaces.
+
+5. Niri compositor support.
+   - Define and implement a shared compositor service boundary before changing HUD modules.
+   - Add Niri fallback and documentation after command/API behavior is confirmed.
+
+6. Orbital planet map optimization.
+   - Improve the graphical orbital surface's depth, label hierarchy, and repaint behavior while preserving current ephemeris contracts.
 
 ## Reference Feature Gap Analysis
 

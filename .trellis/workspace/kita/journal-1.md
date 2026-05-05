@@ -479,3 +479,10 @@
 - Added reusable `components/SectionHeader.qml` and registered it in `components/qmldir`.
 - Grouped `CommandCenterSettingsColumn.qml` into tactical sections for visual palette, backdrop/wallpaper, system data/input, panel visibility, typography/density, surface/scanlines, contrast tuning, and polling cadence.
 - Preserved existing setting controls and behaviors while improving scan readability.
+
+## 2026-05-05 - Code-Spec Update For Niri And Orbital Optimization
+
+- Added Niri compositor support to the PRD/PLAN as planned future work.
+- Added a planned orbital planet map optimization phase to the PRD/PLAN focused on visual hierarchy and bounded repaint behavior.
+- Added a frontend state-management code-spec scenario for a multi-compositor workspace contract, including QML-facing signatures, fallback behavior, validation matrix, tests, and wrong/correct examples.
+- Added a frontend component code-spec scenario for `OrbitalExpansionPanel.qml` rendering optimization, including planet-data fields, safe-area/deployment contracts, validation matrix, tests, and wrong/correct examples.

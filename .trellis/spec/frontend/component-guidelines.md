@@ -74,6 +74,77 @@ Rules:
 - keep the visual language tactical and high-density
 - do not add separate popup/window owners per edge-panel child
 
+## Scenario: Orbital Planet Map Rendering Contract
+
+### 1. Scope / Trigger
+
+- Trigger: optimizing or materially changing `modules/hud/OrbitalExpansionPanel.qml` rendering, animation, or orbital metadata.
+- Applies to: graphical orbit paths, planet nodes, trails, labels, reticles, metadata rows, Canvas/animation repaint behavior, and close/safe-area integration.
+- This is a central expansion surface contract because the orbital panel is the highest-priority visual drill-down and must preserve expansion behavior while improving rendering.
+
+### 2. Signatures
+
+- Surface: `OrbitalExpansionPanel { signal closeRequested() }` or equivalent existing close dispatch through `ExpansionService.close()`.
+- Deployment owner: `HudLayout.qml` sets `width`, `height`, `x`, `y`, `scale`, `opacity`, and origin-aware motion.
+- Time source: `services/Time.qml` / `Time.now` or existing local timer state.
+- Planet data fields should remain local/offline and include at least:
+  - `name: string`
+  - `periodDays: number`
+  - `epochLongitude: number`
+  - `radiusScale` or display-distance equivalent
+  - derived current longitude/phase for display metadata.
+
+### 3. Contracts
+
+- Planet positions must remain deterministic and derived from current time plus local orbital approximations; no network ephemeris dependency for this optimization phase.
+- Orbital optimization must not move safe-area sizing or deployment geometry into `OrbitalExpansionPanel.qml`; `HudLayout.qml` remains the owner.
+- Close behavior must stay consistent with other central panels: visible close affordance plus `Escape` routing via `HudLayout.qml`/`ExpansionService`.
+- Canvas or animation repaint should be bounded to actual visual state changes or controlled timers; avoid unnecessary high-frequency redraw loops.
+- Labels must elide, clamp, or reposition to remain readable at common 1080p and 1440p central safe-area dimensions.
+- Visual language must remain tactical/sci-fi: warning-yellow accents, translucent sensor surface, orbit hierarchy, reticles, metadata, and mechanical/cyber motion language.
+
+### 4. Validation & Error Matrix
+
+- Missing/invalid planet field -> use safe default or skip that body; do not break the entire panel.
+- Central safe area small -> labels/metadata elide or compress; no critical close affordance clipping.
+- Time source unavailable -> use current local `Date` fallback or stable deterministic phase; no network requirement.
+- Canvas repaint loop consumes visible CPU -> fail performance review; reduce timer frequency or repaint only on phase changes.
+- Orbital surface computes global screen geometry -> fail review; duplicates `HudLayout.qml` responsibility.
+- Close route changes or `Escape` regresses -> fail smoke/manual review.
+
+### 5. Good/Base/Bad Cases
+
+- Good: a rendering pass improves orbit hierarchy and label placement while planet phase still derives from period/epoch data and close/safe-area behavior is unchanged.
+- Base: small visual tweaks to colors/trails can stay inside `OrbitalExpansionPanel.qml` if they use `Theme.qml` values and do not alter service contracts.
+- Bad: replacing the panel with static mock positions, network-only astronomy data, or a new popup owner outside `ExpansionService`.
+
+### 6. Tests Required
+
+- QML lint: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`.
+- Runtime smoke: `timeout 8s quickshell -p .` must show `Configuration Loaded` without startup QML errors.
+- Manual orbital smoke: click the analog orbital clock, verify the panel opens inside the central safe area, labels/metadata are readable, and close/backdrop/`Escape` still close it.
+- Determinism assertion: changing current time changes derived planet phase without network access.
+- Performance assertion: watch for obvious repaint/CPU spikes during idle orbital display after optimization.
+
+### 7. Wrong vs Correct
+
+#### Wrong
+
+```qml
+// Static positions look stable but break the time-derived ephemeris contract.
+property var planets: [{ name: "MARS", x: 120, y: 80 }]
+```
+
+#### Correct
+
+```qml
+function longitudeFor(body: var, dayCount: real): real {
+    return (body.epochLongitude + dayCount / body.periodDays * 360) % 360;
+}
+```
+
+Keep orbital visuals grounded in deterministic local phase data while optimizing the graphical presentation.
+
 ## Scenario: Central Surface Chrome Contract
 
 ### 1. Scope / Trigger
