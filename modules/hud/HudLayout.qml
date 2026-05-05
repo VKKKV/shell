@@ -29,6 +29,8 @@ Item {
     readonly property int orbitalOriginY: leftPanel.y + Math.min(260, leftPanel.height * 0.42) * 0.5 + 38
     readonly property int cpuOriginX: rightPanel.x + rightPanel.width * 0.5
     readonly property int cpuOriginY: rightPanel.y + 90
+    readonly property int networkOriginX: rightPanel.x + rightPanel.width * 0.5
+    readonly property int networkOriginY: rightPanel.y + Math.min(rightPanel.height - 80, 360)
     readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion, expansionInputRegion, toastInputRegion]
 
     function syncMetrics(): void {
@@ -171,6 +173,30 @@ Item {
             height: root.expansionHeight
             x: visible ? root.expansionTargetX : root.cpuOriginX - width / 2
             y: visible ? root.expansionTargetY : root.cpuOriginY - height / 2
+            scale: visible ? 1 : 0.08
+            opacity: visible ? 1 : 0
+            transformOrigin: Item.Center
+
+            Behavior on x {
+                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+            }
+            Behavior on y {
+                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+            }
+            Behavior on scale {
+                NumberAnimation { duration: 220; easing.type: Easing.OutBack }
+            }
+            Behavior on opacity {
+                NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+            }
+        }
+
+        NetworkExpansionPanel {
+            visible: ExpansionService.activeSurface === "network"
+            width: root.expansionWidth
+            height: root.expansionHeight
+            x: visible ? root.expansionTargetX : root.networkOriginX - width / 2
+            y: visible ? root.expansionTargetY : root.networkOriginY - height / 2
             scale: visible ? 1 : 0.08
             opacity: visible ? 1 : 0
             transformOrigin: Item.Center

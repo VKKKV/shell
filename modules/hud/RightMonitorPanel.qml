@@ -59,20 +59,40 @@ TacticalFrame {
             rows: [[BatteryService.label, BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
         }
 
-        MetricBlock {
-            title: "NETWORK // eno1"
-            rows: SystemStats.networkRows
-        }
-
-        MetricBlock {
-            title: "NETWORK DETAIL"
-            rows: NetworkDetailService.rows
-        }
-
-        Sparkline {
+        Item {
             Layout.fillWidth: true
-            Layout.preferredHeight: 34
-            values: SystemStats.networkHistory
+            Layout.preferredHeight: networkStack.implicitHeight
+
+            ColumnLayout {
+                id: networkStack
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: 10
+
+                MetricBlock {
+                    title: "NETWORK // eno1"
+                    rows: SystemStats.networkRows
+                }
+
+                MetricBlock {
+                    title: "NETWORK DETAIL"
+                    rows: NetworkDetailService.rows
+                }
+
+                Sparkline {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 34
+                    values: SystemStats.networkHistory
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: ExpansionService.show("network", "right-network")
+            }
         }
 
         MetricBlock {

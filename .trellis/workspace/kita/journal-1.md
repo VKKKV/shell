@@ -192,3 +192,9 @@
 - Changed `PowerProfileService.qml` to probe `powerprofilesctl` through `command -v` before running it, preventing missing-binary startup warnings.
 - Extended `ExpansionService.show()` with source-origin metadata for expansion surfaces.
 - Updated orbital and CPU expansion placement so panels scale/move from their clicked source direction instead of flashing directly into the center.
+
+## 2026-05-05 - Network Matrix Expansion Slice
+
+- Added `modules/hud/NetworkExpansionPanel.qml` as a right-panel drill-down surface for throughput, link detail, active connections, and Wi-Fi scan rows.
+- Made the right monitor network block clickable and routed it through `ExpansionService.show("network", "right-network")`.
+- Updated the roadmap to mark network matrix expansion covered and leave filesystem/log drill-downs next.
