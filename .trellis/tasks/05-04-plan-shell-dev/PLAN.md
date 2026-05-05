@@ -200,6 +200,8 @@ Acceptance:
 
 Current status: all concrete planned phases below are covered by first-party slices. Future work should start from new user feedback, screenshot comparisons, or a new Trellis task rather than extending this roadmap indefinitely.
 
+Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
+
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.
 - Use real screenshots from the running shell as the visual feedback source.

@@ -331,3 +331,22 @@
 - Replaced broken tray `display(item, ...)` calls with reference-shell-style `activate()`/`secondaryActivate()` behavior until a Window-backed/custom tray menu surface exists.
 - Added `components/PanelCloseButton.qml` and reused it across command center plus orbital/CPU/network/filesystem/log central panels.
 - Added `Escape` close handling in `HudLayout.qml` for both command center and expansion overlays while preserving `Ctrl+Alt+S` command-center toggle.
+
+## 2026-05-05 - PRD Acceptance Verification
+
+- Rechecked the shell development PRD against current QML implementation: visible `SETTINGS` top-bar entry, right-panel scrolling/elision, `#F2C94C` default accent with settings swatches, central safe-area expansion sizing, graphical orbital surface, and CPU/network/filesystem/log drill-down sizing are all implemented.
+- Verified the repository with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
+- Updated PRD acceptance checkboxes to reflect the verified implementation state.
+
+## 2026-05-05 - Optimization Brainstorm Restart
+
+- Captured the user requirement to continue project optimization in staged phases.
+- Added a checkpoint protocol to the PRD/plan: each completed development phase should run verification, update Trellis notes, create a git commit, and push the branch before proceeding.
+- Initial optimization candidates from the existing backlog are central chrome consistency, visual density controls, runtime diagnostics, tray UX refinement, and performance profiling.
+- User selected central panel chrome unification as the next optimization MVP.
+- Updated the PRD with requirements, acceptance criteria, and an ADR-lite decision for the central panel chrome phase.
+
+## 2026-05-05 - Code-Spec Update For Optimization Contracts
+
+- Added a frontend component code-spec scenario for central surface chrome: `PanelCloseButton` contract, `HudLayout` safe-area ownership, scroll/elide expectations, orbital sensor exception, validation matrix, tests, and wrong/correct examples.
+- Added a frontend quality code-spec scenario for phase checkpoint verification and git handoff: required checks, commit/push behavior, failure matrix, and command examples.

@@ -97,12 +97,12 @@ Follow-up feedback captured 2026-05-05:
 
 ### Acceptance Criteria (Evolving)
 
-- [ ] A visible HUD control opens the command/settings panel.
-- [ ] Right monitor panel labels/values elide or wrap intentionally without disappearing or clipping critical text.
-- [ ] Default theme uses bright warning yellow close to `target.png`, and settings can adjust/tune the accent.
-- [ ] Expansion panels size themselves from the central safe area instead of fixed constants.
+- [x] A visible HUD control opens the command/settings panel.
+- [x] Right monitor panel labels/values elide or wrap intentionally without disappearing or clipping critical text.
+- [x] Default theme uses bright warning yellow close to `target.png`, and settings can adjust/tune the accent.
+- [x] Expansion panels size themselves from the central safe area instead of fixed constants.
 - [x] Graphical orbital expansion replaces ASCII with animated orbit rings, glowing planet nodes, trails, labels, reticles, and sci-fi HUD effects.
-- [ ] CPU/network/filesystem/log expansions no longer clip at common 1080p/1440p dimensions.
+- [x] CPU/network/filesystem/log expansions no longer clip at common 1080p/1440p dimensions.
 
 ### MVP Decision: Visual Fit Pass 1
 
@@ -157,6 +157,53 @@ Captured after tray menu fix on 2026-05-05.
 - Standardize panel button styling, starting with central panel close buttons and close shortcuts.
 - Add a small visual density setting (`compact`, `normal`, `dense`) that adjusts font sizes, row heights, and graph heights.
 - Add a runtime diagnostics page in command center showing Quickshell mode, enabled services, missing commands, and recent service log warnings.
+
+### Development Checkpoint Protocol
+
+User instruction captured 2026-05-05:
+
+- Continue project optimization as staged refinement work.
+- After each completed development phase, run the relevant verification commands, create a git commit, and push the branch.
+- Do not treat a phase as complete until the task journal/PRD or plan has been updated with the completed slice and verification result.
+- If verification fails, fix or report the blocker before committing/pushing.
+- If remote push is unavailable or rejected, keep the local commit and report the exact push blocker.
+
+Definition of a completed phase for this project:
+
+- A coherent optimization slice is implemented.
+- `qmllint` passes for QML changes.
+- `zig build` passes when Zig/settings helper behavior is touched.
+- `git diff --check` passes.
+- A short `quickshell -p .` smoke check passes when a display/session is available.
+- Trellis journal is updated.
+
+### Next Optimization MVP: Central Panel Chrome Unification
+
+Decision captured 2026-05-05: prioritize central panel consistency before density controls, diagnostics, tray custom menus, or performance profiling.
+
+Requirements:
+
+- Standardize common central-surface chrome across command center and CPU/network/filesystem/log expansion panels.
+- Preserve the existing graphical orbital surface style; do not force it into a heavy framed card if that would weaken the central sensor look.
+- Reuse existing primitives first, especially `PanelCloseButton`, `TacticalFrame`, `TacticalLabel`, and theme constants.
+- Avoid growing `HudLayout.qml` with surface internals; central surfaces should own their own layout while `HudLayout.qml` only positions/deploys them.
+- Keep `Escape` close behavior and existing click-to-open expansion routes unchanged.
+- Keep this phase focused on consistency, not a redesign of every panel's internal data visualization.
+
+Acceptance Criteria:
+
+- [ ] Command center and CPU/network/filesystem/log expansion panels use a consistent top-right close affordance and header placement.
+- [ ] Shared dimensions, margins, border behavior, and close-button positioning come from reusable code or theme constants instead of repeated one-off values.
+- [ ] Central surfaces retain safe-area sizing from `HudLayout.qml` and remain scrollable/elided where content is dense.
+- [ ] Orbital expansion still opens as a translucent sci-fi sensor surface and keeps its current visual priority.
+- [ ] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: central panels now share safe-area sizing and close behavior, but each panel still hand-rolls some chrome/header/layout details. This creates inconsistency and makes future central surfaces more expensive to add.
+- Decision: implement a small shared central-panel chrome primitive or minimally extend existing primitives, then migrate command center and non-orbital expansion panels to it. Keep orbital mostly custom because it is intentionally a sensor overlay rather than a framed information panel.
+- Consequences: improves consistency and reduces duplication with low product risk. The trade-off is that this does not yet solve visual density controls, diagnostics, tray custom menus, or performance profiling; those remain future phases.
 
 ### Panel Control Standardization
 
