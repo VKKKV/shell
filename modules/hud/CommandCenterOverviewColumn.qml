@@ -118,6 +118,13 @@ ColumnLayout {
         rows: [["RAM", SystemStats.ramText, SystemStats.ramProgress, true], ["SWAP", SystemStats.swapText, SystemStats.swapProgress, false], ["AUDIO", AudioService.volumeText, AudioService.available ? AudioService.volume : -1, AudioService.available], ["MIC", AudioService.micText, AudioService.micAvailable ? AudioService.micVolume : -1, AudioService.micAvailable && !AudioService.micMuted], ["POWER", BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
     }
 
+    Sparkline {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 38
+        values: AudioService.spectrum
+        barColor: AudioService.available && !AudioService.muted ? Theme.line : Theme.lineDim
+    }
+
     TextBlock {
         title: "SERVICE STATUS"
         lines: [SettingsService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, AudioService.micStatusLine, BatteryService.statusLine, MediaService.statusLine, LauncherService.statusLine, NotificationService.statusLine, ClipboardService.statusLine, WeatherService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine, KeyboardService.statusLine]

@@ -210,3 +210,9 @@
 - Added `modules/hud/LogExpansionPanel.qml` as a right-panel drill-down surface for service status events and warning classification.
 - Made the right monitor log stream clickable and routed it through `ExpansionService.show("logs", "right-logs")`.
 - Updated the roadmap to mark the current interactive expansion MVP covered.
+
+## 2026-05-05 - Audio Spectrum Slice
+
+- Added a local deterministic spectrum signal to `AudioService.qml`, driven by volume/mute state and a lightweight timer.
+- Added compact spectrum visuals to the top bar and command center overview without adding external audio dependencies.
+- Updated the roadmap to mark spectrum/visualizer covered and leave optional lyrics deferred.

@@ -293,6 +293,7 @@ The reference shells provide a much broader desktop environment than the current
 - Hyprland workspace display and switching.
 - Live CPU, memory, network, and filesystem stats.
 - Audio and microphone volume/mute polling and controls via `wpctl`.
+- Local audio spectrum visualizer driven by live volume/playback state.
 - Session lock/logout/reboot/shutdown controls with confirmation.
 - Power profile and idle inhibitor controls with command fallback.
 - Battery/power-source display with AC/no-battery fallback.
@@ -337,7 +338,7 @@ The reference shells provide a much broader desktop environment than the current
 
 - Audio, microphone, and media/MPRIS.
   - References: Caelestia Audio/Players/Lyrics, Noctalia AudioService/MediaService/SpectrumService, Dank AudioService/MprisController/MediaPlayerTab.
-  - Tactical version: audio levels, microphone controls, mute controls, MPRIS track display, spectrum/visualizer, lyrics optional. Current remaining gap is spectrum/visualizer and optional lyrics.
+  - Tactical version: audio levels, microphone controls, mute controls, MPRIS track display, and local spectrum/visualizer. Current remaining gap is optional lyrics only.
 
 - Network detail, VPN, Bluetooth.
   - References: Caelestia Network/Nmcli/VPN/Bluetooth popouts, Noctalia Network/VPN/Bluetooth services, Dank Network/VPN/Bluetooth services.

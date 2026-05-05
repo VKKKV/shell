@@ -122,6 +122,13 @@ TacticalFrame {
                     dim: !AudioService.available || AudioService.muted
                 }
 
+                Sparkline {
+                    Layout.preferredWidth: 70
+                    Layout.preferredHeight: 18
+                    values: AudioService.spectrum.slice(0, 10)
+                    barColor: AudioService.available && !AudioService.muted ? Theme.line : Theme.lineDim
+                }
+
                 Rectangle {
                     width: 22
                     height: 18

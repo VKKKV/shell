@@ -16,8 +16,22 @@ Singleton {
     property bool micAvailable: false
     property string volumeText: "--%"
     property string micText: "--%"
+    property var spectrum: [0.12, 0.32, 0.18, 0.48, 0.28, 0.62, 0.34, 0.72, 0.42, 0.58, 0.24, 0.44]
+    property real spectrumPhase: 0
     property string statusLine: "audio: fallback"
     property string micStatusLine: "mic: fallback"
+
+    function updateSpectrum(): void {
+        const base = available && !muted ? Math.max(0.08, Math.min(1, volume)) : 0.05;
+        const next = [];
+        for (let i = 0; i < 18; i++) {
+            const wave = Math.abs(Math.sin(spectrumPhase + i * 0.72));
+            const pulse = Math.abs(Math.cos(spectrumPhase * 0.7 + i * 0.31));
+            next.push(Math.min(1, base * (0.25 + wave * 0.55 + pulse * 0.2)));
+        }
+        spectrum = next;
+        spectrumPhase += 0.42;
+    }
 
     function updateVolume(output: string): void {
         const match = output.match(/Volume:\s+([0-9.]+)(\s+\[MUTED\])?/);
@@ -87,12 +101,21 @@ Singleton {
         onTriggered: root.refresh()
     }
 
+    property Timer spectrumTimer: Timer {
+        interval: 180
+        repeat: true
+        running: SettingsService.liveDataEnabled
+        triggeredOnStart: true
+        onTriggered: root.updateSpectrum()
+    }
+
     Connections {
         target: SettingsService
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled) {
                 root.refresh();
                 root.poller.restart();
+                root.spectrumTimer.restart();
             }
         }
     }
