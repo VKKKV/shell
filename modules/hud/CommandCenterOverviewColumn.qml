@@ -9,7 +9,54 @@ ColumnLayout {
 
     TextBlock {
         title: "SYSTEM OVERVIEW"
-        lines: ["workspace: " + HyprlandService.activeWorkspace, "active: " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "keyboard: " + KeyboardService.activeLayout + " // " + KeyboardService.activeKeyboard, "weather: " + WeatherService.displayText, "media: " + MediaService.displayText]
+        lines: ["workspace: " + HyprlandService.activeWorkspace, "active: " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "wifi: " + NetworkDetailService.wifiStatus, "keyboard: " + KeyboardService.activeLayout + " // " + KeyboardService.activeKeyboard, "weather: " + WeatherService.displayText, "media: " + MediaService.displayText]
+    }
+
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "WIFI SCAN // " + NetworkDetailService.wifiStatus
+        accent: NetworkDetailService.wifiNetworks.length > 0
+        dim: NetworkDetailService.wifiNetworks.length === 0
+    }
+
+    Repeater {
+        model: NetworkDetailService.wifiNetworks.slice(0, 3)
+
+        Rectangle {
+            required property var modelData
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 26
+            color: modelData.active ? Theme.lineDim : "transparent"
+            border.color: modelData.active ? Theme.line : Theme.lineDim
+            border.width: Theme.lineWidth
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: 8
+
+                TacticalLabel {
+                    text: modelData.active ? "LINK" : modelData.signal + "%"
+                    accent: modelData.active
+                    dim: !modelData.active
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: modelData.ssid
+                    elide: Text.ElideRight
+                    accent: modelData.active
+                }
+
+                TacticalLabel {
+                    text: modelData.security
+                    dim: true
+                    elide: Text.ElideRight
+                }
+            }
+        }
     }
 
     TacticalLabel {

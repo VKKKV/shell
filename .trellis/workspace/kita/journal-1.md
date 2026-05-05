@@ -156,3 +156,9 @@
 - Added `services/KeyboardService.qml` using `hyprctl devices -j` to expose active keyboard layout and keyboard rows.
 - Added keyboard telemetry to command center overview and actions surfaces with Hyprland command fallback.
 - Updated the roadmap to mark keyboard layout telemetry covered while leaving keybind recorder/list and emoji deferred.
+
+## 2026-05-05 - Wi-Fi Scan Slice
+
+- Extended `NetworkDetailService.qml` with `nmcli` Wi-Fi scan telemetry and fallback status.
+- Added command center Wi-Fi scan rows showing SSID, signal, security, and active link state.
+- Updated the roadmap to mark Wi-Fi list telemetry covered while leaving connection flows deferred.

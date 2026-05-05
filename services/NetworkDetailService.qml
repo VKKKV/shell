@@ -14,6 +14,8 @@ Singleton {
     property string primaryType: "UNKNOWN"
     property string vpnStatus: "OFFLINE"
     property string bluetoothStatus: "UNKNOWN"
+    property var wifiNetworks: []
+    property string wifiStatus: "SCANNING"
     property string statusLine: "network detail: initializing"
 
     function updateNetwork(output: string): void {
@@ -64,9 +66,38 @@ Singleton {
         bluetoothStatus = missing ? "OFFLINE" : (powered ? "POWERED" : "DISABLED");
     }
 
+    function updateWifi(output: string): void {
+        const seen = {};
+        const next = [];
+        for (const line of output.trim().split("\n")) {
+            if (line.length === 0)
+                continue;
+
+            const parts = line.split(":");
+            const active = parts[0] === "yes";
+            const ssid = parts[1] || "HIDDEN";
+            const signal = Number(parts[2] || 0);
+            const security = parts.slice(3).join(":") || "OPEN";
+            if (seen[ssid])
+                continue;
+            seen[ssid] = true;
+            next.push({
+                ssid,
+                signal,
+                security,
+                active
+            });
+        }
+
+        next.sort((a, b) => b.signal - a.signal);
+        wifiNetworks = next.slice(0, 5);
+        wifiStatus = next.length > 0 ? next.length + " AP" : "NO AP";
+    }
+
     function refresh(): void {
         networkProcess.running = true;
         bluetoothProcess.running = true;
+        wifiProcess.running = true;
     }
 
     Component.onCompleted: refresh()
@@ -113,6 +144,19 @@ Singleton {
         onExited: (exitCode) => {
             if (exitCode !== 0)
                 root.bluetoothStatus = "OFFLINE";
+        }
+    }
+
+    property Process wifiProcess: Process {
+        command: ["nmcli", "-t", "-f", "ACTIVE,SSID,SIGNAL,SECURITY", "dev", "wifi", "list"]
+        stdout: StdioCollector {
+            onStreamFinished: root.updateWifi(text)
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0) {
+                root.wifiNetworks = [];
+                root.wifiStatus = "WIFI FALLBACK";
+            }
         }
     }
 }

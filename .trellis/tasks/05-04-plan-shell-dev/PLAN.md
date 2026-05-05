@@ -281,7 +281,7 @@ The reference shells provide a much broader desktop environment than the current
 - Edge exclusion zones that reserve real screen space and push Hyprland windows into the center safe area.
 - Command center foundation with app/action launcher search.
 - Notification server fallback, DND/history controls, and tactical toast UI.
-- Network/VPN/Bluetooth detail from `nmcli` and `bluetoothctl`.
+- Network/VPN/Bluetooth detail and Wi-Fi scan telemetry from `nmcli` and `bluetoothctl`.
 - Persistent theme profiles for amber/green/blue/red tactical palettes.
 - Clipboard buffer using `wl-paste`/`wl-copy` with command center history controls.
 - Local calendar grid and agenda state in the command center.
@@ -312,7 +312,7 @@ The reference shells provide a much broader desktop environment than the current
 
 - Network detail, VPN, Bluetooth.
   - References: Caelestia Network/Nmcli/VPN/Bluetooth popouts, Noctalia Network/VPN/Bluetooth services, Dank Network/VPN/Bluetooth services.
-  - Tactical version: network detail panel, Wi-Fi list, VPN status, Bluetooth device monitor.
+  - Tactical version: network detail panel, Wi-Fi list, VPN status, Bluetooth device monitor. Current remaining gap is actionable Wi-Fi/VPN/Bluetooth connection flows.
 
 - Wallpaper/theme/color management.
   - References: Caelestia wallpapers/colours, Noctalia theme/color/wallpaper services, Dank wallpaper/theme browser.
