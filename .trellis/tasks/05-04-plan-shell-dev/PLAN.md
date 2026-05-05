@@ -211,7 +211,7 @@ Current status: all concrete planned phases below are covered by first-party sli
 
 Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
 
-Current next phase: continue appearance settings expansion by adding persisted `visual.panelOpacity` and `visual.scanlineStrength` controls, applying them through `Theme.qml` and existing scanline overlays while preserving current defaults.
+Current next phase: resume fine appearance settings by adding persisted `visual.borderOpacity`, `visual.dimTextOpacity`, and `visual.lineContrast` controls after completing the orbital central chrome alignment priority insert.
 
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.

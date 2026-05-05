@@ -320,6 +320,61 @@ Decision (ADR-lite):
 - Decision: add two coarse global settings, `visual.panelOpacity` and `visual.scanlineStrength`, instead of many per-component opacity knobs.
 - Consequences: improves user-facing visual tuning while preserving simple global theme contracts. Fine-grained border/text/background opacity remains future work.
 
+### Next Optimization MVP: Fine Appearance Contrast Controls
+
+User choice captured 2026-05-05: continue appearance settings by adding `borderOpacity`, `dimTextOpacity`, and `lineContrast` controls.
+
+Requirements:
+
+- Add settings-panel controls for border opacity, dim text opacity, and line/accent contrast.
+- Persist all three settings through `SettingsService.qml` and `void-shell-settings`.
+- Apply them through `Theme.qml` so existing consumers inherit the values without per-panel rewrites.
+- Keep current defaults visually equivalent to the current shell.
+- Clamp values to safe ranges so low-contrast settings remain usable.
+- Keep this phase focused on global visual tuning, not per-panel style profiles.
+
+Acceptance Criteria:
+
+- [ ] Command-center settings expose `BORDER OPACITY`, `DIM TEXT`, and `LINE CONTRAST` controls.
+- [ ] `visual.borderOpacity`, `visual.dimTextOpacity`, and `visual.lineContrast` persist and normalize through the Zig helper.
+- [ ] `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim` respond through central theme derivation.
+- [ ] Defaults match the current look closely.
+- [ ] `qmllint`, `zig build`, `git diff --check`, settings helper clamp checks, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: opacity and scanline controls improve large-surface tuning, but the HUD still needs user-facing controls for border subtlety, secondary text readability, and accent intensity.
+- Decision: add three global visual parameters in `visual.*` and derive existing theme colors from them.
+- Consequences: gives users more control over contrast without introducing per-component style state. The trade-off is that all panels share the same contrast profile.
+
+### Priority Insert: Orbital Central Chrome Alignment
+
+User instruction captured 2026-05-05: before continuing broader appearance control work, make the planetary/orbital panel border and central panel styling consistent with the other central panels.
+
+Requirements:
+
+- Update `OrbitalExpansionPanel.qml` so it uses the same central panel border/chrome language as the command center and CPU/network/filesystem/log panels.
+- Preserve the orbital visualization, time-based ephemeris, planet labels, trails, and metadata.
+- Preserve close behavior, `Escape` behavior, safe-area sizing, and `ExpansionService` routing.
+- Avoid regressing the earlier requirement that orbital remains a strong sci-fi sensor surface; the shared chrome should frame it rather than turn it into a generic flat card.
+- Finish this style alignment before continuing fine appearance contrast settings.
+
+Acceptance Criteria:
+
+- [x] `OrbitalExpansionPanel` uses the shared central panel chrome or an equivalent shared border/header/close implementation.
+- [x] Orbital content remains visible and visually prioritized inside the unified frame.
+- [x] The panel still displays time-based orbital metadata.
+- [x] Close button and `Escape` behavior remain intact.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: `OrbitalExpansionPanel` intentionally stayed custom while central chrome was standardized, but the current product direction now prioritizes visual consistency across all central panels.
+- Decision: align orbital with `CentralPanelChrome` or a shared equivalent while keeping the sensor surface as the content body.
+- Consequences: improves central panel consistency. The trade-off is a slightly more framed orbital presentation, which should be mitigated by preserving translucent sensor content and dense orbital HUD details.
+
 ### Panel Control Standardization
 
 - Central overlays should close with a consistent shortcut: `Escape`.

@@ -402,6 +402,13 @@
 - Updated frontend directory/component specs to include `AnalogOrbitClock.qml`, `CentralPanelChrome.qml`, current service granularity, and shared central chrome contract details.
 - Updated `PLAN.md` architecture/current-status sections to treat the analog clock entry, graphical time-based ephemeris, central panel chrome, and `visual.fontScale` as the current implementation baseline.
 
+## 2026-05-05 - Orbital Central Chrome Alignment
+
+- Captured the priority insert to align `OrbitalExpansionPanel.qml` border/header/close styling with the other central panels before continuing fine appearance controls.
+- Added shared central-panel visual language directly to the orbital surface: themed panel background, outer border, inner border, corner ticks, `[ACTIVE]` status, and standardized `PanelCloseButton` margins.
+- Preserved the orbital sensor body, time-based ephemeris metadata, planet nodes, trails, labels, close behavior, and safe-area deployment.
+- Verified the phase with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
+
 ## 2026-05-05 - Appearance Opacity And Scanline Controls
 
 - Added the next PRD/PLAN phase for broader appearance controls after font scaling: `visual.panelOpacity` and `visual.scanlineStrength`.

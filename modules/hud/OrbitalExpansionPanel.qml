@@ -60,7 +60,18 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "#24000000"
+        color: Theme.panel
+        border.color: Theme.line
+        border.width: Theme.lineWidth
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: 4
+        color: "transparent"
+        border.color: Theme.lineDim
+        border.width: Theme.lineWidth
+        opacity: 0.35
     }
 
     ScanlineOverlay {
@@ -329,12 +340,11 @@ Item {
     Rectangle {
         anchors.left: parent.left
         anchors.top: parent.top
-        anchors.margins: 10
+        anchors.leftMargin: Theme.panelPadding
+        anchors.topMargin: 7
         width: Math.min(parent.width - 116, statusText.implicitWidth + 18)
         height: 28
-        color: "#33000000"
-        border.color: Theme.lineDim
-        border.width: Theme.lineWidth
+        color: "transparent"
 
         TacticalLabel {
             id: statusText
@@ -349,7 +359,50 @@ Item {
     PanelCloseButton {
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 10
+        anchors.rightMargin: Theme.panelPadding
+        anchors.topMargin: 8
         onCloseRequested: ExpansionService.close()
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        width: 26
+        height: Theme.heavyLineWidth
+        color: Theme.line
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        width: Theme.heavyLineWidth
+        height: 26
+        color: Theme.line
+    }
+
+    Rectangle {
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        width: 26
+        height: Theme.heavyLineWidth
+        color: Theme.line
+    }
+
+    Rectangle {
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        width: Theme.heavyLineWidth
+        height: 26
+        color: Theme.line
+    }
+
+    TacticalLabel {
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.panelPadding + 96
+        anchors.top: parent.top
+        anchors.topMargin: 7
+        text: "[ACTIVE]"
+        accent: true
+        size: Theme.fontTiny
     }
 }
