@@ -373,3 +373,10 @@
 - Replaced `RotatingGlobe` in `LeftTacticalPanel.qml` with `AnalogOrbitClock` and moved the orbital expansion click route to `ExpansionService.show("orbital", "left-clock")`.
 - Registered `AnalogOrbitClock` in `components/qmldir` while leaving `RotatingGlobe.qml` available but no longer the primary orbital entry.
 - Verified the phase with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.
+
+## 2026-05-05 - Analog Clock Pointer Fix
+
+- Fixed `AnalogOrbitClock.qml` hand placement by rotating center-anchored hand containers instead of relying on rectangle-local `Rotation` origins.
+- Removed the explicit `CLICK EPHEMERIS` text so the clock no longer displays clock-to-planet-panel wording while keeping the click target active.
+- Reduced second-hand jaggedness by using a 2px antialiased rounded hand plus a dim tail instead of a single-pixel line.
+- Verified the fix with `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` startup smoke test.

@@ -73,45 +73,64 @@ Item {
         opacity: 0.38
     }
 
-    Rectangle {
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height + width / 2
-        width: 5
-        height: root.dialSize * 0.25
-        radius: width / 2
-        color: Theme.text
-        transform: Rotation {
-            origin.x: 2.5
-            origin.y: parent.height - 2.5
-            angle: root.hourAngle
+    Item {
+        anchors.centerIn: parent
+        width: root.dialSize
+        height: root.dialSize
+        rotation: root.hourAngle
+
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.verticalCenter
+            width: 5
+            height: root.dialSize * 0.25
+            radius: width / 2
+            color: Theme.text
         }
     }
 
-    Rectangle {
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height + width / 2
-        width: 3
-        height: root.dialSize * 0.34
-        radius: width / 2
-        color: Theme.line
-        transform: Rotation {
-            origin.x: 1.5
-            origin.y: parent.height - 1.5
-            angle: root.minuteAngle
+    Item {
+        anchors.centerIn: parent
+        width: root.dialSize
+        height: root.dialSize
+        rotation: root.minuteAngle
+
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.verticalCenter
+            width: 3
+            height: root.dialSize * 0.34
+            radius: width / 2
+            color: Theme.line
         }
     }
 
-    Rectangle {
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height + width / 2
-        width: Theme.lineWidth
-        height: root.dialSize * 0.39
-        color: Theme.danger
-        opacity: 0.85
-        transform: Rotation {
-            origin.x: 0.5
-            origin.y: parent.height - 0.5
-            angle: root.secondAngle
+    Item {
+        anchors.centerIn: parent
+        width: root.dialSize
+        height: root.dialSize
+        rotation: root.secondAngle
+
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.verticalCenter
+            width: 2
+            height: root.dialSize * 0.39
+            radius: width / 2
+            color: Theme.danger
+            opacity: 0.9
+            antialiasing: true
+        }
+
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.verticalCenter
+            width: 2
+            height: root.dialSize * 0.11
+            radius: width / 2
+            color: Theme.danger
+            opacity: 0.38
+            antialiasing: true
         }
     }
 
@@ -145,7 +164,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: root.dialSize * 0.18
-        text: Time.timeText + " // CLICK EPHEMERIS"
+        text: Time.timeText
         dim: !clockArea.containsMouse
         accent: clockArea.containsMouse
         size: Theme.fontTiny
