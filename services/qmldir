@@ -15,3 +15,4 @@ singleton CalendarService 1.0 CalendarService.qml
 singleton WeatherService 1.0 WeatherService.qml
 singleton PowerProfileService 1.0 PowerProfileService.qml
 singleton KeyboardService 1.0 KeyboardService.qml
+singleton ExpansionService 1.0 ExpansionService.qml

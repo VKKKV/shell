@@ -20,6 +20,7 @@ TacticalFrame {
         RotatingGlobe {
             Layout.fillWidth: true
             Layout.preferredHeight: Math.min(260, parent.height * 0.42)
+            onActivated: ExpansionService.show("orbital")
         }
 
         MetricBlock {

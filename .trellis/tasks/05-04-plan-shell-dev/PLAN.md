@@ -309,6 +309,7 @@ The reference shells provide a much broader desktop environment than the current
 - Compact mission dock in the bottom bar for current workspace windows.
 - Local weather via wttr.in with safe fetch fallback.
 - Keyboard layout telemetry from Hyprland devices with command fallback.
+- Interactive orbital expansion overlay with ASCII solar-system telemetry.
 - Tactical settings panel foundation.
 - Zig settings helper with JSON normalization.
 - Hyprland namespace/blur documentation.
@@ -316,7 +317,7 @@ The reference shells provide a much broader desktop environment than the current
 ### Missing High-Value Features From References
 - Interactive tactical expansion surfaces.
   - References: dashboard popouts, detail drawers, and desktop widget overlays in Caelestia/Noctalia/DankMaterialShell.
-  - Tactical version: click left/right panel child elements to deploy central enlarged machine-interface panels. First MVP is orbital globe to ASCII solar-system analysis; later surfaces can drill into CPU, network, filesystem, logs, tray, or weather.
+  - Tactical version: click left/right panel child elements to deploy central enlarged machine-interface panels. Orbital globe to ASCII solar-system analysis is implemented; later surfaces can drill into CPU, network, filesystem, logs, tray, or weather.
 
 - Dashboard/control center popout.
   - References: Caelestia dashboard, Noctalia panels, DankDash/control center.
@@ -369,9 +370,8 @@ The reference shells provide a much broader desktop environment than the current
 ### Recommended Feature Build Order
 
 0. Interactive panel expansion MVP.
-   - Add central expansion overlay state and module.
-   - Make the left orbital globe open a cyber/mechanical orbital analysis panel.
-   - Render local deterministic solar-system ASCII telemetry; no external ephemeris dependency yet.
+   - Covered: central expansion overlay state and module, left orbital globe click target, cyber/mechanical orbital analysis panel, local deterministic ASCII solar-system telemetry.
+   - Next expansions: apply the same overlay pattern to right-panel CPU matrix, network graph, filesystem rows, and log stream drill-downs.
 
 1. Settings persistence wiring.
    - Connect QML `SettingsService` to `void-shell-settings` read/write.

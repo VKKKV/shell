@@ -13,4 +13,5 @@ CommandCenterOverviewColumn 1.0 CommandCenterOverviewColumn.qml
 CommandCenterSettingsColumn 1.0 CommandCenterSettingsColumn.qml
 CommandCenterActionsColumn 1.0 CommandCenterActionsColumn.qml
 TrayDrawer 1.0 TrayDrawer.qml
+OrbitalExpansionPanel 1.0 OrbitalExpansionPanel.qml
 NotificationToast 1.0 NotificationToast.qml

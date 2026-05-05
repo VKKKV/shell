@@ -21,7 +21,7 @@ Item {
     readonly property int bottomReserved: bottomBar.height + Theme.margin * 2
     readonly property int leftReserved: leftPanel.visible ? leftPanel.width + Theme.margin * 2 : 0
     readonly property int rightReserved: rightPanel.visible ? rightPanel.width + Theme.margin * 2 : 0
-    readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion, toastInputRegion]
+    readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion, expansionInputRegion, toastInputRegion]
 
     function syncMetrics(): void {
         HudMetrics.topReserved = topReserved;
@@ -114,6 +114,36 @@ Item {
         anchors.fill: parent
     }
 
+    Item {
+        id: expansionLayer
+
+        visible: ExpansionService.open
+        opacity: visible ? 1 : 0
+        anchors.fill: parent
+
+        Rectangle {
+            anchors.fill: parent
+            color: "#66000000"
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: ExpansionService.close()
+            }
+        }
+
+        OrbitalExpansionPanel {
+            visible: ExpansionService.activeSurface === "orbital"
+            width: Math.min(980, parent.width - HudMetrics.leftReserved - HudMetrics.rightReserved - Theme.margin * 2)
+            height: Math.min(620, parent.height - HudMetrics.topReserved - HudMetrics.bottomReserved - Theme.margin * 2)
+            x: HudMetrics.leftReserved + Math.max(0, parent.width - HudMetrics.leftReserved - HudMetrics.rightReserved - width) / 2
+            y: HudMetrics.topReserved + Math.max(0, parent.height - HudMetrics.topReserved - HudMetrics.bottomReserved - height) / 2
+
+            Behavior on opacity {
+                NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
+            }
+        }
+    }
+
     NotificationToast {
         id: notificationToast
 
@@ -170,6 +200,16 @@ Item {
         y: 0
         width: settingsPanel.visible ? root.width : 0
         height: settingsPanel.visible ? root.height : 0
+        intersection: Intersection.Subtract
+    }
+
+    Region {
+        id: expansionInputRegion
+
+        x: 0
+        y: 0
+        width: expansionLayer.visible ? root.width : 0
+        height: expansionLayer.visible ? root.height : 0
         intersection: Intersection.Subtract
     }
 

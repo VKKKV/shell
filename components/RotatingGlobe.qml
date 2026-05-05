@@ -5,6 +5,7 @@ Item {
     id: root
 
     property real rotationPhase: 0
+    signal activated()
 
     implicitWidth: 180
     implicitHeight: 180
@@ -87,5 +88,12 @@ Item {
         radius: width / 2
         color: Theme.line
         opacity: 0.2
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+        onClicked: root.activated()
     }
 }

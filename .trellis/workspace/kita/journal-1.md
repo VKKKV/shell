@@ -174,3 +174,9 @@
 - Captured the new direction: left/right panel child elements should become interactive tactical entry points.
 - Planned the first MVP around clicking the left orbital globe to deploy a central enlarged orbital/solar-system analysis panel.
 - Defined the visual requirement for ASCII/monospace planet position telemetry with mechanical/cyber deployment language and reusable overlay architecture.
+
+## 2026-05-05 - Orbital Expansion MVP
+
+- Added `services/ExpansionService.qml` to own central expansion overlay state.
+- Added `modules/hud/OrbitalExpansionPanel.qml` with deterministic animated ASCII solar-system telemetry and mechanical/cyber tactical framing.
+- Made `RotatingGlobe` clickable and wired `HudLayout.qml` to deploy/close the orbital overlay with a matching input region.
