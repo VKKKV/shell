@@ -26,7 +26,8 @@ Fallback if `XDG_CONFIG_HOME` is unset:
   "visual": {
     "scanlinesEnabled": true,
     "intensity": 1.0,
-    "profile": "amber"
+    "profile": "amber",
+    "backgroundMode": "void"
   },
   "data": {
     "liveDataEnabled": true,
@@ -46,6 +47,7 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `visual.scanlinesEnabled` is boolean.
 - `visual.intensity` is clamped to `0.5..1.5`.
 - `visual.profile` is one of `amber`, `green`, `blue`, or `red`.
+- `visual.backgroundMode` is one of `void`, `grid`, or `radar`.
 - `data.liveDataEnabled` is boolean.
 - `data.updateIntervalMs` is clamped to `1000..30000`.
 - panel visibility fields are booleans.

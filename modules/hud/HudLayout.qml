@@ -56,6 +56,65 @@ Item {
         lineOpacity: 0.025 * SettingsService.intensity
     }
 
+    Rectangle {
+        visible: SettingsService.backgroundMode !== "void"
+        anchors.fill: parent
+        color: SettingsService.backgroundMode === "radar" ? "#11000000" : "transparent"
+        opacity: 0.18 * SettingsService.intensity
+    }
+
+    GridLayout {
+        visible: SettingsService.backgroundMode === "grid"
+        anchors.fill: parent
+        anchors.margins: Theme.margin
+        columns: 12
+        rowSpacing: 0
+        columnSpacing: 0
+        opacity: 0.14 * SettingsService.intensity
+
+        Repeater {
+            model: 96
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "transparent"
+                border.color: Theme.lineDim
+                border.width: Theme.lineWidth
+            }
+        }
+    }
+
+    Item {
+        visible: SettingsService.backgroundMode === "radar"
+        anchors.fill: parent
+        opacity: 0.22 * SettingsService.intensity
+
+        Repeater {
+            model: 5
+
+            Rectangle {
+                required property int index
+
+                anchors.centerIn: parent
+                width: Math.min(parent.width, parent.height) * (0.18 + index * 0.13)
+                height: width
+                radius: width / 2
+                color: "transparent"
+                border.color: Theme.lineDim
+                border.width: Theme.lineWidth
+            }
+        }
+
+        Rectangle {
+            anchors.centerIn: parent
+            width: Math.min(parent.width, parent.height) * 0.78
+            height: Theme.lineWidth
+            color: Theme.lineDim
+            rotation: 28
+        }
+    }
+
     TopStatusBar {
         id: topBar
 

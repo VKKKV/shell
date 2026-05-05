@@ -304,6 +304,7 @@ The reference shells provide a much broader desktop environment than the current
 - Notification server fallback, DND/history controls, and tactical toast UI.
 - Network/VPN/Bluetooth detail and Wi-Fi scan telemetry from `nmcli` and `bluetoothctl`.
 - Persistent theme profiles for amber/green/blue/red tactical palettes.
+- Persistent tactical background modes for void/grid/radar surfaces.
 - Clipboard buffer using `wl-paste`/`wl-copy` with command center history controls.
 - Local calendar grid and agenda state in the command center.
 - Active window telemetry and current workspace window overview.
@@ -346,7 +347,7 @@ The reference shells provide a much broader desktop environment than the current
 
 - Wallpaper/theme/color management.
   - References: Caelestia wallpapers/colours, Noctalia theme/color/wallpaper services, Dank wallpaper/theme browser.
-  - Tactical version: theme profile selector, warning-yellow palette tuning, wallpaper/background integration, optional dynamic color extraction.
+  - Tactical version: theme profile selector, warning-yellow palette tuning, local tactical background modes, wallpaper/background integration, optional dynamic color extraction. Current remaining gap is external wallpaper browser and dynamic color extraction.
 
 - Dock/taskbar/active window overview.
   - References: Dank dock/taskbar/overview, Noctalia dock/desktop widgets, Caelestia active window/window info.

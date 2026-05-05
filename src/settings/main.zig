@@ -4,6 +4,7 @@ const Settings = struct {
     scanlines_enabled: bool = true,
     intensity: f64 = 1.0,
     profile: []const u8 = "amber",
+    background_mode: []const u8 = "void",
     live_data_enabled: bool = true,
     update_interval_ms: i64 = 5000,
     left_visible: bool = true,
@@ -17,7 +18,8 @@ const defaults_json =
     \\  "visual": {
     \\    "scanlinesEnabled": true,
     \\    "intensity": 1.0,
-    \\    "profile": "amber"
+    \\    "profile": "amber",
+    \\    "backgroundMode": "void"
     \\  },
     \\  "data": {
     \\    "liveDataEnabled": true,
@@ -123,6 +125,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.scanlines_enabled = boolField(visual, "scanlinesEnabled") orelse settings.scanlines_enabled;
         settings.intensity = clampFloat(numberField(visual, "intensity") orelse settings.intensity, 0.5, 1.5);
         settings.profile = themeProfileField(visual, "profile") orelse settings.profile;
+        settings.background_mode = backgroundModeField(visual, "backgroundMode") orelse settings.background_mode;
     }
 
     if (objectField(root, "data")) |data| {
@@ -142,7 +145,8 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\  "visual": {{
         \\    "scanlinesEnabled": {},
         \\    "intensity": {d:.1},
-        \\    "profile": "{s}"
+        \\    "profile": "{s}",
+        \\    "backgroundMode": "{s}"
         \\  }},
         \\  "data": {{
         \\    "liveDataEnabled": {},
@@ -158,6 +162,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.scanlines_enabled,
         settings.intensity,
         settings.profile,
+        settings.background_mode,
         settings.live_data_enabled,
         settings.update_interval_ms,
         settings.left_visible,
@@ -186,6 +191,16 @@ fn themeProfileField(value: std.json.Value, key: []const u8) ?[]const u8 {
     const profile = field.string;
     if (std.mem.eql(u8, profile, "amber") or std.mem.eql(u8, profile, "green") or std.mem.eql(u8, profile, "blue") or std.mem.eql(u8, profile, "red"))
         return profile;
+    return null;
+}
+
+fn backgroundModeField(value: std.json.Value, key: []const u8) ?[]const u8 {
+    const field = objectField(value, key) orelse return null;
+    if (field != .string)
+        return null;
+    const mode = field.string;
+    if (std.mem.eql(u8, mode, "void") or std.mem.eql(u8, mode, "grid") or std.mem.eql(u8, mode, "radar"))
+        return mode;
     return null;
 }
 

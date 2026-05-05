@@ -216,3 +216,9 @@
 - Added a local deterministic spectrum signal to `AudioService.qml`, driven by volume/mute state and a lightweight timer.
 - Added compact spectrum visuals to the top bar and command center overview without adding external audio dependencies.
 - Updated the roadmap to mark spectrum/visualizer covered and leave optional lyrics deferred.
+
+## 2026-05-05 - Tactical Background Modes Slice
+
+- Added persistent `visual.backgroundMode` settings support for `void`, `grid`, and `radar`.
+- Added grid/radar background rendering behind the HUD and command center controls for selecting background mode.
+- Updated the settings contract and roadmap to mark local background mode management covered while leaving external wallpaper browsing/dynamic color deferred.

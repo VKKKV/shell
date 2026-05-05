@@ -47,6 +47,46 @@ ColumnLayout {
         }
     }
 
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "BACKGROUND // " + SettingsService.backgroundMode.toUpperCase()
+        accent: SettingsService.backgroundMode !== "void"
+    }
+
+    GridLayout {
+        Layout.fillWidth: true
+        columns: 3
+        rowSpacing: 6
+        columnSpacing: 6
+
+        Repeater {
+            model: ["void", "grid", "radar"]
+
+            Rectangle {
+                required property string modelData
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 24
+                color: SettingsService.backgroundMode === modelData ? Theme.lineDim : "transparent"
+                border.color: SettingsService.backgroundMode === modelData ? Theme.line : Theme.lineDim
+                border.width: Theme.lineWidth
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: SettingsService.backgroundMode = parent.modelData
+                }
+
+                TacticalLabel {
+                    anchors.centerIn: parent
+                    text: parent.modelData.toUpperCase()
+                    accent: SettingsService.backgroundMode === parent.modelData
+                    dim: SettingsService.backgroundMode !== parent.modelData
+                }
+            }
+        }
+    }
+
     ToggleRow {
         label: "SCANLINE OVERLAY"
         checked: SettingsService.scanlinesEnabled

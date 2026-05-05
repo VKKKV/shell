@@ -15,6 +15,7 @@ Singleton {
     property bool centerVisible: true
     property bool rightVisible: true
     property string themeProfile: "amber"
+    property string backgroundMode: "void"
     property real intensity: 1
     property int updateIntervalMs: 5000
     property string statusLine: "settings: defaults active"
@@ -39,6 +40,10 @@ Singleton {
         return ["amber", "green", "blue", "red"].indexOf(value) >= 0 ? value : "amber";
     }
 
+    function normalizeBackgroundMode(value: string): string {
+        return ["void", "grid", "radar"].indexOf(value) >= 0 ? value : "void";
+    }
+
     function applySettings(settings: var): void {
         if (!settings || typeof settings !== "object")
             return;
@@ -51,6 +56,8 @@ Singleton {
                 intensity = clampIntensity(settings.visual.intensity);
             if (typeof settings.visual.profile === "string")
                 themeProfile = normalizeThemeProfile(settings.visual.profile);
+            if (typeof settings.visual.backgroundMode === "string")
+                backgroundMode = normalizeBackgroundMode(settings.visual.backgroundMode);
         }
         if (settings.data) {
             if (typeof settings.data.liveDataEnabled === "boolean")
@@ -75,7 +82,8 @@ Singleton {
             visual: {
                 scanlinesEnabled: scanlinesEnabled,
                 intensity: clampIntensity(intensity),
-                profile: normalizeThemeProfile(themeProfile)
+                profile: normalizeThemeProfile(themeProfile),
+                backgroundMode: normalizeBackgroundMode(backgroundMode)
             },
             data: {
                 liveDataEnabled: liveDataEnabled,
@@ -118,6 +126,14 @@ Singleton {
         const normalized = normalizeThemeProfile(themeProfile);
         if (normalized !== themeProfile) {
             themeProfile = normalized;
+            return;
+        }
+        scheduleSave();
+    }
+    onBackgroundModeChanged: {
+        const normalized = normalizeBackgroundMode(backgroundMode);
+        if (normalized !== backgroundMode) {
+            backgroundMode = normalized;
             return;
         }
         scheduleSave();
