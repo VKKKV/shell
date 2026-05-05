@@ -95,9 +95,23 @@ TacticalFrame {
             }
         }
 
-        MetricBlock {
-            title: "FILESYSTEM"
-            rows: SystemStats.filesystemRows
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: filesystemBlock.implicitHeight
+
+            MetricBlock {
+                id: filesystemBlock
+
+                title: "FILESYSTEM"
+                rows: SystemStats.filesystemRows
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: ExpansionService.show("filesystem", "right-filesystem")
+            }
         }
 
         TextBlock {

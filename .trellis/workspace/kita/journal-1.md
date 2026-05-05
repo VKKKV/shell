@@ -198,3 +198,9 @@
 - Added `modules/hud/NetworkExpansionPanel.qml` as a right-panel drill-down surface for throughput, link detail, active connections, and Wi-Fi scan rows.
 - Made the right monitor network block clickable and routed it through `ExpansionService.show("network", "right-network")`.
 - Updated the roadmap to mark network matrix expansion covered and leave filesystem/log drill-downs next.
+
+## 2026-05-05 - Filesystem Matrix Expansion Slice
+
+- Added `modules/hud/FilesystemExpansionPanel.qml` as a right-panel drill-down surface for mount usage, storage state, and memory coupling.
+- Made the right monitor filesystem block clickable and routed it through `ExpansionService.show("filesystem", "right-filesystem")`.
+- Updated the roadmap to mark filesystem expansion covered and leave log stream drill-down next.
