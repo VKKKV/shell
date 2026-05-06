@@ -29,6 +29,7 @@ HUD modules must import only `CompositorService` for compositor state:
 - `statusLine`
 - `backendStatusLine`
 - `workspaceStatusLine`
+- `actionStatusLine`
 - `diagnosticRows`
 - `activeWorkspace`
 - `workspaces`
@@ -62,3 +63,4 @@ Expected fallback behavior outside Niri:
 - Niri command failures are contained inside `NiriService`.
 - Workspace buttons and window focus actions become no-op safe when no supported compositor is active.
 - Command-center overview and diagnostics show the active backend, workspace/window counts, and recent compositor transition log entries.
+- Workspace/focus actions update `CompositorService.actionStatusLine` and write service-log events for failed or fallback actions.

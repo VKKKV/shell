@@ -758,3 +758,29 @@ Decision (ADR-lite):
 - Context: after adding Niri, the facade still exposed window rows where focus actions commonly passed display titles. Titles are not stable identifiers and can collide.
 - Decision: add `windowKey` to the shared row shape and make HUD focus calls use it while keeping title fallback for compatibility.
 - Consequences: improves focus correctness across compositors with minimal UI change. The trade-off is a slightly larger row contract.
+
+### Next Optimization MVP: Compositor Action Feedback
+
+Plan source: continue reliability work after stable window focus keys by making compositor action no-ops visible.
+
+Requirements:
+
+- Add a compositor action status line for workspace switch and window focus attempts.
+- Log compositor user actions through `ServiceLogService`, including no-op/fallback paths.
+- Keep feedback centralized in `CompositorService.qml`; HUD modules should not log compositor actions directly.
+- Include the action status in diagnostics through the existing compositor matrix.
+
+Acceptance Criteria:
+
+- [x] `CompositorService.qml` exposes `actionStatusLine`.
+- [x] Workspace switch and window focus attempts update action status and service-log events.
+- [x] Unsupported compositor state and missing window keys produce warning status/log entries instead of silent no-ops.
+- [x] `CompositorService.diagnosticRows` includes the current action status.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: compositor action routes are no-op safe, but unsupported backends or malformed window keys can fail silently from the user's perspective.
+- Decision: add facade-level action feedback and structured logging while keeping backend services focused on command dispatch/parsing.
+- Consequences: improves diagnostics and user confidence with small state surface growth. The trade-off is that successful Hyprland dispatch cannot currently confirm compositor-side completion beyond dispatch intent.

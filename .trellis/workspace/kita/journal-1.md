@@ -578,3 +578,11 @@
 - Updated `MissionDock.qml` and `CommandCenterOverviewColumn.qml` to pass `windowKey` to `CompositorService.focusWindow()` with title fallback for legacy rows.
 - Updated compositor state docs and user docs with the stable window focus key contract.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Compositor Action Feedback
+
+- Added `actionStatusLine` to `CompositorService.qml` and included it in the compositor diagnostic rows.
+- Workspace switch and window focus attempts now push structured service-log events from the facade.
+- Unsupported compositor state and missing window keys now produce warning action status/log entries instead of silent no-ops.
+- Updated compositor state specs and user docs with the action feedback contract.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

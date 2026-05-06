@@ -112,6 +112,7 @@ Rules:
   - `statusLine: string`
   - `backendStatusLine: string`
   - `workspaceStatusLine: string`
+  - `actionStatusLine: string`
   - `diagnosticRows: var` where each row has `[label, status]` for diagnostics surfaces.
   - `activeWorkspace: int|string`
   - `workspaces: var` where each row has `{ id, label, active, occupied }`.
@@ -133,6 +134,7 @@ Rules:
 - Compositor transition/fallback events should be logged from `CompositorService` through `ServiceLogService`, deduped by last observed status.
 - Workspace switch/focus actions must be no-op safe when the target compositor is unavailable.
 - Window focus should pass `windowKey` from `currentWorkspaceWindows`, not display title text, with title fallback only for legacy rows.
+- Compositor user actions should update `actionStatusLine` and push a structured service-log event on dispatch or no-op fallback.
 - Niri support uses documented local commands in `docs/niri.md`: `niri msg --json workspaces`, `niri msg --json windows`, `niri msg action focus-workspace <id>`, and `niri msg action focus-window --id <window-id>`.
 
 ### 4. Validation & Error Matrix
@@ -143,6 +145,7 @@ Rules:
 - Command missing -> service logs warning/fallback and keeps shaped default values.
 - Compositor backend/status changes -> one structured service-log event per changed summary, not one event per poll tick.
 - Workspace/focus action called while unavailable -> no-op with status/log update, no uncaught process error.
+- Missing window key -> warning action status/log event, no uncaught error.
 - Duplicate window titles -> focus uses compositor-native `windowKey` where available instead of ambiguous display text.
 - HUD module imports compositor-specific API directly -> fail review; violates service boundary.
 

@@ -25,9 +25,11 @@ Singleton {
         ["HYPR", HyprlandService.statusLine],
         ["NIRI", NiriService.statusLine],
         ["SPACE", workspaceStatusLine],
+        ["ACTION", actionStatusLine],
         ["WINDOW", activeWindowClass + " // " + activeWindowTitle]
     ]
 
+    property string actionStatusLine: "action: standby"
     property string lastLoggedBackend: ""
     property string lastLoggedBackendStatus: ""
     property string lastLoggedWorkspaceStatus: ""
@@ -48,6 +50,11 @@ Singleton {
         lastLoggedBackend = logStatusChange("backend", compositorName, lastLoggedBackend);
         lastLoggedBackendStatus = logStatusChange("status", backendStatusLine, lastLoggedBackendStatus);
         lastLoggedWorkspaceStatus = logStatusChange("workspace", workspaceStatusLine, lastLoggedWorkspaceStatus);
+    }
+
+    function setActionStatus(message: string, level: string): void {
+        actionStatusLine = message;
+        ServiceLogService.push("compositor", level, message);
     }
 
     Component.onCompleted: syncLogState()
@@ -78,8 +85,11 @@ Singleton {
     }
 
     function switchWorkspace(id: int): void {
-        if (!available)
+        if (!available) {
+            setActionStatus("action: workspace " + id + " unavailable", "warn");
             return;
+        }
+        setActionStatus("action: switch workspace " + id + " via " + compositorName, "info");
         if (hyprlandActive)
             HyprlandService.switchWorkspace(id);
         else if (niriActive)
@@ -87,8 +97,15 @@ Singleton {
     }
 
     function focusWindow(windowKey: string): void {
-        if (!available)
+        if (!available) {
+            setActionStatus("action: focus window unavailable", "warn");
             return;
+        }
+        if (!windowKey || windowKey.length === 0) {
+            setActionStatus("action: focus window missing key", "warn");
+            return;
+        }
+        setActionStatus("action: focus window via " + compositorName, "info");
         if (hyprlandActive)
             HyprlandService.focusWindow(windowKey);
         else if (niriActive)
