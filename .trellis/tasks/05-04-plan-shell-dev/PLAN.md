@@ -58,6 +58,8 @@ modules/
 services/
   Time.qml
   HyprlandService.qml
+  NiriService.qml
+  CompositorService.qml
   SystemStats.qml
   SettingsService.qml
   ExpansionService.qml
@@ -195,7 +197,7 @@ Acceptance:
 
 ## Risks
 - Quickshell API details vary by version; confirm imports against v0.3.0 docs during implementation.
-- Hyprland-only workspace logic should be isolated so other compositors can be added later without rewriting the HUD; Niri is now the next planned compositor target.
+- Hyprland and Niri workspace logic should stay isolated behind `CompositorService.qml` so other compositors can be added later without rewriting the HUD.
 - Polling system commands too often can create avoidable CPU overhead.
 - Dense tactical UI can become unreadable quickly; prioritize spacing, hierarchy, and monospaced alignment over adding more numbers.
 
@@ -239,16 +241,16 @@ Status: covered in `docs/hyprland.md`; blur remains optional.
 
 ### Phase B2: Niri Compositor Support
 - Add Niri as the next compositor target without regressing Hyprland behavior.
-- Define a shared compositor service contract before changing HUD modules: active workspace, workspace rows, active window class/title, current workspace windows, status line, and switch/focus actions.
-- Keep Niri command/API parsing inside services and expose already-shaped values to HUD modules.
-- Add user-facing Niri compositor notes once commands and layer/exclusion behavior are confirmed.
+- The shared compositor service contract is `services/CompositorService.qml`: active workspace, active window class/title, current workspace window lists, status line, occupied workspace checks, and switch/focus actions.
+- Keep Niri command/API parsing inside `services/NiriService.qml` and expose already-shaped values to HUD modules.
+- User-facing command assumptions and fallback behavior live in `docs/niri.md`.
 
 Acceptance:
 - Hyprland and Niri can each provide workspace/window state through the same QML-facing contract.
 - Missing compositor commands or unavailable compositor state produce readable fallback values, not QML errors.
 - HUD modules do not import compositor-specific APIs directly.
 
-Status: planned; implementation should start with the code-spec compositor contract and a small service slice.
+Status: covered by `NiriService.qml` behind `CompositorService.qml`; manual validation inside a real Niri session remains the next environment-specific check.
 
 ### Phase C: Responsive And Monitor Fit
 - Add layout guardrails for smaller monitors and non-16:9 resolutions.

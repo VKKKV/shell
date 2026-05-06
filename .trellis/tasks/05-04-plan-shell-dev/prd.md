@@ -599,3 +599,32 @@ Decision (ADR-lite):
 - Context: the orbital panel is now graphical and time-derived, but future polish should improve visual hierarchy and performance together.
 - Decision: treat orbital optimization as a focused rendering contract, not a rewrite of `ExpansionService` or compositor layout.
 - Consequences: keeps the highest-impact visual surface improving while protecting existing central expansion behavior.
+
+### Next Optimization MVP: Niri Compositor Service
+
+Plan source: planned Niri support and the completed `CompositorService` facade prerequisite.
+
+Requirements:
+
+- Add Niri as a second compositor backend behind `CompositorService.qml` without regressing Hyprland behavior.
+- Keep Niri command/API probing and parsing inside `services/NiriService.qml`; HUD modules must keep consuming only `CompositorService`.
+- Use local offline Niri IPC commands: `niri msg --json workspaces`, `niri msg --json windows`, `niri msg action focus-workspace <id>`, and `niri msg action focus-window --id <window-id>`.
+- Prefer Hyprland when the Quickshell Hyprland service is available; use Niri only when Hyprland is unavailable and Niri state is valid.
+- Missing Niri binary, unavailable IPC, parse failures, or unavailable compositor state must degrade to readable fallback values and no-op-safe actions.
+- Add user-facing Niri notes documenting command assumptions and fallback behavior.
+
+Acceptance Criteria:
+
+- [x] `NiriService.qml` exposes workspace/window state shaped for the shared compositor facade.
+- [x] `CompositorService.qml` selects Hyprland, then Niri, then fallback without HUD-module conditionals.
+- [x] Workspace switch and window focus actions dispatch through the active compositor backend and are no-op safe when unavailable.
+- [x] Missing Niri/Hyprland state remains readable without QML errors.
+- [x] `docs/niri.md` documents command/API assumptions and expected fallback behavior.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: the previous compositor-facade phase removed direct Hyprland consumption from HUD modules, leaving Niri as the next backend to implement safely.
+- Decision: add a small QML `NiriService` that polls Niri JSON IPC commands and adapts rows/actions into the existing `CompositorService` contract, while preserving Hyprland as the preferred backend.
+- Consequences: Niri can power the HUD without UI rewrites. The trade-off is command-output-shape risk across Niri versions; fallback parsing keeps the shell readable, and deeper Niri-specific behavior can be refined from real runtime output.

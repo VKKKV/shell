@@ -530,3 +530,11 @@
 - Code-spec frontend docs updated: state-management multi-compositor contract, component-guidelines orbital rendering contract, directory-structure additions.
 - PRD/PLAN/journal synced for all phases.
 - Working tree clean, no uncommitted changes.
+
+## 2026-05-06 - Niri Compositor Service
+
+- Continued the active shell development task from a clean working tree.
+- Added `services/NiriService.qml` as a private compositor backend using local `niri msg --json workspaces` and `niri msg --json windows` polling plus `focus-workspace`/`focus-window` action dispatch.
+- Updated `services/CompositorService.qml` to select Hyprland first, then Niri, then fallback while preserving the existing HUD-facing contract.
+- Registered `NiriService` in `services/qmldir` and kept HUD modules on `CompositorService` only.
+- Added `docs/niri.md` and updated frontend state/directory specs with the Niri command contract and fallback behavior.

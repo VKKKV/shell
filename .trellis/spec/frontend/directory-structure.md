@@ -52,6 +52,7 @@ modules/hud/
 services/
 ├── SystemStats.qml
 ├── HyprlandService.qml
+├── NiriService.qml
 ├── CompositorService.qml
 ├── SettingsService.qml
 ├── ExpansionService.qml
@@ -70,6 +71,7 @@ src/settings/
 └── main.zig
 docs/
 ├── hyprland.md
+├── niri.md
 └── settings.md
 ```
 
@@ -104,6 +106,7 @@ Add new features as vertical slices, not as registries or broad rewrites.
 ## Examples
 
 - `services/SettingsService.qml` plus `src/settings/main.zig`: QML owns presentation state while Zig owns durable normalization.
+- `services/CompositorService.qml` plus `HyprlandService.qml`/`NiriService.qml`: HUD modules consume a shared compositor facade while backend-specific parsing stays in services.
 - `services/WeatherService.qml` plus `modules/hud/CommandCenterOverviewColumn.qml`: service-backed data appears in a composed command-center surface.
 - `modules/hud/SettingsPanel.qml` plus `CommandCenterPanel.qml`: thin overlay wrapper around a larger product panel.
 - `components/MetricBlock.qml`: reusable display primitive fed by already-shaped rows.

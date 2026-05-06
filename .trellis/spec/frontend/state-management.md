@@ -16,9 +16,9 @@ Current examples:
 
 - `services/Time.qml` owns live clock state.
 - `services/SystemStats.qml` owns CPU, memory, network, and filesystem polling state.
-- `services/HyprlandService.qml` owns workspace availability/occupancy state.
-- `services/CompositorService.qml` owns the shared QML-facing compositor contract; currently proxies HyprlandService.
-- Planned Niri support must enter through the same service boundary rather than HUD-module conditionals.
+- `services/HyprlandService.qml` owns Hyprland workspace availability/occupancy state.
+- `services/NiriService.qml` owns Niri command probing, workspace/window JSON parsing, and action dispatch.
+- `services/CompositorService.qml` owns the shared QML-facing compositor contract and selects Hyprland first, then Niri, then fallback.
 - `services/SettingsService.qml` owns in-session settings state.
 - `src/settings/main.zig` owns normalized settings persistence behavior.
 
@@ -119,7 +119,7 @@ Rules:
   - `switchWorkspace(workspaceId): void`
   - `focusWindow(windowKey): void`
 - Existing Hyprland-specific service: `services/HyprlandService.qml`.
-- Planned Niri implementation must either adapt into the shared service or provide a private service consumed only by the shared compositor facade.
+- Niri implementation adapts through `services/NiriService.qml`, consumed only by the shared compositor facade.
 
 ### 3. Contracts
 
@@ -127,12 +127,12 @@ Rules:
 - Compositor-specific parsing belongs in `services/`, never in `modules/hud/` or `components/`.
 - Missing compositor support must produce readable fallback values such as `compositor: fallback`, empty window lists, and inactive workspace rows.
 - Workspace switch/focus actions must be no-op safe when the target compositor is unavailable.
-- Niri support must document the command/API source it uses before implementation, including any required binary names or environment assumptions.
+- Niri support uses documented local commands in `docs/niri.md`: `niri msg --json workspaces`, `niri msg --json windows`, `niri msg action focus-workspace <id>`, and `niri msg action focus-window --id <window-id>`.
 
 ### 4. Validation & Error Matrix
 
 - Hyprland available -> shared state mirrors Hyprland workspace/window telemetry.
-- Niri available -> shared state mirrors Niri workspace/window telemetry through the same fields.
+- Niri available and Hyprland unavailable -> shared state mirrors Niri workspace/window telemetry through the same fields.
 - No supported compositor -> `available = false`, fallback status line, no thrown QML binding errors.
 - Command missing -> service logs warning/fallback and keeps shaped default values.
 - Workspace/focus action called while unavailable -> no-op with status/log update, no uncaught process error.

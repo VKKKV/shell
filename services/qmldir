@@ -1,6 +1,7 @@
 singleton Time 1.0 Time.qml
 singleton SystemStats 1.0 SystemStats.qml
 singleton HyprlandService 1.0 HyprlandService.qml
+singleton NiriService 1.0 NiriService.qml
 singleton CompositorService 1.0 CompositorService.qml
 singleton SettingsService 1.0 SettingsService.qml
 singleton AudioService 1.0 AudioService.qml
