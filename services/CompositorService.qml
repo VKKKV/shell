@@ -28,6 +28,34 @@ Singleton {
         ["WINDOW", activeWindowClass + " // " + activeWindowTitle]
     ]
 
+    property string lastLoggedBackend: ""
+    property string lastLoggedBackendStatus: ""
+    property string lastLoggedWorkspaceStatus: ""
+
+    function logLevelFor(message: string): string {
+        return message.toLowerCase().indexOf("fallback") >= 0 ? "warn" : "info";
+    }
+
+    function logStatusChange(kind: string, current: string, last: string): string {
+        if (current === last)
+            return last;
+
+        ServiceLogService.push("compositor", logLevelFor(current), kind + ": " + current);
+        return current;
+    }
+
+    function syncLogState(): void {
+        lastLoggedBackend = logStatusChange("backend", compositorName, lastLoggedBackend);
+        lastLoggedBackendStatus = logStatusChange("status", backendStatusLine, lastLoggedBackendStatus);
+        lastLoggedWorkspaceStatus = logStatusChange("workspace", workspaceStatusLine, lastLoggedWorkspaceStatus);
+    }
+
+    Component.onCompleted: syncLogState()
+
+    onCompositorNameChanged: syncLogState()
+    onBackendStatusLineChanged: syncLogState()
+    onWorkspaceStatusLineChanged: syncLogState()
+
     function fallbackWorkspaces(): var {
         const rows = [];
         for (let id = 1; id <= 5; id++) {

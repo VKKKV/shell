@@ -679,3 +679,29 @@ Decision (ADR-lite):
 - Context: Niri support is now implemented behind a facade, but users still need a visible way to confirm which backend is active and whether the inactive backend is falling back.
 - Decision: add shaped compositor diagnostic rows to `CompositorService` and render them inside the existing diagnostics column.
 - Consequences: improves operability with minimal UI change. The trade-off is a little more facade surface area, but it keeps backend-specific services out of HUD modules.
+
+### Next Optimization MVP: Compositor Transition Logging
+
+Plan source: continue compositor operability after exposing backend diagnostics in the command center.
+
+Requirements:
+
+- Emit structured service-log events when the active compositor backend, backend status line, or workspace/window count summary changes.
+- Keep logging centralized in `CompositorService.qml`; do not add backend-specific log wiring to HUD modules.
+- Use warning severity when compositor status enters fallback, and info severity for normal online/transition updates.
+- Avoid repeatedly logging unchanged status on every binding reevaluation or poll tick.
+
+Acceptance Criteria:
+
+- [x] `CompositorService.qml` records backend/status/workspace summary transitions through `ServiceLogService.push()`.
+- [x] Repeated identical compositor states are deduplicated by last-logged state.
+- [x] Fallback compositor status is logged as `warn`; normal transitions are logged as `info`.
+- [x] Existing diagnostics event stream displays these compositor events without UI changes.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: the command center now shows current compositor backend state, but transient backend/fallback changes are not preserved after the current state moves on.
+- Decision: log compositor transitions from the facade using a small last-state cache.
+- Consequences: improves diagnostics history while keeping backend services and HUD modules simple. The trade-off is that log granularity is limited to facade-level summaries, not raw backend command stderr.

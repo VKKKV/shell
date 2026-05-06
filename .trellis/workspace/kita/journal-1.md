@@ -556,3 +556,10 @@
 - Updated `CommandCenterDiagnosticsColumn.qml` with a compositor matrix fed only by `CompositorService`, keeping backend-specific services out of HUD modules.
 - Updated the frontend state-management spec and PRD/PLAN notes for the compositor diagnostics contract.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Compositor Transition Logging
+
+- Continued compositor operability work by recording backend/status/workspace summary changes into `ServiceLogService`.
+- Added last-state deduplication in `CompositorService.qml` so compositor polls do not spam repeated service-log entries.
+- Fallback compositor states now log as warnings while normal backend/workspace transitions log as info.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

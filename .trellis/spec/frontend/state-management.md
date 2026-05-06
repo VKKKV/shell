@@ -130,6 +130,7 @@ Rules:
 - Compositor-specific parsing belongs in `services/`, never in `modules/hud/` or `components/`.
 - Missing compositor support must produce readable fallback values such as `compositor: fallback`, empty window lists, and inactive workspace rows.
 - Diagnostics surfaces may display backend-specific status lines through `CompositorService.diagnosticRows`, but should not import backend services directly.
+- Compositor transition/fallback events should be logged from `CompositorService` through `ServiceLogService`, deduped by last observed status.
 - Workspace switch/focus actions must be no-op safe when the target compositor is unavailable.
 - Niri support uses documented local commands in `docs/niri.md`: `niri msg --json workspaces`, `niri msg --json windows`, `niri msg action focus-workspace <id>`, and `niri msg action focus-window --id <window-id>`.
 
@@ -139,6 +140,7 @@ Rules:
 - Niri available and Hyprland unavailable -> shared state mirrors Niri workspace/window telemetry through the same fields.
 - No supported compositor -> `available = false`, fallback status line, no thrown QML binding errors.
 - Command missing -> service logs warning/fallback and keeps shaped default values.
+- Compositor backend/status changes -> one structured service-log event per changed summary, not one event per poll tick.
 - Workspace/focus action called while unavailable -> no-op with status/log update, no uncaught process error.
 - HUD module imports compositor-specific API directly -> fail review; violates service boundary.
 
