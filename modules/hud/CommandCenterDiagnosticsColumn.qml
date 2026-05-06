@@ -32,6 +32,8 @@ ColumnLayout {
         ["WALL", WallpaperService.statusLine]
     ]
 
+    readonly property var compositorRows: CompositorService.diagnosticRows
+
     function warningText(line: string): bool {
         const lower = line.toLowerCase();
         return lower.indexOf("fallback") >= 0 || lower.indexOf("missing") >= 0 || lower.indexOf("offline") >= 0 || lower.indexOf("failed") >= 0 || lower.indexOf("unavailable") >= 0 || lower.indexOf("no ") >= 0;
@@ -53,6 +55,52 @@ ColumnLayout {
     MetricBlock {
         title: "HUD RESERVATION"
         rows: [["TOP", HudMetrics.topReserved + "PX", HudMetrics.topReserved > 0 ? 1 : 0, true], ["LEFT", HudMetrics.leftReserved + "PX", HudMetrics.leftReserved > 0 ? 1 : 0, SettingsService.leftVisible], ["RIGHT", HudMetrics.rightReserved + "PX", HudMetrics.rightReserved > 0 ? 1 : 0, SettingsService.rightVisible], ["BOTTOM", HudMetrics.bottomReserved + "PX", HudMetrics.bottomReserved > 0 ? 1 : 0, true]]
+    }
+
+    TacticalLabel {
+        Layout.fillWidth: true
+        text: "COMPOSITOR MATRIX // " + CompositorService.compositorName.toUpperCase()
+        accent: CompositorService.available
+        dim: !CompositorService.available
+    }
+
+    Repeater {
+        model: root.compositorRows
+
+        Rectangle {
+            required property var modelData
+
+            readonly property bool warning: root.warningText(modelData[1])
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: Theme.densityRowHeight
+            color: warning ? Theme.lineDim : "transparent"
+            border.color: warning ? Theme.line : Theme.border
+            border.width: Theme.lineWidth
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: Theme.densitySmallSpacing
+
+                TacticalLabel {
+                    Layout.preferredWidth: 58
+                    text: parent.parent.modelData[0]
+                    accent: parent.parent.warning
+                    dim: !parent.parent.warning
+                    elide: Text.ElideRight
+                }
+
+                TacticalLabel {
+                    Layout.fillWidth: true
+                    text: parent.parent.modelData[1]
+                    accent: parent.parent.warning
+                    dim: !parent.parent.warning
+                    elide: Text.ElideRight
+                }
+            }
+        }
     }
 
     TacticalLabel {

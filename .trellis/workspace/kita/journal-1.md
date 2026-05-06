@@ -548,3 +548,11 @@
 - Updated `TopStatusBar.qml` to consume shared workspace rows instead of reconstructing workspace buttons from a hard-coded numeric model.
 - Synced PRD/PLAN/frontend state docs to reflect completed Niri support, completed orbital optimization, and the workspace-row facade contract.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Compositor Diagnostics Visibility
+
+- Continued the multi-compositor development plan by making the active compositor backend more visible from the command center.
+- Added `backendStatusLine`, `workspaceStatusLine`, and `diagnosticRows` to `CompositorService.qml` so diagnostics can show active backend, Hyprland/Niri status, workspace counts, window counts, and active window identity.
+- Updated `CommandCenterDiagnosticsColumn.qml` with a compositor matrix fed only by `CompositorService`, keeping backend-specific services out of HUD modules.
+- Updated the frontend state-management spec and PRD/PLAN notes for the compositor diagnostics contract.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

@@ -18,6 +18,15 @@ Singleton {
     readonly property bool activeWindowAvailable: hyprlandActive ? HyprlandService.activeToplevel !== null : (niriActive && NiriService.activeWindowAvailable)
     readonly property var workspaces: hyprlandActive ? HyprlandService.workspaces : (niriActive ? NiriService.workspaces : fallbackWorkspaces())
     readonly property var currentWorkspaceWindows: hyprlandActive ? HyprlandService.currentWorkspaceWindows : (niriActive ? NiriService.currentWorkspaceWindows : [])
+    readonly property string backendStatusLine: "active: " + compositorName + " // hypr " + (HyprlandService.available ? "online" : "fallback") + " // niri " + (NiriService.available ? "online" : "fallback")
+    readonly property string workspaceStatusLine: "workspace: " + activeWorkspace + " // rows " + workspaces.length + " // windows " + currentWorkspaceWindows.length
+    readonly property var diagnosticRows: [
+        ["ACTIVE", backendStatusLine],
+        ["HYPR", HyprlandService.statusLine],
+        ["NIRI", NiriService.statusLine],
+        ["SPACE", workspaceStatusLine],
+        ["WINDOW", activeWindowClass + " // " + activeWindowTitle]
+    ]
 
     function fallbackWorkspaces(): var {
         const rows = [];

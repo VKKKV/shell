@@ -110,6 +110,9 @@ Rules:
   - `available: bool`
   - `compositorName: string`
   - `statusLine: string`
+  - `backendStatusLine: string`
+  - `workspaceStatusLine: string`
+  - `diagnosticRows: var` where each row has `[label, status]` for diagnostics surfaces.
   - `activeWorkspace: int|string`
   - `workspaces: var` where each row has `{ id, label, active, occupied }`.
   - `activeWindowClass: string`
@@ -126,6 +129,7 @@ Rules:
 - HUD modules must consume the shared compositor contract, not compositor-specific commands or imports.
 - Compositor-specific parsing belongs in `services/`, never in `modules/hud/` or `components/`.
 - Missing compositor support must produce readable fallback values such as `compositor: fallback`, empty window lists, and inactive workspace rows.
+- Diagnostics surfaces may display backend-specific status lines through `CompositorService.diagnosticRows`, but should not import backend services directly.
 - Workspace switch/focus actions must be no-op safe when the target compositor is unavailable.
 - Niri support uses documented local commands in `docs/niri.md`: `niri msg --json workspaces`, `niri msg --json windows`, `niri msg action focus-workspace <id>`, and `niri msg action focus-window --id <window-id>`.
 
@@ -141,6 +145,7 @@ Rules:
 ### 5. Good/Base/Bad Cases
 
 - Good: `TopStatusBar.qml` renders `CompositorService.workspaces` and does not know whether Hyprland, Niri, or fallback produced the rows.
+- Good: `CommandCenterDiagnosticsColumn.qml` renders `CompositorService.diagnosticRows` for backend visibility without importing Hyprland/Niri services directly.
 - Base: during migration, `HyprlandService.qml` may remain the backing implementation if the facade contract is already documented and consumers are being moved intentionally.
 - Bad: adding `if niri` branches or shell command parsing inside `TopStatusBar.qml`, `MissionDock.qml`, or `CommandCenterOverviewColumn.qml`.
 

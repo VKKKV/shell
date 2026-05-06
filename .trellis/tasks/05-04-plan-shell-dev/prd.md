@@ -654,3 +654,28 @@ Decision (ADR-lite):
 - Context: Niri support added a backend facade, but the top workspace strip still recreated workspace state from a hard-coded five-item model and direct occupancy checks.
 - Decision: make workspace rows a first-class facade field so UI modules consume already-shaped compositor state.
 - Consequences: improves the multi-compositor boundary and lets Niri surface dynamic workspace ids/labels. The trade-off is a small amount of row-shaping duplication in compositor services until more compositor backends justify a shared helper.
+
+### Next Optimization MVP: Compositor Diagnostics Visibility
+
+Plan source: continue the multi-compositor support plan after adding Niri and workspace-row facade support.
+
+Requirements:
+
+- Surface active compositor backend details in the command-center diagnostics view so Niri/Hyprland fallback behavior is visible without reading logs.
+- Keep backend-specific imports out of HUD modules; expose already-shaped diagnostic rows from `CompositorService.qml`.
+- Show active backend, Hyprland backend status, Niri backend status, workspace row/window counts, and active window identity.
+- Preserve existing diagnostics layout, service matrix, log clear behavior, and command-center safe-area scrolling.
+
+Acceptance Criteria:
+
+- [x] `CompositorService.qml` exposes backend/workspace diagnostic status lines and `diagnosticRows`.
+- [x] `CommandCenterDiagnosticsColumn.qml` renders a compositor matrix from `CompositorService.diagnosticRows`.
+- [x] HUD diagnostics do not import `HyprlandService` or `NiriService` directly.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: Niri support is now implemented behind a facade, but users still need a visible way to confirm which backend is active and whether the inactive backend is falling back.
+- Decision: add shaped compositor diagnostic rows to `CompositorService` and render them inside the existing diagnostics column.
+- Consequences: improves operability with minimal UI change. The trade-off is a little more facade surface area, but it keeps backend-specific services out of HUD modules.
