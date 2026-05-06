@@ -17,7 +17,7 @@ RowLayout {
 
             required property var modelData
 
-            readonly property string title: modelData.title
+            readonly property string windowKey: modelData.windowKey || modelData.title
 
             Layout.preferredWidth: 128
             Layout.preferredHeight: 24
@@ -31,7 +31,7 @@ RowLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: CompositorService.focusWindow(dockItem.title)
+                onClicked: CompositorService.focusWindow(dockItem.windowKey)
             }
 
             RowLayout {

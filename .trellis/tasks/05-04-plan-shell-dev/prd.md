@@ -731,3 +731,30 @@ Decision (ADR-lite):
 - Context: compositor diagnostics are visible in the diagnostics column, but the command-center overview still starts at workspace/window data and hides which compositor is active.
 - Decision: add a compact compositor/status line to the existing overview and align user-facing docs with the facade-based architecture.
 - Consequences: improves discoverability with minimal UI impact. The trade-off is one additional overview line in an already dense column.
+
+### Next Optimization MVP: Stable Window Focus Keys
+
+Plan source: continue strengthening the multi-compositor facade after Niri support and overview surfacing.
+
+Requirements:
+
+- Add a stable `windowKey` field to compositor window rows so HUD modules do not focus windows by display title.
+- Use compositor-native identifiers where available: Hyprland window address and Niri window id.
+- Keep title fallback for legacy or malformed rows.
+- Update dock and command-center overview focus actions to pass `windowKey`.
+- Document the row contract in frontend state-management and compositor docs.
+
+Acceptance Criteria:
+
+- [x] `HyprlandService.qml` includes `windowKey` in `currentWorkspaceWindows` rows and focuses by address when possible.
+- [x] `NiriService.qml` includes `windowKey` in `currentWorkspaceWindows` rows and focuses by id.
+- [x] `MissionDock.qml` and `CommandCenterOverviewColumn.qml` pass `windowKey` to `CompositorService.focusWindow()`.
+- [x] Duplicate-title windows no longer rely on title matching when compositor-native keys are available.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: after adding Niri, the facade still exposed window rows where focus actions commonly passed display titles. Titles are not stable identifiers and can collide.
+- Decision: add `windowKey` to the shared row shape and make HUD focus calls use it while keeping title fallback for compatibility.
+- Consequences: improves focus correctness across compositors with minimal UI change. The trade-off is a slightly larger row contract.

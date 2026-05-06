@@ -53,15 +53,16 @@ Singleton {
     function windowRowsForWorkspace(id: int): var {
         const values = Hyprland.toplevels?.values || [];
         return values.filter(toplevel => toplevel.workspace?.id === id).slice(0, 6).map(toplevel => ({
+            windowKey: toplevel.lastIpcObject?.address || compact(toplevel.title || "UNTITLED", 42),
             title: compact(toplevel.title || "UNTITLED", 42),
             appClass: compact(toplevel.lastIpcObject?.class || "unknown", 18),
             active: toplevel === activeToplevel
         }));
     }
 
-    function focusWindow(title: string): void {
+    function focusWindow(windowKey: string): void {
         const values = Hyprland.toplevels?.values || [];
-        const target = values.find(toplevel => (toplevel.title || "UNTITLED") === title || compact(toplevel.title || "UNTITLED", 42) === title);
+        const target = values.find(toplevel => toplevel.lastIpcObject?.address === windowKey || (toplevel.title || "UNTITLED") === windowKey || compact(toplevel.title || "UNTITLED", 42) === windowKey);
         if (target?.lastIpcObject?.address)
             Hyprland.dispatch(`focuswindow address:${target.lastIpcObject.address}`);
     }

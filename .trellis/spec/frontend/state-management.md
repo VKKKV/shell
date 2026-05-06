@@ -117,7 +117,7 @@ Rules:
   - `workspaces: var` where each row has `{ id, label, active, occupied }`.
   - `activeWindowClass: string`
   - `activeWindowTitle: string`
-  - `currentWorkspaceWindows: var` where each item has `{ appClass, title, active }`.
+  - `currentWorkspaceWindows: var` where each item has `{ windowKey, appClass, title, active }`.
 - Shared QML-facing actions:
   - `switchWorkspace(workspaceId): void`
   - `focusWindow(windowKey): void`
@@ -132,6 +132,7 @@ Rules:
 - Diagnostics surfaces may display backend-specific status lines through `CompositorService.diagnosticRows`, but should not import backend services directly.
 - Compositor transition/fallback events should be logged from `CompositorService` through `ServiceLogService`, deduped by last observed status.
 - Workspace switch/focus actions must be no-op safe when the target compositor is unavailable.
+- Window focus should pass `windowKey` from `currentWorkspaceWindows`, not display title text, with title fallback only for legacy rows.
 - Niri support uses documented local commands in `docs/niri.md`: `niri msg --json workspaces`, `niri msg --json windows`, `niri msg action focus-workspace <id>`, and `niri msg action focus-window --id <window-id>`.
 
 ### 4. Validation & Error Matrix
@@ -142,12 +143,14 @@ Rules:
 - Command missing -> service logs warning/fallback and keeps shaped default values.
 - Compositor backend/status changes -> one structured service-log event per changed summary, not one event per poll tick.
 - Workspace/focus action called while unavailable -> no-op with status/log update, no uncaught process error.
+- Duplicate window titles -> focus uses compositor-native `windowKey` where available instead of ambiguous display text.
 - HUD module imports compositor-specific API directly -> fail review; violates service boundary.
 
 ### 5. Good/Base/Bad Cases
 
 - Good: `TopStatusBar.qml` renders `CompositorService.workspaces` and does not know whether Hyprland, Niri, or fallback produced the rows.
 - Good: `CommandCenterDiagnosticsColumn.qml` renders `CompositorService.diagnosticRows` for backend visibility without importing Hyprland/Niri services directly.
+- Good: `MissionDock.qml` and `CommandCenterOverviewColumn.qml` call `CompositorService.focusWindow(modelData.windowKey)` and render title only as display text.
 - Base: during migration, `HyprlandService.qml` may remain the backing implementation if the facade contract is already documented and consumers are being moved intentionally.
 - Bad: adding `if niri` branches or shell command parsing inside `TopStatusBar.qml`, `MissionDock.qml`, or `CommandCenterOverviewColumn.qml`.
 

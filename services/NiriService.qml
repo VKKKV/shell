@@ -90,6 +90,7 @@ Singleton {
             const activeWindow = values.find(window => window?.is_focused === true || window?.focused === true || window?.is_active === true || window?.active === true);
             const rows = values.filter(window => windowWorkspaceId(window) === activeWorkspace).slice(0, 6).map(window => ({
                 id: String(window?.id ?? window?.app_id ?? window?.title ?? ""),
+                windowKey: String(window?.id ?? window?.app_id ?? window?.title ?? ""),
                 title: compact(window?.title || "UNTITLED", 42),
                 appClass: compact(window?.app_id || window?.app_class || "unknown", 18),
                 active: activeWindow !== undefined && window === activeWindow

@@ -570,3 +570,11 @@
 - Updated `docs/hyprland.md` to describe Hyprland as a backend behind the shared compositor facade instead of a HUD-facing API.
 - Updated `docs/niri.md` with the expanded facade fields and command-center status inspection notes.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Stable Window Focus Keys
+
+- Added `windowKey` to Hyprland and Niri current-workspace window rows so focus actions do not rely on display titles.
+- Hyprland window rows now use the compositor address when available; Niri rows use the window id.
+- Updated `MissionDock.qml` and `CommandCenterOverviewColumn.qml` to pass `windowKey` to `CompositorService.focusWindow()` with title fallback for legacy rows.
+- Updated compositor state docs and user docs with the stable window focus key contract.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

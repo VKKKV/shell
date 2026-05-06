@@ -202,7 +202,7 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: CompositorService.focusWindow(parent.modelData.title)
+                onClicked: CompositorService.focusWindow(parent.modelData.windowKey || parent.modelData.title)
             }
 
             RowLayout {

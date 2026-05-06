@@ -42,6 +42,8 @@ HUD modules must import only `CompositorService` for compositor state:
 
 Hyprland remains the preferred backend when its Quickshell service is available. Niri is used when Hyprland is unavailable and Niri command output is valid.
 
+Window rows expose `windowKey` separately from display title. Niri uses the window id as `windowKey` so click-to-focus can target duplicate-title windows safely.
+
 ## Layer Behavior
 
 The HUD itself remains a Wayland layer-shell surface. Niri-specific layer and exclusion behavior should be configured in the compositor if needed; shell code should not depend on compositor-side blur or decoration features.

@@ -52,7 +52,9 @@ The Hyprland backend reads:
 
 - active workspace: `Hyprland.focusedWorkspace?.id`
 - occupied workspaces: `Hyprland.workspaces?.values`
+- window focus key: `toplevel.lastIpcObject?.address`
 - switching: `Hyprland.dispatch("workspace <id>")`
+- focusing: `Hyprland.dispatch("focuswindow address:<address>")`
 
 If workspace highlighting does not update, confirm the shell is running inside a Hyprland session and that the Quickshell Hyprland service is available in your installed Quickshell build. The command-center overview and diagnostics panels show the active compositor backend, workspace row count, active window, and fallback status.
 
