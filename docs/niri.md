@@ -45,6 +45,8 @@ Hyprland remains the preferred backend when its Quickshell service is available.
 
 Window rows expose `windowKey` separately from display title. Niri uses the window id as `windowKey` so click-to-focus can target duplicate-title windows safely.
 
+Workspace rows may expose Niri workspace names as labels. The top workspace strip clamps and elides labels, so long names remain readable without expanding the whole bar unexpectedly.
+
 ## Layer Behavior
 
 The HUD itself remains a Wayland layer-shell surface. Niri-specific layer and exclusion behavior should be configured in the compositor if needed; shell code should not depend on compositor-side blur or decoration features.

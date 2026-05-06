@@ -784,3 +784,29 @@ Decision (ADR-lite):
 - Context: compositor action routes are no-op safe, but unsupported backends or malformed window keys can fail silently from the user's perspective.
 - Decision: add facade-level action feedback and structured logging while keeping backend services focused on command dispatch/parsing.
 - Consequences: improves diagnostics and user confidence with small state surface growth. The trade-off is that successful Hyprland dispatch cannot currently confirm compositor-side completion beyond dispatch intent.
+
+### Next Optimization MVP: Workspace Label Fit
+
+Plan source: continue Niri UI robustness after exposing compositor-provided workspace rows.
+
+Requirements:
+
+- Make top workspace buttons handle compositor-provided labels that are longer than single-digit Hyprland ids.
+- Keep numeric Hyprland workspace buttons visually equivalent.
+- Clamp button width so long labels do not consume the top bar.
+- Elide labels inside the button instead of clipping text.
+
+Acceptance Criteria:
+
+- [x] `TopStatusBar.qml` derives workspace button width from label width within a small clamp.
+- [x] Workspace labels elide inside the button.
+- [x] Numeric Hyprland labels still render as compact square buttons.
+- [x] `docs/niri.md` and frontend state specs document that compositor workspace labels may be longer than numeric ids.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: the compositor facade now passes workspace labels through from Niri, but the top workspace strip still used fixed 34px buttons designed for numeric labels.
+- Decision: make buttons label-aware with a bounded width and text elision.
+- Consequences: Niri workspace names become usable without destabilizing top-bar layout. The trade-off is that very long labels are abbreviated in the strip and full names remain a future tooltip/details concern.

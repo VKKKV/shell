@@ -49,19 +49,25 @@ TacticalFrame {
                     required property var modelData
 
                     readonly property int workspaceId: Number(modelData.id)
+                    readonly property string label: String(modelData.label ?? modelData.id)
                     readonly property bool active: modelData.active
                     readonly property bool occupied: modelData.occupied
                     property bool hovered: false
 
-                    width: 34
+                    width: Math.max(34, Math.min(86, workspaceLabel.implicitWidth + 18))
                     height: 24
                     color: active ? Theme.line : (hovered ? Theme.lineDim : (occupied ? Theme.panelSoft : "transparent"))
                     border.color: active || occupied || hovered ? Theme.line : Theme.lineDim
                     border.width: Theme.lineWidth
 
                     TacticalLabel {
+                        id: workspaceLabel
+
                         anchors.centerIn: parent
-                        text: modelData.label
+                        width: parent.width - 10
+                        horizontalAlignment: Text.AlignHCenter
+                        elide: Text.ElideRight
+                        text: parent.label
                         color: parent.active ? Theme.background : Theme.line
                         font.bold: true
                     }

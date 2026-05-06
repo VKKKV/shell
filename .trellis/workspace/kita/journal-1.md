@@ -586,3 +586,11 @@
 - Unsupported compositor state and missing window keys now produce warning action status/log entries instead of silent no-ops.
 - Updated compositor state specs and user docs with the action feedback contract.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Workspace Label Fit
+
+- Updated `TopStatusBar.qml` workspace buttons to size from `CompositorService.workspaces` labels within a clamp.
+- Long compositor-provided workspace labels now elide inside the button instead of clipping or widening the whole top bar unexpectedly.
+- Numeric Hyprland labels remain compact with the existing minimum width.
+- Updated Niri docs and frontend state specs with the workspace label fit contract.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

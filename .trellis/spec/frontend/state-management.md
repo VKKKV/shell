@@ -130,6 +130,7 @@ Rules:
 - HUD modules must consume the shared compositor contract, not compositor-specific commands or imports.
 - Compositor-specific parsing belongs in `services/`, never in `modules/hud/` or `components/`.
 - Missing compositor support must produce readable fallback values such as `compositor: fallback`, empty window lists, and inactive workspace rows.
+- Workspace row labels may be compositor-provided names; visual consumers must elide/clamp labels instead of assuming numeric one-character labels.
 - Diagnostics surfaces may display backend-specific status lines through `CompositorService.diagnosticRows`, but should not import backend services directly.
 - Compositor transition/fallback events should be logged from `CompositorService` through `ServiceLogService`, deduped by last observed status.
 - Workspace switch/focus actions must be no-op safe when the target compositor is unavailable.
@@ -146,12 +147,14 @@ Rules:
 - Compositor backend/status changes -> one structured service-log event per changed summary, not one event per poll tick.
 - Workspace/focus action called while unavailable -> no-op with status/log update, no uncaught process error.
 - Missing window key -> warning action status/log event, no uncaught error.
+- Long workspace labels -> top workspace strip clamps button width and elides labels, not panel overflow.
 - Duplicate window titles -> focus uses compositor-native `windowKey` where available instead of ambiguous display text.
 - HUD module imports compositor-specific API directly -> fail review; violates service boundary.
 
 ### 5. Good/Base/Bad Cases
 
 - Good: `TopStatusBar.qml` renders `CompositorService.workspaces` and does not know whether Hyprland, Niri, or fallback produced the rows.
+- Good: `TopStatusBar.qml` sizes workspace buttons from label width within a clamp and elides long labels.
 - Good: `CommandCenterDiagnosticsColumn.qml` renders `CompositorService.diagnosticRows` for backend visibility without importing Hyprland/Niri services directly.
 - Good: `MissionDock.qml` and `CommandCenterOverviewColumn.qml` call `CompositorService.focusWindow(modelData.windowKey)` and render title only as display text.
 - Base: during migration, `HyprlandService.qml` may remain the backing implementation if the facade contract is already documented and consumers are being moved intentionally.
