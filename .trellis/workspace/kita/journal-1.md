@@ -538,3 +538,5 @@
 - Updated `services/CompositorService.qml` to select Hyprland first, then Niri, then fallback while preserving the existing HUD-facing contract.
 - Registered `NiriService` in `services/qmldir` and kept HUD modules on `CompositorService` only.
 - Added `docs/niri.md` and updated frontend state/directory specs with the Niri command contract and fallback behavior.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+- Commit created: `aeb461d feat(services): add niri compositor backend`.

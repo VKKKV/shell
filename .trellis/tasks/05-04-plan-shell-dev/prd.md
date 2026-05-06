@@ -621,7 +621,7 @@ Acceptance Criteria:
 - [x] Missing Niri/Hyprland state remains readable without QML errors.
 - [x] `docs/niri.md` documents command/API assumptions and expected fallback behavior.
 - [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
-- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
 
 Decision (ADR-lite):
 
