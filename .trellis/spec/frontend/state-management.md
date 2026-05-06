@@ -111,7 +111,7 @@ Rules:
   - `compositorName: string`
   - `statusLine: string`
   - `activeWorkspace: int|string`
-  - `workspaces: var` where each row has `{ id, label, active, occupied }` or an equivalent stable tuple documented before migration.
+  - `workspaces: var` where each row has `{ id, label, active, occupied }`.
   - `activeWindowClass: string`
   - `activeWindowTitle: string`
   - `currentWorkspaceWindows: var` where each item has `{ appClass, title, active }`.
@@ -140,7 +140,7 @@ Rules:
 
 ### 5. Good/Base/Bad Cases
 
-- Good: `TopStatusBar.qml` renders workspaces from a shared compositor service and does not know whether Hyprland or Niri produced the rows.
+- Good: `TopStatusBar.qml` renders `CompositorService.workspaces` and does not know whether Hyprland, Niri, or fallback produced the rows.
 - Base: during migration, `HyprlandService.qml` may remain the backing implementation if the facade contract is already documented and consumers are being moved intentionally.
 - Bad: adding `if niri` branches or shell command parsing inside `TopStatusBar.qml`, `MissionDock.qml`, or `CommandCenterOverviewColumn.qml`.
 

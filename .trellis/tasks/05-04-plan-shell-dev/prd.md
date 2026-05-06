@@ -535,11 +535,11 @@ Requirements:
 
 Acceptance Criteria:
 
-- [ ] Niri support has a scoped implementation phase before code changes begin.
-- [ ] A shared compositor state contract defines active workspace, workspace rows, active window, current workspace windows, status line, and focus/switch actions.
-- [ ] Hyprland and Niri implementations can degrade to readable fallback state without QML errors.
-- [ ] HUD modules consume the shared compositor contract rather than directly importing compositor-specific APIs.
-- [ ] `qmllint`, compositor fallback smoke checks, and relevant command availability checks pass before any Niri implementation commit.
+- [x] Niri support has a scoped implementation phase before code changes begin.
+- [x] A shared compositor state contract defines active workspace, workspace rows, active window, current workspace windows, status line, and focus/switch actions.
+- [x] Hyprland and Niri implementations can degrade to readable fallback state without QML errors.
+- [x] HUD modules consume the shared compositor contract rather than directly importing compositor-specific APIs.
+- [x] `qmllint`, compositor fallback smoke checks, and relevant command availability checks pass before any Niri implementation commit.
 
 Decision (ADR-lite):
 
@@ -617,6 +617,7 @@ Acceptance Criteria:
 
 - [x] `NiriService.qml` exposes workspace/window state shaped for the shared compositor facade.
 - [x] `CompositorService.qml` selects Hyprland, then Niri, then fallback without HUD-module conditionals.
+- [x] `CompositorService.qml` exposes shared workspace rows consumed by the top workspace strip.
 - [x] Workspace switch and window focus actions dispatch through the active compositor backend and are no-op safe when unavailable.
 - [x] Missing Niri/Hyprland state remains readable without QML errors.
 - [x] `docs/niri.md` documents command/API assumptions and expected fallback behavior.
@@ -628,3 +629,28 @@ Decision (ADR-lite):
 - Context: the previous compositor-facade phase removed direct Hyprland consumption from HUD modules, leaving Niri as the next backend to implement safely.
 - Decision: add a small QML `NiriService` that polls Niri JSON IPC commands and adapts rows/actions into the existing `CompositorService` contract, while preserving Hyprland as the preferred backend.
 - Consequences: Niri can power the HUD without UI rewrites. The trade-off is command-output-shape risk across Niri versions; fallback parsing keeps the shell readable, and deeper Niri-specific behavior can be refined from real runtime output.
+
+### Follow-up Refactor: Workspace Row Facade
+
+Refactor source: post-Niri documentation/code sync review on 2026-05-06.
+
+Requirements:
+
+- Expose workspace rows from `CompositorService.qml` instead of making HUD modules reconstruct workspace buttons from hard-coded ids.
+- Keep Hyprland behavior visually equivalent by shaping five default Hyprland workspace rows.
+- Preserve Niri's dynamic workspace labels/ids when Niri is the active backend.
+- Provide fallback workspace rows so the top bar remains readable without a supported compositor.
+
+Acceptance Criteria:
+
+- [x] `HyprlandService.qml` exposes `workspaces` rows with `{ id, label, active, occupied }`.
+- [x] `CompositorService.qml` exposes backend-selected `workspaces` rows and fallback rows.
+- [x] `TopStatusBar.qml` consumes `CompositorService.workspaces` instead of a hard-coded numeric model.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: Niri support added a backend facade, but the top workspace strip still recreated workspace state from a hard-coded five-item model and direct occupancy checks.
+- Decision: make workspace rows a first-class facade field so UI modules consume already-shaped compositor state.
+- Consequences: improves the multi-compositor boundary and lets Niri surface dynamic workspace ids/labels. The trade-off is a small amount of row-shaping duplication in compositor services until more compositor backends justify a shared helper.

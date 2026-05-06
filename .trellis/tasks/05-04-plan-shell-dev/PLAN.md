@@ -213,7 +213,7 @@ Current status: all concrete planned phases below are covered by first-party sli
 
 Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
 
-Current next phase: resume fine appearance settings by adding persisted `visual.borderOpacity`, `visual.dimTextOpacity`, and `visual.lineContrast` controls after completing the orbital central chrome alignment priority insert.
+Current next phase: review screenshot/user feedback for the next visual tuning slice or open a new Trellis task for any larger product direction; all concrete planned shell-development slices in this task are now covered.
 
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.
@@ -338,7 +338,7 @@ Acceptance:
 - Orbital labels and tracks stay readable at common 1080p/1440p central safe-area dimensions.
 - A short manual orbital open/close smoke check passes after `quickshell -p .`.
 
-Status: planned future visual/performance optimization.
+Status: covered by the completed orbital planet map optimization phase; future orbital work should be driven by screenshot/performance feedback.
 
 ## Prioritized Next Steps
 
@@ -362,11 +362,11 @@ Status: planned future visual/performance optimization.
    - Apply the same interaction pattern to additional right/edge drill-downs when new domains need central detail surfaces.
 
 5. Niri compositor support.
-   - Define and implement a shared compositor service boundary before changing HUD modules.
-   - Add Niri fallback and documentation after command/API behavior is confirmed.
+    - Covered: `CompositorService.qml` provides the shared boundary and `NiriService.qml` provides Niri fallback/documented command integration.
+    - Remaining check is manual validation inside a real Niri session when available.
 
 6. Orbital planet map optimization.
-   - Improve the graphical orbital surface's depth, label hierarchy, and repaint behavior while preserving current ephemeris contracts.
+    - Covered: graphical orbital depth, label hierarchy, and bounded repaint behavior were improved while preserving current ephemeris contracts.
 
 ## Reference Feature Gap Analysis
 

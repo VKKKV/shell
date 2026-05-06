@@ -14,6 +14,7 @@ Singleton {
     readonly property string activeWindowClass: activeToplevel?.lastIpcObject?.class || "UNKNOWN"
     readonly property bool available: Hyprland.focusedWorkspace !== null || (Hyprland.workspaces?.values?.length ?? 0) > 0
     readonly property string statusLine: available ? "hyprland: workspace service online" : "hyprland: workspace fallback"
+    readonly property var workspaces: workspaceRows()
     readonly property var currentWorkspaceWindows: windowRowsForWorkspace(activeWorkspace)
     readonly property var occupiedIds: {
         const values = Hyprland.workspaces?.values || [];
@@ -22,6 +23,19 @@ Singleton {
 
     function isOccupied(id: int): bool {
         return occupiedIds.indexOf(id) >= 0;
+    }
+
+    function workspaceRows(): var {
+        const rows = [];
+        for (let id = 1; id <= 5; id++) {
+            rows.push({
+                id: id,
+                label: String(id),
+                active: id === activeWorkspace,
+                occupied: isOccupied(id)
+            });
+        }
+        return rows;
     }
 
     function switchWorkspace(id: int): void {

@@ -16,7 +16,21 @@ Singleton {
     readonly property string activeWindowTitle: hyprlandActive ? HyprlandService.activeWindowTitle : (niriActive ? NiriService.activeWindowTitle : "NO ACTIVE WINDOW")
     readonly property string activeWindowClass: hyprlandActive ? HyprlandService.activeWindowClass : (niriActive ? NiriService.activeWindowClass : "UNKNOWN")
     readonly property bool activeWindowAvailable: hyprlandActive ? HyprlandService.activeToplevel !== null : (niriActive && NiriService.activeWindowAvailable)
+    readonly property var workspaces: hyprlandActive ? HyprlandService.workspaces : (niriActive ? NiriService.workspaces : fallbackWorkspaces())
     readonly property var currentWorkspaceWindows: hyprlandActive ? HyprlandService.currentWorkspaceWindows : (niriActive ? NiriService.currentWorkspaceWindows : [])
+
+    function fallbackWorkspaces(): var {
+        const rows = [];
+        for (let id = 1; id <= 5; id++) {
+            rows.push({
+                id: id,
+                label: String(id),
+                active: id === activeWorkspace,
+                occupied: false
+            });
+        }
+        return rows;
+    }
 
     function isOccupied(id: int): bool {
         if (hyprlandActive)

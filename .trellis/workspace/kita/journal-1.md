@@ -540,3 +540,11 @@
 - Added `docs/niri.md` and updated frontend state/directory specs with the Niri command contract and fallback behavior.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
 - Commit created: `aeb461d feat(services): add niri compositor backend`.
+
+## 2026-05-06 - Workspace Facade Sync
+
+- Checked project docs after the Niri phase and found stale PRD/PLAN statuses for early Niri planning and orbital optimization.
+- Refactored workspace state so `HyprlandService`, `NiriService`, and fallback expose shaped workspace rows through `CompositorService.workspaces`.
+- Updated `TopStatusBar.qml` to consume shared workspace rows instead of reconstructing workspace buttons from a hard-coded numeric model.
+- Synced PRD/PLAN/frontend state docs to reflect completed Niri support, completed orbital optimization, and the workspace-row facade contract.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

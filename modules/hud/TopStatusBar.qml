@@ -7,8 +7,6 @@ import QtQuick.Layouts
 TacticalFrame {
     id: root
 
-    property int activeWorkspace: CompositorService.activeWorkspace
-
     implicitHeight: Math.min(Theme.topBarMaxHeight, Math.max(Theme.topBarMinHeight, content.implicitHeight + Theme.panelPadding * 2))
     highlighted: true
 
@@ -43,14 +41,16 @@ TacticalFrame {
             spacing: 10
 
             Repeater {
-                model: 5
+                model: CompositorService.workspaces
 
                 Rectangle {
                     id: workspaceButton
 
-                    required property int index
-                    readonly property bool active: index + 1 === root.activeWorkspace
-                    readonly property bool occupied: CompositorService.isOccupied(index + 1)
+                    required property var modelData
+
+                    readonly property int workspaceId: Number(modelData.id)
+                    readonly property bool active: modelData.active
+                    readonly property bool occupied: modelData.occupied
                     property bool hovered: false
 
                     width: 34
@@ -61,7 +61,7 @@ TacticalFrame {
 
                     TacticalLabel {
                         anchors.centerIn: parent
-                        text: index + 1
+                        text: modelData.label
                         color: parent.active ? Theme.background : Theme.line
                         font.bold: true
                     }
@@ -72,7 +72,7 @@ TacticalFrame {
                         hoverEnabled: true
                         onEntered: workspaceButton.hovered = true
                         onExited: workspaceButton.hovered = false
-                        onClicked: CompositorService.switchWorkspace(parent.index + 1)
+                        onClicked: CompositorService.switchWorkspace(workspaceButton.workspaceId)
                     }
 
                 }
