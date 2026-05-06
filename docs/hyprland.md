@@ -46,13 +46,15 @@ Use `rounding = 0` to preserve the hard-edged machine-interface look.
 
 ## Workspace Integration
 
-The top workspace strip uses `services/HyprlandService.qml` and the Quickshell Hyprland API:
+Hyprland is adapted through `services/HyprlandService.qml`, then exposed to HUD modules through `services/CompositorService.qml`. HUD modules should consume the shared facade instead of importing Hyprland-specific APIs directly.
+
+The Hyprland backend reads:
 
 - active workspace: `Hyprland.focusedWorkspace?.id`
 - occupied workspaces: `Hyprland.workspaces?.values`
 - switching: `Hyprland.dispatch("workspace <id>")`
 
-If workspace highlighting does not update, confirm the shell is running inside a Hyprland session and that the Quickshell Hyprland service is available in your installed Quickshell build.
+If workspace highlighting does not update, confirm the shell is running inside a Hyprland session and that the Quickshell Hyprland service is available in your installed Quickshell build. The command-center overview and diagnostics panels show the active compositor backend, workspace row count, active window, and fallback status.
 
 ## Troubleshooting
 

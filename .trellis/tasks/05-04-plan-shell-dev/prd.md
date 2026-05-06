@@ -705,3 +705,29 @@ Decision (ADR-lite):
 - Context: the command center now shows current compositor backend state, but transient backend/fallback changes are not preserved after the current state moves on.
 - Decision: log compositor transitions from the facade using a small last-state cache.
 - Consequences: improves diagnostics history while keeping backend services and HUD modules simple. The trade-off is that log granularity is limited to facade-level summaries, not raw backend command stderr.
+
+### Next Optimization MVP: Compositor Overview Surfacing
+
+Plan source: continue compositor support visibility outside the diagnostics-only surface.
+
+Requirements:
+
+- Show the active compositor backend and workspace/window summary in the command-center overview, not only the diagnostics column.
+- Keep the overview consuming `CompositorService` only.
+- Update user-facing Hyprland/Niri docs so they describe `CompositorService` as the HUD-facing compositor contract.
+- Preserve overview layout and existing network/window controls.
+
+Acceptance Criteria:
+
+- [x] `CommandCenterOverviewColumn.qml` shows active compositor backend and `CompositorService.workspaceStatusLine`.
+- [x] Overview still reads active window and workspace/window state from `CompositorService`.
+- [x] `docs/hyprland.md` describes Hyprland as a backend behind `CompositorService`.
+- [x] `docs/niri.md` lists the expanded facade fields and explains where to inspect backend status.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: compositor diagnostics are visible in the diagnostics column, but the command-center overview still starts at workspace/window data and hides which compositor is active.
+- Decision: add a compact compositor/status line to the existing overview and align user-facing docs with the facade-based architecture.
+- Consequences: improves discoverability with minimal UI impact. The trade-off is one additional overview line in an already dense column.

@@ -365,6 +365,7 @@ Status: covered by the completed orbital planet map optimization phase; future o
     - Covered: `CompositorService.qml` provides the shared boundary and `NiriService.qml` provides Niri fallback/documented command integration.
     - Covered: command-center diagnostics now surface active backend, Hyprland/Niri status, workspace rows, and active window identity through `CompositorService.diagnosticRows`.
     - Covered: compositor backend/status/workspace transitions are recorded in `ServiceLogService` for diagnostics history.
+    - Covered: command-center overview and user docs now expose the active compositor backend through the shared facade.
     - Remaining check is manual validation inside a real Niri session when available.
 
 6. Orbital planet map optimization.

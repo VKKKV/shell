@@ -27,7 +27,11 @@ HUD modules must import only `CompositorService` for compositor state:
 - `available`
 - `compositorName`
 - `statusLine`
+- `backendStatusLine`
+- `workspaceStatusLine`
+- `diagnosticRows`
 - `activeWorkspace`
+- `workspaces`
 - `activeWindowClass`
 - `activeWindowTitle`
 - `activeWindowAvailable`
@@ -55,3 +59,4 @@ Expected fallback behavior outside Niri:
 - `CompositorService.compositorName` reports `hyprland` if Hyprland is available, otherwise `fallback`.
 - Niri command failures are contained inside `NiriService`.
 - Workspace buttons and window focus actions become no-op safe when no supported compositor is active.
+- Command-center overview and diagnostics show the active backend, workspace/window counts, and recent compositor transition log entries.

@@ -563,3 +563,10 @@
 - Added last-state deduplication in `CompositorService.qml` so compositor polls do not spam repeated service-log entries.
 - Fallback compositor states now log as warnings while normal backend/workspace transitions log as info.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Compositor Overview Surfacing
+
+- Added active compositor backend and workspace/window summary lines to `CommandCenterOverviewColumn.qml` using `CompositorService`.
+- Updated `docs/hyprland.md` to describe Hyprland as a backend behind the shared compositor facade instead of a HUD-facing API.
+- Updated `docs/niri.md` with the expanded facade fields and command-center status inspection notes.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
