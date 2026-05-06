@@ -502,3 +502,31 @@
 - Migrated `TopStatusBar.qml`, `CommandCenterDiagnosticsColumn.qml`, `CommandCenterOverviewColumn.qml`, `LogExpansionPanel.qml`, `MissionDock.qml`, and `RightMonitorPanel.qml` from direct `HyprlandService` references to `CompositorService`.
 - Hyprland workspace switching, focus, and window telemetry behavior are preserved through the facade.
 - Updated frontend state-management and directory specs to include `CompositorService`.
+
+## 2026-05-05 - Session Closure
+
+- Final `/trellis:finish-work` verification:
+  - `zig build` passes.
+  - `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml` passes.
+  - `timeout 8s quickshell -p .` loads cleanly with `Configuration Loaded`.
+  - `void-shell-settings defaults` and `write` output valid JSON on stdout.
+  - `git status` clean, working tree up to date with `origin/master`.
+- Commits this session:
+  - `05052dd feat(settings): add visual density profiles`
+  - `50dc5de docs: mark density phase complete`
+  - `a717bad feat(command-center): add runtime diagnostics`
+  - `d0e45ce docs: mark diagnostics phase complete`
+  - `9a0b98a refactor(hud): centralize expansion motion`
+  - `f9cdbd6 docs: mark motion phase complete`
+  - `023ad24 fix(tray): clarify menu affordances`
+  - `ba22a4d docs: mark tray affordance phase complete`
+  - `e20165c refactor(command-center): group settings controls`
+  - `28aa258 docs: mark settings grouping phase complete`
+  - `41c1b2d docs: plan niri and orbital optimization`
+  - `5f162f6 feat(hud): optimize orbital planet map`
+  - `9699a78 refactor(services): add compositor facade`
+- Phases completed: density profiles, runtime diagnostics, centralized expansion motion, tray menu affordances, command-center settings grouping, Niri + orbital code-spec planning, orbital planet map optimization, compositor service facade.
+- Zig 0.16 migration applied to `src/settings/main.zig` during orbital phase to satisfy build verification.
+- Code-spec frontend docs updated: state-management multi-compositor contract, component-guidelines orbital rendering contract, directory-structure additions.
+- PRD/PLAN/journal synced for all phases.
+- Working tree clean, no uncommitted changes.
