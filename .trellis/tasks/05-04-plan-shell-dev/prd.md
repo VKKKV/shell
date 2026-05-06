@@ -547,6 +547,33 @@ Decision (ADR-lite):
 - Decision: plan Niri behind a shared service boundary and defer implementation until the contract is explicit.
 - Consequences: reduces future cross-compositor churn. The trade-off is one extra abstraction layer when Niri work starts.
 
+### Next Optimization MVP: Compositor Service Facade
+
+Plan source: first Niri support prerequisite from the multi-compositor workspace contract.
+
+Requirements:
+
+- Add `CompositorService.qml` as the shared QML-facing compositor contract.
+- For this phase, proxy existing `HyprlandService` behavior through the facade without changing runtime behavior.
+- Migrate HUD modules from direct `HyprlandService` consumption to `CompositorService`.
+- Keep `HyprlandService.qml` as the Hyprland-specific implementation detail.
+- Do not implement Niri parsing yet; this phase only creates the safe boundary.
+
+Acceptance Criteria:
+
+- [x] `CompositorService.qml` exposes `available`, `compositorName`, `statusLine`, `activeWorkspace`, `activeWindowClass`, `activeWindowTitle`, `currentWorkspaceWindows`, `isOccupied()`, `switchWorkspace()`, and `focusWindow()`.
+- [x] HUD modules no longer reference `HyprlandService` directly for workspace/window state.
+- [x] Existing Hyprland workspace switching and focus behavior are preserved through the facade.
+- [x] Missing/fallback compositor state remains readable and no-op safe.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: Niri support should not introduce compositor conditionals into UI modules.
+- Decision: introduce a facade first, backed by Hyprland, then implement Niri behind it in a later phase.
+- Consequences: creates a stable migration point with low behavior risk. The trade-off is one extra service indirection before Niri functionality exists.
+
 ### Next Optimization MVP: Orbital Planet Map Optimization
 
 User instruction captured 2026-05-05: add planetary map optimization to the development plan.

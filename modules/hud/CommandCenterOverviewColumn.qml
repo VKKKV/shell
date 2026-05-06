@@ -9,7 +9,7 @@ ColumnLayout {
 
     TextBlock {
         title: "SYSTEM OVERVIEW"
-        lines: ["workspace: " + HyprlandService.activeWorkspace, "active: " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "wifi: " + NetworkDetailService.wifiStatus, "audio: " + AudioService.volumeText + " // mic " + AudioService.micText, "keyboard: " + KeyboardService.activeLayout + " // " + KeyboardService.activeKeyboard, "weather: " + WeatherService.displayText, "environment: " + EnvironmentService.nightLightText, "media: " + MediaService.displayText]
+        lines: ["workspace: " + CompositorService.activeWorkspace, "active: " + CompositorService.activeWindowClass + " // " + CompositorService.activeWindowTitle, "date: " + CalendarService.dateText + " // " + CalendarService.dayText, "reserved: T" + HudMetrics.topReserved + " B" + HudMetrics.bottomReserved + " L" + HudMetrics.leftReserved + " R" + HudMetrics.rightReserved, "network: " + NetworkDetailService.primaryName + " // " + NetworkDetailService.vpnStatus, "wifi: " + NetworkDetailService.wifiStatus, "audio: " + AudioService.volumeText + " // mic " + AudioService.micText, "keyboard: " + KeyboardService.activeLayout + " // " + KeyboardService.activeKeyboard, "weather: " + WeatherService.displayText, "environment: " + EnvironmentService.nightLightText, "media: " + MediaService.displayText]
     }
 
     TacticalLabel {
@@ -180,12 +180,12 @@ ColumnLayout {
 
     TacticalLabel {
         Layout.fillWidth: true
-        text: "WINDOWS // WORKSPACE " + HyprlandService.activeWorkspace
+        text: "WINDOWS // WORKSPACE " + CompositorService.activeWorkspace
         accent: true
     }
 
     Repeater {
-        model: HyprlandService.currentWorkspaceWindows
+        model: CompositorService.currentWorkspaceWindows
 
         Rectangle {
             required property var modelData
@@ -202,7 +202,7 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: HyprlandService.focusWindow(parent.modelData.title)
+                onClicked: CompositorService.focusWindow(parent.modelData.title)
             }
 
             RowLayout {

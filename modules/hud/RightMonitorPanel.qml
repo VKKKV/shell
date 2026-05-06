@@ -136,7 +136,7 @@ TacticalFrame {
                 LogStream {
                     id: logStream
 
-                    lines: [HyprlandService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
+                    lines: [CompositorService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, BatteryService.statusLine, MediaService.statusLine].concat(SystemStats.logLines)
                 }
 
                 MouseArea {

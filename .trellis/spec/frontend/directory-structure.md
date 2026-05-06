@@ -52,6 +52,7 @@ modules/hud/
 services/
 ├── SystemStats.qml
 ├── HyprlandService.qml
+├── CompositorService.qml
 ├── SettingsService.qml
 ├── ExpansionService.qml
 ├── AudioService.qml

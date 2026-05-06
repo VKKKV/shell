@@ -17,6 +17,7 @@ Current examples:
 - `services/Time.qml` owns live clock state.
 - `services/SystemStats.qml` owns CPU, memory, network, and filesystem polling state.
 - `services/HyprlandService.qml` owns workspace availability/occupancy state.
+- `services/CompositorService.qml` owns the shared QML-facing compositor contract; currently proxies HyprlandService.
 - Planned Niri support must enter through the same service boundary rather than HUD-module conditionals.
 - `services/SettingsService.qml` owns in-session settings state.
 - `src/settings/main.zig` owns normalized settings persistence behavior.

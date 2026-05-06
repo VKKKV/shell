@@ -10,7 +10,7 @@ CentralPanelChrome {
     title: "LOG STREAM // EVENT DRILLDOWN"
     headerText: "DEPLOYED FROM RIGHT LOG NODE // SERVICE STATUS EVENT BUS"
 
-    readonly property var logLines: [HyprlandService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, AudioService.micStatusLine, BatteryService.statusLine, MediaService.statusLine, WeatherService.statusLine, KeyboardService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine].concat(SystemStats.logLines)
+    readonly property var logLines: [CompositorService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, AudioService.micStatusLine, BatteryService.statusLine, MediaService.statusLine, WeatherService.statusLine, KeyboardService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine].concat(SystemStats.logLines)
 
     ColumnLayout {
         anchors.fill: parent

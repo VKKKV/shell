@@ -10,7 +10,7 @@ RowLayout {
     spacing: 6
 
     Repeater {
-        model: HyprlandService.currentWorkspaceWindows
+        model: CompositorService.currentWorkspaceWindows
 
         Rectangle {
             id: dockItem
@@ -31,7 +31,7 @@ RowLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: HyprlandService.focusWindow(dockItem.title)
+                onClicked: CompositorService.focusWindow(dockItem.title)
             }
 
             RowLayout {
@@ -57,7 +57,7 @@ RowLayout {
     }
 
     TacticalLabel {
-        visible: HyprlandService.currentWorkspaceWindows.length === 0
+        visible: CompositorService.currentWorkspaceWindows.length === 0
         text: "NO WINDOWS"
         dim: true
     }

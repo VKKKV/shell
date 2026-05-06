@@ -7,7 +7,7 @@ import QtQuick.Layouts
 TacticalFrame {
     id: root
 
-    property int activeWorkspace: HyprlandService.activeWorkspace
+    property int activeWorkspace: CompositorService.activeWorkspace
 
     implicitHeight: Math.min(Theme.topBarMaxHeight, Math.max(Theme.topBarMinHeight, content.implicitHeight + Theme.panelPadding * 2))
     highlighted: true
@@ -50,7 +50,7 @@ TacticalFrame {
 
                     required property int index
                     readonly property bool active: index + 1 === root.activeWorkspace
-                    readonly property bool occupied: HyprlandService.isOccupied(index + 1)
+                    readonly property bool occupied: CompositorService.isOccupied(index + 1)
                     property bool hovered: false
 
                     width: 34
@@ -72,7 +72,7 @@ TacticalFrame {
                         hoverEnabled: true
                         onEntered: workspaceButton.hovered = true
                         onExited: workspaceButton.hovered = false
-                        onClicked: HyprlandService.switchWorkspace(parent.index + 1)
+                        onClicked: CompositorService.switchWorkspace(parent.index + 1)
                     }
 
                 }
@@ -98,7 +98,7 @@ TacticalFrame {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 elide: Text.ElideRight
-                text: HyprlandService.available ? "HYPRLAND // QML RENDERER" : "HYPRLAND // FALLBACK MODE"
+                text: CompositorService.compositorName.toUpperCase() + " // " + (CompositorService.available ? "ONLINE" : "FALLBACK")
                 dim: true
             }
 
@@ -111,9 +111,9 @@ TacticalFrame {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignRight
                     elide: Text.ElideRight
-                    text: "ACTIVE // " + HyprlandService.activeWindowClass + " // " + HyprlandService.activeWindowTitle
-                    accent: HyprlandService.activeToplevel !== null
-                    dim: HyprlandService.activeToplevel === null
+                    text: "ACTIVE // " + CompositorService.activeWindowClass + " // " + CompositorService.activeWindowTitle
+                    accent: CompositorService.activeWindowAvailable
+                    dim: !CompositorService.activeWindowAvailable
                 }
 
                 TacticalLabel {

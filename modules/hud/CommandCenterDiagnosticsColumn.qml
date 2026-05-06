@@ -11,7 +11,7 @@ ColumnLayout {
     spacing: Theme.densitySpacing
 
     readonly property var serviceRows: [
-        ["HYPR", HyprlandService.statusLine],
+        ["COMP", CompositorService.statusLine],
         ["STATS", SystemStats.statusLine],
         ["NET", NetworkDetailService.statusLine],
         ["AUDIO", AudioService.statusLine],

@@ -493,3 +493,12 @@
 - Added safe planet field helper functions in `OrbitalExpansionPanel.qml` so missing/invalid local planet data falls back without breaking the panel.
 - Improved orbit rendering hierarchy with alternating orbit weights, accent arc fragments, radial spokes, and clearer sensor-ring depth.
 - Improved planet labels with left/right side placement, clamping, connector lines, and helper-derived code/AU/period values while preserving time-derived orbital positions.
+
+## 2026-05-05 - Compositor Service Facade
+
+- Added the next PRD phase for a shared compositor service facade as the Niri support prerequisite.
+- Added `services/CompositorService.qml` as a QML singleton that exposes `available`, `compositorName`, `statusLine`, `activeWorkspace`, `activeWindowClass`, `activeWindowTitle`, `currentWorkspaceWindows`, `isOccupied()`, `switchWorkspace()`, and `focusWindow()`.
+- Registered `CompositorService` in `services/qmldir`.
+- Migrated `TopStatusBar.qml`, `CommandCenterDiagnosticsColumn.qml`, `CommandCenterOverviewColumn.qml`, `LogExpansionPanel.qml`, `MissionDock.qml`, and `RightMonitorPanel.qml` from direct `HyprlandService` references to `CompositorService`.
+- Hyprland workspace switching, focus, and window telemetry behavior are preserved through the facade.
+- Updated frontend state-management and directory specs to include `CompositorService`.
