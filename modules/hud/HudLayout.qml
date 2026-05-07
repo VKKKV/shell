@@ -29,6 +29,8 @@ Item {
     readonly property int expansionTargetY: topReserved + Math.max(0, height - topReserved - bottomReserved - expansionHeight) / 2
     readonly property int orbitalOriginX: leftPanel.x + leftPanel.width * 0.5
     readonly property int orbitalOriginY: leftPanel.y + Math.min(260, leftPanel.height * 0.42) * 0.5 + 38
+    readonly property int mediaOriginX: leftPanel.x + leftPanel.width * 0.5
+    readonly property int mediaOriginY: leftPanel.y + Math.min(leftPanel.height - 30, 560)
     readonly property int cpuOriginX: rightPanel.x + rightPanel.width * 0.5
     readonly property int cpuOriginY: rightPanel.y + 90
     readonly property int networkOriginX: rightPanel.x + rightPanel.width * 0.5
@@ -224,6 +226,30 @@ Item {
             height: root.expansionHeight
             x: visible ? root.expansionTargetX : root.orbitalOriginX - width / 2
             y: visible ? root.expansionTargetY : root.orbitalOriginY - height / 2
+            scale: visible ? 1 : Theme.motionCollapsedScale
+            opacity: visible ? 1 : 0
+            transformOrigin: Item.Center
+
+            Behavior on x {
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
+            }
+            Behavior on y {
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
+            }
+            Behavior on scale {
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
+            }
+            Behavior on opacity {
+                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            }
+        }
+
+        MediaExpansionPanel {
+            visible: ExpansionService.activeSurface === "media"
+            width: root.expansionWidth
+            height: root.expansionHeight
+            x: visible ? root.expansionTargetX : root.mediaOriginX - width / 2
+            y: visible ? root.expansionTargetY : root.mediaOriginY - height / 2
             scale: visible ? 1 : Theme.motionCollapsedScale
             opacity: visible ? 1 : 0
             transformOrigin: Item.Center

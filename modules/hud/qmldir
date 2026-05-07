@@ -20,4 +20,5 @@ NetworkExpansionPanel 1.0 NetworkExpansionPanel.qml
 FilesystemExpansionPanel 1.0 FilesystemExpansionPanel.qml
 LogExpansionPanel 1.0 LogExpansionPanel.qml
 PowerExpansionPanel 1.0 PowerExpansionPanel.qml
+MediaExpansionPanel 1.0 MediaExpansionPanel.qml
 NotificationToast 1.0 NotificationToast.qml

@@ -180,6 +180,7 @@ Keep orbital visuals grounded in deterministic local phase data while optimizing
 
 - Good: CPU/network/filesystem/log panels share `PanelCloseButton`, common header spacing, and scroll/elide dense data.
 - Good: power/battery drill-downs use `CentralPanelChrome`, are routed by `ExpansionService`, and reuse `BatteryService`/`PowerProfileService` rather than creating new service state.
+- Good: media drill-downs use `CentralPanelChrome`, are routed by `ExpansionService`, and call existing `MediaService.control()` actions instead of duplicating playerctl commands.
 - Base: a one-off experimental panel may use `TacticalFrame` directly, but still uses `PanelCloseButton` and `Theme` constants.
 - Bad: each panel defines its own `CLOSE` rectangle, duplicated margins, and custom close behavior.
 

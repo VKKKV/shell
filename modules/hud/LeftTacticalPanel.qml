@@ -49,9 +49,23 @@ TacticalFrame {
                 values: [0.2, 0.5, 0.32, 0.72, 0.45, 0.9, 0.62, 0.36, 0.78, 0.54, 0.26, 0.66]
             }
 
-            MetricBlock {
-                title: "TELEMETRY"
-                rows: [["AUDIO", AudioService.volumeText, AudioService.available ? AudioService.volume : -1, AudioService.available], ["POWER", BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available], ["MEDIA", MediaService.status, -1, MediaService.available]]
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: telemetryBlock.implicitHeight
+
+                MetricBlock {
+                    id: telemetryBlock
+
+                    title: "TELEMETRY"
+                    rows: [["AUDIO", AudioService.volumeText, AudioService.available ? AudioService.volume : -1, AudioService.available], ["POWER", BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available], ["MEDIA", MediaService.status, -1, MediaService.available]]
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: ExpansionService.show("media", "left-telemetry")
+                }
             }
         }
 

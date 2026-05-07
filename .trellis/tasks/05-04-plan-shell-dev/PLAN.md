@@ -362,6 +362,7 @@ Status: covered by the completed orbital planet map optimization phase; future o
    - Use a central overlay module controlled by small shared state instead of turning each edge panel into a separate popup owner.
     - Apply the same interaction pattern to additional right/edge drill-downs when new domains need central detail surfaces.
     - Covered: right-panel `POWER SOURCE` now opens `PowerExpansionPanel.qml` with battery/profile/idle controls through the shared central overlay path.
+    - Covered: left-panel `TELEMETRY` now opens `MediaExpansionPanel.qml` with player/audio/lyrics controls through the shared central overlay path.
 
 5. Niri compositor support.
     - Covered: `CompositorService.qml` provides the shared boundary and `NiriService.qml` provides Niri fallback/documented command integration.
@@ -435,6 +436,7 @@ Exit criteria:
 - Filesystem matrix drill-down expansion using the shared central overlay pattern.
 - Log stream drill-down expansion using the shared central overlay pattern.
 - Power source drill-down expansion using the shared central overlay pattern.
+- Media/lyrics telemetry drill-down expansion using the shared central overlay pattern.
 - Tactical settings panel foundation.
 - Launcher calculator provider (`=<expr>`) and shell command provider (`$ <command>`).
 - Lightweight structured service event log in the command center.

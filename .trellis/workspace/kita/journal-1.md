@@ -626,3 +626,12 @@
 - Added the panel to `HudLayout.qml` with shared safe-area deployment motion and registered it in `modules/hud/qmldir`.
 - Updated frontend directory/component specs and PRD/PLAN notes for the new power drill-down surface.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Media Lyrics Expansion Panel
+
+- Continued the expanded interaction panel direction with a left-panel telemetry drill-down.
+- Added `modules/hud/MediaExpansionPanel.qml` for player state, active track, audio spectrum, local lyrics, and transport controls using existing `MediaService`/`AudioService`.
+- Wired `LeftTacticalPanel.qml` telemetry block to `ExpansionService.show("media", "left-telemetry")`.
+- Added the panel to `HudLayout.qml` with shared central safe-area deployment motion and registered it in `modules/hud/qmldir`.
+- Updated frontend directory/component specs and PRD/PLAN notes for the media drill-down surface.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

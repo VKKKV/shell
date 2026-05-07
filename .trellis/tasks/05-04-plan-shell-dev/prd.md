@@ -890,3 +890,31 @@ Decision (ADR-lite):
 - Context: CPU/network/filesystem/log drill-downs already use the central expansion pattern, but `POWER SOURCE` is still a high-signal right-panel metric with no drill-down.
 - Decision: add a focused `PowerExpansionPanel.qml` using existing power services and the shared central chrome/deployment path.
 - Consequences: expands the interaction model without introducing new service contracts. The trade-off is that detailed battery history is not added yet; the slice focuses on current telemetry and controls.
+
+### Next Optimization MVP: Media/Lyrics Expansion Panel
+
+Plan source: continue the user-selected expanded interaction panel direction after the power drill-down.
+
+Requirements:
+
+- Add a central drill-down opened from the left panel's `TELEMETRY` block.
+- Reuse existing `MediaService` and `AudioService`; do not duplicate `playerctl` command logic in the HUD module.
+- Show player state, active track, audio spectrum, lyric lookup status, and local lyric lines.
+- Expose existing previous/play-pause/next actions through `MediaService.control()`.
+- Preserve shared central safe-area deployment, close button, backdrop close, and `Escape` close behavior.
+
+Acceptance Criteria:
+
+- [x] Clicking `TELEMETRY` in `LeftTacticalPanel.qml` opens a central media expansion surface.
+- [x] `MediaExpansionPanel.qml` uses `CentralPanelChrome` and existing services only.
+- [x] Panel displays media status, track text, audio spectrum, and lyrics fallback/file lines.
+- [x] Transport controls call `MediaService.control()`.
+- [x] Safe-area sizing and close behavior are preserved through `HudLayout.qml`/`ExpansionService`.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: left-panel `TELEMETRY` shows media/audio/power summary but only the orbital clock has a left-panel central drill-down.
+- Decision: add a focused media/lyrics expansion surface from the telemetry block, reusing `MediaService` and `AudioService`.
+- Consequences: expands left-side interaction without new backend state. The trade-off is that lyrics remain local-file fallback only; network lyrics are out of scope.
