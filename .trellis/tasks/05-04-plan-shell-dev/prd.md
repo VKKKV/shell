@@ -918,3 +918,43 @@ Decision (ADR-lite):
 - Context: left-panel `TELEMETRY` shows media/audio/power summary but only the orbital clock has a left-panel central drill-down.
 - Decision: add a focused media/lyrics expansion surface from the telemetry block, reusing `MediaService` and `AudioService`.
 - Consequences: expands left-side interaction without new backend state. The trade-off is that lyrics remain local-file fallback only; network lyrics are out of scope.
+
+### Next Optimization MVP: Expansion Panel Status Strips
+
+User direction captured 2026-05-06: optimize non-orbital expansion panels for content density and cyber-machine visual language before the orbital rewrite.
+
+Requirements:
+
+- Add a shared `PanelStatusStrip` component to unify the top status bar across all six non-orbital central expansion panels.
+- Each strip must show left (source/live), center (bus/telemetry summary), and right (close hint) labels.
+- Warning styling when the backing service reports fallback status.
+- Preserve existing panel content and safe-area sizing.
+- Do not change the orbital panel; it is deferred for the J2000 rewrite.
+
+Acceptance Criteria:
+
+- [x] `components/PanelStatusStrip.qml` exposes `leftText`, `centerText`, `rightText`, and `warning` properties.
+- [x] CPU/Network/Filesystem/Log/Power/Media expansion panels use `PanelStatusStrip` at the top of their content.
+- [x] Each strip shows a service-specific bus label and live data summary.
+- [x] Warning state correctly reflects service fallback status.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: expansion panels have no shared status chrome; each panel's top area shows raw data with no common bus/status language.
+- Decision: add a lightweight shared `PanelStatusStrip` that each panel instantiates with its own service labels.
+- Consequences: improves visual consistency and information density with minimal per-panel code change. The trade-off is that this is a surface-level chrome addition, not a deep content redesign.
+
+### Planned Next: J2000 3D Orbital Rewrite
+
+User direction captured 2026-05-06: rewrite the orbital expansion panel as a 3D side-view J2000 solar system with cosmic coordinate frame, drag-to-rotate, zoom, real-time heliocentric XYZ/AU for each planet, and cyber-machine visual language.
+
+Design constraints recorded:
+
+- Rendering target: QML Canvas 2.5D pseudo-3D projection.
+- Ephemeris: J2000 approximate orbital elements with Kepler approximation, offline real-time calculation.
+- Display: heliocentric ecliptic XYZ in AU per planet, orbital tracks, coordinate ticks, reticle/grid, glow/trail effects.
+- Interaction: drag to rotate view, scroll/gesture zoom, reset view control.
+- Priority: orbital rewrite starts after non-orbital panel density/cyber style passes are complete.
+- Existing contracts to preserve: `ExpansionService`, `CentralPanelChrome`, safe-area sizing, close/backdrop/Escape behavior, `Time.now` time source, offline/deterministic calculation, and the `AnalogOrbitClock` entry point.

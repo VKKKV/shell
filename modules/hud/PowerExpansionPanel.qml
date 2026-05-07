@@ -20,6 +20,13 @@ CentralPanelChrome {
         anchors.fill: parent
         spacing: Theme.densitySpacing
 
+        PanelStatusStrip {
+            leftText: "POWER BUS // LIVE"
+            centerText: "BATTERY // " + BatteryService.state
+            rightText: "ESC // CLOSE"
+            warning: BatteryService.statusLine.toLowerCase().indexOf("fallback") >= 0
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true

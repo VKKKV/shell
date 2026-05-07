@@ -378,6 +378,24 @@ Status: covered by the completed orbital planet map optimization phase; future o
 6. Orbital planet map optimization.
     - Covered: graphical orbital depth, label hierarchy, and bounded repaint behavior were improved while preserving current ephemeris contracts.
 
+7. Expansion panel density and cyber style pass.
+    - Covered: `PanelStatusStrip` unifies top status chrome across CPU/Network/Filesystem/Log/Power/Media panels.
+    - Planned: deeper content redesign for each panel's internal widget density and cyber-machine visual language.
+    - Planned: J2000 3D side-view orbital rewrite with drag/zoom, real-time heliocentric XYZ, cosmic coordinate frame, and cyber-sci-fi rendering.
+
+## Planned: J2000 3D Orbital Rewrite
+
+Design constraints from user direction:
+
+- 3D side-view solar system using QML Canvas 2.5D pseudo-3D projection.
+- J2000 heliocentric ecliptic coordinate frame with real-time Kepler-approximate planet positions.
+- Display heliocentric XYZ in AU per planet, orbital tracks, coordinate ticks, reticle/grid, glow/trail effects.
+- Drag to rotate view, scroll/gesture zoom, reset view control.
+- Offline/deterministic, no network ephemeris.
+- Cyber-machine visual language: warning-yellow accents, translucent sensor overlay, dense labels, scanline continuity.
+
+Priority order from user: non-orbital panel density/cyber passes complete first, then orbital J2000 rewrite.
+
 ## Reference Feature Gap Analysis
 
 The reference shells provide a much broader desktop environment than the current tactical HUD. Missing features should be added as vertical slices, preserving this project's machine-interface visual language instead of copying Material/Noctalia/Caelestia styling.

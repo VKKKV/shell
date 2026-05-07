@@ -16,6 +16,13 @@ CentralPanelChrome {
         anchors.fill: parent
         spacing: Theme.densitySpacing
 
+        PanelStatusStrip {
+            leftText: "EVENT BUS // LIVE"
+            centerText: "LOG STREAM // " + root.logLines.length + " LINES"
+            rightText: "ESC // CLOSE"
+            warning: root.logLines.some(line => line.toLowerCase().indexOf("fallback") >= 0 || line.toLowerCase().indexOf("missing") >= 0)
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true

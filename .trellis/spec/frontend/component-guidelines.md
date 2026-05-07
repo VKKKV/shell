@@ -257,6 +257,7 @@ This project is visual-first and desktop-shell-specific, but minimum interaction
 - labels should elide rather than overflow
 - fallback states should render readable text, not blank panels
 - tray controls should show whether an item advertises a menu and should not call native menu display APIs without a real Window-backed surface
+- expansion panels should use `PanelStatusStrip` for unified top chrome with `leftText`/`centerText`/`rightText`/`warning` props, not ad-hoc status labels
 
 ---
 
@@ -266,3 +267,4 @@ This project is visual-first and desktop-shell-specific, but minimum interaction
 - growing `HudLayout.qml` instead of extracting a new module
 - bypassing `Theme.qml` with ad-hoc constants
 - copying the visual language of reference shells instead of adapting it to this project
+- adding hand-rolled status bars per expansion panel when `PanelStatusStrip` provides the shared contract

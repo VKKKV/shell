@@ -31,6 +31,7 @@ components/
 ├── TrayStrip.qml
 ├── AnalogOrbitClock.qml
 ├── CentralPanelChrome.qml
+├── PanelStatusStrip.qml
 └── qmldir
 modules/hud/
 ├── HudWindow.qml

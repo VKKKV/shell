@@ -16,6 +16,13 @@ CentralPanelChrome {
         anchors.fill: parent
         spacing: Theme.densitySpacing
 
+        PanelStatusStrip {
+            leftText: "MEDIA BUS // LIVE"
+            centerText: "PLAYER // " + MediaService.status
+            rightText: "ESC // CLOSE"
+            warning: MediaService.statusLine.toLowerCase().indexOf("fallback") >= 0
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true

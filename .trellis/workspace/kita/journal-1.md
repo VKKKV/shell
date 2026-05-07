@@ -635,3 +635,12 @@
 - Added the panel to `HudLayout.qml` with shared central safe-area deployment motion and registered it in `modules/hud/qmldir`.
 - Updated frontend directory/component specs and PRD/PLAN notes for the media drill-down surface.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Expansion Panel Status Strips
+
+- User directed to optimize non-orbital expansion panel density and cyber style before the orbital J2000 rewrite.
+- Added `components/PanelStatusStrip.qml` as a shared top-status chrome component with left/center/right labels and warning styling.
+- Wired `PanelStatusStrip` into CPU, Network, Filesystem, Log, Power, and Media expansion panels with service-specific bus labels and fallback warning behavior.
+- Registered the new component in `components/qmldir`.
+- Recorded the J2000 3D orbital rewrite as the planned next major visual phase in PRD/PLAN, with design constraints for Canvas 2.5D projection, Kepler ephemeris, heliocentric XYZ/AU display, drag/zoom interaction, and cyber-machine visual language.
+- Updated frontend component/directory specs for the new `PanelStatusStrip` primitive.

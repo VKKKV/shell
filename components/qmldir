@@ -19,3 +19,4 @@ RotatingGlobe 1.0 RotatingGlobe.qml
 AnalogOrbitClock 1.0 AnalogOrbitClock.qml
 PanelCloseButton 1.0 PanelCloseButton.qml
 CentralPanelChrome 1.0 CentralPanelChrome.qml
+PanelStatusStrip 1.0 PanelStatusStrip.qml

@@ -14,6 +14,13 @@ CentralPanelChrome {
         anchors.fill: parent
         spacing: Theme.densitySpacing
 
+        PanelStatusStrip {
+            leftText: "NET BUS // LIVE"
+            centerText: "THROUGHPUT // " + NetworkDetailService.primaryName.toUpperCase()
+            rightText: "ESC // CLOSE"
+            warning: NetworkDetailService.statusLine.toLowerCase().indexOf("fallback") >= 0
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true

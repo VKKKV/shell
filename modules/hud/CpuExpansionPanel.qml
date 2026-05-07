@@ -24,6 +24,13 @@ CentralPanelChrome {
         anchors.fill: parent
         spacing: Theme.densitySpacing
 
+        PanelStatusStrip {
+            leftText: "CPU BUS // LIVE"
+            centerText: "CORE MATRIX // " + SystemStats.cpuRows.length + " CORES"
+            rightText: "ESC // CLOSE"
+            warning: SystemStats.statusLine.toLowerCase().indexOf("fallback") >= 0
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
