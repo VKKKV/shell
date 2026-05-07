@@ -82,12 +82,13 @@ fn settingsPath(allocator: std.mem.Allocator, environ_map: *const std.process.En
     return std.fs.path.join(allocator, &.{ home, ".config", "void-shell", "settings.json" });
 }
 
-fn ensureSettingsDir(allocator: std.mem.Allocator, io: std.Io, path: []const u8) void {
+fn ensureSettingsDir(allocator: std.mem.Allocator, io: std.Io, path: []const u8) !void {
     const dir_path = std.fs.path.dirname(path) orelse return;
     std.Io.Dir.cwd().createDirPath(io, dir_path) catch |err| {
         writeStderrAlloc(allocator, io, "warning: failed to create settings directory: {s}\n", .{@errorName(err)}) catch {};
         if (err == error.PathAlreadyExists)
             return;
+        return err;
     };
 }
 
@@ -122,12 +123,13 @@ fn writeSettings(allocator: std.mem.Allocator, io: std.Io, environ_map: *const s
 
     const path = try settingsPath(allocator, environ_map);
     defer allocator.free(path);
-    ensureSettingsDir(allocator, io, path);
+    try ensureSettingsDir(allocator, io, path);
 
     var file = try std.Io.Dir.cwd().createFile(io, path, .{ .truncate = true });
     defer file.close(io);
     try file.writeStreamingAll(io, normalized);
     try file.writeStreamingAll(io, "\n");
+
     try writeStdout(io, normalized);
     try writeStdout(io, "\n");
 }
@@ -422,4 +424,19 @@ test "normalizeSettings migrates missing and old versions to current version" {
 
 test "normalizeSettings rejects future versions" {
     try std.testing.expectError(error.UnsupportedSettingsVersion, normalizeSettings(std.testing.allocator, "{\"version\":999}"));
+}
+
+test "ensureSettingsDir creates nested settings directory" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+
+    const path = try std.fmt.allocPrint(arena.allocator(), ".zig-cache/tmp/{s}/nested/void-shell/settings.json", .{tmp.sub_path});
+
+    try ensureSettingsDir(arena.allocator(), std.testing.io, path);
+
+    var nested_dir = try std.Io.Dir.cwd().openDir(std.testing.io, std.fs.path.dirname(path).?, .{});
+    defer nested_dir.close(std.testing.io);
 }

@@ -1,0 +1,7 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend development guide"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Zig settings helper quality rules"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Backend error handling notes"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "QML quality and verification rules"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Service boundary rules"}
