@@ -29,8 +29,8 @@ Reduce Canvas work in `modules/hud/OrbitalExpansionPanel.qml` while the user is 
 ## Acceptance Criteria (evolving)
 
 * [x] Drag mode uses fewer orbit samples than the current 42-sample low path.
-* [ ] Non-drag mode still uses the full 96-sample orbit path.
-* [ ] The panel still renders and responds to selection/zoom correctly.
+* [x] Non-drag mode still uses the full 96-sample orbit path.
+* [x] The panel still renders and responds to selection/zoom correctly.
 
 ## Definition of Done (team quality bar)
 
@@ -54,3 +54,4 @@ Reduce Canvas work in `modules/hud/OrbitalExpansionPanel.qml` while the user is 
 ## Implementation Notes
 
 * Drag sampling was reduced from 42 to 12 to lower Canvas work while dragging.
+* Verified with `qmllint`, `zig build`, `timeout 8s quickshell -p .`, and `git diff --check` before commit.
