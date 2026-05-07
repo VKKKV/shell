@@ -651,3 +651,12 @@
 - Added local J2000-style orbital elements, a bounded Kepler solver, heliocentric XYZ/AU projection, projected orbit tracks, planet trails, labels, reticles, and coordinate-grid HUD overlays.
 - Added drag-to-rotate, wheel/trackpad zoom, and reset-view controls while preserving `ExpansionService`, central safe-area sizing, close/backdrop/`Escape` behavior, and the `AnalogOrbitClock` entry point.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-07 - Orbital Drag Performance Pass
+
+- Optimized `OrbitalExpansionPanel.qml` drag rotation after user reported the planet map felt too laggy.
+- Added frame-level view update throttling so high-frequency pointer events no longer force immediate yaw/pitch recompute and Canvas repaint on every event.
+- Reduced orbit-track Canvas sample count during active dragging, then restored high-quality track sampling after release/cancel.
+- Loosened orbital zoom limits to `0.42x..4.20x` and made coordinate labels/readouts explicitly show J2000 ecliptic `X/Y/Z` values in AU.
+- Kept the current QML Canvas implementation; the bottleneck addressed here is JS/Canvas redraw and binding churn, not a missing GPU backend switch.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.

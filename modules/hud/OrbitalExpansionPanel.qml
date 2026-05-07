@@ -21,6 +21,12 @@ Item {
     property real dragStartPitch: pitchDeg
     property real dragPressX: 0
     property real dragPressY: 0
+    property real pendingYawDeg: yawDeg
+    property real pendingPitchDeg: pitchDeg
+    property bool dragActive: false
+    readonly property int orbitSampleCount: dragActive ? 42 : 96
+    readonly property real minZoomLevel: 0.42
+    readonly property real maxZoomLevel: 4.2
     readonly property var planets: [
         { name: "MERCURY", code: "ME", a: 0.387099, e: 0.20564, i: 7.005, node: 48.331, peri: 77.457, meanLongitude: 252.251, period: 87.969, size: 5 },
         { name: "VENUS", code: "VE", a: 0.723332, e: 0.00678, i: 3.395, node: 76.680, peri: 131.602, meanLongitude: 181.979, period: 224.701, size: 7 },
@@ -175,6 +181,10 @@ Item {
         };
     }
 
+    function earthState(): var {
+        return orbitalState(planets[2], daysSinceEpoch);
+    }
+
     function labelX(projected: var, labelWidth: real): real {
         const preferred = projected.depth >= 0 ? projected.x + 16 : projected.x - labelWidth - 16;
         return Math.min(width - labelWidth - 10, Math.max(10, preferred));
@@ -194,8 +204,25 @@ Item {
         return planetCode(planet) + " XYZ " + state.x.toFixed(2) + " " + state.y.toFixed(2) + " " + state.z.toFixed(2) + " AU // LON " + state.trueLongitude.toFixed(1) + " // M " + state.meanAnomaly.toFixed(1);
     }
 
+    function planetCoordinateLabel(planet: var): string {
+        const state = orbitalState(planet, daysSinceEpoch);
+        return planetCode(planet) + " X " + state.x.toFixed(2) + " Y " + state.y.toFixed(2) + " Z " + state.z.toFixed(2) + " AU";
+    }
+
     function requestScenePaint(): void {
         orbitCanvas.requestPaint();
+    }
+
+    function scheduleViewUpdate(nextYaw: real, nextPitch: real): void {
+        pendingYawDeg = nextYaw;
+        pendingPitchDeg = nextPitch;
+        if (!viewUpdateTimer.running)
+            viewUpdateTimer.start();
+    }
+
+    function applyPendingView(): void {
+        yawDeg = pendingYawDeg;
+        pitchDeg = pendingPitchDeg;
     }
 
     function resetView(): void {
@@ -209,8 +236,17 @@ Item {
     onYawDegChanged: requestScenePaint()
     onPitchDegChanged: requestScenePaint()
     onZoomLevelChanged: requestScenePaint()
+    onOrbitSampleCountChanged: requestScenePaint()
     onWidthChanged: requestScenePaint()
     onHeightChanged: requestScenePaint()
+
+    Timer {
+        id: viewUpdateTimer
+
+        interval: 16
+        repeat: false
+        onTriggered: root.applyPendingView()
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -283,8 +319,8 @@ Item {
             for (let p = 0; p < root.planets.length; p++) {
                 const planet = root.planets[p];
                 ctx.beginPath();
-                for (let sample = 0; sample <= 120; sample++) {
-                    const dayOffset = root.daysSinceEpoch + sample * root.planetPeriod(planet) / 120;
+                for (let sample = 0; sample <= root.orbitSampleCount; sample++) {
+                    const dayOffset = root.daysSinceEpoch + sample * root.planetPeriod(planet) / root.orbitSampleCount;
                     const projected = root.projectPoint(root.orbitalState(planet, dayOffset));
                     if (sample === 0)
                         ctx.moveTo(projected.x, projected.y);
@@ -313,8 +349,11 @@ Item {
             ctx.globalAlpha = 0.38;
             ctx.fillStyle = accent;
             ctx.font = Theme.fontTiny + "px " + Theme.fontFamily;
-            ctx.fillText("ECLIPTIC FRAME // J2000", 18, height - 26);
-            ctx.fillText("YAW " + Math.round(root.yawDeg) + " // PITCH " + Math.round(root.pitchDeg) + " // ZOOM " + root.zoomLevel.toFixed(2), width - 292, height - 26);
+            ctx.fillText("ECLIPTIC XYZ FRAME // J2000 // AU", 18, height - 26);
+            ctx.fillText("YAW " + Math.round(root.yawDeg) + " // PITCH " + Math.round(root.pitchDeg) + " // ZOOM " + root.zoomLevel.toFixed(2) + "X", width - 326, height - 26);
+            ctx.globalAlpha = 0.3;
+            ctx.fillText("+X VERNAL", cx + gridRadius + 8, cy + 4);
+            ctx.fillText("+Y ECLIPTIC", cx + 8, cy - gridRadius - 8);
 
             ctx.globalAlpha = 0.16;
             ctx.strokeStyle = lineDim;
@@ -340,8 +379,11 @@ Item {
         preventStealing: true
         propagateComposedEvents: false
         onPressed: mouse => {
+            dragActive = true;
             dragStartYaw = yawDeg;
             dragStartPitch = pitchDeg;
+            pendingYawDeg = yawDeg;
+            pendingPitchDeg = pitchDeg;
             dragPressX = mouse.x;
             dragPressY = mouse.y;
             mouse.accepted = true;
@@ -349,9 +391,17 @@ Item {
         onPositionChanged: mouse => {
             if (!pressed)
                 return;
-            yawDeg = dragStartYaw + (mouse.x - dragPressX) * 0.35;
-            pitchDeg = clamp(dragStartPitch + (mouse.y - dragPressY) * 0.22, 18, 78);
+            scheduleViewUpdate(dragStartYaw + (mouse.x - dragPressX) * 0.35, clamp(dragStartPitch + (mouse.y - dragPressY) * 0.22, 18, 78));
             mouse.accepted = true;
+        }
+        onReleased: mouse => {
+            dragActive = false;
+            applyPendingView();
+            mouse.accepted = true;
+        }
+        onCanceled: {
+            dragActive = false;
+            applyPendingView();
         }
         onClicked: mouse => {
             mouse.accepted = true;
@@ -362,8 +412,8 @@ Item {
         target: null
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: event => {
-            const step = event.angleDelta.y > 0 ? 1.08 : 0.92;
-            root.zoomLevel = root.clamp(root.zoomLevel * step, 0.65, 1.65);
+            const step = event.angleDelta.y > 0 ? 1.16 : 0.86;
+            root.zoomLevel = root.clamp(root.zoomLevel * step, root.minZoomLevel, root.maxZoomLevel);
         }
     }
 
@@ -439,7 +489,7 @@ Item {
                 id: labelProbe
 
                 visible: false
-                text: root.planetCode(modelData) + " // " + parent.projected.r.toFixed(2) + "AU // Z " + parent.projected.z.toFixed(2)
+                text: root.planetCoordinateLabel(modelData)
                 size: Theme.fontTiny
             }
 
@@ -536,7 +586,7 @@ Item {
 
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "VIEW CONTROL // DRAG ROTATE // WHEEL ZOOM"
+                text: "VIEW CONTROL // DRAG ROTATE // WHEEL ZOOM 0.42X-4.20X"
                 accent: true
                 size: Theme.fontTiny
                 elide: Text.ElideRight
@@ -544,8 +594,16 @@ Item {
 
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "YAW " + Math.round(root.yawDeg) + " DEG // PITCH " + Math.round(root.pitchDeg) + " DEG // SCALE " + root.zoomLevel.toFixed(2)
+                text: "YAW " + Math.round(root.yawDeg) + " DEG // PITCH " + Math.round(root.pitchDeg) + " DEG // SCALE " + root.zoomLevel.toFixed(2) + "X"
                 dim: true
+                size: Theme.fontTiny
+                elide: Text.ElideRight
+            }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "EARTH XYZ " + root.earthState().x.toFixed(3) + " / " + root.earthState().y.toFixed(3) + " / " + root.earthState().z.toFixed(3) + " AU"
+                accent: true
                 size: Theme.fontTiny
                 elide: Text.ElideRight
             }
