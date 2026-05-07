@@ -14,8 +14,8 @@ Singleton {
     property bool leftVisible: true
     property bool centerVisible: true
     property bool rightVisible: true
-    property string themeProfile: "amber"
-    property string accentColor: "#F2C94C"
+    property string themeProfile: "gray"
+    property string accentColor: "#8A8A8A"
     property string backgroundMode: "void"
     property bool networkGeolocationEnabled: false
     property real intensity: 1
@@ -70,7 +70,7 @@ Singleton {
     }
 
     function normalizeThemeProfile(value: string): string {
-        return ["amber", "green", "blue", "red"].indexOf(value) >= 0 ? value : "amber";
+        return ["gray", "amber", "green", "blue", "red"].indexOf(value) >= 0 ? value : "gray";
     }
 
     function normalizeBackgroundMode(value: string): string {
@@ -82,7 +82,7 @@ Singleton {
     }
 
     function normalizeAccentColor(value: string): string {
-        return /^#[0-9a-fA-F]{6}$/.test(value) ? value.toUpperCase() : "#F2C94C";
+        return /^#[0-9a-fA-F]{6}$/.test(value) ? value.toUpperCase() : "#8A8A8A";
     }
 
     function applySettings(settings: var): void {

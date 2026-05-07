@@ -40,7 +40,7 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 ### 1. Scope / Trigger
 
 - Trigger: adding or changing persistent appearance settings that affect global typography, panel surfaces, or scanline overlays.
-- Applies to: `visual.fontScale`, `visual.panelOpacity`, `visual.scanlineStrength`, `visual.borderOpacity`, `visual.dimTextOpacity`, `visual.lineContrast`, and `visual.density` in `SettingsService.qml`, `Theme.qml`, `src/settings/main.zig`, `docs/settings.md`, and command-center settings controls.
+- Applies to: `visual.profile`, `visual.accentColor`, `visual.fontScale`, `visual.panelOpacity`, `visual.scanlineStrength`, `visual.borderOpacity`, `visual.dimTextOpacity`, `visual.lineContrast`, and `visual.density` in `SettingsService.qml`, `Theme.qml`, `src/settings/main.zig`, `docs/settings.md`, and command-center settings controls.
 - This is a cross-layer contract because QML owns live UI state while Zig owns durable JSON normalization.
 
 ### 2. Signatures
@@ -55,6 +55,8 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - Durable JSON field: `visual.dimTextOpacity: number`.
 - Durable JSON field: `visual.lineContrast: number`.
 - Durable JSON field: `visual.density: "compact" | "normal" | "dense"`.
+- Durable JSON field: `visual.profile: "gray" | "amber" | "green" | "blue" | "red"`.
+- Durable JSON field: `visual.accentColor: "#RRGGBB"`.
 - Zig setting field: `Settings.font_scale: f64`.
 - Zig setting field: `Settings.panel_opacity: f64`.
 - Zig setting field: `Settings.scanline_strength: f64`.
@@ -106,6 +108,8 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - `visual.lineContrast < 0.65` -> clamp to `0.65`.
 - `visual.lineContrast > 1.35` -> clamp to `1.35`.
 - Missing or invalid `visual.density` -> normalize to `normal`.
+- Missing or invalid `visual.profile` -> normalize to `gray`.
+- Missing or invalid `visual.accentColor` -> normalize to `#8A8A8A`.
 - Panel hard-codes new font sizes after this contract -> fail review; use `Theme.font*` instead.
 - Panel hard-codes global panel background alpha after this contract -> fail review; use `Theme.panel` or `Theme.panelSoft` instead.
 - Panel adds new repeated control/row/graph heights after this contract -> fail review; use density sizing from `Theme.qml` where the size is part of shared HUD rhythm.
@@ -118,6 +122,7 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - Good: settings column changes `SettingsService.panelOpacity`, `Theme.panel` updates globally, panels keep using `Theme.panel`.
 - Good: settings column changes `SettingsService.scanlineStrength`, existing scanline overlays get stronger/weaker while the toggle still disables them.
 - Good: settings column changes fine contrast settings, and existing panels update through `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim`.
+- Good: default startup uses `visual.profile = "gray"` and `visual.accentColor = "#8A8A8A"`, while persisted user settings still override these defaults.
 - Good: settings column changes `SettingsService.density`, and shared row/control/graph heights update through `Theme.qml`.
 - Base: a visual-only component uses `Theme.fontTiny`/`Theme.fontNormal` and automatically inherits scaling.
 - Bad: a panel implements its own `property int localFontSize` and bypasses `Theme.qml`, causing inconsistent scaling.

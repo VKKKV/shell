@@ -25,7 +25,7 @@ ColumnLayout {
         columnSpacing: Theme.densitySmallSpacing
 
         Repeater {
-            model: ["#F2C94C", "#FFB900", "#96BF48", "#55B7FF", "#FF4D2E"]
+            model: ["#8A8A8A", "#F2C94C", "#96BF48", "#55B7FF", "#FF4D2E"]
 
             Rectangle {
                 required property string modelData
@@ -60,7 +60,7 @@ ColumnLayout {
         columnSpacing: Theme.densitySmallSpacing
 
         Repeater {
-            model: ["amber", "green", "blue", "red"]
+            model: ["gray", "amber", "green", "blue", "red"]
 
             Rectangle {
                 required property string modelData

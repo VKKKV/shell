@@ -103,7 +103,7 @@ Rules:
 - Close behavior must stay consistent with other central panels: visible close affordance plus `Escape` routing via `HudLayout.qml`/`ExpansionService`.
 - Canvas or animation repaint should be bounded to actual visual state changes or controlled timers; avoid unnecessary high-frequency redraw loops.
 - Labels must elide, clamp, or reposition to remain readable at common 1080p and 1440p central safe-area dimensions.
-- Visual language must remain tactical/sci-fi: warning-yellow accents, translucent sensor surface, orbit hierarchy, reticles, metadata, and mechanical/cyber motion language.
+- Visual language must remain tactical/sci-fi: theme-driven accents, translucent sensor surface, orbit hierarchy, reticles, metadata, and mechanical/cyber motion language.
 
 ### 4. Validation & Error Matrix
 
@@ -245,7 +245,7 @@ Examples:
 - Centralize colors, spacing, sizing, and breakpoints in `theme/Theme.qml`.
 - Centralize repeated motion timings and collapsed scale values in `theme/Theme.qml`.
 - Do not scatter hard-coded tactical yellow/gray values across modules.
-- Preserve the hard-edged machine-interface style: sharp corners, dense typography, thin borders, warning-yellow highlights, and translucent HUD layers.
+- Preserve the hard-edged machine-interface style: sharp corners, dense typography, thin borders, theme-driven highlights, and translucent HUD layers.
 - Scanline and polish effects should stay optional and controllable through settings state.
 - Graphical sci-fi effects should still be built from small QML primitives or a focused Canvas/Shape surface, not copied wholesale from reference shells.
 

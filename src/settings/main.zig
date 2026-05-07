@@ -10,8 +10,8 @@ const Settings = struct {
     dim_text_opacity: f64 = 1.0,
     line_contrast: f64 = 1.0,
     density: []const u8 = "normal",
-    profile: []const u8 = "amber",
-    accent_color: []const u8 = "#F2C94C",
+    profile: []const u8 = "gray",
+    accent_color: []const u8 = "#8A8A8A",
     background_mode: []const u8 = "void",
     live_data_enabled: bool = true,
     network_geolocation_enabled: bool = false,
@@ -36,8 +36,8 @@ const defaults_json =
     \\    "dimTextOpacity": 1.0,
     \\    "lineContrast": 1.0,
     \\    "density": "normal",
-    \\    "profile": "amber",
-    \\    "accentColor": "#F2C94C",
+    \\    "profile": "gray",
+    \\    "accentColor": "#8A8A8A",
     \\    "backgroundMode": "void"
     \\  },
     \\  "data": {
@@ -243,7 +243,7 @@ fn themeProfileField(value: std.json.Value, key: []const u8) ?[]const u8 {
     if (field != .string)
         return null;
     const profile = field.string;
-    if (std.mem.eql(u8, profile, "amber") or std.mem.eql(u8, profile, "green") or std.mem.eql(u8, profile, "blue") or std.mem.eql(u8, profile, "red"))
+    if (std.mem.eql(u8, profile, "gray") or std.mem.eql(u8, profile, "amber") or std.mem.eql(u8, profile, "green") or std.mem.eql(u8, profile, "blue") or std.mem.eql(u8, profile, "red"))
         return profile;
     return null;
 }
@@ -402,8 +402,8 @@ test "normalizeSettings falls back for invalid enum and color values" {
     defer std.testing.allocator.free(normalized);
 
     try expectContains(normalized, "\"density\": \"normal\"");
-    try expectContains(normalized, "\"profile\": \"amber\"");
-    try expectContains(normalized, "\"accentColor\": \"#F2C94C\"");
+    try expectContains(normalized, "\"profile\": \"gray\"");
+    try expectContains(normalized, "\"accentColor\": \"#8A8A8A\"");
     try expectContains(normalized, "\"backgroundMode\": \"void\"");
     try expectContains(normalized, "\"updateIntervalMs\": 30000");
 }

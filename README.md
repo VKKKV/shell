@@ -18,7 +18,7 @@ To help with development and visual debugging, here is the comparison between th
 
 ## Features
 
-- **Techwear Aesthetic:** High-contrast tactical HUD styling with pure-black surfaces, sharp frames, scanlines, and a default `#F2C94C` warning-yellow accent.
+- **Techwear Aesthetic:** High-contrast tactical HUD styling with pure-black surfaces, sharp frames, scanlines, and a default gray tactical accent.
 - **Runtime Appearance Controls:** Command-center settings for accent color, theme profile, scanlines, background mode, font scale, panel visibility, intensity, and polling interval.
 - **Adaptive Edge Panels:** Left/right panels grow to fit content until they hit the top/bottom bars, then switch to internal scrolling.
 - **Integrated Monitoring:** Live CPU, memory, swap, network, filesystem, power, battery, weather, environment/night-light, and service fallback telemetry.
@@ -147,7 +147,7 @@ Common interactions:
 
 Open the command center and use the settings column to adjust:
 
-- accent color, defaulting to `#F2C94C`
+- accent color, defaulting to gray `#8A8A8A`
 - theme profile
 - tactical background mode
 - font scale

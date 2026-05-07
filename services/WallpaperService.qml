@@ -10,8 +10,8 @@ Singleton {
 
     property var wallpapers: []
     property string selectedPath: ""
-    property string dominantColor: "#ffb900"
-    property string suggestedProfile: "amber"
+    property string dominantColor: "#8a8a8a"
+    property string suggestedProfile: "gray"
     property string statusLine: "wallpaper: initializing"
     property string applyStatusLine: "wallpaper apply: standby"
 
@@ -57,11 +57,11 @@ Singleton {
             const red = parseInt(color.slice(1, 3), 16);
             const green = parseInt(color.slice(3, 5), 16);
             const blue = parseInt(color.slice(5, 7), 16);
-            suggestedProfile = blue > red && blue > green ? "blue" : (green > red ? "green" : (red > green + blue ? "red" : "amber"));
+            suggestedProfile = Math.abs(red - green) < 24 && Math.abs(green - blue) < 24 ? "gray" : (blue > red && blue > green ? "blue" : (green > red ? "green" : (red > green + blue ? "red" : "amber")));
             applyStatusLine = "wallpaper color: " + color;
         } else {
-            dominantColor = "#ffb900";
-            suggestedProfile = "amber";
+            dominantColor = "#8a8a8a";
+            suggestedProfile = "gray";
             applyStatusLine = "wallpaper color: sample fallback";
         }
     }
@@ -109,7 +109,7 @@ Singleton {
     }
 
     property Process sampleProcess: Process {
-        command: ["sh", "-c", "if command -v magick >/dev/null 2>&1; then magick \"$1\" -resize 1x1! -format '%[hex:p{0,0}]' info: | sed 's/^/#/'; elif command -v convert >/dev/null 2>&1; then convert \"$1\" -resize 1x1! -format '%[hex:p{0,0}]' info: | sed 's/^/#/'; else echo '#ffb900'; fi", "void-shell-wallpaper", root.selectedPath]
+        command: ["sh", "-c", "if command -v magick >/dev/null 2>&1; then magick \"$1\" -resize 1x1! -format '%[hex:p{0,0}]' info: | sed 's/^/#/'; elif command -v convert >/dev/null 2>&1; then convert \"$1\" -resize 1x1! -format '%[hex:p{0,0}]' info: | sed 's/^/#/'; else echo '#8a8a8a'; fi", "void-shell-wallpaper", root.selectedPath]
         stdout: StdioCollector {
             onStreamFinished: root.updateColor(text)
         }
