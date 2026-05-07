@@ -837,6 +837,21 @@
 - Preserved right-click canvas selection, previous/next target buttons, cached orbit paths, and expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Control Tooltip Coverage
+
+- Continued fixed-tooltip coverage for remaining high-value orbital controls.
+- Added tooltip copy to `RESET`, `TOP`, and `EDGE` view preset buttons.
+- Added tooltip hints to previous/next selected-planet controls near the close button, while keeping click actions guarded at list boundaries.
+- Preserved existing mouse and keyboard activation behavior.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-07 - Orbital Zoom Range Expansion
+
+- Captured user feedback that the orbital map wheel zoom range was too limited.
+- Expanded `OrbitalExpansionPanel.qml` zoom bounds from `0.42..4.2` to `0.22..8.0` while keeping reset at `1.0x`.
+- Preserved existing map/label clamping, drag rotation, view preset controls, and central expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

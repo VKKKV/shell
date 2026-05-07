@@ -43,8 +43,8 @@ Item {
     property int selectedPlanetIndex: 2
     readonly property int orbitSampleCount: dragActive ? 42 : 96
     property var cachedOrbitPaths: []
-    readonly property real minZoomLevel: 0.42
-    readonly property real maxZoomLevel: 4.2
+    readonly property real minZoomLevel: 0.22
+    readonly property real maxZoomLevel: 8.0
     readonly property real centuryDays: 36525
     // Gaussian gravitational constant squared in AU^3/day^2. Used as the solar GM for visual ephemeris mean motion.
     readonly property real gmSun: 2.959122082855911e-4
@@ -942,9 +942,9 @@ Item {
 
                 Repeater {
                     model: [
-                        { label: "RESET", color: Theme.line, action: function() { root.resetView(); } },
-                        { label: "TOP", color: Theme.lineDim, action: function() { root.setTopDownView(); } },
-                        { label: "EDGE", color: Theme.lineDim, action: function() { root.setEdgeOnView(); } }
+                        { label: "RESET", color: Theme.line, tooltip: "Restore the default oblique orbital camera and zoom.", action: function() { root.resetView(); } },
+                        { label: "TOP", color: Theme.lineDim, tooltip: "Switch to an overhead ecliptic view for longitude/track inspection.", action: function() { root.setTopDownView(); } },
+                        { label: "EDGE", color: Theme.lineDim, tooltip: "Switch to edge-on view to inspect inclination and vertical separation.", action: function() { root.setEdgeOnView(); } }
                     ]
 
                     Rectangle {
@@ -965,6 +965,8 @@ Item {
                             cursorShape: Qt.PointingHandCursor
                             hoverEnabled: true
                             onClicked: parent.modelData.action()
+                            onEntered: TooltipService.show("ORBIT VIEW " + parent.modelData.label, parent.modelData.tooltip, "orbit-view-" + parent.modelData.label)
+                            onExited: TooltipService.clear("orbit-view-" + parent.modelData.label)
                         }
 
                         TacticalLabel {
@@ -1105,8 +1107,13 @@ Item {
         MouseArea {
             anchors.fill: parent
             cursorShape: selectedPlanetIndex > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
-            enabled: selectedPlanetIndex > 0
-            onClicked: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
+            hoverEnabled: true
+            onClicked: {
+                if (selectedPlanetIndex > 0)
+                    root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1);
+            }
+            onEntered: TooltipService.show("PREVIOUS PLANET", "Step the orbital detail target backward. Current target: " + root.selectedPlanet().name + ".", "orbit-prev")
+            onExited: TooltipService.clear("orbit-prev")
         }
     }
 
@@ -1135,8 +1142,13 @@ Item {
         MouseArea {
             anchors.fill: parent
             cursorShape: selectedPlanetIndex < 7 ? Qt.PointingHandCursor : Qt.ArrowCursor
-            enabled: selectedPlanetIndex < 7
-            onClicked: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
+            hoverEnabled: true
+            onClicked: {
+                if (selectedPlanetIndex < 7)
+                    root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1);
+            }
+            onEntered: TooltipService.show("NEXT PLANET", "Step the orbital detail target forward. Current target: " + root.selectedPlanet().name + ".", "orbit-next")
+            onExited: TooltipService.clear("orbit-next")
         }
     }
 }

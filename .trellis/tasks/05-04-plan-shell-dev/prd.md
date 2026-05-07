@@ -1485,3 +1485,50 @@ Implementation notes:
 - Compact ephemeris rows are now focusable/clickable `Rectangle` delegates with hover and focus styling.
 - Row activation updates `selectedPlanetIndex`, preserving the existing selected-planet detail pane and Canvas reticle route.
 - Hovering a row updates the fixed bottom tooltip hint line through `TooltipService`.
+
+### Next Refinement: Orbital Control Tooltip Coverage
+
+Plan source: continue fixed-tooltip coverage for remaining high-value orbital controls.
+
+Requirements:
+
+- Add fixed tooltip hints to orbital view preset buttons: `RESET`, `TOP`, and `EDGE`.
+- Add fixed tooltip hints to previous/next selected-planet controls near the close button.
+- Preserve existing click and keyboard activation behavior.
+- Keep changes local to `OrbitalExpansionPanel.qml` and reuse `TooltipService`.
+
+Acceptance Criteria:
+
+- [x] Hovering each view preset updates the fixed bottom hint line with its action.
+- [x] Hovering previous/next target buttons updates the fixed bottom hint line.
+- [x] Existing keyboard and mouse activation behavior remains unchanged.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- View preset model rows now include tooltip copy for reset/top/edge camera controls.
+- Previous/next target buttons now keep hover hints even at list boundaries, while click actions remain guarded.
+
+### Priority Usability Fix: Orbital Zoom Range
+
+User issue captured 2026-05-07: the orbital map panel's wheel zoom range is too limited; the user wants a larger zoom-in/zoom-out range.
+
+Requirements:
+
+- Expand the `OrbitalExpansionPanel.qml` wheel zoom range in both directions.
+- Preserve bounded zoom so the map cannot disappear into invalid or numerically unstable scale values.
+- Preserve drag rotation, reset/top/edge controls, current map labels, ephemeris rows, and central expansion behavior.
+- Keep the change local to orbital view constants unless broader viewport controls are needed later.
+
+Acceptance Criteria:
+
+- [x] Wheel/trackpad zoom can zoom farther out than before.
+- [x] Wheel/trackpad zoom can zoom farther in than before.
+- [x] Reset view still returns to the default `1.0x` zoom.
+- [x] Labels/readouts remain clamped to panel bounds at wider zoom limits.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- Orbital wheel zoom bounds changed from `0.42..4.2` to `0.22..8.0`.
+- Existing map and label clamp logic remains in place for the wider zoom range.
