@@ -353,13 +353,15 @@ Status: covered by the completed orbital planet map optimization phase; future o
    - Use existing services first; avoid adding plugin registries.
 
 3. Broader reference-shell features.
-   - Candidate features: interactive tactical expansion surfaces, richer tray drawers, idle/power profile controls, wallpaper/theme management, keyboard layout/keybind surfaces, and optional desktop widgets.
-   - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
+    - Candidate features: interactive tactical expansion surfaces, richer tray drawers, idle/power profile controls, wallpaper/theme management, keyboard layout/keybind surfaces, and optional desktop widgets.
+    - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
+    - Current selected direction: expanded interaction panels.
 
 4. Left/right panel interaction model.
    - Current left orbital entry is `AnalogOrbitClock`; it replaced the original globe affordance after time-based orbital ephemeris work.
    - Use a central overlay module controlled by small shared state instead of turning each edge panel into a separate popup owner.
-   - Apply the same interaction pattern to additional right/edge drill-downs when new domains need central detail surfaces.
+    - Apply the same interaction pattern to additional right/edge drill-downs when new domains need central detail surfaces.
+    - Covered: right-panel `POWER SOURCE` now opens `PowerExpansionPanel.qml` with battery/profile/idle controls through the shared central overlay path.
 
 5. Niri compositor support.
     - Covered: `CompositorService.qml` provides the shared boundary and `NiriService.qml` provides Niri fallback/documented command integration.
@@ -432,6 +434,7 @@ Exit criteria:
 - Network matrix drill-down expansion using the shared central overlay pattern.
 - Filesystem matrix drill-down expansion using the shared central overlay pattern.
 - Log stream drill-down expansion using the shared central overlay pattern.
+- Power source drill-down expansion using the shared central overlay pattern.
 - Tactical settings panel foundation.
 - Launcher calculator provider (`=<expr>`) and shell command provider (`$ <command>`).
 - Lightweight structured service event log in the command center.

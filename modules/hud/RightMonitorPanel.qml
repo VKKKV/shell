@@ -64,9 +64,23 @@ TacticalFrame {
                 rows: [["RAM", SystemStats.ramText, SystemStats.ramProgress, true], ["SWAP", SystemStats.swapText, SystemStats.swapProgress, false]]
             }
 
-            MetricBlock {
-                title: "POWER SOURCE"
-                rows: [[BatteryService.label, BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: powerBlock.implicitHeight
+
+                MetricBlock {
+                    id: powerBlock
+
+                    title: "POWER SOURCE"
+                    rows: [[BatteryService.label, BatteryService.valueText, BatteryService.available ? BatteryService.progress : -1, BatteryService.available]]
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: ExpansionService.show("power", "right-power")
+                }
             }
 
             Item {

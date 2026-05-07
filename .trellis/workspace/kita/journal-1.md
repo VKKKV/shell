@@ -617,3 +617,12 @@
 - User directed that local Niri validation should be moved into waiting-for-test because this machine has no active Niri session.
 - Updated PLAN and PRD so Niri runtime validation is no longer part of the active development path.
 - Kept `docs/niri.md` as the manual validation checklist source for a future real Niri session.
+
+## 2026-05-06 - Power Grid Expansion Panel
+
+- User selected the next development direction: expanded interaction panels.
+- Added `modules/hud/PowerExpansionPanel.qml` as a central drill-down for battery/AC telemetry, power profile state, idle inhibitor state, and profile/idle controls.
+- Wired the right-panel `POWER SOURCE` block to `ExpansionService.show("power", "right-power")`.
+- Added the panel to `HudLayout.qml` with shared safe-area deployment motion and registered it in `modules/hud/qmldir`.
+- Updated frontend directory/component specs and PRD/PLAN notes for the new power drill-down surface.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

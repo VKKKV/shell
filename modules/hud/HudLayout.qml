@@ -33,6 +33,8 @@ Item {
     readonly property int cpuOriginY: rightPanel.y + 90
     readonly property int networkOriginX: rightPanel.x + rightPanel.width * 0.5
     readonly property int networkOriginY: rightPanel.y + Math.min(rightPanel.height - 80, 360)
+    readonly property int powerOriginX: rightPanel.x + rightPanel.width * 0.5
+    readonly property int powerOriginY: rightPanel.y + 170
     readonly property int filesystemOriginX: rightPanel.x + rightPanel.width * 0.5
     readonly property int filesystemOriginY: rightPanel.y + Math.min(rightPanel.height - 50, 470)
     readonly property int logOriginX: rightPanel.x + rightPanel.width * 0.5
@@ -270,6 +272,30 @@ Item {
             height: root.expansionHeight
             x: visible ? root.expansionTargetX : root.networkOriginX - width / 2
             y: visible ? root.expansionTargetY : root.networkOriginY - height / 2
+            scale: visible ? 1 : Theme.motionCollapsedScale
+            opacity: visible ? 1 : 0
+            transformOrigin: Item.Center
+
+            Behavior on x {
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
+            }
+            Behavior on y {
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
+            }
+            Behavior on scale {
+                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
+            }
+            Behavior on opacity {
+                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            }
+        }
+
+        PowerExpansionPanel {
+            visible: ExpansionService.activeSurface === "power"
+            width: root.expansionWidth
+            height: root.expansionHeight
+            x: visible ? root.expansionTargetX : root.powerOriginX - width / 2
+            y: visible ? root.expansionTargetY : root.powerOriginY - height / 2
             scale: visible ? 1 : Theme.motionCollapsedScale
             opacity: visible ? 1 : 0
             transformOrigin: Item.Center

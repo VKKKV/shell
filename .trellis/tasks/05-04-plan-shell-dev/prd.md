@@ -862,3 +862,31 @@ Decision (ADR-lite):
 - Context: all code-level Niri support slices are complete, but actual runtime behavior still needs validation in a Niri session.
 - Decision: treat Niri runtime validation as waiting-for-test in the current Hyprland session and document exact commands/assertions for the first Niri session run.
 - Consequences: active development can continue without pretending Niri was manually validated. The trade-off is that real Niri behavior still needs a future manual run on the target compositor.
+
+### Next Optimization MVP: Power Grid Expansion Panel
+
+User direction captured 2026-05-06: continue with expanded interaction panels.
+
+Requirements:
+
+- Add a central drill-down opened from the right panel's `POWER SOURCE` block.
+- Reuse existing `BatteryService` and `PowerProfileService`; do not add a new backend/helper.
+- Preserve the existing `ExpansionService` central safe-area deployment model and shared chrome.
+- Show battery/AC state, power profile, idle inhibitor state, and power profile controls.
+- Keep power profile and idle actions using existing service methods.
+
+Acceptance Criteria:
+
+- [x] Clicking `POWER SOURCE` in `RightMonitorPanel.qml` opens a central power expansion surface.
+- [x] `PowerExpansionPanel.qml` uses `CentralPanelChrome` and existing services only.
+- [x] Panel displays battery telemetry, profile status, idle inhibitor state, and action hints.
+- [x] Profile buttons call `PowerProfileService.setProfile()` and idle control calls `toggleIdleInhibitor()`.
+- [x] Safe-area sizing, backdrop close, close button, and `Escape` close behavior are preserved through `HudLayout.qml`/`ExpansionService`.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: CPU/network/filesystem/log drill-downs already use the central expansion pattern, but `POWER SOURCE` is still a high-signal right-panel metric with no drill-down.
+- Decision: add a focused `PowerExpansionPanel.qml` using existing power services and the shared central chrome/deployment path.
+- Consequences: expands the interaction model without introducing new service contracts. The trade-off is that detailed battery history is not added yet; the slice focuses on current telemetry and controls.
