@@ -369,6 +369,7 @@ Status: covered by the completed orbital planet map optimization phase; future o
     - Covered: window focus uses stable compositor `windowKey` values instead of display titles when available.
     - Covered: compositor workspace/focus actions update visible action status and structured service-log entries.
     - Covered: top workspace strip clamps and elides compositor-provided workspace labels for Niri compatibility.
+    - Covered: Niri workspace occupancy is recomputed after window payload refreshes so occupied indicators do not lag a poll cycle.
     - Remaining check is manual validation inside a real Niri session when available.
 
 6. Orbital planet map optimization.

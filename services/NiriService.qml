@@ -14,6 +14,7 @@ Singleton {
     property string activeWindowClass: "UNKNOWN"
     property bool activeWindowAvailable: false
     property string statusLine: "niri: initializing"
+    property var rawWorkspaces: []
     property var workspaces: []
     property var currentWorkspaceWindows: []
     property var knownWindows: []
@@ -33,6 +34,7 @@ Singleton {
         activeWindowTitle = "NO ACTIVE WINDOW";
         activeWindowClass = "UNKNOWN";
         activeWindowAvailable = false;
+        rawWorkspaces = [];
         workspaces = [];
         currentWorkspaceWindows = [];
         knownWindows = [];
@@ -55,22 +57,34 @@ Singleton {
         return knownWindows.some(window => windowWorkspaceId(window) === id);
     }
 
+    function shapeWorkspaces(values: var): var {
+        return values.map(workspace => {
+            const id = normalizeWorkspaceId(workspace);
+            const active = workspace?.is_active === true || workspace?.is_focused === true || workspace?.active === true || workspace?.focused === true;
+            const occupied = (workspace?.active_window_id ?? null) !== null || (workspace?.windows ?? 0) > 0 || hasWindowOnWorkspace(id);
+            return {
+                id: id,
+                label: workspace?.name || String(id),
+                active: active,
+                occupied: occupied
+            };
+        }).sort((left, right) => left.id - right.id);
+    }
+
+    function refreshWorkspaceOccupancy(): void {
+        if (rawWorkspaces.length === 0)
+            return;
+
+        workspaces = shapeWorkspaces(rawWorkspaces);
+    }
+
     function updateWorkspaces(output: string): void {
         try {
             const payload = JSON.parse(output || "[]");
             const values = Array.isArray(payload) ? payload : [];
-            const rows = values.map(workspace => {
-                const id = normalizeWorkspaceId(workspace);
-                const active = workspace?.is_active === true || workspace?.is_focused === true || workspace?.active === true || workspace?.focused === true;
-                const occupied = (workspace?.active_window_id ?? null) !== null || (workspace?.windows ?? 0) > 0 || hasWindowOnWorkspace(id);
-                return {
-                    id: id,
-                    label: workspace?.name || String(id),
-                    active: active,
-                    occupied: occupied
-                };
-            }).sort((left, right) => left.id - right.id);
+            const rows = shapeWorkspaces(values);
 
+            rawWorkspaces = values;
             workspaces = rows;
             const activeRow = rows.find(row => row.active);
             activeWorkspace = activeRow?.id ?? (rows.length > 0 ? rows[0].id : 1);
@@ -87,6 +101,7 @@ Singleton {
             const payload = JSON.parse(output || "[]");
             const values = Array.isArray(payload) ? payload : [];
             knownWindows = values;
+            refreshWorkspaceOccupancy();
             const activeWindow = values.find(window => window?.is_focused === true || window?.focused === true || window?.is_active === true || window?.active === true);
             const rows = values.filter(window => windowWorkspaceId(window) === activeWorkspace).slice(0, 6).map(window => ({
                 id: String(window?.id ?? window?.app_id ?? window?.title ?? ""),

@@ -176,6 +176,7 @@ function focusWindow(windowKey: string): void
 - `compositorName` must be one of `hyprland`, `niri`, or `fallback`.
 - `workspaces` must always be renderable. Fallback returns five inactive numeric rows.
 - `currentWorkspaceWindows` must always be an array. Fallback returns `[]`.
+- Niri workspace occupancy is derived from both workspace payload fields and the latest window payload. Preserve raw workspace rows and recompute shaped workspace rows after `niri msg --json windows` updates.
 - `windowKey` is the action key, not display text:
   - Hyprland uses `lastIpcObject.address` when available.
   - Niri uses window id from `niri msg --json windows`.
@@ -202,6 +203,7 @@ function focusWindow(windowKey: string): void
 - Neither backend available -> `available = false`, `compositorName = "fallback"`, `workspaces.length = 5`, `currentWorkspaceWindows.length = 0`.
 - `niri` binary missing or command exits non-zero -> `NiriService.available = false`, readable `niri: command fallback`, no QML exception.
 - Niri JSON parse fails -> service returns fallback status and shaped empty arrays, no raw exception in UI.
+- Niri windows update after workspaces -> workspace `occupied` flags are recomputed from the latest window list in the same polling cycle.
 - Compositor backend/status changes -> one structured service-log event per changed summary, not one event per poll tick.
 - Workspace switch while unavailable -> `actionStatusLine` contains unavailable warning and service log gets a `warn` event.
 - Focus with missing `windowKey` -> warning action status/log event, no uncaught error.

@@ -594,3 +594,11 @@
 - Numeric Hyprland labels remain compact with the existing minimum width.
 - Updated Niri docs and frontend state specs with the workspace label fit contract.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Niri Occupancy Refresh
+
+- Added `rawWorkspaces` and shared workspace shaping helpers to `NiriService.qml`.
+- Niri window refresh now recomputes workspace occupancy from the latest window payload in the same polling cycle.
+- Fallback clears raw workspace payloads along with shaped workspace/window rows.
+- Updated frontend state-management spec and PRD/PLAN notes with the Niri occupancy refresh contract.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.

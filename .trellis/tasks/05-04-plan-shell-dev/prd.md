@@ -810,3 +810,29 @@ Decision (ADR-lite):
 - Context: the compositor facade now passes workspace labels through from Niri, but the top workspace strip still used fixed 34px buttons designed for numeric labels.
 - Decision: make buttons label-aware with a bounded width and text elision.
 - Consequences: Niri workspace names become usable without destabilizing top-bar layout. The trade-off is that very long labels are abbreviated in the strip and full names remain a future tooltip/details concern.
+
+### Next Optimization MVP: Niri Occupancy Refresh
+
+Plan source: continue Niri compositor robustness after workspace label fit and executable contract update.
+
+Requirements:
+
+- Keep Niri workspace `occupied` flags in sync with the latest window list, not only the previous poll's `knownWindows` state.
+- Preserve raw workspace payloads so workspace rows can be reshaped after `niri msg --json windows` updates.
+- Do not change the shared `CompositorService.workspaces` row shape.
+- Preserve missing-command/parse fallback behavior.
+
+Acceptance Criteria:
+
+- [x] `NiriService.qml` stores raw workspace payloads separately from shaped `workspaces` rows.
+- [x] `NiriService.qml` shapes workspace rows through a single helper.
+- [x] Window refresh recomputes workspace occupancy from the latest known windows.
+- [x] Niri fallback clears raw workspace state as well as shaped rows/window rows.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: Niri workspace occupancy could lag because workspace rows were shaped before the fresh window list arrived.
+- Decision: store raw workspace payloads and recompute shaped workspace rows immediately after the window payload updates.
+- Consequences: makes occupancy indicators more accurate in the same poll cycle. The trade-off is one extra raw-state property inside `NiriService`.
