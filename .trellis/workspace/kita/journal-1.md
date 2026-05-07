@@ -674,3 +674,10 @@
 - Moved outer/inner rings, ticks, crosshair, hands, and center caps onto the same `dialFace` origin so non-square layout slots no longer make rings and ticks appear off-center.
 - Kept the clock activation path to `ExpansionService.show("orbital", "left-clock")` unchanged.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-07 - Cached Orbital Track Rendering
+
+- Continued the orbital rendering optimization plan after the corner/clock fixes.
+- Added cached high-quality and drag-time orbit path samples in `OrbitalExpansionPanel.qml` so Canvas repaint projects precomputed 3D path points instead of resolving Kepler samples on every redraw.
+- Preserved current `Time.now`-derived planet node positions and metadata while reducing JS math inside drag/zoom repaints.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.

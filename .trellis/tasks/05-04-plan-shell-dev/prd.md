@@ -1013,6 +1013,30 @@ Decision (ADR-lite):
 - Decision: track deeper rendering optimization as a future slice rather than mixing it with small visual bug fixes.
 - Consequences: preserves current stability while making room for a more deliberate rendering backend evaluation.
 
+### Next Optimization MVP: Cached Orbital Track Rendering
+
+Implemented 2026-05-07 as the first step in the orbital map rendering optimization plan.
+
+Requirements:
+
+- Move expensive orbit-track Kepler sampling out of every Canvas repaint.
+- Cache high-quality and drag-time orbital path samples locally in `OrbitalExpansionPanel.qml`.
+- Preserve live planet positions, labels, metadata, drag/zoom controls, and existing visual styling.
+- Keep this slice QML-only and avoid introducing a new renderer/backend before measuring need.
+
+Acceptance Criteria:
+
+- [x] Canvas orbit-track redraw projects cached 3D path points instead of recomputing Kepler samples per paint.
+- [x] Drag mode still uses a lighter path while idle mode uses a higher-quality path.
+- [x] Current planet positions and metadata remain time-derived from current `Time.now`.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the first drag performance pass reduced update frequency, but Canvas redraw still solved Kepler repeatedly for every orbit sample.
+- Decision: cache static orbit paths because orbital shape is stable for this approximate visual model; live planet nodes still compute current time-derived positions separately.
+- Consequences: drag and zoom spend less time in JS orbital math while preserving the visual model. The trade-off is that any future time-varying orbital elements would need cache invalidation.
+
 ### Next Optimization MVP: Orbital Corner Chrome Fix
 
 User issue captured 2026-05-07: the planetary panel has four incorrect right-angle corner effects.

@@ -25,6 +25,7 @@ Item {
     property real pendingPitchDeg: pitchDeg
     property bool dragActive: false
     readonly property int orbitSampleCount: dragActive ? 42 : 96
+    property var cachedOrbitPaths: []
     readonly property real minZoomLevel: 0.42
     readonly property real maxZoomLevel: 4.2
     readonly property var planets: [
@@ -185,6 +186,28 @@ Item {
         return orbitalState(planets[2], daysSinceEpoch);
     }
 
+    function buildOrbitPath(planet: var, samples: int): var {
+        const path = [];
+        for (let sample = 0; sample <= samples; sample++) {
+            path.push(orbitalState(planet, sample * planetPeriod(planet) / samples));
+        }
+        return path;
+    }
+
+    function buildOrbitPaths(): void {
+        const paths = [];
+        for (let i = 0; i < planets.length; i++) {
+            paths.push({ high: buildOrbitPath(planets[i], 96), low: buildOrbitPath(planets[i], 42) });
+        }
+        cachedOrbitPaths = paths;
+    }
+
+    function orbitPathFor(index: int): var {
+        if (!cachedOrbitPaths || index < 0 || index >= cachedOrbitPaths.length)
+            return [];
+        return dragActive ? cachedOrbitPaths[index].low : cachedOrbitPaths[index].high;
+    }
+
     function labelX(projected: var, labelWidth: real): real {
         const preferred = projected.depth >= 0 ? projected.x + 16 : projected.x - labelWidth - 16;
         return Math.min(width - labelWidth - 10, Math.max(10, preferred));
@@ -239,6 +262,8 @@ Item {
     onOrbitSampleCountChanged: requestScenePaint()
     onWidthChanged: requestScenePaint()
     onHeightChanged: requestScenePaint()
+
+    Component.onCompleted: buildOrbitPaths()
 
     Timer {
         id: viewUpdateTimer
@@ -317,11 +342,10 @@ Item {
             ctx.stroke();
 
             for (let p = 0; p < root.planets.length; p++) {
-                const planet = root.planets[p];
+                const path = root.orbitPathFor(p);
                 ctx.beginPath();
-                for (let sample = 0; sample <= root.orbitSampleCount; sample++) {
-                    const dayOffset = root.daysSinceEpoch + sample * root.planetPeriod(planet) / root.orbitSampleCount;
-                    const projected = root.projectPoint(root.orbitalState(planet, dayOffset));
+                for (let sample = 0; sample < path.length; sample++) {
+                    const projected = root.projectPoint(path[sample]);
                     if (sample === 0)
                         ctx.moveTo(projected.x, projected.y);
                     else
