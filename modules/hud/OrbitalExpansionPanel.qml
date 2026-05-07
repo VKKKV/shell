@@ -19,6 +19,8 @@ Item {
     property real zoomLevel: 1
     property real dragStartYaw: yawDeg
     property real dragStartPitch: pitchDeg
+    property real dragPressX: 0
+    property real dragPressY: 0
     readonly property var planets: [
         { name: "MERCURY", code: "ME", a: 0.387099, e: 0.20564, i: 7.005, node: 48.331, peri: 77.457, meanLongitude: 252.251, period: 87.969, size: 5 },
         { name: "VENUS", code: "VE", a: 0.723332, e: 0.00678, i: 3.395, node: 76.680, peri: 131.602, meanLongitude: 181.979, period: 224.701, size: 7 },
@@ -335,17 +337,24 @@ Item {
         anchors.bottomMargin: 52
         acceptedButtons: Qt.LeftButton
         cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
-        preventStealing: false
-        propagateComposedEvents: true
+        preventStealing: true
+        propagateComposedEvents: false
         onPressed: mouse => {
             dragStartYaw = yawDeg;
             dragStartPitch = pitchDeg;
+            dragPressX = mouse.x;
+            dragPressY = mouse.y;
+            mouse.accepted = true;
         }
         onPositionChanged: mouse => {
             if (!pressed)
                 return;
-            yawDeg = dragStartYaw + (mouse.x - pressX) * 0.35;
-            pitchDeg = clamp(dragStartPitch + (mouse.y - pressY) * 0.22, 18, 78);
+            yawDeg = dragStartYaw + (mouse.x - dragPressX) * 0.35;
+            pitchDeg = clamp(dragStartPitch + (mouse.y - dragPressY) * 0.22, 18, 78);
+            mouse.accepted = true;
+        }
+        onClicked: mouse => {
+            mouse.accepted = true;
         }
     }
 
