@@ -958,3 +958,31 @@ Design constraints recorded:
 - Interaction: drag to rotate view, scroll/gesture zoom, reset view control.
 - Priority: orbital rewrite starts after non-orbital panel density/cyber style passes are complete.
 - Existing contracts to preserve: `ExpansionService`, `CentralPanelChrome`, safe-area sizing, close/backdrop/Escape behavior, `Time.now` time source, offline/deterministic calculation, and the `AnalogOrbitClock` entry point.
+
+### Next Optimization MVP: J2000 3D Orbital Rewrite
+
+Implemented 2026-05-07 after non-orbital expansion panel status strips.
+
+Requirements:
+
+- Rewrite `OrbitalExpansionPanel.qml` as a 2.5D pseudo-3D J2000 solar-system projection using QML Canvas and existing QML primitives.
+- Replace circular longitude-only phase with offline approximate Kepler orbital elements seeded from J2000 values.
+- Display heliocentric ecliptic XYZ/AU, current distance, longitude/anomaly metadata, orbit tracks, coordinate grid, reticles, labels, and trail effects.
+- Add drag-to-rotate, wheel/trackpad zoom, and a reset-view control without introducing a new backend/helper.
+- Preserve `ExpansionService`, `HudLayout` safe-area sizing, close/backdrop/Escape behavior, `Time.now`, and the `AnalogOrbitClock` entry point.
+
+Acceptance Criteria:
+
+- [x] Planet positions derive from J2000-style orbital elements and current time through an offline Kepler approximation.
+- [x] The orbital surface renders a pseudo-3D ecliptic coordinate frame with orbit tracks, projected planet nodes, trails, labels, and tactical HUD overlays.
+- [x] The panel shows heliocentric XYZ/AU and related orbital metadata for visible planets.
+- [x] Drag rotation, wheel/trackpad zoom, and reset view controls are available locally in the panel.
+- [x] Existing central deployment, close button, backdrop close, and `Escape` close behavior remain owned by `HudLayout.qml`/`ExpansionService.qml`.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
+- [ ] The completed phase is committed and pushed, or any push blocker is reported explicitly.
+
+Decision (ADR-lite):
+
+- Context: the orbital expansion panel was already graphical and time-derived, but it was still a top-down circular/elliptical view with limited astronomical shape and no 3D viewpoint control.
+- Decision: keep the implementation local to `OrbitalExpansionPanel.qml` and use approximate J2000 orbital elements plus a small Kepler solver to produce heliocentric ecliptic XYZ positions, projected through a bounded pseudo-3D camera.
+- Consequences: the highest-priority orbital surface now carries stronger sci-fi depth and more meaningful metadata without adding services or network ephemerides. The trade-off is that the result remains approximate visual astronomy, not precision ephemeris output.

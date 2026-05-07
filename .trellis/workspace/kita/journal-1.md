@@ -644,3 +644,10 @@
 - Registered the new component in `components/qmldir`.
 - Recorded the J2000 3D orbital rewrite as the planned next major visual phase in PRD/PLAN, with design constraints for Canvas 2.5D projection, Kepler ephemeris, heliocentric XYZ/AU display, drag/zoom interaction, and cyber-machine visual language.
 - Updated frontend component/directory specs for the new `PanelStatusStrip` primitive.
+
+## 2026-05-07 - J2000 3D Orbital Rewrite
+
+- Reworked `modules/hud/OrbitalExpansionPanel.qml` from a top-down circular orbit display into a QML Canvas pseudo-3D heliocentric ecliptic view.
+- Added local J2000-style orbital elements, a bounded Kepler solver, heliocentric XYZ/AU projection, projected orbit tracks, planet trails, labels, reticles, and coordinate-grid HUD overlays.
+- Added drag-to-rotate, wheel/trackpad zoom, and reset-view controls while preserving `ExpansionService`, central safe-area sizing, close/backdrop/`Escape` behavior, and the `AnalogOrbitClock` entry point.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
