@@ -1579,3 +1579,26 @@ Implementation notes:
 
 - Added `zoomStatusLine()` helper to report nominal/min/max zoom status.
 - Detail pane now shows `ZOOM BOUNDS` plus a status row that accents near range limits.
+
+### Next Refinement: Orbital State Cache Hot-Path
+
+Plan source: continue orbital performance cleanup after viewport usability passes.
+
+Requirements:
+
+- Cache repeated orbital state calculations inside `OrbitalExpansionPanel.qml` so the same selected/Earth state isn't recomputed multiple times per frame.
+- Preserve all visual output, zoom behavior, labels, cached orbit paths, and interaction routes.
+- Keep the fix local to the panel and avoid introducing new services or a renderer rewrite.
+- Maintain determinism and update the cache when the selected target or time source changes.
+
+Acceptance Criteria:
+
+- [x] Selected planet state is reused within a frame instead of recomputing the same orbital state repeatedly.
+- [x] Earth comparison state is reused within a frame instead of recomputing the same orbital state repeatedly.
+- [x] Visual behavior remains unchanged.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- Added `selectedPlanetData`, `selectedPlanetState`, and `earthState` readonly properties in `OrbitalExpansionPanel.qml`.
+- Reused the cached earth/selected state in the compact ephemeris and detail-pane calculations instead of rebuilding those states multiple times.

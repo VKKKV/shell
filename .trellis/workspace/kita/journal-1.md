@@ -867,6 +867,14 @@
 - Preserved existing wheel zoom, smooth animation, reset/top/edge controls, and expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital State Cache Hot Path
+
+- Continued orbital performance cleanup after the viewport usability passes.
+- Added cached `selectedPlanetData`, `selectedPlanetState`, and `earthState` properties in `OrbitalExpansionPanel.qml`.
+- Reused the cached selected/Earth state in the compact ephemeris and detail-pane math so the same orbital state is not recomputed multiple times per frame.
+- Preserved visual output, cached orbit paths, smooth zoom, drag rotation, and expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

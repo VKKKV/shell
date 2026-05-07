@@ -30,6 +30,10 @@ Item {
     readonly property real cosPitch: Math.cos(pitchRad)
     readonly property real sinPitch: Math.sin(pitchRad)
     readonly property real currentViewScale: mapSize * 0.44 * zoomLevel / 30.2
+    readonly property int selectedPlanetId: Math.max(0, Math.min(7, selectedPlanetIndex))
+    readonly property var selectedPlanetData: planets[selectedPlanetId]
+    readonly property var selectedPlanetState: orbitalState(selectedPlanetData, daysSinceEpoch)
+    readonly property var earthState: orbitalState(planets[2], daysSinceEpoch)
     property real yawDeg: -34
     property real pitchDeg: 58
     property real zoomLevel: 1
@@ -209,7 +213,6 @@ Item {
     }
 
     function earthDistanceFor(state: var): real {
-        const earthState = orbitalState(planets[2], daysSinceEpoch);
         return Math.sqrt((state.x - earthState.x) ** 2 + (state.y - earthState.y) ** 2 + (state.z - earthState.z) ** 2);
     }
 
@@ -218,11 +221,11 @@ Item {
     }
 
     function selectedState(): var {
-        return stateFor(planets[Math.max(0, Math.min(7, selectedPlanetIndex))]);
+        return selectedPlanetState;
     }
 
     function selectedPlanet(): var {
-        return planets[Math.max(0, Math.min(7, selectedPlanetIndex))];
+        return selectedPlanetData;
     }
 
     function zoomStatusLine(): string {
@@ -874,9 +877,8 @@ Item {
                     const p = root.selectedPlanet();
                     const s = root.selectedState();
                     const el = s.elements;
-                    const earthState = root.orbitalState(root.planets[2], root.daysSinceEpoch);
-                    const distEarth = Math.sqrt((s.x - earthState.x) ** 2 + (s.y - earthState.y) ** 2 + (s.z - earthState.z) ** 2);
-                    const phase = root.phaseAngle(s, earthState);
+                    const distEarth = Math.sqrt((s.x - root.earthState.x) ** 2 + (s.y - root.earthState.y) ** 2 + (s.z - root.earthState.z) ** 2);
+                    const phase = root.phaseAngle(s, root.earthState);
                     const mag = root.apparentMagnitude(p, s.r, distEarth, phase);
                     const zIdx = root.zodiacIndex(s.eclLon);
                     return [
