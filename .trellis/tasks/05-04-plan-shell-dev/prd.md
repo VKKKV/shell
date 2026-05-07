@@ -1378,3 +1378,9 @@ Implementation notes:
 - Phase angle now uses planet-to-Earth and planet-to-Sun vectors, and apparent magnitude uses local distance/phase approximations.
 - Detail readout includes JD, eccentric anomaly, mean motion, and widened panel space for dense scientific rows.
 - Selection reticle gained a stronger pulse/arc overlay while preserving the Canvas rendering path.
+
+Follow-up cleanup implemented 2026-05-07:
+
+- Removed leftover helper functions superseded by `elementsFor()`.
+- Added visible source/precision lines to the selected-planet detail pane, including the local GM constant and the visual-ephemeris limitation.
+- Preserved all routing, rendering, and interaction behavior.

@@ -114,21 +114,10 @@ Item {
         return { a, e, i: inc, node, peri, meanLongitude, m0, n, centuries };
     }
 
-    function planetA(p: var): real { return elementsFor(p, daysSinceEpoch).a; }
-    function planetE(p: var): real { return elementsFor(p, daysSinceEpoch).e; }
-    function planetI(p: var): real { return elementsFor(p, daysSinceEpoch).i; }
-    function planetNode(p: var): real { return elementsFor(p, daysSinceEpoch).node; }
-    function planetPeri(p: var): real { return elementsFor(p, daysSinceEpoch).peri; }
-    function planetMeanLongitude(p: var): real { return elementsFor(p, daysSinceEpoch).meanLongitude; }
     function planetSize(p: var): real { return typeof p.size === "number" && p.size > 0 ? p.size : 7; }
 
     function meanMotion(a: real): real {
         return Math.sqrt(gmSun / (a * a * a)) * (180 / Math.PI);
-    }
-
-    function meanAnomaly(p: var, dayOffset: real): real {
-        const el = elementsFor(p, dayOffset);
-        return wrap360(el.m0);
     }
 
     function solveKepler(meanAnomalyDeg: real, e: real): real {
@@ -877,6 +866,22 @@ Item {
                 text: "YAW " + Math.round(root.yawDeg) + "  PITCH " + Math.round(root.pitchDeg) + "  ZOOM " + root.zoomLevel.toFixed(2)
                 dim: true
                 size: Theme.fontTiny
+            }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "SOURCE // J2000 mean elements + secular rates // GM " + root.gmSun.toExponential(3) + " AU^3/D^2"
+                dim: true
+                size: Theme.fontTiny
+                elide: Text.ElideRight
+            }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "PRECISION // VISUAL EPHEMERIS, NOT NAVIGATION-GRADE"
+                accent: true
+                size: Theme.fontTiny
+                elide: Text.ElideRight
             }
 
             RowLayout {

@@ -794,6 +794,14 @@
 - Strengthened selected-planet reticle pulse/arc styling without changing drag, zoom, right-click selection, reset/top/edge controls, close behavior, or central expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Ephemeris Cleanup
+
+- Continued the orbital scientific pass with a focused cleanup slice.
+- Removed stale helper functions that were superseded by `elementsFor()` after the current-element rewrite.
+- Added visible source/precision rows to the orbital detail pane: J2000 mean elements plus secular rates, local GM constant, and a clear visual-ephemeris/not-navigation-grade warning.
+- Preserved cached orbit paths, Canvas rendering, drag/zoom/right-click selection, close behavior, and central expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 
