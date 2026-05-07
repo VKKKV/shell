@@ -106,27 +106,84 @@ Rules:
 
 ### 2. Signatures
 
-- Shared QML-facing service state:
-  - `available: bool`
-  - `compositorName: string`
-  - `statusLine: string`
-  - `backendStatusLine: string`
-  - `workspaceStatusLine: string`
-  - `actionStatusLine: string`
-  - `diagnosticRows: var` where each row has `[label, status]` for diagnostics surfaces.
-  - `activeWorkspace: int|string`
-  - `workspaces: var` where each row has `{ id, label, active, occupied }`.
-  - `activeWindowClass: string`
-  - `activeWindowTitle: string`
-  - `currentWorkspaceWindows: var` where each item has `{ windowKey, appClass, title, active }`.
-- Shared QML-facing actions:
-  - `switchWorkspace(workspaceId): void`
-  - `focusWindow(windowKey): void`
-- Existing Hyprland-specific service: `services/HyprlandService.qml`.
-- Niri implementation adapts through `services/NiriService.qml`, consumed only by the shared compositor facade.
+- Shared QML-facing singleton: `services/CompositorService.qml`.
+- Backend singletons:
+  - `services/HyprlandService.qml` adapts `Quickshell.Hyprland`.
+  - `services/NiriService.qml` adapts local `niri msg` commands.
+- Facade state signature:
+
+```qml
+readonly property bool available
+readonly property string compositorName // "hyprland" | "niri" | "fallback"
+readonly property string statusLine
+readonly property string backendStatusLine
+readonly property string workspaceStatusLine
+property string actionStatusLine
+readonly property int activeWorkspace
+readonly property string activeWindowClass
+readonly property string activeWindowTitle
+readonly property bool activeWindowAvailable
+readonly property var workspaces
+readonly property var currentWorkspaceWindows
+readonly property var diagnosticRows
+function isOccupied(id: int): bool
+function switchWorkspace(id: int): void
+function focusWindow(windowKey: string): void
+```
+
+- Workspace row payload:
+
+```qml
+{
+    id: number,
+    label: string,
+    active: boolean,
+    occupied: boolean
+}
+```
+
+- Window row payload:
+
+```qml
+{
+    windowKey: string,
+    appClass: string,
+    title: string,
+    active: boolean
+}
+```
+
+- Diagnostics row payload:
+
+```qml
+[label: string, status: string]
+```
+
+- Backend command/API signatures:
+  - Hyprland active workspace: `Hyprland.focusedWorkspace?.id`.
+  - Hyprland occupied workspaces: `Hyprland.workspaces?.values`.
+  - Hyprland windows: `Hyprland.toplevels?.values`.
+  - Hyprland switch: `Hyprland.dispatch("workspace <id>")`.
+  - Hyprland focus: `Hyprland.dispatch("focuswindow address:<address>")`.
+  - Niri workspaces: `niri msg --json workspaces`.
+  - Niri windows: `niri msg --json windows`.
+  - Niri switch: `niri msg action focus-workspace <id>`.
+  - Niri focus: `niri msg action focus-window --id <window-id>`.
 
 ### 3. Contracts
 
+- `CompositorService` selects backends in priority order: Hyprland if available, then Niri if available, otherwise fallback.
+- `compositorName` must be one of `hyprland`, `niri`, or `fallback`.
+- `workspaces` must always be renderable. Fallback returns five inactive numeric rows.
+- `currentWorkspaceWindows` must always be an array. Fallback returns `[]`.
+- `windowKey` is the action key, not display text:
+  - Hyprland uses `lastIpcObject.address` when available.
+  - Niri uses window id from `niri msg --json windows`.
+  - Title fallback is allowed only for legacy/malformed rows.
+- `diagnosticRows` must include current active backend, Hyprland status, Niri status, workspace summary, action status, and active window identity.
+- `actionStatusLine` starts at `action: standby` and updates on workspace/focus dispatch or no-op fallback.
+- `ServiceLogService.push("compositor", level, message)` records backend/status/workspace transitions and compositor action attempts.
+- Transition logs must be deduped by last observed backend/status/workspace summary.
 - HUD modules must consume the shared compositor contract, not compositor-specific commands or imports.
 - Compositor-specific parsing belongs in `services/`, never in `modules/hud/` or `components/`.
 - Missing compositor support must produce readable fallback values such as `compositor: fallback`, empty window lists, and inactive workspace rows.
@@ -140,15 +197,16 @@ Rules:
 
 ### 4. Validation & Error Matrix
 
-- Hyprland available -> shared state mirrors Hyprland workspace/window telemetry.
-- Niri available and Hyprland unavailable -> shared state mirrors Niri workspace/window telemetry through the same fields.
-- No supported compositor -> `available = false`, fallback status line, no thrown QML binding errors.
-- Command missing -> service logs warning/fallback and keeps shaped default values.
+- Hyprland available -> `compositorName = "hyprland"`, rows mirror Hyprland telemetry, Niri does not override it.
+- Hyprland unavailable and Niri valid -> `compositorName = "niri"`, rows mirror Niri JSON telemetry.
+- Neither backend available -> `available = false`, `compositorName = "fallback"`, `workspaces.length = 5`, `currentWorkspaceWindows.length = 0`.
+- `niri` binary missing or command exits non-zero -> `NiriService.available = false`, readable `niri: command fallback`, no QML exception.
+- Niri JSON parse fails -> service returns fallback status and shaped empty arrays, no raw exception in UI.
 - Compositor backend/status changes -> one structured service-log event per changed summary, not one event per poll tick.
-- Workspace/focus action called while unavailable -> no-op with status/log update, no uncaught process error.
-- Missing window key -> warning action status/log event, no uncaught error.
-- Long workspace labels -> top workspace strip clamps button width and elides labels, not panel overflow.
+- Workspace switch while unavailable -> `actionStatusLine` contains unavailable warning and service log gets a `warn` event.
+- Focus with missing `windowKey` -> warning action status/log event, no uncaught error.
 - Duplicate window titles -> focus uses compositor-native `windowKey` where available instead of ambiguous display text.
+- Long workspace labels -> top workspace strip clamps button width and elides labels, not panel overflow.
 - HUD module imports compositor-specific API directly -> fail review; violates service boundary.
 
 ### 5. Good/Base/Bad Cases
@@ -158,14 +216,19 @@ Rules:
 - Good: `CommandCenterDiagnosticsColumn.qml` renders `CompositorService.diagnosticRows` for backend visibility without importing Hyprland/Niri services directly.
 - Good: `MissionDock.qml` and `CommandCenterOverviewColumn.qml` call `CompositorService.focusWindow(modelData.windowKey)` and render title only as display text.
 - Base: during migration, `HyprlandService.qml` may remain the backing implementation if the facade contract is already documented and consumers are being moved intentionally.
+- Bad: `MissionDock.qml` calls `CompositorService.focusWindow(modelData.title)` as the primary key; duplicate titles can focus the wrong window.
 - Bad: adding `if niri` branches or shell command parsing inside `TopStatusBar.qml`, `MissionDock.qml`, or `CommandCenterOverviewColumn.qml`.
 
 ### 6. Tests Required
 
 - QML lint: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`.
 - Runtime smoke: `timeout 8s quickshell -p .` must show `Configuration Loaded` without startup QML errors.
-- Fallback assertion: run or reason through startup without a supported compositor command and confirm status lines/window lists stay readable.
-- Action assertion: workspace/focus actions should not throw when unavailable.
+- Fallback assertion: without a supported compositor, assert `compositorName === "fallback"`, `available === false`, workspace rows are present, and window rows are empty.
+- Backend selection assertion: when Hyprland is available, Niri must not become active; when Hyprland is unavailable and Niri JSON is valid, Niri becomes active.
+- Niri command assertion: missing `niri` command produces `niri: command fallback` and no QML errors.
+- Action assertion: workspace/focus actions while unavailable update `actionStatusLine` and service-log `warn`, not exceptions.
+- Window-key assertion: dock/overview pass `modelData.windowKey` to `focusWindow()` with title fallback only for missing keys.
+- Label-fit assertion: long workspace labels render inside clamped buttons with `Text.ElideRight`.
 - Manual compositor assertion when available: active workspace and active window text update after switching/focusing.
 
 ### 7. Wrong vs Correct
@@ -187,3 +250,18 @@ Repeater {
 ```
 
 The compositor-specific command parsing stays in `services/`, behind the shared shaped state contract.
+
+#### Wrong
+
+```qml
+// Display titles are not stable action keys.
+onClicked: CompositorService.focusWindow(modelData.title)
+```
+
+#### Correct
+
+```qml
+onClicked: CompositorService.focusWindow(modelData.windowKey || modelData.title)
+```
+
+Use `windowKey` first so Hyprland addresses and Niri window ids handle duplicate titles safely.
