@@ -947,3 +947,48 @@
 ### Next Steps
 
 - None - task complete
+
+
+## Session 2: Orbital Panel Refinements, Runtime Fixes & Ephemeris Refactor
+
+**Date**: 2026-05-07
+**Task**: Orbital Panel Refinements, Runtime Fixes & Ephemeris Refactor
+**Branch**: `master`
+
+### Summary
+
+Comprehensive orbital panel refinement pass including tooltip coverage, viewport controls, track stroke quality, runtime click/layout fixes, scientific ephemeris readouts, and ephemeris math extraction refactor.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6dd7a76` | (see git log) |
+| `ce40a7e` | (see git log) |
+| `45b93d2` | (see git log) |
+| `c0ef56b` | (see git log) |
+| `74e2f0f` | (see git log) |
+| `a889b02` | (see git log) |
+| `a91a919` | (see git log) |
+| `6647c7c` | (see git log) |
+| `db14d2c` | (see git log) |
+| `abe61a0` | (see git log) |
+| `a9e5065` | (see git log) |
+| `34a023b` | (see git log) |
+| `fe4d991` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
