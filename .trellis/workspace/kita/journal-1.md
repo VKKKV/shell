@@ -852,6 +852,13 @@
 - Preserved existing map/label clamping, drag rotation, view preset controls, and central expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Smooth Zoom
+
+- Captured user feedback that orbital wheel zoom should feel smoother/silkier.
+- Added a short `OutCubic` `NumberAnimation` behavior on `OrbitalExpansionPanel.qml` `zoomLevel` so wheel/trackpad zoom and reset interpolate instead of snapping.
+- Kept the widened zoom range, existing repaint routing, drag rotation, view presets, and expansion behavior unchanged.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

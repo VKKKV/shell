@@ -1532,3 +1532,27 @@ Implementation notes:
 
 - Orbital wheel zoom bounds changed from `0.42..4.2` to `0.22..8.0`.
 - Existing map and label clamp logic remains in place for the wider zoom range.
+
+### Priority Usability Fix: Orbital Smooth Zoom
+
+User issue captured 2026-05-07: orbital panel wheel zoom should feel smoother/silkier instead of stepping abruptly.
+
+Requirements:
+
+- Smooth the visual transition for wheel/trackpad zoom in `OrbitalExpansionPanel.qml`.
+- Preserve the expanded zoom bounds, current reset/top/edge controls, drag rotation, cached orbit paths, and label clamping.
+- Avoid introducing a heavy animation loop or renderer rewrite; keep the change local to viewport state.
+- Keep input responsive under repeated wheel events.
+
+Acceptance Criteria:
+
+- [x] Wheel/trackpad zoom transitions animate smoothly toward the new zoom target.
+- [x] Repeated wheel events update the target without visual jumps.
+- [x] Reset view still returns smoothly to `1.0x`.
+- [x] Drag rotation and Canvas repaint behavior remain clean.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- `zoomLevel` now has a short `OutCubic` `NumberAnimation` behavior, so wheel events and reset transitions interpolate instead of snapping.
+- Existing `onZoomLevelChanged` repaint routing drives Canvas redraws during the animation.

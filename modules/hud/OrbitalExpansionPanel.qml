@@ -49,6 +49,10 @@ Item {
     // Gaussian gravitational constant squared in AU^3/day^2. Used as the solar GM for visual ephemeris mean motion.
     readonly property real gmSun: 2.959122082855911e-4
 
+    Behavior on zoomLevel {
+        NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+    }
+
     readonly property var planetColors: [
         "#c8c8c8", "#e8c060", "#48A0FF", "#e04040",
         "#d8a060", "#e0c880", "#70d0d0", "#4060ff"
