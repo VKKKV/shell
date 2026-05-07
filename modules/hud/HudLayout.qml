@@ -218,173 +218,101 @@ Item {
             }
         }
 
-        OrbitalExpansionPanel {
-            id: orbitalExpansion
-
-            visible: ExpansionService.activeSurface === "orbital"
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "orbital"
             width: root.expansionWidth
             height: root.expansionHeight
-            x: visible ? root.expansionTargetX : root.orbitalOriginX - width / 2
-            y: visible ? root.expansionTargetY : root.orbitalOriginY - height / 2
-            scale: visible ? 1 : Theme.motionCollapsedScale
-            opacity: visible ? 1 : 0
-            transformOrigin: Item.Center
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.orbitalOriginX
+            originY: root.orbitalOriginY
 
-            Behavior on x {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on y {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on scale {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
-            }
-            Behavior on opacity {
-                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            OrbitalExpansionPanel {
+                anchors.fill: parent
             }
         }
 
-        MediaExpansionPanel {
-            visible: ExpansionService.activeSurface === "media"
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "media"
             width: root.expansionWidth
             height: root.expansionHeight
-            x: visible ? root.expansionTargetX : root.mediaOriginX - width / 2
-            y: visible ? root.expansionTargetY : root.mediaOriginY - height / 2
-            scale: visible ? 1 : Theme.motionCollapsedScale
-            opacity: visible ? 1 : 0
-            transformOrigin: Item.Center
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.mediaOriginX
+            originY: root.mediaOriginY
 
-            Behavior on x {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on y {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on scale {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
-            }
-            Behavior on opacity {
-                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            MediaExpansionPanel {
+                anchors.fill: parent
             }
         }
 
-        CpuExpansionPanel {
-            visible: ExpansionService.activeSurface === "cpu"
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "cpu"
             width: root.expansionWidth
             height: root.expansionHeight
-            x: visible ? root.expansionTargetX : root.cpuOriginX - width / 2
-            y: visible ? root.expansionTargetY : root.cpuOriginY - height / 2
-            scale: visible ? 1 : Theme.motionCollapsedScale
-            opacity: visible ? 1 : 0
-            transformOrigin: Item.Center
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.cpuOriginX
+            originY: root.cpuOriginY
 
-            Behavior on x {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on y {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on scale {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
-            }
-            Behavior on opacity {
-                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            CpuExpansionPanel {
+                anchors.fill: parent
             }
         }
 
-        NetworkExpansionPanel {
-            visible: ExpansionService.activeSurface === "network"
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "network"
             width: root.expansionWidth
             height: root.expansionHeight
-            x: visible ? root.expansionTargetX : root.networkOriginX - width / 2
-            y: visible ? root.expansionTargetY : root.networkOriginY - height / 2
-            scale: visible ? 1 : Theme.motionCollapsedScale
-            opacity: visible ? 1 : 0
-            transformOrigin: Item.Center
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.networkOriginX
+            originY: root.networkOriginY
 
-            Behavior on x {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on y {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on scale {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
-            }
-            Behavior on opacity {
-                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            NetworkExpansionPanel {
+                anchors.fill: parent
             }
         }
 
-        PowerExpansionPanel {
-            visible: ExpansionService.activeSurface === "power"
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "power"
             width: root.expansionWidth
             height: root.expansionHeight
-            x: visible ? root.expansionTargetX : root.powerOriginX - width / 2
-            y: visible ? root.expansionTargetY : root.powerOriginY - height / 2
-            scale: visible ? 1 : Theme.motionCollapsedScale
-            opacity: visible ? 1 : 0
-            transformOrigin: Item.Center
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.powerOriginX
+            originY: root.powerOriginY
 
-            Behavior on x {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on y {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on scale {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
-            }
-            Behavior on opacity {
-                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            PowerExpansionPanel {
+                anchors.fill: parent
             }
         }
 
-        FilesystemExpansionPanel {
-            visible: ExpansionService.activeSurface === "filesystem"
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "filesystem"
             width: root.expansionWidth
             height: root.expansionHeight
-            x: visible ? root.expansionTargetX : root.filesystemOriginX - width / 2
-            y: visible ? root.expansionTargetY : root.filesystemOriginY - height / 2
-            scale: visible ? 1 : Theme.motionCollapsedScale
-            opacity: visible ? 1 : 0
-            transformOrigin: Item.Center
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.filesystemOriginX
+            originY: root.filesystemOriginY
 
-            Behavior on x {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on y {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on scale {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
-            }
-            Behavior on opacity {
-                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            FilesystemExpansionPanel {
+                anchors.fill: parent
             }
         }
 
-        LogExpansionPanel {
-            visible: ExpansionService.activeSurface === "logs"
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "logs"
             width: root.expansionWidth
             height: root.expansionHeight
-            x: visible ? root.expansionTargetX : root.logOriginX - width / 2
-            y: visible ? root.expansionTargetY : root.logOriginY - height / 2
-            scale: visible ? 1 : Theme.motionCollapsedScale
-            opacity: visible ? 1 : 0
-            transformOrigin: Item.Center
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.logOriginX
+            originY: root.logOriginY
 
-            Behavior on x {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on y {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutCubic }
-            }
-            Behavior on scale {
-                NumberAnimation { duration: Theme.motionDeployMs; easing.type: Easing.OutBack }
-            }
-            Behavior on opacity {
-                NumberAnimation { duration: Theme.motionFadeMs; easing.type: Easing.OutCubic }
+            LogExpansionPanel {
+                anchors.fill: parent
             }
         }
     }

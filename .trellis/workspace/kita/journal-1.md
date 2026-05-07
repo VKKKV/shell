@@ -704,6 +704,15 @@
 - Removed the confusing empty input mask from `HudExclusionZone` and let visibility/exclusion mode express the zone state.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Expansion Slot And Calendar Cache Refactor
+
+- Continued the code-review performance/duplication route after the correctness slice.
+- Added `modules/hud/ExpansionPanelSlot.qml` to own shared central expansion deployment behavior: origin-aware x/y, scale, opacity, and theme motion constants.
+- Migrated orbital, media, CPU, network, power, filesystem, and log expansion surfaces in `HudLayout.qml` to use the shared slot while preserving safe-area sizing, backdrop close, close-button routing, and `Escape` behavior.
+- Registered `ExpansionPanelSlot` in `modules/hud/qmldir`.
+- Updated `CalendarService` to build month rows and flattened month cells from one cached object instead of rebuilding rows twice per tick.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

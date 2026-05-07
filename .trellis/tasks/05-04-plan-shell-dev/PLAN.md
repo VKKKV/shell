@@ -389,7 +389,7 @@ Acceptance:
 - Polling load is smoother without changing user-facing update semantics.
 - `qmllint`, `zig build` when settings helper behavior changes, `git diff --check`, and `quickshell -p .` pass before checkpoint.
 
-Status: planned after correctness/security fixes unless performance feedback makes orbital rendering urgent.
+Status: partially completed 2026-05-07. `ExpansionPanelSlot.qml` now owns shared expansion panel deployment animation/position boilerplate for orbital/media/CPU/network/power/filesystem/log surfaces, and `CalendarService` now builds month rows/cells from a single cache. Remaining follow-ups: settings handler refactor, orbital object-allocation/redraw optimization, poll staggering, and optional theme/stat profiling. Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
 ### Phase L: Extensibility, Migrations, And Tests
 
@@ -426,6 +426,7 @@ Status: planned medium/long-term. Tests and settings migrations are the most con
 
 2. Code-review performance and duplication refactors.
    - Extract expansion-panel boilerplate, reduce settings handler repetition, continue orbital Canvas/object-allocation optimization, stagger service polls, and cache calendar/theme work where useful.
+   - Covered: shared `ExpansionPanelSlot` deployment primitive and calendar month cache.
 
 3. Extensibility/test infrastructure.
    - Start with Zig settings-helper validation tests and settings migration/version checks before larger plugin or multi-monitor architecture.

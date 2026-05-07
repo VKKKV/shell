@@ -11,10 +11,11 @@ Singleton {
     readonly property string dayText: Qt.formatDateTime(now, "dddd").toUpperCase()
     readonly property string dateText: Qt.formatDateTime(now, "yyyy-MM-dd")
     readonly property string monthText: Qt.formatDateTime(now, "MMMM yyyy").toUpperCase()
-    readonly property var weekRows: buildMonthRows(now)
-    readonly property var monthCells: buildMonthCells(now)
+    readonly property var weekRows: monthCache.rows
+    readonly property var monthCells: monthCache.cells
     readonly property var agenda: buildAgenda(now)
     readonly property string statusLine: "calendar: local agenda ready"
+    readonly property var monthCache: buildMonthCache(now)
 
     function daysInMonth(year: int, month: int): int {
         return new Date(year, month + 1, 0).getDate();
@@ -45,14 +46,17 @@ Singleton {
         return rows;
     }
 
-    function buildMonthCells(date: date): var {
+    function buildMonthCache(date: date): var {
         const rows = buildMonthRows(date);
         const cells = [];
         for (const row of rows) {
             for (const cell of row)
                 cells.push(cell);
         }
-        return cells;
+        return {
+            rows,
+            cells
+        };
     }
 
     function buildAgenda(date: date): var {

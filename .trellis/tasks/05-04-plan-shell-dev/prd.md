@@ -1119,6 +1119,8 @@ Decision (ADR-lite):
 
 Review source captured 2026-05-07: performance and duplication comments for Void Shell. These are planned follow-up slices, not immediate implementation.
 
+First implementation slice completed 2026-05-07: extracted shared expansion-panel deployment slot and cached calendar month rows/cells.
+
 Requirements:
 
 - Extract repeated `HudLayout.qml` expansion-panel deployment animation and input-region boilerplate into a reusable primitive such as `ExpansionPanelBase` or equivalent shared helper.
@@ -1131,12 +1133,12 @@ Requirements:
 
 Acceptance Criteria:
 
-- [ ] Expansion panel deployment boilerplate is reduced without changing safe-area deployment, close, backdrop, or `Escape` behavior.
+- [x] Expansion panel deployment boilerplate is reduced without changing safe-area deployment, close, backdrop, or `Escape` behavior.
 - [ ] Settings persistence remains validated/clamped while reducing repeated handler code.
 - [ ] Orbital drag/zoom remains smooth and preserves J2000/Kepler metadata and readability.
 - [ ] Service polling avoids avoidable synchronized CPU spikes.
-- [ ] Calendar/theme/stat optimizations preserve existing visible behavior.
-- [ ] `qmllint`, `zig build` when settings helper changes, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+- [x] Calendar/theme/stat optimizations preserve existing visible behavior.
+- [x] `qmllint`, `zig build` when settings helper changes, `git diff --check`, and `quickshell -p .` pass before checkpoint.
 
 Decision (ADR-lite):
 
