@@ -811,6 +811,15 @@
 - Preserved cached orbit paths, Canvas rendering, selected-planet controls, close behavior, and central expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Top Click And Bottom Layout Fixes
+
+- Captured two user-reported runtime regressions in the PRD: top panel controls could not be clicked, and bottom panel elements/text overlapped.
+- Fixed top/edge click swallowing by adding an empty mask to `HudExclusionZone.qml`, matching the reservation-window pattern: reserve layer-shell space without accepting input.
+- Constrained bottom status labels and status text with maximum widths and elision.
+- Made `MissionDock.qml` clip its content and use bounded item widths so many window entries do not collide with the bottom status labels or fixed tooltip hint line.
+- Verified the first smoke run exposed a bottom `RowLayout` recursive rearrange warning; simplified dock sizing to remove the feedback loop.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

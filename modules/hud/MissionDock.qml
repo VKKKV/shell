@@ -8,6 +8,7 @@ RowLayout {
     id: root
 
     spacing: 6
+    clip: true
 
     Repeater {
         model: CompositorService.currentWorkspaceWindows
@@ -19,7 +20,8 @@ RowLayout {
 
             readonly property string windowKey: modelData.windowKey || modelData.title
 
-            Layout.preferredWidth: 128
+            Layout.preferredWidth: 112
+            Layout.maximumWidth: 128
             Layout.preferredHeight: 24
             color: modelData.active ? Theme.lineDim : (dockArea.containsMouse ? Theme.panelSoft : "transparent")
             border.color: modelData.active ? Theme.line : Theme.lineDim
@@ -60,7 +62,9 @@ RowLayout {
 
     TacticalLabel {
         visible: CompositorService.currentWorkspaceWindows.length === 0
+        Layout.fillWidth: true
         text: "NO WINDOWS"
         dim: true
+        elide: Text.ElideRight
     }
 }

@@ -1391,3 +1391,47 @@ Follow-up layout/readability pass implemented 2026-05-07:
 - Reused explicit map bounds for map size, map center, planet label clamping, zodiac label clamping, and axis label clamping.
 - Reused shared `detailWidth` and `ephemerisWidth` geometry properties for overlay panels.
 - Preserved Canvas rendering, cached orbit paths, selected-planet controls, and expansion routing.
+
+### Priority Runtime Fix: Top Panel Clickability Regression
+
+User issue captured 2026-05-07: the top panel cannot be clicked, including the settings/command-center button.
+
+Requirements:
+
+- Restore click handling for interactive controls in `TopStatusBar.qml`, especially the command/settings entry button.
+- Preserve top-panel hover tooltip behavior and keyboard shortcuts.
+- Fix the root input-region/exclusion issue if click-through geometry is wrong; do not work around by duplicating settings state elsewhere.
+- Ensure other HUD regions (left/right/bottom, central expansion, toast, tooltip bottom hint line) keep their intended input behavior.
+
+Acceptance Criteria:
+
+- [x] Clicking the top settings/command-center button opens the command center.
+- [x] Top audio/media/workspace controls remain clickable where applicable.
+- [x] Top hover tooltips still update the fixed bottom hint line.
+- [x] Normal central window area remains click-through when no central panel is open.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+### Priority Runtime Fix: Bottom Panel Overlap Regression
+
+User issue captured 2026-05-07: the bottom panel has partially overlapping elements/text, making it hard to read.
+
+Requirements:
+
+- Fix bottom status bar layout so fixed hint-line tooltip, mission dock, date/status labels, and live indicator do not overlap.
+- Preserve the bottom fixed hint-line behavior chosen for tooltips.
+- Make dense bottom-row content elide or hide intentionally at constrained widths instead of drawing over adjacent elements.
+- Keep mission dock readable without allowing long window rows to consume the entire bottom bar.
+
+Acceptance Criteria:
+
+- [x] Bottom bar text and controls do not visually overlap at common 1080p/1440p widths.
+- [x] Tooltip hint line remains readable and stays in the bottom bar.
+- [x] Mission dock content is clipped/elided rather than colliding with status labels.
+- [x] Bottom bar still contributes the correct reserved height for normal windows.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- `HudExclusionZone.qml` now uses `mask: Region {}` so transparent reservation windows do not intercept top/bottom/side HUD clicks.
+- `BottomStatusBar.qml` now constrains fixed labels, status text, and the dock lane with elision/clipping instead of allowing overlap.
+- `MissionDock.qml` clips its row and uses bounded fixed item widths so many windows do not collide with bottom status text.

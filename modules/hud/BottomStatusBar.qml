@@ -6,7 +6,7 @@ import QtQuick.Layouts
 
 TacticalFrame {
     highlighted: true
-    implicitHeight: Math.min(Theme.bottomBarMaxHeight, Math.max(Theme.bottomBarMinHeight, content.implicitHeight + Theme.panelPadding))
+    implicitHeight: Math.min(Theme.bottomBarMaxHeight, Math.max(Theme.bottomBarMinHeight, content.implicitHeight + 12))
 
     ColumnLayout {
         id: content
@@ -23,32 +23,42 @@ TacticalFrame {
             spacing: 8
 
             TacticalLabel {
+                Layout.maximumWidth: 240
                 text: "VOID-HYPRLAND // NODE_02 // ID: 10.0.0.12"
                 dim: true
+                elide: Text.ElideRight
             }
 
             TacticalLabel {
-                Layout.preferredWidth: 220
+                Layout.preferredWidth: 184
+                Layout.maximumWidth: 184
                 horizontalAlignment: Text.AlignLeft
                 text: "[" + CalendarService.dayText + " // " + CalendarService.dateText + "]"
                 accent: true
                 size: Theme.fontNormal
+                elide: Text.ElideRight
             }
 
             MissionDock {
                 Layout.fillWidth: true
+                Layout.minimumWidth: 120
                 Layout.alignment: Qt.AlignVCenter
             }
 
-            Row {
-                spacing: 12
+            RowLayout {
+                Layout.preferredWidth: 328
+                Layout.maximumWidth: 328
+                spacing: 8
 
                 TacticalLabel {
+                    Layout.fillWidth: true
                     text: "TACTICAL LAYER ONLINE // SECURE CHANNEL ESTABLISHED"
                     dim: true
+                    elide: Text.ElideRight
                 }
 
                 LiveIndicator {
+                    Layout.alignment: Qt.AlignVCenter
                 }
 
             }

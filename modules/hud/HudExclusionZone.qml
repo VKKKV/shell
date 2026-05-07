@@ -20,6 +20,7 @@ PanelWindow {
     }
 
     color: "transparent"
+    mask: Region {}
     implicitWidth: edge === "left" || edge === "right" ? thickness : 1
     implicitHeight: edge === "top" || edge === "bottom" ? thickness : 1
     visible: thickness > 0
