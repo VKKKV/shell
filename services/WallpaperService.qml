@@ -37,7 +37,7 @@ Singleton {
 
     function select(path: string): void {
         selectedPath = path;
-        sampleProcess.running = true;
+        sampleDebounce.restart();
     }
 
     function applySelected(): void {
@@ -77,6 +77,18 @@ Singleton {
     }
 
     Component.onCompleted: refresh()
+
+    property Timer sampleDebounce: Timer {
+        interval: 180
+        repeat: false
+        onTriggered: {
+            if (root.sampleProcess.running) {
+                restart();
+                return;
+            }
+            root.sampleProcess.running = true;
+        }
+    }
 
     property Process listProcess: Process {
         command: ["sh", "-c", "for dir in \"$HOME/Pictures\" \"$HOME/Pictures/Wallpapers\" \"$HOME/.local/share/wallpapers\" /usr/share/backgrounds; do [ -d \"$dir\" ] || continue; find \"$dir\" -maxdepth 2 -type f \\( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \\); done 2>/dev/null | sort -u"]

@@ -1076,3 +1076,100 @@ Acceptance Criteria:
 - [x] The orbital panel shows exactly four correctly oriented corner brackets.
 - [x] No duplicate top-left/bottom-right heavy corner artifacts remain.
 - [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+### Code Review Backlog: Correctness Fixes
+
+Review source captured 2026-05-07: code review comments for Void Shell. These are added to the development plan only; do not implement as part of this capture step.
+
+Implemented 2026-05-07 as the first code-review maintenance slice.
+
+Priority: address correctness/security issues before further visual optimization unless the user explicitly selects another slice.
+
+Requirements:
+
+- Fix `Theme.qml` `dimAccent` fallback so the fallback is a six-digit hex color and alpha is applied through theme alpha helpers.
+- Make session logout compositor-aware. `SessionService.commandForAction("logout")` should not hardcode Hyprland when the active compositor is Niri or fallback.
+- Make the settings helper path robust when Quickshell is launched outside the repository root. Avoid relying only on `./zig-out/bin/void-shell-settings`.
+- Adjust `SystemStats` network bar scaling so typical 100-500 KiB/s desktop traffic remains visible.
+- Make `NiriService` polling respect the user update interval setting or otherwise document/centralize its polling contract.
+- Remove shell-injection risk from `WeatherService` wttr location handling by avoiding `sh -c` string concatenation with `WTTR_LOCATION`.
+- Rename `NotificationService.serverEnabled` or expose a clearer alias because the current boolean means the shell should own notifications when no other daemon is found.
+- Split `AudioService` action/read-back processes or otherwise prevent action/read poll command races and stale refresh behavior.
+- Debounce `WallpaperService.select()` so rapid wallpaper clicks do not spawn overlapping ImageMagick sample processes.
+- Clarify or remove the empty `HudExclusionZone` mask when invisible/zero-thickness so input semantics are not misleading.
+
+Acceptance Criteria:
+
+- [x] Security-sensitive process invocations avoid shell string interpolation for user/env-derived values.
+- [x] Compositor/session actions degrade correctly on Hyprland, Niri, and fallback states.
+- [x] Settings helper discovery works outside the repository working directory or fails with clear diagnostics.
+- [x] Network throughput bars remain visible for low/normal desktop traffic.
+- [x] Polling services honor shared update timing contracts or document exceptions.
+- [x] Audio and wallpaper actions avoid overlapping-process races under rapid user interaction.
+- [x] Naming/docs make notification ownership semantics obvious.
+- [x] `qmllint`, `zig build`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the review identified small correctness, security, and race-condition risks across services and theme defaults.
+- Decision: group these into a dedicated correctness-fix slice so they can be handled before lower-risk refactors.
+- Consequences: reduces user-visible failures and security risk with focused changes. The trade-off is delaying broader architecture cleanup until correctness is stable.
+
+### Code Review Backlog: Performance And Duplication Refactors
+
+Review source captured 2026-05-07: performance and duplication comments for Void Shell. These are planned follow-up slices, not immediate implementation.
+
+Requirements:
+
+- Extract repeated `HudLayout.qml` expansion-panel deployment animation and input-region boilerplate into a reusable primitive such as `ExpansionPanelBase` or equivalent shared helper.
+- Reduce repetitive `SettingsService` clamp/save handlers through a shared normalization/save routing pattern.
+- Continue orbital rendering optimization by avoiding unnecessary full Canvas redraws and reducing hot-path JS object allocation in projection/orbital math.
+- Consider narrower `/proc/stat` parsing if system-stat parsing becomes measurable overhead.
+- Cache derived theme colors or otherwise avoid repeated expensive color derivation if profiling shows theme bindings are hot.
+- Stagger service polling startup/timers so SystemStats, Audio, Niri, Clipboard, Battery, and Network do not all fire simultaneously.
+- Cache calendar month-row computation so `buildMonthRows()` is not repeated unnecessarily every minute.
+
+Acceptance Criteria:
+
+- [ ] Expansion panel deployment boilerplate is reduced without changing safe-area deployment, close, backdrop, or `Escape` behavior.
+- [ ] Settings persistence remains validated/clamped while reducing repeated handler code.
+- [ ] Orbital drag/zoom remains smooth and preserves J2000/Kepler metadata and readability.
+- [ ] Service polling avoids avoidable synchronized CPU spikes.
+- [ ] Calendar/theme/stat optimizations preserve existing visible behavior.
+- [ ] `qmllint`, `zig build` when settings helper changes, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the shell has accumulated repeated animation, settings, and polling patterns as features were added in vertical slices.
+- Decision: track performance/duplication work separately from correctness fixes so refactors can be verified without mixing behavior changes.
+- Consequences: improves maintainability and responsiveness. The trade-off is that some duplicated code remains until this slice is selected.
+
+### Code Review Backlog: Extensibility And Test Infrastructure
+
+Review source captured 2026-05-07: extensibility comments for Void Shell. These are medium/long-term planning items unless user prioritizes them.
+
+Requirements:
+
+- Revisit `CompositorService` after Niri validation; consider backend registration/delegation instead of repeated Hyprland/Niri ternaries before adding a third compositor.
+- Consolidate settings schema duplication across QML defaults, Zig `Settings`/validation, and default JSON, potentially through a single schema source.
+- Add an expansion panel base component before creating more central panels.
+- Introduce layout configuration or theme-derived positioning before making panel positions user-configurable.
+- Defer a plugin/extension system until third-party widgets or dynamic external consumers are explicit requirements.
+- Plan multi-monitor support around screen-aware `HudWindow`/layout instances before implementation.
+- Add test infrastructure, starting with Zig settings-helper validation tests and QML parser/service fixtures for malformed command output.
+- Add keyboard navigation for command center, expansion panels, and critical controls beyond `Ctrl+Alt+S`/`Escape`.
+- Add settings version-check and migration logic before relying on future incompatible settings changes.
+- Revisit static service discovery/lazy loading only if memory/startup overhead becomes visible or optional service count keeps growing.
+
+Acceptance Criteria:
+
+- [ ] Extensibility work is split into separate implementation tasks before coding, not mixed into bug-fix slices.
+- [ ] Any settings schema/migration change includes Zig validation tests.
+- [ ] Any compositor-backend extensibility change preserves Hyprland behavior and Niri fallback behavior.
+- [ ] Multi-monitor/plugin/lazy-loading work has explicit product requirements before implementation.
+
+Decision (ADR-lite):
+
+- Context: review found several architectural seams that are acceptable for the current first-party shell but will become expensive as compositors, panels, settings, and optional services grow.
+- Decision: record them as planned extensibility/test-infrastructure work, with tests and settings migrations as the most concrete early candidates.
+- Consequences: keeps the current shell pragmatic while preventing these concerns from being lost. The trade-off is that plugin, multi-monitor, and registry work remain intentionally deferred.

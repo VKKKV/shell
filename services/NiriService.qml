@@ -150,6 +150,13 @@ Singleton {
         focusProcess.running = true;
     }
 
+    function logout(): void {
+        if (!available || logoutProcess.running)
+            return;
+
+        logoutProcess.running = true;
+    }
+
     function refresh(): void {
         workspaceProcess.running = true;
     }
@@ -157,7 +164,7 @@ Singleton {
     Component.onCompleted: refresh()
 
     property Timer poller: Timer {
-        interval: 3000
+        interval: SettingsService.updateIntervalMs
         repeat: true
         running: SettingsService.liveDataEnabled
         onTriggered: root.refresh()
@@ -213,6 +220,13 @@ Singleton {
         onExited: (exitCode) => {
             root.statusLine = exitCode === 0 ? "niri: focus dispatched" : "niri: focus fallback";
             root.refresh();
+        }
+    }
+
+    property Process logoutProcess: Process {
+        command: ["niri", "msg", "action", "quit", "--skip-confirmation"]
+        onExited: (exitCode) => {
+            root.statusLine = exitCode === 0 ? "niri: logout dispatched" : "niri: logout fallback";
         }
     }
 }

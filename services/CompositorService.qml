@@ -111,4 +111,19 @@ Singleton {
         else if (niriActive)
             NiriService.focusWindow(windowKey);
     }
+
+    function logout(): bool {
+        if (hyprlandActive) {
+            setActionStatus("action: logout via hyprland", "info");
+            HyprlandService.logout();
+            return true;
+        }
+        if (niriActive) {
+            setActionStatus("action: logout via niri", "info");
+            NiriService.logout();
+            return true;
+        }
+        setActionStatus("action: compositor logout unavailable", "warn");
+        return false;
+    }
 }

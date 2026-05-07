@@ -66,4 +66,9 @@ Singleton {
         if (target?.lastIpcObject?.address)
             Hyprland.dispatch(`focuswindow address:${target.lastIpcObject.address}`);
     }
+
+    function logout(): void {
+        if (available)
+            Hyprland.dispatch("exit");
+    }
 }

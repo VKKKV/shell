@@ -689,6 +689,21 @@
 - Preserved cached orbit paths, current-time planet positions, drag/zoom controls, and existing central expansion behavior.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Code Review Correctness Fixes
+
+- Continued the active shell development task along the code-review maintenance route.
+- Fixed `Theme.dimAccent()` fallback alpha handling so fallback accent color stays six-digit before alpha composition.
+- Routed logout through `CompositorService.logout()`, with Hyprland dispatch, Niri quit action, and loginctl fallback from `SessionService`.
+- Made `SettingsService` discover the Zig settings helper from the QML file location or `PATH`, instead of relying on the launch working directory.
+- Lowered network bar scaling floor so normal KiB/s throughput is visible.
+- Aligned `NiriService` polling with `SettingsService.updateIntervalMs`.
+- Removed wttr shell interpolation by passing the encoded weather URL directly to `curl`.
+- Clarified notification ownership with `shouldOwnNotifications` while keeping a compatibility `serverEnabled` alias.
+- Reduced audio action/read-back races with separate pending sink/mic refresh handling and action guards.
+- Debounced wallpaper color sampling so rapid selection changes do not spawn overlapping sample processes.
+- Removed the confusing empty input mask from `HudExclusionZone` and let visibility/exclusion mode express the zone state.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

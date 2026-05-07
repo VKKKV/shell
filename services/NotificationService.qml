@@ -13,7 +13,8 @@ Singleton {
     property var history: []
     property var latest: null
     property bool toastVisible: false
-    property bool serverEnabled: false
+    property bool shouldOwnNotifications: false
+    readonly property bool serverEnabled: shouldOwnNotifications
     property string statusLine: "notifications: probing server"
 
     function notificationData(notification: Notification): var {
@@ -63,13 +64,13 @@ Singleton {
     property Process probeProcess: Process {
         command: ["sh", "-c", "dbus-send --session --print-reply --dest=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.NameHasOwner string:org.freedesktop.Notifications 2>/dev/null | grep -q 'boolean true'"]
         onExited: (exitCode) => {
-            root.serverEnabled = exitCode !== 0;
-            root.statusLine = root.serverEnabled ? "notifications: server online" : "notifications: external daemon active";
+            root.shouldOwnNotifications = exitCode !== 0;
+            root.statusLine = root.shouldOwnNotifications ? "notifications: server online" : "notifications: external daemon active";
         }
     }
 
     Loader {
-        active: root.serverEnabled
+        active: root.shouldOwnNotifications
         sourceComponent: NotificationServer {
             keepOnReload: false
             actionsSupported: false

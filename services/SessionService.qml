@@ -27,7 +27,7 @@ Singleton {
         if (action === "lock")
             return ["loginctl", "lock-session"];
         if (action === "logout")
-            return ["hyprctl", "dispatch", "exit"];
+            return ["loginctl", "terminate-user", Quickshell.env("USER") || ""];
         if (action === "reboot")
             return ["systemctl", "reboot"];
         if (action === "shutdown")
@@ -38,6 +38,13 @@ Singleton {
     function confirm(action: string): void {
         if (pendingAction !== action) {
             arm(action);
+            return;
+        }
+
+        if (action === "logout" && CompositorService.logout()) {
+            statusLine = "session: logout via " + CompositorService.compositorName;
+            pendingAction = "";
+            confirmationTimer.stop();
             return;
         }
 

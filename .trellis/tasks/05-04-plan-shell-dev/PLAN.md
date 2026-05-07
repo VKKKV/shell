@@ -209,11 +209,11 @@ Acceptance:
 
 ## Next Development Roadmap
 
-Current status: all concrete planned phases below are covered by first-party slices. Future work should start from new user feedback, screenshot comparisons, or a new Trellis task rather than extending this roadmap indefinitely.
+Current status: all concrete first-party feature phases below are covered. New code-review feedback captured 2026-05-07 adds a maintenance roadmap focused on correctness, security, performance, duplication, extensibility, and tests.
 
 Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
 
-Current next phase: choose the next product direction with the user. All concrete planned shell-development slices in this task are covered; Niri runtime validation is tracked under Waiting For Test and is not on the active development path while this machine is not running Niri.
+Current next phase: code-review correctness/security fixes are complete. Continue with code-review performance and duplication refactors unless the user explicitly selects a different slice. Niri runtime validation is tracked under Waiting For Test and is not on the active development path while this machine is not running Niri.
 
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.
@@ -340,31 +340,119 @@ Acceptance:
 
 Status: covered by the completed orbital planet map optimization phase; future orbital work should be driven by screenshot/performance feedback.
 
+### Phase J: Code Review Correctness And Security Fixes
+
+Review source captured 2026-05-07 from Void Shell code review.
+
+Scope:
+
+- `Theme.qml`: fix `dimAccent` fallback hex length so alpha handling stays consistent.
+- `SessionService`: make logout compositor-aware instead of hardcoding `hyprctl dispatch exit`.
+- `SettingsService`: make `void-shell-settings` helper discovery robust outside repo-root launches.
+- `SystemStats`: adjust network bar scaling so normal KiB/s traffic is visible.
+- `NiriService`: align polling interval with `SettingsService.updateIntervalMs` or centralize/document the exception.
+- `WeatherService`: remove `sh -c` location interpolation and pass wttr location safely.
+- `NotificationService`: clarify inverted `serverEnabled` naming, preferably `shouldOwnNotifications` or a clear alias.
+- `AudioService`: avoid races between action commands and read-back refresh processes.
+- `WallpaperService`: debounce `select()` to avoid overlapping heavy sample processes.
+- `HudExclusionZone`: clarify or remove confusing empty mask behavior for invisible/zero-thickness zones.
+
+Acceptance:
+
+- Security-sensitive command invocations avoid shell interpolation for user/env-derived values.
+- Compositor/session actions behave or degrade correctly on Hyprland, Niri, and fallback.
+- Settings helper lookup works from non-repo working directories or reports a clear fallback/error.
+- Low/normal network throughput is visually represented.
+- Rapid user actions do not spawn avoidable overlapping audio/wallpaper processes.
+- `qmllint`, `zig build`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Status: completed 2026-05-07. Fixed theme fallback alpha handling, compositor-aware logout routing, settings helper discovery outside repo-root launches, low-traffic network scaling, Niri polling interval, weather command injection risk, notification ownership naming, audio read-back races, wallpaper sample debouncing, and exclusion-zone mask clarity. Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+### Phase K: Code Review Performance And Duplication Refactors
+
+Review source captured 2026-05-07 from Void Shell code review.
+
+Scope:
+
+- Extract repeated expansion panel animation/input-region boilerplate from `HudLayout.qml` into a shared component/helper such as `ExpansionPanelBase`.
+- Reduce repetitive `SettingsService` clamp/save handlers with a shared normalization/save routing pattern.
+- Continue orbital rendering optimization by reducing unnecessary Canvas redraws and hot-path object allocations.
+- Consider narrower `/proc/stat` parsing if metric parsing becomes measurable overhead.
+- Cache derived theme colors if profiling shows repeated color derivation is hot.
+- Stagger polling timers across services to avoid synchronized CPU spikes.
+- Cache calendar month rows so month cell/week row builders do not recompute the same intermediate result.
+
+Acceptance:
+
+- Refactors preserve visible behavior and existing safe-area/close/backdrop/`Escape` contracts.
+- Orbital drag/zoom readability and J2000/Kepler metadata are preserved.
+- Polling load is smoother without changing user-facing update semantics.
+- `qmllint`, `zig build` when settings helper behavior changes, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Status: planned after correctness/security fixes unless performance feedback makes orbital rendering urgent.
+
+### Phase L: Extensibility, Migrations, And Tests
+
+Review source captured 2026-05-07 from Void Shell code review.
+
+Scope:
+
+- Revisit `CompositorService` backend delegation before adding a third compositor.
+- Consolidate duplicated settings schema definitions across QML defaults, Zig settings structs, default JSON, and validation.
+- Add an expansion panel base before creating more central panels.
+- Introduce layout configuration or theme-derived positioning before making panel positions user-configurable.
+- Defer plugin/extension system until third-party widgets or dynamic external consumers are explicit requirements.
+- Plan multi-monitor support with screen-aware `HudWindow`/layout instances before implementation.
+- Add test infrastructure, starting with Zig settings validation tests and QML service parser fixtures.
+- Add keyboard navigation for command center, expansion panels, and critical controls.
+- Add settings version checks/migration logic before incompatible settings changes.
+- Revisit static service discovery/lazy loading only if memory/startup overhead becomes visible.
+
+Acceptance:
+
+- Extensibility work is split into separate Trellis implementation tasks before coding.
+- Settings schema/migration changes include Zig validation tests.
+- Compositor backend changes preserve Hyprland behavior and Niri fallback behavior.
+- Plugin, multi-monitor, and lazy-loading work have explicit product requirements before implementation.
+
+Status: planned medium/long-term. Tests and settings migrations are the most concrete early candidates.
+
 ## Prioritized Next Steps
 
-1. Screenshot-driven visual tuning.
-   - Tune panel proportions, font sizes, yellow intensity, scanline opacity, and graph density from real screenshots.
-   - Keep `quickshell -p .` warning-free after every visual pass.
-   - Verify edge exclusion zones push real Hyprland windows into the center safe area on the target monitor.
+1. Code-review correctness/security fixes.
+   - Fix the high-risk review items first: weather shell injection, compositor-aware logout, settings helper path, audio/wallpaper process races, Niri polling contract, network bar visibility, theme fallback, notification naming, and exclusion-zone mask clarity.
+   - Keep this as a focused maintenance slice, not a broad refactor.
+   - Covered: completed 2026-05-07 with verification passing.
 
-2. Tactical command center.
+2. Code-review performance and duplication refactors.
+   - Extract expansion-panel boilerplate, reduce settings handler repetition, continue orbital Canvas/object-allocation optimization, stagger service polls, and cache calendar/theme work where useful.
+
+3. Extensibility/test infrastructure.
+   - Start with Zig settings-helper validation tests and settings migration/version checks before larger plugin or multi-monitor architecture.
+
+4. Screenshot-driven visual tuning.
+    - Tune panel proportions, font sizes, yellow intensity, scanline opacity, and graph density from real screenshots.
+    - Keep `quickshell -p .` warning-free after every visual pass.
+    - Verify edge exclusion zones push real Hyprland windows into the center safe area on the target monitor.
+
+5. Tactical command center.
    - Convert the settings overlay into a broader command center with quick toggles, system overview, service statuses, and power actions.
    - Keep settings controls available, but group them so the panel does not become a long flat list.
    - Use existing services first; avoid adding plugin registries.
 
-3. Broader reference-shell features.
+6. Broader reference-shell features.
     - Candidate features: interactive tactical expansion surfaces, richer tray drawers, idle/power profile controls, wallpaper/theme management, keyboard layout/keybind surfaces, and optional desktop widgets.
     - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
     - Current selected direction: expanded interaction panels.
 
-4. Left/right panel interaction model.
+7. Left/right panel interaction model.
    - Current left orbital entry is `AnalogOrbitClock`; it replaced the original globe affordance after time-based orbital ephemeris work.
    - Use a central overlay module controlled by small shared state instead of turning each edge panel into a separate popup owner.
     - Apply the same interaction pattern to additional right/edge drill-downs when new domains need central detail surfaces.
     - Covered: right-panel `POWER SOURCE` now opens `PowerExpansionPanel.qml` with battery/profile/idle controls through the shared central overlay path.
     - Covered: left-panel `TELEMETRY` now opens `MediaExpansionPanel.qml` with player/audio/lyrics controls through the shared central overlay path.
 
-5. Niri compositor support.
+8. Niri compositor support.
     - Covered: `CompositorService.qml` provides the shared boundary and `NiriService.qml` provides Niri fallback/documented command integration.
     - Covered: command-center diagnostics now surface active backend, Hyprland/Niri status, workspace rows, and active window identity through `CompositorService.diagnosticRows`.
     - Covered: compositor backend/status/workspace transitions are recorded in `ServiceLogService` for diagnostics history.
@@ -375,10 +463,10 @@ Status: covered by the completed orbital planet map optimization phase; future o
     - Covered: Niri workspace occupancy is recomputed after window payload refreshes so occupied indicators do not lag a poll cycle.
     - Runtime validation inside a real Niri session is moved to Waiting For Test; current Hyprland session blocks Niri IPC validation because `NIRI_SOCKET` is not set.
 
-6. Orbital planet map optimization.
+9. Orbital planet map optimization.
     - Covered: graphical orbital depth, label hierarchy, and bounded repaint behavior were improved while preserving current ephemeris contracts.
 
-7. Expansion panel density and cyber style pass.
+10. Expansion panel density and cyber style pass.
     - Covered: `PanelStatusStrip` unifies top status chrome across CPU/Network/Filesystem/Log/Power/Media panels.
     - Planned: deeper content redesign for each panel's internal widget density and cyber-machine visual language.
     - Planned: J2000 3D side-view orbital rewrite with drag/zoom, real-time heliocentric XYZ, cosmic coordinate frame, and cyber-sci-fi rendering.

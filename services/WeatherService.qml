@@ -57,11 +57,10 @@ Singleton {
     }
 
     property string location: Quickshell.env("WTTR_LOCATION") || ""
+    readonly property string weatherUrl: "https://wttr.in/" + encodeURIComponent(location) + "?format=%C|%t|%h|%w"
 
     property Process fetchProcess: Process {
-        command: location.length > 0
-            ? ["sh", "-c", "curl -m 6 -s 'https://wttr.in/" + location + "?format=%C|%t|%h|%w' 2>/dev/null || echo ''"]
-            : ["sh", "-c", "curl -m 6 -s 'https://wttr.in/?format=%C|%t|%h|%w' 2>/dev/null || echo ''"]
+        command: ["curl", "-m", "6", "-s", root.weatherUrl]
         stdout: StdioCollector {
             onStreamFinished: root.updateWeather(text)
         }

@@ -26,8 +26,8 @@ Singleton {
     property real lineContrast: 1
     property string density: "normal"
     property int updateIntervalMs: 5000
-    property string statusLine: "settings: defaults active"
-    property string helperPath: "./zig-out/bin/void-shell-settings"
+    property string statusLine: "settings: probing helper"
+    property string helperPath: "void-shell-settings"
     property string pendingPayload: ""
     property bool loading: true
     property bool applyingSettings: false
@@ -181,6 +181,10 @@ Singleton {
         }
     }
 
+    function localHelperPath(): string {
+        return decodeURIComponent(Qt.resolvedUrl("../zig-out/bin/void-shell-settings").toString().replace(/^file:\/\//, ""));
+    }
+
     onScanlinesEnabledChanged: scheduleSave()
     onLiveDataEnabledChanged: scheduleSave()
     onLeftVisibleChanged: scheduleSave()
@@ -283,12 +287,31 @@ Singleton {
         scheduleSave();
     }
 
-    Component.onCompleted: readProcess.running = true
+    Component.onCompleted: helperProbeProcess.running = true
 
     property Timer saveDebounce: Timer {
         interval: 300
         repeat: false
         onTriggered: root.saveNow()
+    }
+
+    property Process helperProbeProcess: Process {
+        command: ["sh", "-c", "if [ -x \"$1\" ]; then printf '%s' \"$1\"; elif command -v void-shell-settings >/dev/null 2>&1; then command -v void-shell-settings; else exit 127; fi", "void-shell-settings-probe", root.localHelperPath()]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const resolved = text.trim();
+                if (resolved.length > 0)
+                    root.helperPath = resolved;
+            }
+        }
+        onExited: (exitCode) => {
+            if (exitCode === 0)
+                root.readProcess.running = true;
+            else {
+                root.statusLine = "settings: helper unavailable";
+                root.loading = false;
+            }
+        }
     }
 
     property Process readProcess: Process {

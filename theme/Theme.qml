@@ -55,7 +55,7 @@ QtObject {
     readonly property int fontClock: scaledFont(34)
 
     function dimAccent(value: string): string {
-        return /^#[0-9a-fA-F]{6}$/.test(value) ? alphaColor(contrastAccent(value, SettingsService.lineContrast), 0.4) : "#66F2C94C";
+        return alphaColor(/^#[0-9a-fA-F]{6}$/.test(value) ? contrastAccent(value, SettingsService.lineContrast) : "#F2C94C", 0.4);
     }
 
     function scaledFont(value: int): int {

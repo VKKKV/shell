@@ -175,7 +175,7 @@ Singleton {
             const seconds = Math.max(1, (now - root.previousNetworkTime) / 1000);
             const downRate = Math.max(0, (rx - root.previousNetworkRx) / seconds);
             const upRate = Math.max(0, (tx - root.previousNetworkTx) / seconds);
-            const scale = Math.max(1048576, downRate, upRate);
+            const scale = Math.max(1024, downRate, upRate);
             root.networkRows = [["DOWN", formatRate(downRate), Math.min(1, downRate / scale), true], ["UP", formatRate(upRate), Math.min(1, upRate / scale), false], ["LINK", "SECURE", -1, true]];
             root.networkHistory = pushHistory(root.networkHistory, downRate / scale, 12);
             networkStatus = "network: online";
