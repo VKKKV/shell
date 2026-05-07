@@ -667,3 +667,10 @@
 - Fixed the orbital panel's four corner bracket effects by replacing mirrored `Scale`-based corner drawing and duplicate heavy corner fragments with explicit per-corner L brackets.
 - Preserved orbital content, drag/zoom controls, close behavior, and central deployment routing.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-07 - Analog Orbit Clock Concentric Fix
+
+- Fixed the left-panel `AnalogOrbitClock` concentric-frame alignment by introducing a centered square `dialFace` coordinate system.
+- Moved outer/inner rings, ticks, crosshair, hands, and center caps onto the same `dialFace` origin so non-square layout slots no longer make rings and ticks appear off-center.
+- Kept the clock activation path to `ExpansionService.show("orbital", "left-clock")` unchanged.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
