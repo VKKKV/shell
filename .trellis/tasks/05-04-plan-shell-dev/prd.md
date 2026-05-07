@@ -1460,3 +1460,28 @@ Implementation notes:
 - Orbit tracks now draw with rounded caps/joins and layered strokes: a wider translucent color underlay, a brighter core line, and a subtle light highlight.
 - Selected, Earth, and outer/major orbits receive stronger width/alpha hierarchy while preserving per-planet color coding.
 - The fix stays inside the existing Canvas paint path and keeps cached orbit paths unchanged.
+
+### Next Refinement: Orbital Ephemeris Row Selection
+
+Plan source: continue orbital usability after scientific/readability/stroke-quality passes.
+
+Requirements:
+
+- Make compact ephemeris rows in the bottom-left orbital table clickable selection targets.
+- Preserve right-click canvas selection and previous/next target buttons.
+- Add hover styling and fixed tooltip text so the interaction is discoverable.
+- Keep the change local to `OrbitalExpansionPanel.qml`; do not add new service state.
+
+Acceptance Criteria:
+
+- [x] Clicking a planet row in the compact ephemeris table selects that planet.
+- [x] Hovering a row shows a visible highlight and updates the fixed tooltip hint line.
+- [x] Selected row remains visually distinct from hover-only rows.
+- [x] Existing canvas right-click selection and arrow controls still work.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- Compact ephemeris rows are now focusable/clickable `Rectangle` delegates with hover and focus styling.
+- Row activation updates `selectedPlanetIndex`, preserving the existing selected-planet detail pane and Canvas reticle route.
+- Hovering a row updates the fixed bottom tooltip hint line through `TooltipService`.

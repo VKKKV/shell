@@ -828,6 +828,15 @@
 - Preserved per-planet color coding, cached orbit paths, J2000/Kepler ephemeris math, drag/zoom behavior, and expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Ephemeris Row Selection
+
+- Continued orbital usability after the stroke-quality pass.
+- Made compact ephemeris rows in `OrbitalExpansionPanel.qml` clickable and keyboard-focusable selection targets.
+- Added hover/focus/selected styling for each row while preserving the existing selected planet detail pane and Canvas reticle behavior.
+- Added fixed tooltip hints for row hover through `TooltipService`.
+- Preserved right-click canvas selection, previous/next target buttons, cached orbit paths, and expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

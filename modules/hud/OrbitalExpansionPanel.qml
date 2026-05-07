@@ -717,32 +717,57 @@ Item {
             Repeater {
                 model: root.planets
 
-                RowLayout {
+                Rectangle {
                     required property int index
                     required property var modelData
                     Layout.fillWidth: true
-                    spacing: 6
+                    Layout.preferredHeight: 18
+                    color: index === root.selectedPlanetIndex ? Theme.lineDim : (ephemerisArea.containsMouse || activeFocus ? Theme.panelSoft : "transparent")
+                    border.color: index === root.selectedPlanetIndex || ephemerisArea.containsMouse || activeFocus ? root.planetColors[index] : "transparent"
+                    border.width: Theme.lineWidth
+                    activeFocusOnTab: true
+                    Keys.onReturnPressed: root.selectedPlanetIndex = index
+                    Keys.onEnterPressed: root.selectedPlanetIndex = index
+                    Keys.onSpacePressed: root.selectedPlanetIndex = index
 
-                    Rectangle {
-                        Layout.preferredWidth: 8
-                        Layout.preferredHeight: 8
-                        radius: 4
-                        color: root.planetColors[index]
+                    MouseArea {
+                        id: ephemerisArea
+
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: root.selectedPlanetIndex = parent.index
+                        onEntered: TooltipService.show("SELECT " + parent.modelData.name, "Target " + parent.modelData.name + " in the orbital detail pane and map reticle.", "orbit-row-" + parent.modelData.code)
+                        onExited: TooltipService.clear("orbit-row-" + parent.modelData.code)
                     }
 
-                    TacticalLabel {
-                        text: modelData.code
-                        accent: index === root.selectedPlanetIndex
-                        size: Theme.fontTiny
-                    }
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 4
+                        anchors.rightMargin: 4
+                        spacing: 6
 
-                    TacticalLabel {
-                        Layout.fillWidth: true
-                        text: root.planetLineCompact(modelData)
-                        dim: index !== root.selectedPlanetIndex
-                        accent: index === root.selectedPlanetIndex
-                        size: Theme.fontTiny
-                        elide: Text.ElideRight
+                        Rectangle {
+                            Layout.preferredWidth: 8
+                            Layout.preferredHeight: 8
+                            radius: 4
+                            color: root.planetColors[index]
+                        }
+
+                        TacticalLabel {
+                            text: modelData.code
+                            accent: index === root.selectedPlanetIndex
+                            size: Theme.fontTiny
+                        }
+
+                        TacticalLabel {
+                            Layout.fillWidth: true
+                            text: root.planetLineCompact(modelData)
+                            dim: index !== root.selectedPlanetIndex
+                            accent: index === root.selectedPlanetIndex
+                            size: Theme.fontTiny
+                            elide: Text.ElideRight
+                        }
                     }
                 }
             }
