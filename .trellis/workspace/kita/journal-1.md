@@ -681,3 +681,10 @@
 - Added cached high-quality and drag-time orbit path samples in `OrbitalExpansionPanel.qml` so Canvas repaint projects precomputed 3D path points instead of resolving Kepler samples on every redraw.
 - Preserved current `Time.now`-derived planet node positions and metadata while reducing JS math inside drag/zoom repaints.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-07 - Canvas Planet Node Rendering
+
+- Continued orbital map rendering optimization by moving planet node circles, halo rings, trail dots, and reticle crosses from QML `Rectangle` delegates into the existing Canvas draw pass.
+- Kept QML `TacticalLabel` planet coordinate labels for crisp/elidable text while reducing per-planet live item and binding count during drag/zoom.
+- Preserved cached orbit paths, current-time planet positions, drag/zoom controls, and existing central expansion behavior.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.

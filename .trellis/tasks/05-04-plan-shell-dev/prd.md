@@ -1037,6 +1037,30 @@ Decision (ADR-lite):
 - Decision: cache static orbit paths because orbital shape is stable for this approximate visual model; live planet nodes still compute current time-derived positions separately.
 - Consequences: drag and zoom spend less time in JS orbital math while preserving the visual model. The trade-off is that any future time-varying orbital elements would need cache invalidation.
 
+### Next Optimization MVP: Canvas Planet Node Rendering
+
+Implemented 2026-05-07 as the next orbital rendering optimization slice.
+
+Requirements:
+
+- Move planet node circles, trail dots, and reticle crosses from QML `Rectangle` delegates into the existing orbital Canvas.
+- Keep QML `TacticalLabel` readouts for planet coordinate labels so text remains crisp and elidable.
+- Preserve cached orbit-track paths, current-time planet position calculation, drag/zoom controls, and visual styling.
+- Reduce live QML item/binding count during drag and zoom interactions.
+
+Acceptance Criteria:
+
+- [x] Canvas draws planet nodes, glow rings, trails, and reticle crosses for all visible planets.
+- [x] QML delegates no longer create per-planet node/trail/cross `Rectangle` items.
+- [x] Planet coordinate labels remain visible and positioned from projected planet coordinates.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: cached orbit paths removed repeated Kepler solving from Canvas repaint, but QML still maintained many per-planet visual primitives whose bindings updated during every view change.
+- Decision: draw non-text planet marks directly in Canvas and leave only text labels in QML.
+- Consequences: reduces QML scene graph item churn and binding work while preserving label readability. The trade-off is that planet node styling now lives in the Canvas drawing routine.
+
 ### Next Optimization MVP: Orbital Corner Chrome Fix
 
 User issue captured 2026-05-07: the planetary panel has four incorrect right-angle corner effects.

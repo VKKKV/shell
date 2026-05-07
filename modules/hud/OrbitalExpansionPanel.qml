@@ -357,6 +357,46 @@ Item {
                 ctx.stroke();
             }
 
+            for (let p = 0; p < root.planets.length; p++) {
+                const planet = root.planets[p];
+                const projectedPlanet = root.projectedPlanet(planet);
+                const nodeSize = root.planetSize(planet) * Math.max(0.72, Math.min(1.28, projectedPlanet.perspective));
+
+                for (let trail = 4; trail >= 0; trail--) {
+                    const trailState = root.orbitalState(planet, root.daysSinceEpoch - (trail + 1) * Math.max(3, 460 / root.planetPeriod(planet)));
+                    const trailPoint = root.projectPoint(trailState);
+                    const trailSize = Math.max(2, nodeSize - trail * 1.45);
+                    ctx.globalAlpha = 0.25 - trail * 0.035;
+                    ctx.fillStyle = accent;
+                    ctx.beginPath();
+                    ctx.arc(trailPoint.x, trailPoint.y, trailSize / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.globalAlpha = 0.22 + Math.max(0, projectedPlanet.depth) * 0.008;
+                ctx.strokeStyle = accent;
+                ctx.lineWidth = Theme.lineWidth;
+                ctx.beginPath();
+                ctx.arc(projectedPlanet.x, projectedPlanet.y, (nodeSize + 12) / 2, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.globalAlpha = projectedPlanet.depth >= 0 ? 0.98 : 0.58;
+                ctx.fillStyle = root.planetCode(planet) === "EA" ? Theme.text.toString() : accent;
+                ctx.beginPath();
+                ctx.arc(projectedPlanet.x, projectedPlanet.y, nodeSize / 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.globalAlpha = 0.3;
+                ctx.strokeStyle = accent;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(projectedPlanet.x, projectedPlanet.y - 14);
+                ctx.lineTo(projectedPlanet.x, projectedPlanet.y + 14);
+                ctx.moveTo(projectedPlanet.x - 14, projectedPlanet.y);
+                ctx.lineTo(projectedPlanet.x + 14, projectedPlanet.y);
+                ctx.stroke();
+            }
+
             ctx.globalAlpha = 0.34;
             ctx.strokeStyle = accent;
             ctx.lineWidth = 2;
@@ -448,66 +488,6 @@ Item {
             required property var modelData
 
             readonly property var projected: root.projectedPlanet(modelData)
-            readonly property real nodeSize: root.planetSize(modelData) * Math.max(0.72, Math.min(1.28, projected.perspective))
-
-            Repeater {
-                model: 5
-
-                Rectangle {
-                    required property int index
-
-                    readonly property var trailState: root.orbitalState(parent.modelData, root.daysSinceEpoch - (index + 1) * Math.max(3, 460 / root.planetPeriod(parent.modelData)))
-                    readonly property var trailPoint: root.projectPoint(trailState)
-
-                    x: trailPoint.x - width / 2
-                    y: trailPoint.y - height / 2
-                    width: Math.max(2, parent.nodeSize - index * 1.45)
-                    height: width
-                    radius: width / 2
-                    color: Theme.line
-                    opacity: 0.25 - index * 0.035
-                }
-            }
-
-            Rectangle {
-                x: parent.projected.x - width / 2
-                y: parent.projected.y - height / 2
-                width: parent.nodeSize + 12
-                height: width
-                radius: width / 2
-                color: "transparent"
-                border.color: Theme.line
-                border.width: Theme.lineWidth
-                opacity: 0.22 + Math.max(0, parent.projected.depth) * 0.008
-            }
-
-            Rectangle {
-                x: parent.projected.x - width / 2
-                y: parent.projected.y - height / 2
-                width: parent.nodeSize
-                height: width
-                radius: width / 2
-                color: root.planetCode(modelData) === "EA" ? Theme.text : Theme.line
-                opacity: parent.projected.depth >= 0 ? 0.98 : 0.58
-            }
-
-            Rectangle {
-                x: parent.projected.x - 1
-                y: parent.projected.y - 14
-                width: 2
-                height: 28
-                color: Theme.line
-                opacity: 0.3
-            }
-
-            Rectangle {
-                x: parent.projected.x - 14
-                y: parent.projected.y - 1
-                width: 28
-                height: 2
-                color: Theme.line
-                opacity: 0.3
-            }
 
             TacticalLabel {
                 id: labelProbe
