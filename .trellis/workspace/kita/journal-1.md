@@ -1117,3 +1117,36 @@ Comprehensive orbital panel refinement pass including tooltip coverage, viewport
 ### Next Steps
 
 - None - task complete
+
+
+## Session 3: Privacy-aware Earth panel and shell hardening
+
+**Date**: 2026-05-07
+**Task**: Privacy-aware Earth panel and shell hardening
+**Branch**: `master`
+
+### Summary
+
+Implemented review-driven shell hardening, orbital rendering/cache refinements, a privacy-aware Earth/geolocation panel, compositor facade cleanup, updated the development plan and journal, then archived the completed plan-shell-dev task.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `defbc79` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
