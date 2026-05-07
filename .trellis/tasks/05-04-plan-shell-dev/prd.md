@@ -1556,3 +1556,26 @@ Implementation notes:
 
 - `zoomLevel` now has a short `OutCubic` `NumberAnimation` behavior, so wheel events and reset transitions interpolate instead of snapping.
 - Existing `onZoomLevelChanged` repaint routing drives Canvas redraws during the animation.
+
+### Next Refinement: Orbital Zoom Status Readout
+
+Plan source: continue viewport usability after widening and smoothing orbital zoom.
+
+Requirements:
+
+- Show current zoom together with min/max zoom bounds in the orbital detail pane.
+- Indicate when the view is near the minimum or maximum zoom limit.
+- Keep the change local to `OrbitalExpansionPanel.qml`; do not add new state services.
+- Preserve reset/top/edge controls and existing viewport text.
+
+Acceptance Criteria:
+
+- [x] Detail pane shows current zoom and configured zoom bounds.
+- [x] Detail pane shows a readable status when zoom is near min/max limit.
+- [x] Existing viewport controls and smooth zoom behavior remain unchanged.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- Added `zoomStatusLine()` helper to report nominal/min/max zoom status.
+- Detail pane now shows `ZOOM BOUNDS` plus a status row that accents near range limits.

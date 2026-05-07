@@ -859,6 +859,14 @@
 - Kept the widened zoom range, existing repaint routing, drag rotation, view presets, and expansion behavior unchanged.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Zoom Status Readout
+
+- Continued viewport usability after zoom range and smooth zoom updates.
+- Added a `zoomStatusLine()` helper to report nominal/min/max zoom status.
+- Added detail-pane rows for configured zoom bounds and current zoom limit status, with accent styling near min/max limits.
+- Preserved existing wheel zoom, smooth animation, reset/top/edge controls, and expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

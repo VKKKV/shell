@@ -225,6 +225,14 @@ Item {
         return planets[Math.max(0, Math.min(7, selectedPlanetIndex))];
     }
 
+    function zoomStatusLine(): string {
+        if (zoomLevel <= minZoomLevel * 1.08)
+            return "ZOOM LIMIT // MINIMUM RANGE";
+        if (zoomLevel >= maxZoomLevel * 0.92)
+            return "ZOOM LIMIT // MAXIMUM RANGE";
+        return "ZOOM RANGE // NOMINAL";
+    }
+
     function projectPointInto(point: var, target: var): void {
         const x1 = point.x * cosYaw - point.y * sinYaw;
         const y1 = point.x * sinYaw + point.y * cosYaw;
@@ -922,6 +930,23 @@ Item {
                 text: "YAW " + Math.round(root.yawDeg) + "  PITCH " + Math.round(root.pitchDeg) + "  ZOOM " + root.zoomLevel.toFixed(2)
                 dim: true
                 size: Theme.fontTiny
+            }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "ZOOM BOUNDS // " + root.minZoomLevel.toFixed(2) + "X - " + root.maxZoomLevel.toFixed(1) + "X"
+                dim: true
+                size: Theme.fontTiny
+                elide: Text.ElideRight
+            }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: root.zoomStatusLine()
+                accent: root.zoomLevel <= root.minZoomLevel * 1.08 || root.zoomLevel >= root.maxZoomLevel * 0.92
+                dim: root.zoomLevel > root.minZoomLevel * 1.08 && root.zoomLevel < root.maxZoomLevel * 0.92
+                size: Theme.fontTiny
+                elide: Text.ElideRight
             }
 
             TacticalLabel {
