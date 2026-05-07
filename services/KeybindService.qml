@@ -15,6 +15,7 @@ Singleton {
     property string recordedCombo: ""
     property string recordStatusLine: "recorder: standby"
     property string pendingCopyText: ""
+    property string bindBackend: "none"
 
     function startRecording(): void {
         recording = true;
@@ -75,12 +76,15 @@ Singleton {
         const key = parts.pop() || "KEY";
         const mods = parts.join(" ");
         pendingCopyText = "bind = " + (mods.length > 0 ? mods + ", " : "") + key + ", exec, <command>";
+        copyProcess.command = ["wl-copy", pendingCopyText];
         copyProcess.running = true;
     }
 
     function updateBinds(output: string): void {
         try {
             const payload = JSON.parse(output);
+            if (!Array.isArray(payload))
+                throw new Error("unsupported binds payload");
             const next = [];
             for (const bind of payload) {
                 const mods = bind.modmaskname || bind.modmask || "";
@@ -94,15 +98,28 @@ Singleton {
             }
             keybinds = next.slice(0, 12);
             available = next.length > 0;
-            statusLine = available ? "keybinds: " + next.length + " binds" : "keybinds: no binds";
+            statusLine = available ? "keybinds: " + next.length + " binds // " + bindBackend : "keybinds: no binds // " + bindBackend;
         } catch (error) {
             keybinds = [];
             available = false;
-            statusLine = "keybinds: parse fallback";
+            statusLine = "keybinds: parse fallback // " + bindBackend;
         }
     }
 
     function refresh(): void {
+        if (CompositorService.hyprlandActive) {
+            bindBackend = "hyprland";
+            bindsProcess.command = ["hyprctl", "binds", "-j"];
+        } else if (CompositorService.niriActive) {
+            bindBackend = "niri";
+            bindsProcess.command = ["niri", "msg", "binds"];
+        } else {
+            bindBackend = "fallback";
+            keybinds = [];
+            available = false;
+            statusLine = "keybinds: compositor fallback";
+            return;
+        }
         bindsProcess.running = true;
     }
 
@@ -140,7 +157,7 @@ Singleton {
     }
 
     property Process copyProcess: Process {
-        command: ["sh", "-c", "printf %s \"$1\" | wl-copy", "void-shell-keybind", root.pendingCopyText]
+        command: ["wl-copy", root.pendingCopyText]
         onExited: (exitCode) => {
             root.recordStatusLine = exitCode === 0 ? "recorder: template copied" : "recorder: wl-copy fallback";
         }

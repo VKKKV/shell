@@ -33,9 +33,30 @@ TacticalFrame {
                 onActivated: ExpansionService.show("orbital", "left-clock")
             }
 
+            RotatingGlobe {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: Math.min(parent.width, 170)
+                Layout.preferredHeight: Layout.preferredWidth
+                latitude: EarthLocationService.latitude
+                longitude: EarthLocationService.longitude
+                locationAvailable: EarthLocationService.available
+                label: "EARTH FIX"
+                statusText: EarthLocationService.statusLine.toUpperCase()
+                onActivated: ExpansionService.show("earth", "left-earth")
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onEntered: TooltipService.show("EARTH GEO", "Open the central rotating Earth panel. IP geolocation marks the approximate current network location when available.", "left-earth")
+                    onExited: TooltipService.clear("left-earth")
+                    onClicked: ExpansionService.show("earth", "left-earth")
+                }
+            }
+
             MetricBlock {
                 title: "GLOBAL LINK"
-                rows: [["STATUS", "TRACKING", -1, true], ["ORBIT", "LEO", -1, false], ["SIGNAL", "98%", 0.98, false], ["LATENCY", "18MS", 0.18, false]]
+                rows: [["STATUS", EarthLocationService.available ? "GEO LOCK" : "TRACKING", -1, EarthLocationService.available], ["PLACE", EarthLocationService.displayText, -1, EarthLocationService.available], ["COORD", EarthLocationService.coordinateText, -1, EarthLocationService.available], ["SIGNAL", "98%", 0.98, false]]
             }
 
             MetricBlock {

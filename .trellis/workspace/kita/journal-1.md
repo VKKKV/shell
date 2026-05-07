@@ -948,6 +948,131 @@
 
 - None - task complete
 
+## 2026-05-07 Review-Driven Hardening Slice
+
+Validated the submitted `void-shell` review against current files and updated `.trellis/tasks/05-04-plan-shell-dev/prd.md` with a bounded hardening MVP plus deferred architecture backlog.
+
+### Main Changes
+
+- Fixed settings helper directory handling so a directory creation warning does not abort every write before attempting the target file write.
+- Corrected CPU total jiffy calculation to ignore duplicated `guest` and `guest_nice` fields.
+- Removed shell-based `printf ... | wl-copy` copy paths from clipboard, keybind, and launcher services.
+- Added audio sink/source action queues so rapid mute/volume commands are serialized instead of dropped.
+- Added compositor-aware keyboard/keybind command selection for Hyprland/Niri with readable fallback status text.
+- Hardened logout fallback when `$USER` is unset by using `$XDG_SESSION_ID` or returning no command.
+- Replaced orbital `Date.now()` paint-time pulse with a controlled timer property.
+- Cached calendar month rows across minute ticks, lazy-loaded the HUD grid background, and simplified density sizing through `Theme.densityScale`.
+
+### Testing
+
+- [OK] `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`
+- [OK] `zig build`
+- [OK] `zig build test`
+- [OK] `git diff --check`
+- [OK] `timeout 8s quickshell -p .` showed `Configuration Loaded`
+
+### Status
+
+[OK] Hardening slice implemented; pending user review/commit.
+
+## 2026-05-07 Orbital Dynamic State Cache
+
+Continued the existing development plan by closing the remaining `Orbital Map Rendering Optimization` parent acceptance block.
+
+### Main Changes
+
+- Added `cachedPlanetStates` and `cachedTrailStates` to `OrbitalExpansionPanel.qml`.
+- Rebuilt dynamic orbital state/trail caches only when `daysSinceEpoch` changes.
+- Reused cached current states for Canvas planet rendering, right-click selection, QML planet labels, compact ephemeris rows, selected detail state, and Earth comparison state.
+- Reused cached 29-point trail histories during controlled pulse repaints so Canvas no longer recomputes every trail ephemeris on each paint.
+- Marked the parent orbital rendering optimization acceptance criteria complete and documented the new dynamic-state cache slice in the PRD.
+
+### Testing
+
+- [OK] `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`
+- [OK] `zig build`
+- [OK] `zig build test`
+- [OK] `git diff --check`
+- [OK] `timeout 8s quickshell -p .` showed `Configuration Loaded`
+
+### Status
+
+[OK] Orbital rendering optimization parent plan closed; pending user review/commit.
+
+## 2026-05-07 Geo-Located Earth Panel
+
+Added the requested development goal, then implemented it as a small vertical slice.
+
+### Main Changes
+
+- Added PRD target `Geo-Located Rotating Earth Panel`.
+- Upgraded `components/RotatingGlobe.qml` to draw a rotating Canvas Earth with local coastline polylines, latitude/longitude grid, tactical labels, and optional current-location marker.
+- Added `services/EarthLocationService.qml` for optional IP-based approximate geolocation through `https://ipapi.co/json/`, with readable fallback when live data, network, curl, or parsing fails.
+- Added `modules/hud/EarthExpansionPanel.qml` with a large central rotating Earth, status strip, location readouts, and approximation/privacy notes.
+- Added a compact Earth control below the analog clock in `LeftTacticalPanel.qml`; clicking it opens `ExpansionService.show("earth", "left-earth")`.
+- Wired the new `earth` central expansion slot in `HudLayout.qml` and registered new service/module files in `qmldir`.
+
+### Testing
+
+- [OK] `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`
+- [OK] `zig build`
+- [OK] `zig build test`
+- [OK] `git diff --check`
+- [OK] `timeout 8s quickshell -p .` showed `Configuration Loaded`
+
+### Status
+
+[OK] Geo-located Earth panel implemented; pending user review/commit.
+
+## 2026-05-07 Earth Location Privacy Policy
+
+Responded to privacy concern about default third-party IP geolocation.
+
+### Main Changes
+
+- Added persisted `data.networkGeolocationEnabled`, defaulting to `false`, in QML settings and the Zig settings helper.
+- Added a `NETWORK GEOLOCATION` toggle to the command-center settings panel with explicit privacy warning copy.
+- Changed `EarthLocationService` default behavior to offline timezone inference using local `date +%Z` and a static representative-city map.
+- Kept network IP geolocation as an opt-in path only, gated by both `SettingsService.liveDataEnabled` and `SettingsService.networkGeolocationEnabled`.
+- Added fallback from failed network geolocation to timezone inference.
+- Documented location privacy/accuracy as an unresolved development issue in the PRD.
+
+### Testing
+
+- [OK] `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`
+- [OK] `zig build`
+- [OK] `zig build test`
+- [OK] `git diff --check`
+- [OK] `timeout 8s quickshell -p .` showed `Configuration Loaded`
+
+### Status
+
+[OK] Network geolocation is now opt-in; timezone inference is default.
+
+## 2026-05-07 Compositor Backend Facade Cleanup
+
+Closed the remaining extensibility/test-infrastructure PRD criteria without introducing broad plugin or multi-monitor systems.
+
+### Main Changes
+
+- Refactored `CompositorService.qml` to select a single `activeBackend` object with Hyprland priority, Niri fallback, and null fallback state.
+- Proxied shared compositor fields/actions through `activeBackend` instead of repeating Hyprland/Niri branches on every property and action.
+- Added matching facade fields to `HyprlandService.qml`: `compositorName` and `activeWindowAvailable`.
+- Updated `docs/hyprland.md` and `docs/niri.md` to document `activeBackend` as an internal selection seam while preserving the rule that HUD modules consume `CompositorService` only.
+- Marked multi-monitor/plugin/lazy-loading as explicitly deferred until product requirements exist, avoiding speculative architecture.
+
+### Testing
+
+- [OK] `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`
+- [OK] `zig build`
+- [OK] `zig build test`
+- [OK] `git diff --check`
+- [OK] `timeout 8s quickshell -p .` showed `Configuration Loaded`
+
+### Status
+
+[OK] Extensibility/test-infrastructure PRD criteria are closed.
+
 
 ## Session 2: Orbital Panel Refinements, Runtime Fixes & Ephemeris Refactor
 

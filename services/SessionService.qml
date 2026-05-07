@@ -26,8 +26,13 @@ Singleton {
     function commandForAction(action: string): var {
         if (action === "lock")
             return ["loginctl", "lock-session"];
-        if (action === "logout")
-            return ["loginctl", "terminate-user", Quickshell.env("USER") || ""];
+        if (action === "logout") {
+            const user = Quickshell.env("USER") || "";
+            if (user.length > 0)
+                return ["loginctl", "terminate-user", user];
+            const session = Quickshell.env("XDG_SESSION_ID") || "";
+            return session.length > 0 ? ["loginctl", "terminate-session", session] : [];
+        }
         if (action === "reboot")
             return ["systemctl", "reboot"];
         if (action === "shutdown")

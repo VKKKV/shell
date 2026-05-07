@@ -56,7 +56,7 @@ The Hyprland backend reads:
 - switching: `Hyprland.dispatch("workspace <id>")`
 - focusing: `Hyprland.dispatch("focuswindow address:<address>")`
 
-If workspace highlighting does not update, confirm the shell is running inside a Hyprland session and that the Quickshell Hyprland service is available in your installed Quickshell build. The command-center overview and diagnostics panels show the active compositor backend, workspace row count, active window, and fallback status.
+If workspace highlighting does not update, confirm the shell is running inside a Hyprland session and that the Quickshell Hyprland service is available in your installed Quickshell build. The command-center overview and diagnostics panels show the active compositor backend, workspace row count, active window, and fallback status. `CompositorService.activeBackend` selects Hyprland before Niri, but HUD modules should continue using the facade fields/actions.
 
 Workspace switch and window focus actions update `CompositorService.actionStatusLine` and emit structured service-log events, so failed or fallback compositor actions remain visible in the command center diagnostics stream.
 

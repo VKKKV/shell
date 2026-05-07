@@ -9,15 +9,16 @@ Singleton {
 
     readonly property bool hyprlandActive: HyprlandService.available
     readonly property bool niriActive: !hyprlandActive && NiriService.available
-    readonly property string compositorName: hyprlandActive ? "hyprland" : (niriActive ? "niri" : "fallback")
-    readonly property bool available: hyprlandActive || niriActive
-    readonly property string statusLine: hyprlandActive ? "compositor: hyprland online" : (niriActive ? "compositor: niri online" : "compositor: fallback")
-    readonly property int activeWorkspace: hyprlandActive ? HyprlandService.activeWorkspace : (niriActive ? NiriService.activeWorkspace : 1)
-    readonly property string activeWindowTitle: hyprlandActive ? HyprlandService.activeWindowTitle : (niriActive ? NiriService.activeWindowTitle : "NO ACTIVE WINDOW")
-    readonly property string activeWindowClass: hyprlandActive ? HyprlandService.activeWindowClass : (niriActive ? NiriService.activeWindowClass : "UNKNOWN")
-    readonly property bool activeWindowAvailable: hyprlandActive ? HyprlandService.activeToplevel !== null : (niriActive && NiriService.activeWindowAvailable)
-    readonly property var workspaces: hyprlandActive ? HyprlandService.workspaces : (niriActive ? NiriService.workspaces : fallbackWorkspaces())
-    readonly property var currentWorkspaceWindows: hyprlandActive ? HyprlandService.currentWorkspaceWindows : (niriActive ? NiriService.currentWorkspaceWindows : [])
+    readonly property var activeBackend: hyprlandActive ? HyprlandService : (niriActive ? NiriService : null)
+    readonly property string compositorName: activeBackend ? activeBackend.compositorName : "fallback"
+    readonly property bool available: activeBackend !== null
+    readonly property string statusLine: activeBackend ? "compositor: " + compositorName + " online" : "compositor: fallback"
+    readonly property int activeWorkspace: activeBackend ? activeBackend.activeWorkspace : 1
+    readonly property string activeWindowTitle: activeBackend ? activeBackend.activeWindowTitle : "NO ACTIVE WINDOW"
+    readonly property string activeWindowClass: activeBackend ? activeBackend.activeWindowClass : "UNKNOWN"
+    readonly property bool activeWindowAvailable: activeBackend ? activeBackend.activeWindowAvailable : false
+    readonly property var workspaces: activeBackend ? activeBackend.workspaces : fallbackWorkspaces()
+    readonly property var currentWorkspaceWindows: activeBackend ? activeBackend.currentWorkspaceWindows : []
     readonly property string backendStatusLine: "active: " + compositorName + " // hypr " + (HyprlandService.available ? "online" : "fallback") + " // niri " + (NiriService.available ? "online" : "fallback")
     readonly property string workspaceStatusLine: "workspace: " + activeWorkspace + " // rows " + workspaces.length + " // windows " + currentWorkspaceWindows.length
     readonly property var diagnosticRows: [
@@ -77,11 +78,7 @@ Singleton {
     }
 
     function isOccupied(id: int): bool {
-        if (hyprlandActive)
-            return HyprlandService.isOccupied(id);
-        if (niriActive)
-            return NiriService.isOccupied(id);
-        return false;
+        return activeBackend ? activeBackend.isOccupied(id) : false;
     }
 
     function switchWorkspace(id: int): void {
@@ -90,10 +87,7 @@ Singleton {
             return;
         }
         setActionStatus("action: switch workspace " + id + " via " + compositorName, "info");
-        if (hyprlandActive)
-            HyprlandService.switchWorkspace(id);
-        else if (niriActive)
-            NiriService.switchWorkspace(id);
+        activeBackend.switchWorkspace(id);
     }
 
     function focusWindow(windowKey: string): void {
@@ -106,21 +100,13 @@ Singleton {
             return;
         }
         setActionStatus("action: focus window via " + compositorName, "info");
-        if (hyprlandActive)
-            HyprlandService.focusWindow(windowKey);
-        else if (niriActive)
-            NiriService.focusWindow(windowKey);
+        activeBackend.focusWindow(windowKey);
     }
 
     function logout(): bool {
-        if (hyprlandActive) {
-            setActionStatus("action: logout via hyprland", "info");
-            HyprlandService.logout();
-            return true;
-        }
-        if (niriActive) {
-            setActionStatus("action: logout via niri", "info");
-            NiriService.logout();
+        if (activeBackend) {
+            setActionStatus("action: logout via " + compositorName, "info");
+            activeBackend.logout();
             return true;
         }
         setActionStatus("action: compositor logout unavailable", "warn");

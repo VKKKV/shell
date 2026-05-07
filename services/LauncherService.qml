@@ -120,6 +120,7 @@ Singleton {
 
         if (entry.type === "calc") {
             pendingCopyText = entry.command;
+            copyProcess.command = ["wl-copy", pendingCopyText];
             copyProcess.running = true;
             statusLine = "launcher: calculator copied";
             return;
@@ -172,7 +173,7 @@ Singleton {
     }
 
     property Process copyProcess: Process {
-        command: ["sh", "-c", "printf %s \"$1\" | wl-copy", "void-shell-launcher", root.pendingCopyText]
+        command: ["wl-copy", root.pendingCopyText]
         onExited: (exitCode) => {
             root.statusLine = exitCode === 0 ? "launcher: copied result" : "launcher: wl-copy fallback";
         }

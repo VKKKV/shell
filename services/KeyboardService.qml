@@ -13,6 +13,7 @@ Singleton {
     property var keyboards: []
     property bool available: false
     property string statusLine: "keyboard: initializing"
+    property string deviceBackend: "none"
 
     function normalizeLayout(value: string): string {
         const text = value.trim();
@@ -22,14 +23,14 @@ Singleton {
     function updateDevices(output: string): void {
         try {
             const payload = JSON.parse(output);
-            const source = payload.keyboards || [];
+            const source = deviceBackend === "niri" ? (Array.isArray(payload) ? payload : (payload.layouts || payload.keyboards || [])) : (payload.keyboards || []);
             const next = [];
             let active = null;
 
             for (const keyboard of source) {
-                const name = keyboard.name || "unknown keyboard";
-                const layout = normalizeLayout(keyboard.active_keymap || keyboard.layout || "");
-                const main = keyboard.main === true;
+                const name = keyboard.name || keyboard.display_name || keyboard.short_name || "unknown keyboard";
+                const layout = normalizeLayout(keyboard.active_keymap || keyboard.layout || keyboard.name || "");
+                const main = keyboard.main === true || keyboard.is_active === true || keyboard.active === true;
                 const entry = {
                     name,
                     layout,
@@ -44,17 +45,32 @@ Singleton {
             available = next.length > 0;
             activeKeyboard = active ? active.name : "UNKNOWN";
             activeLayout = active ? active.layout : "UNKNOWN";
-            statusLine = available ? "keyboard: " + activeLayout + " // " + next.length + " devices" : "keyboard: no devices";
+            statusLine = available ? "keyboard: " + activeLayout + " // " + next.length + " devices // " + deviceBackend : "keyboard: no devices // " + deviceBackend;
         } catch (error) {
             available = false;
             activeLayout = "UNKNOWN";
             activeKeyboard = "UNKNOWN";
             keyboards = [];
-            statusLine = "keyboard: parse fallback";
+            statusLine = "keyboard: parse fallback // " + deviceBackend;
         }
     }
 
     function refresh(): void {
+        if (CompositorService.hyprlandActive) {
+            deviceBackend = "hyprland";
+            devicesProcess.command = ["hyprctl", "devices", "-j"];
+        } else if (CompositorService.niriActive) {
+            deviceBackend = "niri";
+            devicesProcess.command = ["niri", "msg", "keyboard-layouts"];
+        } else {
+            deviceBackend = "fallback";
+            available = false;
+            activeLayout = "UNAVAILABLE";
+            activeKeyboard = "UNKNOWN";
+            keyboards = [];
+            statusLine = "keyboard: compositor fallback";
+            return;
+        }
         devicesProcess.running = true;
     }
 

@@ -25,3 +25,4 @@ singleton EmojiService 1.0 EmojiService.qml
 singleton WallpaperService 1.0 WallpaperService.qml
 singleton ServiceLogService 1.0 ServiceLogService.qml
 singleton EnvironmentService 1.0 EnvironmentService.qml
+singleton EarthLocationService 1.0 EarthLocationService.qml

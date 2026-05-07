@@ -264,6 +264,22 @@ ColumnLayout {
         onToggled: (checked) => SettingsService.liveDataEnabled = checked
     }
 
+    ToggleRow {
+        label: "NETWORK GEOLOCATION"
+        checked: SettingsService.networkGeolocationEnabled
+        onToggled: (checked) => SettingsService.networkGeolocationEnabled = checked
+    }
+
+    TextBlock {
+        title: "EARTH LOCATION // PRIVACY"
+        lines: [
+            "mode: " + (SettingsService.networkGeolocationEnabled ? "network IP lookup" : "offline timezone inference"),
+            "source: " + EarthLocationService.source,
+            EarthLocationService.statusLine,
+            "network mode contacts ipapi.co and exposes the public egress IP"
+        ]
+    }
+
     TacticalLabel {
         Layout.fillWidth: true
         text: "MICROPHONE // " + AudioService.micText

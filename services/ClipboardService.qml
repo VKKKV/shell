@@ -36,6 +36,7 @@ Singleton {
 
     function copy(text: string): void {
         pendingText = text;
+        copyProcess.command = ["wl-copy", pendingText];
         copyProcess.running = true;
     }
 
@@ -92,7 +93,7 @@ Singleton {
     }
 
     property Process copyProcess: Process {
-        command: ["sh", "-c", "printf %s \"$1\" | wl-copy", "void-shell-clipboard", root.pendingText]
+        command: ["wl-copy", root.pendingText]
         onExited: (exitCode) => {
             root.statusLine = exitCode === 0 ? "clipboard: copied entry" : "clipboard: wl-copy fallback";
         }

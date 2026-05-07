@@ -33,8 +33,8 @@ Item {
     readonly property real currentViewScale: mapSize * 0.44 * zoomLevel / 30.2
     readonly property int selectedPlanetId: Math.max(0, Math.min(7, selectedPlanetIndex))
     readonly property var selectedPlanetData: planets[selectedPlanetId]
-    readonly property var selectedPlanetState: Ephemeris.orbitalState(selectedPlanetData, daysSinceEpoch)
-    readonly property var earthState: Ephemeris.orbitalState(planets[2], daysSinceEpoch)
+    readonly property var selectedPlanetState: stateForIndex(selectedPlanetId)
+    readonly property var earthState: stateForIndex(2)
     property real yawDeg: -34
     property real pitchDeg: 58
     property real zoomLevel: 1
@@ -46,8 +46,11 @@ Item {
     property real pendingPitchDeg: pitchDeg
     property bool dragActive: false
     property int selectedPlanetIndex: 2
+    property real selectedPulsePhase: 0
     readonly property int orbitSampleCount: dragActive ? 42 : 96
     property var cachedOrbitPaths: []
+    property var cachedPlanetStates: []
+    property var cachedTrailStates: []
     readonly property real minZoomLevel: 0.22
     readonly property real maxZoomLevel: 8.0
     readonly property real gmSun: Ephemeris.gmSun
@@ -98,6 +101,20 @@ Item {
         return Ephemeris.orbitalState(p, daysSinceEpoch);
     }
 
+    function stateForIndex(index: int): var {
+        if (cachedPlanetStates && index >= 0 && index < cachedPlanetStates.length)
+            return cachedPlanetStates[index];
+        if (index < 0 || index >= planets.length)
+            return Ephemeris.orbitalState(planets[2], daysSinceEpoch);
+        return stateFor(planets[index]);
+    }
+
+    function trailForIndex(index: int): var {
+        if (cachedTrailStates && index >= 0 && index < cachedTrailStates.length)
+            return cachedTrailStates[index];
+        return [];
+    }
+
     function earthDistanceFor(state: var): real {
         return Math.sqrt((state.x - earthState.x) ** 2 + (state.y - earthState.y) ** 2 + (state.z - earthState.z) ** 2);
     }
@@ -131,18 +148,19 @@ Item {
         target.perspective = persp;
     }
 
-    function planetLineCompact(p: var): string {
-        const s = stateFor(p);
-        const code = p.code;
+    function planetLineCompactAt(index: int): string {
+        const p = planets[index];
+        const s = stateForIndex(index);
         const r = s.r.toFixed(3);
         const d = earthDistanceFor(s).toFixed(3);
         const lon = s.eclLon.toFixed(1);
         const lat = s.eclLat.toFixed(1);
-        return code + " r" + r + " d" + d + " λ" + lon + "° β" + lat + "°";
+        return p.code + " r" + r + " d" + d + " λ" + lon + "° β" + lat + "°";
     }
 
-    function planetDetailLine(p: var): string {
-        const s = stateFor(p);
+    function planetDetailLineAt(index: int): string {
+        const p = planets[index];
+        const s = stateForIndex(index);
         return p.code + " X " + s.x.toFixed(3) + " Y " + s.y.toFixed(3) + " Z " + s.z.toFixed(3) + " AU";
     }
 
@@ -160,6 +178,21 @@ Item {
         for (let i = 0; i < planets.length; i++)
             paths.push({ high: buildOrbitPath(planets[i], 96), low: buildOrbitPath(planets[i], 42) });
         cachedOrbitPaths = paths;
+    }
+
+    function rebuildDynamicStates(): void {
+        const states = [];
+        const trails = [];
+        for (let i = 0; i < planets.length; i++) {
+            const planet = planets[i];
+            const trail = [];
+            states.push(Ephemeris.orbitalState(planet, daysSinceEpoch));
+            for (let point = 28; point >= 0; point--)
+                trail.push(Ephemeris.orbitalState(planet, daysSinceEpoch - (point + 1) * 1.2));
+            trails.push(trail);
+        }
+        cachedPlanetStates = states;
+        cachedTrailStates = trails;
     }
 
     function orbitPathFor(index: int): var {
@@ -211,7 +244,10 @@ Item {
         pitchDeg = 0;
     }
 
-    onDaysSinceEpochChanged: requestScenePaint()
+    onDaysSinceEpochChanged: {
+        rebuildDynamicStates();
+        requestScenePaint();
+    }
     onYawDegChanged: requestScenePaint()
     onPitchDegChanged: requestScenePaint()
     onZoomLevelChanged: requestScenePaint()
@@ -220,13 +256,26 @@ Item {
     onHeightChanged: requestScenePaint()
     onSelectedPlanetIndexChanged: requestScenePaint()
 
-    Component.onCompleted: buildOrbitPaths()
+    Component.onCompleted: {
+        buildOrbitPaths();
+        rebuildDynamicStates();
+    }
 
     Timer {
         id: viewUpdateTimer
         interval: 16
         repeat: false
         onTriggered: root.applyPendingView()
+    }
+
+    Timer {
+        interval: 80
+        repeat: true
+        running: true
+        onTriggered: {
+            root.selectedPulsePhase = (root.selectedPulsePhase + 0.153846) % (Math.PI * 2);
+            root.requestScenePaint();
+        }
     }
 
     Rectangle {
@@ -361,13 +410,14 @@ Item {
 
             for (let p = root.planets.length - 1; p >= 0; p--) {
                 const planet = root.planets[p];
-                const s = root.stateFor(planet);
+                const s = root.stateForIndex(p);
                 const color = root.planetColors[p];
+                const trailPath = root.trailForIndex(p);
 
-                for (let trail = 28; trail >= 0; trail--) {
-                    const tState = Ephemeris.orbitalState(planet, root.daysSinceEpoch - (trail + 1) * 1.2);
+                for (let trail = 0; trail < trailPath.length; trail++) {
+                    const tState = trailPath[trail];
                     root.projectPointInto(tState, scr2);
-                    const alpha = 0.18 - trail * 0.006;
+                    const alpha = 0.006 + trail * 0.006;
                     if (alpha <= 0)
                         continue;
                     ctx.globalAlpha = alpha;
@@ -382,7 +432,7 @@ Item {
                 const isSelected = p === root.selectedPlanetIndex;
 
                 if (isSelected) {
-                    const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 520);
+                    const pulse = 0.5 + 0.5 * Math.sin(root.selectedPulsePhase);
                     ctx.globalAlpha = 0.20 + (scr.depth >= 0 ? 0.12 : 0.04) + 0.14 * pulse;
                     ctx.strokeStyle = accent;
                     ctx.lineWidth = 1.2;
@@ -522,7 +572,7 @@ Item {
                 let bestDist = 640;
                 let bestIdx = root.selectedPlanetIndex;
                 for (let p = 0; p < root.planets.length; p++) {
-                    const s = root.stateFor(root.planets[p]);
+                    const s = root.stateForIndex(p);
                     const proj = { x: 0, y: 0, depth: 0, perspective: 1 };
                     root.projectPointInto(s, proj);
                     const dist = Math.sqrt((proj.x - mx) * (proj.x - mx) + (proj.y - my) * (proj.y - my));
@@ -550,10 +600,10 @@ Item {
     Repeater {
         model: root.planets
 
-        Item {
-            required property int index
-            required property var modelData
-            readonly property var s: root.stateFor(modelData)
+            Item {
+                required property int index
+                required property var modelData
+                readonly property var s: root.stateForIndex(index)
 
             function pointScratch(): var {
                 const p = { x: 0, y: 0, depth: 0, perspective: 1 };
@@ -566,7 +616,7 @@ Item {
             TacticalLabel {
                 id: labelProbe
                 visible: modelData.code !== root.planets[root.selectedPlanetIndex].code
-                text: modelData.code + " " + root.planetDetailLine(modelData)
+                text: modelData.code + " " + root.planetDetailLineAt(parent.index)
                 size: Theme.fontTiny
             }
 
@@ -663,7 +713,7 @@ Item {
 
                         TacticalLabel {
                             Layout.fillWidth: true
-                            text: root.planetLineCompact(modelData)
+                            text: root.planetLineCompactAt(index)
                             dim: index !== root.selectedPlanetIndex
                             accent: index === root.selectedPlanetIndex
                             size: Theme.fontTiny

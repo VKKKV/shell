@@ -35,13 +35,13 @@ QtObject {
     readonly property int rightPanelMaxWidth: 560
     readonly property int compactWidth: 1500
     readonly property real densityScale: SettingsService.density === "compact" ? 0.85 : (SettingsService.density === "dense" ? 1.15 : 1)
-    readonly property int densitySpacing: scaledDensity(10, 6, 14)
-    readonly property int densitySmallSpacing: scaledDensity(6, 4, 8)
-    readonly property int densityControlHeight: scaledDensity(24, 20, 30)
-    readonly property int densityRowHeight: scaledDensity(30, 24, 36)
-    readonly property int densityCardHeight: scaledDensity(74, 60, 88)
-    readonly property int densityGraphHeight: scaledDensity(96, 72, 128)
-    readonly property int densityProgressHeight: scaledDensity(8, 5, 12)
+    readonly property int densitySpacing: scaledDensity(10)
+    readonly property int densitySmallSpacing: scaledDensity(6)
+    readonly property int densityControlHeight: scaledDensity(24)
+    readonly property int densityRowHeight: scaledDensity(30)
+    readonly property int densityCardHeight: scaledDensity(74)
+    readonly property int densityGraphHeight: scaledDensity(96)
+    readonly property int densityProgressHeight: Math.max(5, scaledDensity(8))
     readonly property int motionResizeMs: 180
     readonly property int motionDeployMs: 230
     readonly property int motionFadeMs: 170
@@ -62,12 +62,8 @@ QtObject {
         return Math.max(8, Math.round(value * SettingsService.fontScale));
     }
 
-    function scaledDensity(normal: int, compact: int, dense: int): int {
-        if (SettingsService.density === "compact")
-            return compact;
-        if (SettingsService.density === "dense")
-            return dense;
-        return normal;
+    function scaledDensity(value: int): int {
+        return Math.max(1, Math.round(value * densityScale));
     }
 
     function alphaColor(rgb: string, opacity: real): string {

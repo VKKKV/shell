@@ -14,6 +14,7 @@ const Settings = struct {
     accent_color: []const u8 = "#F2C94C",
     background_mode: []const u8 = "void",
     live_data_enabled: bool = true,
+    network_geolocation_enabled: bool = false,
     update_interval_ms: i64 = 5000,
     left_visible: bool = true,
     center_visible: bool = true,
@@ -41,6 +42,7 @@ const defaults_json =
     \\  },
     \\  "data": {
     \\    "liveDataEnabled": true,
+    \\    "networkGeolocationEnabled": false,
     \\    "updateIntervalMs": 5000
     \\  },
     \\  "panels": {
@@ -80,11 +82,12 @@ fn settingsPath(allocator: std.mem.Allocator, environ_map: *const std.process.En
     return std.fs.path.join(allocator, &.{ home, ".config", "void-shell", "settings.json" });
 }
 
-fn ensureSettingsDir(allocator: std.mem.Allocator, io: std.Io, path: []const u8) !void {
+fn ensureSettingsDir(allocator: std.mem.Allocator, io: std.Io, path: []const u8) void {
     const dir_path = std.fs.path.dirname(path) orelse return;
     std.Io.Dir.cwd().createDirPath(io, dir_path) catch |err| {
-        try writeStderrAlloc(allocator, io, "warning: failed to create settings directory: {s}\n", .{@errorName(err)});
-        return err;
+        writeStderrAlloc(allocator, io, "warning: failed to create settings directory: {s}\n", .{@errorName(err)}) catch {};
+        if (err == error.PathAlreadyExists)
+            return;
     };
 }
 
@@ -119,7 +122,7 @@ fn writeSettings(allocator: std.mem.Allocator, io: std.Io, environ_map: *const s
 
     const path = try settingsPath(allocator, environ_map);
     defer allocator.free(path);
-    try ensureSettingsDir(allocator, io, path);
+    ensureSettingsDir(allocator, io, path);
 
     var file = try std.Io.Dir.cwd().createFile(io, path, .{ .truncate = true });
     defer file.close(io);
@@ -159,6 +162,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
 
     if (objectField(root, "data")) |data| {
         settings.live_data_enabled = boolField(data, "liveDataEnabled") orelse settings.live_data_enabled;
+        settings.network_geolocation_enabled = boolField(data, "networkGeolocationEnabled") orelse settings.network_geolocation_enabled;
         settings.update_interval_ms = clampInt(integerField(data, "updateIntervalMs") orelse settings.update_interval_ms, 1000, 30000);
     }
 
@@ -187,6 +191,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\  }},
         \\  "data": {{
         \\    "liveDataEnabled": {},
+        \\    "networkGeolocationEnabled": {},
         \\    "updateIntervalMs": {}
         \\  }},
         \\  "panels": {{
@@ -210,6 +215,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.accent_color,
         settings.background_mode,
         settings.live_data_enabled,
+        settings.network_geolocation_enabled,
         settings.update_interval_ms,
         settings.left_visible,
         settings.center_visible,
@@ -358,7 +364,7 @@ test "normalizeSettings keeps valid enum and color values" {
         \\    "accentColor": "#12ABef",
         \\    "backgroundMode": "radar"
         \\  },
-        \\  "data": { "liveDataEnabled": false },
+        \\  "data": { "liveDataEnabled": false, "networkGeolocationEnabled": true },
         \\  "panels": { "leftVisible": false, "centerVisible": true, "rightVisible": false }
         \\}
     ;
@@ -371,6 +377,7 @@ test "normalizeSettings keeps valid enum and color values" {
     try expectContains(normalized, "\"accentColor\": \"#12ABef\"");
     try expectContains(normalized, "\"backgroundMode\": \"radar\"");
     try expectContains(normalized, "\"liveDataEnabled\": false");
+    try expectContains(normalized, "\"networkGeolocationEnabled\": true");
     try expectContains(normalized, "\"leftVisible\": false");
     try expectContains(normalized, "\"centerVisible\": true");
     try expectContains(normalized, "\"rightVisible\": false");

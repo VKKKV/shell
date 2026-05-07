@@ -17,6 +17,7 @@ Singleton {
     property string themeProfile: "amber"
     property string accentColor: "#F2C94C"
     property string backgroundMode: "void"
+    property bool networkGeolocationEnabled: false
     property real intensity: 1
     property real fontScale: 1
     property real panelOpacity: 0.8
@@ -118,6 +119,8 @@ Singleton {
         if (settings.data) {
             if (typeof settings.data.liveDataEnabled === "boolean")
                 liveDataEnabled = settings.data.liveDataEnabled;
+            if (typeof settings.data.networkGeolocationEnabled === "boolean")
+                networkGeolocationEnabled = settings.data.networkGeolocationEnabled;
             if (typeof settings.data.updateIntervalMs === "number")
                 updateIntervalMs = clampUpdateInterval(settings.data.updateIntervalMs);
         }
@@ -151,6 +154,7 @@ Singleton {
             },
             data: {
                 liveDataEnabled: liveDataEnabled,
+                networkGeolocationEnabled: networkGeolocationEnabled,
                 updateIntervalMs: clampUpdateInterval(updateIntervalMs)
             },
             panels: {
@@ -195,6 +199,7 @@ Singleton {
 
     onScanlinesEnabledChanged: scheduleSave()
     onLiveDataEnabledChanged: scheduleSave()
+    onNetworkGeolocationEnabledChanged: scheduleSave()
     onLeftVisibleChanged: scheduleSave()
     onCenterVisibleChanged: scheduleSave()
     onRightVisibleChanged: scheduleSave()

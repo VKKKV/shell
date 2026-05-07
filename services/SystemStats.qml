@@ -123,7 +123,7 @@ Singleton {
             const name = parts[0].replace("cpu", "C").padEnd(3, "0");
             const values = parts.slice(1).map(Number);
             const idle = values[3] + (values[4] || 0);
-            const total = values.reduce((sum, value) => sum + value, 0);
+            const total = values.slice(0, 8).reduce((sum, value) => sum + (Number.isFinite(value) ? value : 0), 0);
             const previous = root.previousCpu[parts[0]];
             let progress = 0;
             if (previous) {

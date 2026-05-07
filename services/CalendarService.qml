@@ -8,14 +8,23 @@ Singleton {
     id: root
 
     property date now: new Date()
+    property int cachedMonthKey: now.getFullYear() * 12 + now.getMonth()
+    property var cachedMonthCache: buildMonthCache(now)
     readonly property string dayText: Qt.formatDateTime(now, "dddd").toUpperCase()
     readonly property string dateText: Qt.formatDateTime(now, "yyyy-MM-dd")
     readonly property string monthText: Qt.formatDateTime(now, "MMMM yyyy").toUpperCase()
-    readonly property var weekRows: monthCache.rows
-    readonly property var monthCells: monthCache.cells
+    readonly property var weekRows: cachedMonthCache.rows
+    readonly property var monthCells: cachedMonthCache.cells
     readonly property var agenda: buildAgenda(now)
     readonly property string statusLine: "calendar: local agenda ready"
-    readonly property var monthCache: buildMonthCache(now)
+
+    onNowChanged: {
+        const nextMonthKey = now.getFullYear() * 12 + now.getMonth();
+        if (nextMonthKey !== cachedMonthKey) {
+            cachedMonthKey = nextMonthKey;
+            cachedMonthCache = buildMonthCache(now);
+        }
+    }
 
     function daysInMonth(year: int, month: int): int {
         return new Date(year, month + 1, 0).getDate();

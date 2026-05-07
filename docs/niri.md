@@ -41,7 +41,7 @@ HUD modules must import only `CompositorService` for compositor state:
 - `switchWorkspace(id)`
 - `focusWindow(windowKey)`
 
-Hyprland remains the preferred backend when its Quickshell service is available. Niri is used when Hyprland is unavailable and Niri command output is valid.
+Hyprland remains the preferred backend when its Quickshell service is available. Niri is used when Hyprland is unavailable and Niri command output is valid. `CompositorService.activeBackend` is the selected backend object; HUD callers should still use the facade fields/actions rather than calling backend services directly.
 
 Window rows expose `windowKey` separately from display title. Niri uses the window id as `windowKey` so click-to-focus can target duplicate-title windows safely.
 

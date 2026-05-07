@@ -13,6 +13,8 @@ Singleton {
     readonly property string activeWindowTitle: activeToplevel?.title || "NO ACTIVE WINDOW"
     readonly property string activeWindowClass: activeToplevel?.lastIpcObject?.class || "UNKNOWN"
     readonly property bool available: Hyprland.focusedWorkspace !== null || (Hyprland.workspaces?.values?.length ?? 0) > 0
+    readonly property string compositorName: "hyprland"
+    readonly property bool activeWindowAvailable: activeToplevel !== null
     readonly property string statusLine: available ? "hyprland: workspace service online" : "hyprland: workspace fallback"
     readonly property var workspaces: workspaceRows()
     readonly property var currentWorkspaceWindows: windowRowsForWorkspace(activeWorkspace)

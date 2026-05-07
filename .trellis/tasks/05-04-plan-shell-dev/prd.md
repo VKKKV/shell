@@ -135,6 +135,119 @@ The ASCII orbital overlay was treated as a temporary prototype and has been repl
 
 ## 7. Refinement Backlog
 
+### Next Feature Target: Geo-Located Rotating Earth Panel
+
+User request captured 2026-05-07: add a small rotating Earth below the analog clock in the left panel; clicking it should open a larger central Earth panel. The globe should show coastline-like geographic information and mark the current approximate location based on IP.
+
+Requirements:
+
+- Add a compact rotating Earth widget below the simulated/analog clock in `LeftTacticalPanel.qml`.
+- Clicking the small Earth opens a central expansion panel that shows a larger rotating Earth.
+- Render coastline/continent-like information locally in the globe visualization so it reads as Earth, not a generic sphere.
+- Use IP-derived approximate location to place a visible current-location marker on the globe.
+- Keep location lookup optional and privacy-aware in behavior: if lookup fails or network is disabled/unavailable, show a readable fallback state and keep the globe usable.
+- Keep the implementation aligned with existing shell architecture: visual globe component in `components/` if reusable, expansion surface in `modules/hud/`, external/network lookup in `services/`, and central panel routing through `ExpansionService`/`HudLayout`.
+- Preserve the existing orbital clock click route and orbital expansion behavior; the new Earth target is an additional control below the clock, not a replacement.
+
+Acceptance Criteria:
+
+- [x] Left panel shows a small rotating Earth below the analog clock without breaking adaptive panel height/scrolling.
+- [x] Clicking the small Earth opens a central Earth expansion panel.
+- [x] Small and large globes display rotating coastline/landmass cues plus latitude/longitude/grid/HUD styling.
+- [x] IP location lookup marks approximate current location when available and shows a clear fallback when unavailable.
+- [x] Central Earth panel preserves safe-area sizing, close/backdrop/`Escape` behavior, and does not regress existing expansion panels.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint; `zig build` remains passing if helper files are touched.
+
+Decision (ADR-lite):
+
+- Context: the left orbital clock already opens the planetary/orbital map, but the requested Earth affordance is a distinct geolocation/map interaction.
+- Decision: add a separate Earth expansion route with a reusable rotating globe visual and a small IP geolocation service. Keep astronomical/orbital state separate from terrestrial IP-location state.
+- Consequences: improves left-panel richness and gives the shell a location-aware Earth surface. The trade-off is an optional network dependency for location; fallback behavior must remain first-class.
+
+Implementation notes 2026-05-07:
+
+- Upgraded `components/RotatingGlobe.qml` into a reusable Canvas globe with local coastline polylines, lat/lon grid, rotation, and optional location marker.
+- Added `services/EarthLocationService.qml` using `curl -m 5 -s https://ipapi.co/json/` with fallback status when live data/network/location parsing is unavailable.
+- Added `modules/hud/EarthExpansionPanel.qml` as a central safe-area expansion surface with the large globe, status strip, and location/model readouts.
+- Added a compact Earth globe under `AnalogOrbitClock` in `LeftTacticalPanel.qml`; the existing orbital clock route remains unchanged.
+- Added `earth` expansion routing in `HudLayout.qml` and registered new QML files in `qmldir`.
+
+### Follow-up Privacy Fix: Earth Location Source Policy
+
+User concern captured 2026-05-07: fetching location from a public IP geolocation service by default is privacy-sensitive and should not be the default behavior.
+
+Requirements:
+
+- Default Earth location mode should be offline coarse timezone inference.
+- Network/IP geolocation should be available only as an explicit opt-in setting in the command-center settings panel.
+- Persist the opt-in through the existing settings pipeline and normalize it in the Zig helper.
+- Earth panel should display the active location source so users can tell whether the marker came from timezone inference or network IP lookup.
+- If network lookup is enabled but fails, fall back to timezone inference rather than clearing the globe marker.
+- Document remaining positioning/privacy limitations as an unresolved development issue.
+
+Acceptance Criteria:
+
+- [x] `networkGeolocationEnabled` defaults to `false` in QML and Zig settings defaults.
+- [x] Settings panel exposes a clear `NETWORK GEOLOCATION` toggle with privacy warning copy.
+- [x] `EarthLocationService` uses timezone inference when network geolocation is disabled.
+- [x] Network IP lookup only runs when both live data and `networkGeolocationEnabled` are enabled.
+- [x] Earth expansion panel shows active source/fallback status.
+- [x] Location privacy/accuracy remains documented as an unresolved issue.
+- [x] `qmllint`, `zig build`, `zig build test`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Open Issue: Location Privacy And Accuracy
+
+- Timezone inference is offline and safer, but it is coarse and may point to a representative city rather than the user's actual location.
+- Network IP geolocation can be more specific, but it contacts a third-party service and exposes the public egress IP and request metadata.
+- Future options to evaluate: manual coordinates/city setting, local-only city database, system GeoClue integration with explicit permission, or self-hosted IP geolocation endpoint.
+- Until this is resolved, network geolocation must remain opt-in and clearly labeled.
+
+Implementation notes 2026-05-07:
+
+- Added persisted `data.networkGeolocationEnabled`, defaulting to `false`, through `SettingsService.qml` and `void-shell-settings`.
+- Added `NETWORK GEOLOCATION` toggle and privacy warning copy to the command-center settings panel.
+- Reworked `EarthLocationService.qml` so default location comes from offline timezone abbreviation inference using local `date +%Z` and a static representative-city map.
+- Kept IP lookup as opt-in only; when enabled it still requires `liveDataEnabled` and falls back to timezone inference on fetch/parse failure.
+- Earth expansion now shows active source/fallback status.
+
+### Next Optimization MVP: Review-Driven Hardening Slice
+
+User instruction captured 2026-05-07: validate the submitted `void-shell` code review, update the development plan, then continue development.
+
+Confirmed high-risk fixes for this slice:
+
+- Settings persistence should not silently lose durable settings because directory creation failures are mishandled. Keep stdout machine-readable JSON and stderr diagnostics human-readable.
+- CPU usage parsing should avoid double-counting `/proc/stat` `guest` and `guest_nice` fields in total jiffies.
+- Clipboard copy paths in `ClipboardService`, `KeybindService`, and `LauncherService` should avoid shell interpolation risks for copied user text.
+- Audio sink/source action dispatch should not drop rapid consecutive mute/volume commands because one shared process is reused.
+
+Confirmed medium fixes included when small and low-risk:
+
+- Keyboard/keybind services should choose Hyprland or Niri commands based on `CompositorService`, with fallback status text for unsupported output formats.
+- Logout should avoid `loginctl terminate-user ""` when `$USER` is unset and should prefer session termination when `$XDG_SESSION_ID` is available.
+- Orbital selected-target pulse should be timer/property-driven rather than calling `Date.now()` inside `Canvas.onPaint`.
+- Calendar month cells should only rebuild when the displayed month changes, not every minute.
+- HUD background grid should be lazy-loaded only when grid mode is active.
+- Theme density sizing should use a single computed multiplier instead of repeated density string branching.
+
+Deferred backlog from the review because it is broader architectural work:
+
+- Split orbital rendering into static/dynamic layers and cache projected paths more aggressively.
+- Extract repeated command-center slider rows into a reusable control.
+- Data-drive expansion panel registration in `HudLayout`.
+- Refactor compositor abstraction for a scalable backend interface.
+- Generate or centralize Zig/QML settings schema handling.
+- Extract common polling infrastructure.
+- Move orbital element data out of the large QML panel.
+
+Acceptance Criteria:
+
+- [x] Confirmed high-risk findings above are fixed or explicitly documented as false positives.
+- [x] Small medium/performance fixes above are implemented without changing existing UI routes or visual language.
+- [x] Deferred architecture items remain documented for future phases.
+- [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check are run or skipped with an explicit blocker.
+- [x] Trellis journal records validation and verification results.
+
 Captured after tray menu fix on 2026-05-05.
 
 ### Runtime Fixes
@@ -1001,17 +1114,47 @@ Requirements:
 
 Acceptance Criteria:
 
-- [ ] Dragging the orbital map remains responsive on common shell hardware without obvious frame stalls.
-- [ ] Orbit tracks and coordinate overlays retain visual quality after any rendering backend change.
-- [ ] Planet labels and metadata stay readable at minimum/default/maximum zoom.
-- [ ] Rendering changes do not regress close/backdrop/`Escape` behavior or safe-area deployment.
-- [ ] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+- [x] Dragging the orbital map remains responsive on common shell hardware without obvious frame stalls.
+- [x] Orbit tracks and coordinate overlays retain visual quality after any rendering backend change.
+- [x] Planet labels and metadata stay readable at minimum/default/maximum zoom.
+- [x] Rendering changes do not regress close/backdrop/`Escape` behavior or safe-area deployment.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
 
 Decision (ADR-lite):
 
 - Context: the first performance pass reduced JS/Canvas churn but the orbital surface is still Canvas-heavy and may benefit from cached or GPU-friendlier rendering.
 - Decision: track deeper rendering optimization as a future slice rather than mixing it with small visual bug fixes.
 - Consequences: preserves current stability while making room for a more deliberate rendering backend evaluation.
+
+Completion notes 2026-05-07:
+
+- Closed through several local rendering slices: cached orbit tracks, Canvas-drawn planet nodes/trails/reticles, stroke-quality improvements, zoom controls/readouts, ephemeris math extraction, timer-driven selection pulse, and dynamic state/trail caching.
+- Current planet states and 29-point trail states are cached per `Time.now` tick, so controlled pulse repaints no longer recompute all trail ephemerides.
+- Further GPU-specific renderer exploration remains optional future work, not required for the current map optimization acceptance criteria.
+
+### Next Refinement: Orbital Dynamic State Cache
+
+Implemented 2026-05-07 as the final step for the current orbital rendering optimization plan.
+
+Requirements:
+
+- Cache current per-planet orbital states and trailing history points per `Time.now` tick.
+- Reuse cached states in Canvas planet/trail rendering, right-click selection, label projection, and compact ephemeris rows.
+- Keep live time-derived metadata, selection, zoom, drag rotation, close behavior, and safe-area deployment unchanged.
+- Avoid adding a new service or renderer backend.
+
+Acceptance Criteria:
+
+- [x] Canvas pulse repaints no longer recompute all planet trail ephemerides.
+- [x] Planet labels and compact ephemeris rows reuse cached current states where possible.
+- [x] Time changes rebuild the dynamic cache and repaint the panel.
+- [x] `qmllint`, `zig build`, `zig build test`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: earlier slices cached orbit tracks and moved node/trail drawing into Canvas, but trail states were still regenerated on every Canvas paint, including selection-pulse repaints.
+- Decision: cache current planet states and trail histories on `daysSinceEpoch` changes while keeping projection camera math live for drag/zoom.
+- Consequences: reduces paint-time ephemeris work without changing visual output. The trade-off is a small cache rebuild when time advances, which matches the existing local deterministic update model.
 
 ### Next Optimization MVP: Cached Orbital Track Rendering
 
@@ -1170,14 +1313,21 @@ Acceptance Criteria:
 - [x] Extensibility work is split into separate implementation tasks before coding, not mixed into bug-fix slices.
 - [x] Any settings schema/migration change includes Zig validation tests.
 - [x] Settings version checks/migration behavior are covered for missing, old, current, and future versions.
-- [ ] Any compositor-backend extensibility change preserves Hyprland behavior and Niri fallback behavior.
-- [ ] Multi-monitor/plugin/lazy-loading work has explicit product requirements before implementation.
+- [x] Any compositor-backend extensibility change preserves Hyprland behavior and Niri fallback behavior.
+- [x] Multi-monitor/plugin/lazy-loading work has explicit product requirements before implementation.
 
 Decision (ADR-lite):
 
 - Context: review found several architectural seams that are acceptable for the current first-party shell but will become expensive as compositors, panels, settings, and optional services grow.
 - Decision: record them as planned extensibility/test-infrastructure work, with tests and settings migrations as the most concrete early candidates.
 - Consequences: keeps the current shell pragmatic while preventing these concerns from being lost. The trade-off is that plugin, multi-monitor, and registry work remain intentionally deferred.
+
+Implementation notes 2026-05-07:
+
+- `CompositorService.qml` now selects a single `activeBackend` object (`HyprlandService`, then `NiriService`, then `null`) and proxies common fields/actions through that backend instead of repeating Hyprland/Niri branches for every property.
+- `HyprlandService.qml` now exposes the same `compositorName` and `activeWindowAvailable` facade fields already present on Niri, preserving Hyprland priority while keeping Niri fallback behavior intact.
+- `docs/hyprland.md` and `docs/niri.md` document that `activeBackend` is an internal facade selection seam; HUD modules should continue consuming `CompositorService` only.
+- Multi-monitor, plugin, and lazy-loading work remain deferred until explicit product requirements exist; this checkpoint intentionally does not implement those broad systems.
 
 ### Orbital Detail Telemetry Polish
 

@@ -29,6 +29,8 @@ Item {
     readonly property int expansionTargetY: topReserved + Math.max(0, height - topReserved - bottomReserved - expansionHeight) / 2
     readonly property int orbitalOriginX: leftPanel.x + leftPanel.width * 0.5
     readonly property int orbitalOriginY: leftPanel.y + Math.min(260, leftPanel.height * 0.42) * 0.5 + 38
+    readonly property int earthOriginX: leftPanel.x + leftPanel.width * 0.5
+    readonly property int earthOriginY: leftPanel.y + Math.min(leftPanel.height - 30, 330)
     readonly property int mediaOriginX: leftPanel.x + leftPanel.width * 0.5
     readonly property int mediaOriginY: leftPanel.y + Math.min(leftPanel.height - 30, 560)
     readonly property int cpuOriginX: rightPanel.x + rightPanel.width * 0.5
@@ -69,24 +71,29 @@ Item {
         opacity: 0.18 * SettingsService.intensity
     }
 
-    GridLayout {
-        visible: SettingsService.backgroundMode === "grid"
+    Loader {
+        active: SettingsService.backgroundMode === "grid"
         anchors.fill: parent
-        anchors.margins: Theme.margin
-        columns: 12
-        rowSpacing: 0
-        columnSpacing: 0
-        opacity: 0.14 * SettingsService.intensity
+        sourceComponent: Component {
+            GridLayout {
+                anchors.fill: parent
+                anchors.margins: Theme.margin
+                columns: 12
+                rowSpacing: 0
+                columnSpacing: 0
+                opacity: 0.14 * SettingsService.intensity
 
-        Repeater {
-            model: 96
+                Repeater {
+                    model: 96
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                border.color: Theme.lineDim
-                border.width: Theme.lineWidth
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "transparent"
+                        border.color: Theme.lineDim
+                        border.width: Theme.lineWidth
+                    }
+                }
             }
         }
     }
@@ -242,6 +249,20 @@ Item {
             originY: root.mediaOriginY
 
             MediaExpansionPanel {
+                anchors.fill: parent
+            }
+        }
+
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "earth"
+            width: root.expansionWidth
+            height: root.expansionHeight
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.earthOriginX
+            originY: root.earthOriginY
+
+            EarthExpansionPanel {
                 anchors.fill: parent
             }
         }

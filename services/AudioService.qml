@@ -22,6 +22,8 @@ Singleton {
     property string micStatusLine: "mic: fallback"
     property bool pendingSinkRefresh: false
     property bool pendingMicRefresh: false
+    property var sinkActionQueue: []
+    property var micActionQueue: []
 
     function updateSpectrum(): void {
         const base = available && !muted ? Math.max(0.08, Math.min(1, volume)) : 0.05;
@@ -94,34 +96,52 @@ Singleton {
         micReadProcess.running = true;
     }
 
-    function toggleMute(): void {
-        if (actionProcess.running)
+    function runNextSinkAction(): void {
+        if (actionProcess.running || sinkActionQueue.length === 0)
             return;
-        actionProcess.command = ["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"];
+
+        const next = sinkActionQueue[0];
+        sinkActionQueue = sinkActionQueue.slice(1);
+        actionProcess.command = next;
         actionProcess.running = true;
+    }
+
+    function queueSinkAction(command: var): void {
+        sinkActionQueue = sinkActionQueue.concat([command]);
+        runNextSinkAction();
+    }
+
+    function runNextMicAction(): void {
+        if (micActionProcess.running || micActionQueue.length === 0)
+            return;
+
+        const next = micActionQueue[0];
+        micActionQueue = micActionQueue.slice(1);
+        micActionProcess.command = next;
+        micActionProcess.running = true;
+    }
+
+    function queueMicAction(command: var): void {
+        micActionQueue = micActionQueue.concat([command]);
+        runNextMicAction();
+    }
+
+    function toggleMute(): void {
+        queueSinkAction(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]);
     }
 
     function changeVolume(delta: real): void {
-        if (actionProcess.running)
-            return;
         const next = Math.max(0, Math.min(1.5, volume + delta));
-        actionProcess.command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", next.toFixed(2)];
-        actionProcess.running = true;
+        queueSinkAction(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", next.toFixed(2)]);
     }
 
     function toggleMicMute(): void {
-        if (micActionProcess.running)
-            return;
-        micActionProcess.command = ["wpctl", "set-mute", "@DEFAULT_AUDIO_SOURCE@", "toggle"];
-        micActionProcess.running = true;
+        queueMicAction(["wpctl", "set-mute", "@DEFAULT_AUDIO_SOURCE@", "toggle"]);
     }
 
     function changeMicVolume(delta: real): void {
-        if (micActionProcess.running)
-            return;
         const next = Math.max(0, Math.min(1.5, micVolume + delta));
-        micActionProcess.command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SOURCE@", next.toFixed(2)];
-        micActionProcess.running = true;
+        queueMicAction(["wpctl", "set-volume", "@DEFAULT_AUDIO_SOURCE@", next.toFixed(2)]);
     }
 
     Component.onCompleted: refresh()
@@ -172,7 +192,10 @@ Singleton {
 
     property Process actionProcess: Process {
         command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
-        onExited: root.refreshSink()
+        onExited: {
+            root.refreshSink();
+            root.runNextSinkAction();
+        }
     }
 
     property Process micReadProcess: Process {
@@ -195,6 +218,9 @@ Singleton {
 
     property Process micActionProcess: Process {
         command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SOURCE@"]
-        onExited: root.refreshMic()
+        onExited: {
+            root.refreshMic();
+            root.runNextMicAction();
+        }
     }
 }
