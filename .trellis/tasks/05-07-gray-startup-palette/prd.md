@@ -99,6 +99,7 @@ Make the shell start in a gray tactical palette by default, while keeping the ex
 
 * Replace naive `line.split(":")` parsing for `nmcli -t` output with an escaped-colon-aware parser or a more stable output format.
 * Validate active connections and Wi-Fi rows with names/SSIDs containing colons.
+* Status: implemented with `splitNmcliFields()` for escaped colon handling in active connection and Wi-Fi parsing.
 
 ### PR6: Niri Keybind Diagnostics
 

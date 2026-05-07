@@ -53,6 +53,7 @@ Patterns:
 - Missing commands or parse failures should update fallback state instead of throwing through bindings.
 - Pollers should stop when `SettingsService.liveDataEnabled` is false.
 - When a service captures user/system text for later reuse, store the raw value unless there is an explicit product decision to normalize it; apply trimming/compaction to previews only.
+- When parsing delimited command output, respect the command's escaping rules instead of using naive `split()` if field values can contain the delimiter.
 
 ---
 
@@ -103,6 +104,7 @@ Patterns:
 - Command exits non-zero -> fallback state, no raw stderr in normal UI.
 - Parse fails -> empty/default shaped rows and parse fallback status.
 - Raw text contains leading/trailing whitespace -> preserve it in stored service state when it may be copied back later; preview may compact it.
+- Escaped delimiter in command output -> parser returns the delimiter as part of the field, not as a field boundary.
 - Live data disabled -> poll timers stop and no repeated external reads continue.
 - Module imports backend-specific service directly when a facade exists -> fail review.
 - Rapid repeated service actions -> commands run in order or later actions are explicitly rejected with status text; no silent command overwrite.
@@ -113,6 +115,7 @@ Patterns:
 - Good: `CompositorService.qml` hides Hyprland/Niri differences behind a shared contract.
 - Good: `NetworkDetailService.qml` queues reconnect/down/bluetooth actions before feeding the shared action `Process`.
 - Good: `ClipboardService.qml` stores raw clipboard text while deriving a compact preview separately.
+- Good: `NetworkDetailService.qml` parses `nmcli -t` rows with escaped-colon handling before shaping connection/Wi-Fi rows.
 - Base: a local visual timer in one panel is acceptable when it does not fetch external state.
 - Bad: a HUD component runs `Process { command: [...] }` and parses stdout inline.
 

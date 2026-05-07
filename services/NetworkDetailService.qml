@@ -69,6 +69,29 @@ Singleton {
         queueAction(["bluetoothctl", "power", nextPower], "bluetooth " + nextPower, "network actions: bluetooth " + nextPower);
     }
 
+    function splitNmcliFields(line: string): var {
+        const fields = [];
+        let current = "";
+        let escaped = false;
+        for (const char of line) {
+            if (escaped) {
+                current += char;
+                escaped = false;
+            } else if (char === "\\") {
+                escaped = true;
+            } else if (char === ":") {
+                fields.push(current);
+                current = "";
+            } else {
+                current += char;
+            }
+        }
+        if (escaped)
+            current += "\\";
+        fields.push(current);
+        return fields;
+    }
+
     function updateNetwork(output: string): void {
         const next = [];
         const rowsNext = [];
@@ -79,7 +102,7 @@ Singleton {
             if (line.length === 0)
                 continue;
 
-            const parts = line.split(":");
+            const parts = splitNmcliFields(line);
             const name = parts[0] || "UNKNOWN";
             const type = parts[1] || "unknown";
             const device = parts[2] || "";
@@ -124,7 +147,7 @@ Singleton {
             if (line.length === 0)
                 continue;
 
-            const parts = line.split(":");
+            const parts = splitNmcliFields(line);
             const active = parts[0] === "yes";
             const ssid = parts[1] || "HIDDEN";
             const signal = Number(parts[2] || 0);
