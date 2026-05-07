@@ -370,7 +370,7 @@ Status: covered by the completed orbital planet map optimization phase; future o
     - Covered: compositor workspace/focus actions update visible action status and structured service-log entries.
     - Covered: top workspace strip clamps and elides compositor-provided workspace labels for Niri compatibility.
     - Covered: Niri workspace occupancy is recomputed after window payload refreshes so occupied indicators do not lag a poll cycle.
-    - Remaining check is manual validation inside a real Niri session when available.
+    - Manual validation inside a real Niri session is documented in `docs/niri.md`; current Hyprland session blocks Niri IPC validation because `NIRI_SOCKET` is not set.
 
 6. Orbital planet map optimization.
     - Covered: graphical orbital depth, label hierarchy, and bounded repaint behavior were improved while preserving current ephemeris contracts.

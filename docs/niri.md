@@ -66,3 +66,24 @@ Expected fallback behavior outside Niri:
 - Workspace buttons and window focus actions become no-op safe when no supported compositor is active.
 - Command-center overview and diagnostics show the active backend, workspace/window counts, and recent compositor transition log entries.
 - Workspace/focus actions update `CompositorService.actionStatusLine` and write service-log events for failed or fallback actions.
+
+## Manual Validation Checklist
+
+Run these inside a real Niri session where `NIRI_SOCKET` is set:
+
+```bash
+niri msg --json workspaces
+niri msg --json windows
+quickshell -p .
+```
+
+Assertion points:
+
+- `CompositorService.compositorName` reports `niri` when Hyprland is unavailable and Niri IPC returns valid JSON.
+- Workspace labels/active/occupied state match `niri msg --json workspaces` plus `niri msg --json windows`.
+- Long workspace names fit in the top strip with elision.
+- Clicking a workspace dispatches `niri msg action focus-workspace <id>` and updates `actionStatusLine`.
+- Clicking a dock/overview window dispatches `niri msg action focus-window --id <window-id>` via `windowKey`.
+- Command-center diagnostics show `ACTIVE`, `NIRI`, `SPACE`, `ACTION`, and recent compositor service-log events without QML errors.
+
+If `niri msg` reports `NIRI_SOCKET is not set`, the current session is not a Niri session. Treat runtime validation as environment-blocked rather than a shell failure.

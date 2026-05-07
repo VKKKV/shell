@@ -602,3 +602,12 @@
 - Fallback clears raw workspace payloads along with shaped workspace/window rows.
 - Updated frontend state-management spec and PRD/PLAN notes with the Niri occupancy refresh contract.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Niri Runtime Validation Check
+
+- Scanned the plan for remaining explicit unchecked work; all implementation slices are covered except real Niri-session runtime validation.
+- Checked Niri availability: `/usr/bin/niri` exists.
+- Attempted `niri msg --json workspaces` and `niri msg --json windows`; both failed with `NIRI_SOCKET is not set, are you running this within niri?`.
+- Current session environment reports `XDG_CURRENT_DESKTOP=Hyprland`, `XDG_SESSION_DESKTOP=Hyprland`, `WAYLAND_DISPLAY=wayland-1`.
+- Added a manual validation checklist to `docs/niri.md` and recorded Niri runtime validation as environment-blocked, not failed.
+- Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
