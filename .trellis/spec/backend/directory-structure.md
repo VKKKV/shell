@@ -6,49 +6,64 @@
 
 ## Overview
 
-<!--
-Document your project's backend directory structure here.
+Backend code currently means focused Zig helper binaries for durable or persistence-sensitive behavior. The shell UI and service state live in QML; the backend helper owns settings normalization and filesystem persistence.
 
-Questions to answer:
-- How are modules/packages organized?
-- Where does business logic live?
-- Where are API endpoints defined?
-- How are utilities and helpers organized?
--->
+Current backend surface:
 
-(To be filled by the team)
+- `build.zig`: declares helper artifacts and tests
+- `src/settings/main.zig`: `void-shell-settings` CLI for settings defaults/read/write
+
+Do not introduce a backend framework, route layer, or daemon unless a concrete shell feature needs it.
 
 ---
 
 ## Directory Layout
 
-```
-<!-- Replace with your actual structure -->
+```text
+build.zig
 src/
-├── ...
-└── ...
+└── settings/
+    └── main.zig
 ```
+
+Build artifacts are generated under:
+
+```text
+.zig-cache/
+zig-out/
+```
+
+These must remain uncommitted build outputs.
 
 ---
 
 ## Module Organization
 
-<!-- How should new features/modules be organized? -->
-
-(To be filled by the team)
+- Put focused helper binaries under `src/<domain>/main.zig`.
+- Keep durable validation and normalization inside the helper when persisted state is involved.
+- Keep live UI state and command polling in `services/*.qml`, not in Zig.
+- Add a helper only when QML would otherwise own persistence-sensitive behavior or complex command parsing.
 
 ---
 
 ## Naming Conventions
 
-<!-- File and folder naming rules -->
-
-(To be filled by the team)
+- Helper executable names use shell-oriented kebab case, such as `void-shell-settings`.
+- Zig source directories use lowercase domain names, such as `src/settings/`.
+- CLI commands should be short verbs, such as `defaults`, `read`, and `write`.
+- stdout is machine-readable JSON; stderr is human-readable diagnostics.
 
 ---
 
 ## Examples
 
-<!-- Link to well-organized modules as examples -->
+- `src/settings/main.zig`: normalizes persisted appearance/data/panel settings, creates the config directory, reads/writes `$XDG_CONFIG_HOME/void-shell/settings.json`, and prints normalized JSON.
+- `build.zig`: installs `void-shell-settings` and wires `zig build test` through `b.addTest`.
 
-(To be filled by the team)
+---
+
+## Common Mistakes
+
+- Moving settings persistence into a random QML module instead of `src/settings/main.zig`.
+- Adding a long-running backend process when a small helper command is enough.
+- Forgetting to add tests in `main.zig` when changing helper validation or filesystem behavior.
