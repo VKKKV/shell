@@ -1202,3 +1202,28 @@ Decision (ADR-lite):
 - Context: the orbital panel had the computational model and performance optimizations, but the detail surface could expose more useful orbital metadata and target-selection affordances.
 - Decision: keep the work local to `OrbitalExpansionPanel.qml`, expanding the visual/readout layer without changing services or deployment contracts.
 - Consequences: improves the highest-value central panel's usefulness and cyber-machine feel. The trade-off is more QML logic in the orbital surface; extract only if another astronomy surface reuses it.
+
+### Keyboard Navigation Foundation
+
+Implemented 2026-05-07 as the first keyboard accessibility slice.
+
+Requirements:
+
+- Add keyboard activation to shared close/toggle controls and high-value command-center/orbital actions.
+- Use `Tab` focus plus `Enter`/`Return`/`Space` activation where QML controls are custom rectangles.
+- Preserve existing mouse behavior, visual styling, command routing, and `Escape` close behavior.
+- Keep the slice focused; do not redesign every panel into a full focus-chain system yet.
+
+Acceptance Criteria:
+
+- [x] `PanelCloseButton` can be focused and activated from the keyboard.
+- [x] `ToggleRow` can be focused and toggled from the keyboard.
+- [x] Command-center action controls for power/session, keybind copy, emoji, clipboard, and launcher results expose keyboard activation.
+- [x] Orbital reset/top/edge and previous/next target controls expose keyboard activation.
+- [x] `qmllint`, `zig build test`, `zig build`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the shell was mostly mouse-driven, with only global shortcuts and the keybind recorder handling keyboard input.
+- Decision: add keyboard support first to shared primitives and high-value controls instead of building a large focus-management abstraction.
+- Consequences: improves accessibility and everyday usability while keeping implementation risk low. The trade-off is that some lower-priority custom controls still need future focus-chain work.

@@ -753,6 +753,15 @@
 - Fixed runtime Repeater `index` warnings by declaring `required property int index` in delegates that use `index`.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Keyboard Navigation Foundation
+
+- Continued extensibility/accessibility work with a low-risk keyboard activation foundation.
+- Added `activeFocusOnTab` plus `Enter`/`Return`/`Space` activation to `PanelCloseButton` and `ToggleRow`.
+- Added keyboard activation/focus border feedback for command-center power profile buttons, idle inhibitor, session actions, keybind copy, emoji buttons, clipboard refresh/clear/copy, and launcher results.
+- Added keyboard activation to orbital view controls and previous/next selected-planet buttons.
+- Preserved mouse behavior, existing command routing, global `Escape` close behavior, and visual styling.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

@@ -34,6 +34,10 @@ ColumnLayout {
                 border.color: PowerProfileService.profile.toLowerCase() === modelData ? Theme.line : Theme.lineDim
                 border.width: Theme.lineWidth
                 opacity: PowerProfileService.available ? 1 : 0.45
+                activeFocusOnTab: PowerProfileService.available
+                Keys.onReturnPressed: PowerProfileService.setProfile(modelData)
+                Keys.onEnterPressed: PowerProfileService.setProfile(modelData)
+                Keys.onSpacePressed: PowerProfileService.setProfile(modelData)
 
                 MouseArea {
                     anchors.fill: parent
@@ -55,9 +59,13 @@ ColumnLayout {
     Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 28
-        color: PowerProfileService.idleInhibited ? Theme.lineDim : "transparent"
-        border.color: PowerProfileService.idleInhibited ? Theme.line : Theme.lineDim
+                color: PowerProfileService.idleInhibited ? Theme.lineDim : "transparent"
+        border.color: PowerProfileService.idleInhibited || activeFocus ? Theme.line : Theme.lineDim
         border.width: Theme.lineWidth
+        activeFocusOnTab: true
+        Keys.onReturnPressed: PowerProfileService.toggleIdleInhibitor()
+        Keys.onEnterPressed: PowerProfileService.toggleIdleInhibitor()
+        Keys.onSpacePressed: PowerProfileService.toggleIdleInhibitor()
 
         MouseArea {
             anchors.fill: parent
@@ -88,8 +96,12 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 34
                 color: SessionService.pendingAction === modelData ? Theme.lineDim : "transparent"
-                border.color: SessionService.pendingAction === modelData ? Theme.line : Theme.lineDim
+                border.color: SessionService.pendingAction === modelData || activeFocus ? Theme.line : Theme.lineDim
                 border.width: Theme.lineWidth
+                activeFocusOnTab: true
+                Keys.onReturnPressed: SessionService.confirm(modelData)
+                Keys.onEnterPressed: SessionService.confirm(modelData)
+                Keys.onSpacePressed: SessionService.confirm(modelData)
 
                 MouseArea {
                     anchors.fill: parent
@@ -179,9 +191,13 @@ ColumnLayout {
                 Layout.preferredWidth: 78
                 Layout.preferredHeight: 26
                 color: copyArea.containsMouse ? Theme.lineDim : "transparent"
-                border.color: KeybindService.recordedCombo.length > 0 ? Theme.line : Theme.lineDim
+                border.color: KeybindService.recordedCombo.length > 0 || activeFocus ? Theme.line : Theme.lineDim
                 border.width: Theme.lineWidth
                 opacity: KeybindService.recordedCombo.length > 0 ? 1 : 0.45
+                activeFocusOnTab: KeybindService.recordedCombo.length > 0
+                Keys.onReturnPressed: KeybindService.copyBindTemplate()
+                Keys.onEnterPressed: KeybindService.copyBindTemplate()
+                Keys.onSpacePressed: KeybindService.copyBindTemplate()
 
                 MouseArea {
                     id: copyArea
@@ -258,8 +274,12 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 30
                 color: emojiArea.containsMouse ? Theme.lineDim : "transparent"
-                border.color: emojiArea.containsMouse ? Theme.line : Theme.lineDim
+                border.color: emojiArea.containsMouse || activeFocus ? Theme.line : Theme.lineDim
                 border.width: Theme.lineWidth
+                activeFocusOnTab: true
+                Keys.onReturnPressed: EmojiService.copy(modelData.glyph)
+                Keys.onEnterPressed: EmojiService.copy(modelData.glyph)
+                Keys.onSpacePressed: EmojiService.copy(modelData.glyph)
 
                 MouseArea {
                     id: emojiArea
@@ -374,8 +394,12 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 24
             color: "transparent"
-            border.color: Theme.lineDim
+            border.color: activeFocus ? Theme.line : Theme.lineDim
             border.width: Theme.lineWidth
+            activeFocusOnTab: true
+            Keys.onReturnPressed: ClipboardService.refresh()
+            Keys.onEnterPressed: ClipboardService.refresh()
+            Keys.onSpacePressed: ClipboardService.refresh()
 
             MouseArea {
                 anchors.fill: parent
@@ -394,8 +418,12 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 24
             color: "transparent"
-            border.color: Theme.lineDim
+            border.color: activeFocus ? Theme.line : Theme.lineDim
             border.width: Theme.lineWidth
+            activeFocusOnTab: true
+            Keys.onReturnPressed: ClipboardService.clear()
+            Keys.onEnterPressed: ClipboardService.clear()
+            Keys.onSpacePressed: ClipboardService.clear()
 
             MouseArea {
                 anchors.fill: parent
@@ -420,8 +448,12 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 30
             color: clipArea.containsMouse ? Theme.panelSoft : "transparent"
-            border.color: Theme.lineDim
+            border.color: activeFocus ? Theme.line : Theme.lineDim
             border.width: Theme.lineWidth
+            activeFocusOnTab: true
+            Keys.onReturnPressed: ClipboardService.copy(modelData.text)
+            Keys.onEnterPressed: ClipboardService.copy(modelData.text)
+            Keys.onSpacePressed: ClipboardService.copy(modelData.text)
 
             MouseArea {
                 id: clipArea
@@ -509,8 +541,12 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 28
             color: resultArea.containsMouse ? Theme.panelSoft : "transparent"
-            border.color: modelData.type === "action" ? Theme.line : Theme.lineDim
+            border.color: activeFocus || modelData.type === "action" ? Theme.line : Theme.lineDim
             border.width: Theme.lineWidth
+            activeFocusOnTab: true
+            Keys.onReturnPressed: LauncherService.launch(modelData)
+            Keys.onEnterPressed: LauncherService.launch(modelData)
+            Keys.onSpacePressed: LauncherService.launch(modelData)
 
             MouseArea {
                 id: resultArea

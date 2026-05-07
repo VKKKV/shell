@@ -8,9 +8,13 @@ Rectangle {
 
     implicitWidth: 86
     implicitHeight: 28
-    color: closeArea.containsMouse ? Theme.lineDim : "#33000000"
-    border.color: closeArea.containsMouse ? Theme.line : Theme.border
+    activeFocusOnTab: true
+    color: closeArea.containsMouse || activeFocus ? Theme.lineDim : "#33000000"
+    border.color: closeArea.containsMouse || activeFocus ? Theme.line : Theme.border
     border.width: Theme.lineWidth
+    Keys.onReturnPressed: closeRequested()
+    Keys.onEnterPressed: closeRequested()
+    Keys.onSpacePressed: closeRequested()
 
     MouseArea {
         id: closeArea
@@ -24,7 +28,7 @@ Rectangle {
     TacticalLabel {
         anchors.centerIn: parent
         text: "CLOSE"
-        accent: closeArea.containsMouse
+        accent: closeArea.containsMouse || root.activeFocus
         size: Theme.fontTiny
     }
 }

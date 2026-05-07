@@ -12,7 +12,11 @@ RowLayout {
     signal toggled(bool checked)
 
     Layout.fillWidth: true
+    activeFocusOnTab: true
     spacing: 10
+    Keys.onReturnPressed: toggled(!checked)
+    Keys.onEnterPressed: toggled(!checked)
+    Keys.onSpacePressed: toggled(!checked)
 
     TacticalLabel {
         Layout.fillWidth: true
@@ -24,7 +28,7 @@ RowLayout {
         width: 42
         height: 20
         color: root.checked ? Theme.panelSoft : "transparent"
-        border.color: root.checked ? Theme.line : Theme.lineDim
+        border.color: root.checked || root.activeFocus ? Theme.line : Theme.lineDim
         border.width: Theme.lineWidth
 
         Rectangle {

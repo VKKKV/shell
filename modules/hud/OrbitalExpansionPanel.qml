@@ -854,9 +854,13 @@ Item {
                         required property var modelData
                         Layout.fillWidth: true
                         Layout.preferredHeight: Theme.densityControlHeight
-                        color: btnArea.containsMouse ? Theme.lineDim : "transparent"
-                        border.color: modelData.color
+                        color: btnArea.containsMouse || activeFocus ? Theme.lineDim : "transparent"
+                        border.color: activeFocus ? Theme.line : modelData.color
                         border.width: Theme.lineWidth
+                        activeFocusOnTab: true
+                        Keys.onReturnPressed: modelData.action()
+                        Keys.onEnterPressed: modelData.action()
+                        Keys.onSpacePressed: modelData.action()
 
                         MouseArea {
                             id: btnArea
@@ -869,7 +873,7 @@ Item {
                         TacticalLabel {
                             anchors.centerIn: parent
                             text: parent.modelData.label
-                            accent: btnArea.containsMouse
+                            accent: btnArea.containsMouse || parent.activeFocus
                             size: Theme.fontTiny
                         }
                     }
@@ -987,8 +991,12 @@ Item {
         width: 24
         height: 18
         color: "transparent"
-        border.color: Theme.lineDim
+        border.color: activeFocus ? Theme.line : Theme.lineDim
         border.width: Theme.lineWidth
+        activeFocusOnTab: selectedPlanetIndex > 0
+        Keys.onReturnPressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
+        Keys.onEnterPressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
+        Keys.onSpacePressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
 
         TacticalLabel {
             anchors.centerIn: parent
@@ -1013,8 +1021,12 @@ Item {
         width: 24
         height: 18
         color: "transparent"
-        border.color: Theme.lineDim
+        border.color: activeFocus ? Theme.line : Theme.lineDim
         border.width: Theme.lineWidth
+        activeFocusOnTab: selectedPlanetIndex < 7
+        Keys.onReturnPressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
+        Keys.onEnterPressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
+        Keys.onSpacePressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
 
         TacticalLabel {
             anchors.centerIn: parent
