@@ -16,6 +16,7 @@ Quality is measured by runtime cleanliness, small vertical slices, clear service
 - Do not put polling/parsing logic directly in `modules/hud/` unless it is an explicitly temporary spike.
 - Do not scatter core colors, line widths, spacing, or typography outside `theme/Theme.qml`.
 - Do not add plugin registries, dynamic widget ordering, or large abstractions before multiple first-party features prove the need.
+- Do not leave repeated control rows copy-pasted across a settings surface when they share the same layout and behavior; extract a small presentation component instead.
 - Do not copy large blocks or visual language directly from reference shells.
 - Do not let fallback failures render blank panels or raw command errors as normal UI.
 - Do not grow `HudLayout.qml` with unrelated feature internals; extract a module or command-center column.

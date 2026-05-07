@@ -30,6 +30,7 @@ Examples:
 - `Sparkline.qml`
 - `ToggleRow.qml`
 - `AnalogOrbitClock.qml`
+- `AdjustmentRow.qml`
 - `CentralPanelChrome.qml`
 
 Good component traits:
@@ -40,6 +41,7 @@ Good component traits:
 - reusable across multiple modules
 - uses `Theme.qml` for repeated colors/sizes
 - exposes signals for user intent, such as `activated()`, rather than directly owning cross-surface state
+- is a good fit for repeated local control patterns, such as paired decrement/increment buttons with simple labels and no service logic
 
 ### Modules
 

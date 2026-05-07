@@ -113,6 +113,7 @@ Add new features as vertical slices, not as registries or broad rewrites.
 - `services/WeatherService.qml` plus `modules/hud/CommandCenterOverviewColumn.qml`: service-backed data appears in a composed command-center surface.
 - `modules/hud/SettingsPanel.qml` plus `CommandCenterPanel.qml`: thin overlay wrapper around a larger product panel.
 - `components/MetricBlock.qml`: reusable display primitive fed by already-shaped rows.
+- `components/AdjustmentRow.qml`: reusable paired control row used by settings surfaces for repeated +/- adjustments.
 - `services/ExpansionService.qml` plus `modules/hud/OrbitalExpansionPanel.qml`: edge-panel click targets deploy central safe-area surfaces.
 - `modules/hud/PowerExpansionPanel.qml`: right-panel power source drill-down reuses battery and power-profile services through the shared central expansion path.
 - `modules/hud/MediaExpansionPanel.qml`: left-panel telemetry drill-down reuses media/audio services and local lyric lookup through the shared central expansion path.
