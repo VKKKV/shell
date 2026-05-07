@@ -1,0 +1,5 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "QML performance and service boundary rules"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Shared state and service ownership rules"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Avoid duplicate orbit sampling logic"}

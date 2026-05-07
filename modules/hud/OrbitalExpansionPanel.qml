@@ -47,7 +47,7 @@ Item {
     property bool dragActive: false
     property int selectedPlanetIndex: 2
     property real selectedPulsePhase: 0
-    readonly property int orbitSampleCount: dragActive ? 42 : 96
+    readonly property int orbitSampleCount: dragActive ? 12 : 96
     property var cachedOrbitPaths: []
     property var cachedPlanetStates: []
     property var cachedTrailStates: []
