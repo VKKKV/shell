@@ -1602,3 +1602,27 @@ Implementation notes:
 
 - Added `selectedPlanetData`, `selectedPlanetState`, and `earthState` readonly properties in `OrbitalExpansionPanel.qml`.
 - Reused the cached earth/selected state in the compact ephemeris and detail-pane calculations instead of rebuilding those states multiple times.
+
+### Next Refinement: Orbital Zoom Button Controls
+
+Plan source: continue orbital viewport usability after smooth zoom and zoom status readouts.
+
+Requirements:
+
+- Add bounded zoom-out and zoom-in buttons to the orbital detail pane.
+- Reuse the existing smooth `zoomLevel` behavior and min/max zoom bounds.
+- Keep wheel/trackpad zoom, reset/top/edge controls, and drag rotation unchanged.
+- Add fixed tooltip hints and keyboard activation for the new controls.
+
+Acceptance Criteria:
+
+- [x] Clicking zoom-out decreases zoom within bounds.
+- [x] Clicking zoom-in increases zoom within bounds.
+- [x] Buttons are keyboard-focusable and activate with Enter/Return/Space.
+- [x] Hovering buttons updates the fixed bottom hint line.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- Added `adjustZoom()` helper that clamps button zoom to the existing min/max range.
+- Added `ZOOM-` and `ZOOM+` controls to the orbital detail pane with keyboard activation and fixed tooltip hints.

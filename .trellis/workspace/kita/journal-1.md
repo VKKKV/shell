@@ -875,6 +875,15 @@
 - Preserved visual output, cached orbit paths, smooth zoom, drag rotation, and expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Zoom Button Controls
+
+- Continued orbital viewport usability after smooth zoom and zoom status readouts.
+- Added a bounded `adjustZoom()` helper in `OrbitalExpansionPanel.qml`.
+- Added `ZOOM-` and `ZOOM+` controls to the detail pane, reusing the existing smooth `zoomLevel` animation and min/max bounds.
+- Added keyboard activation and fixed tooltip hints for both zoom buttons.
+- Preserved wheel/trackpad zoom, reset/top/edge controls, drag rotation, and expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

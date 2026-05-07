@@ -315,6 +315,10 @@ Item {
         zoomLevel = 1;
     }
 
+    function adjustZoom(factor: real): void {
+        zoomLevel = clamp(zoomLevel * factor, minZoomLevel, maxZoomLevel);
+    }
+
     function setTopDownView(): void {
         yawDeg = 0;
         pitchDeg = 90;
@@ -949,6 +953,48 @@ Item {
                 dim: root.zoomLevel > root.minZoomLevel * 1.08 && root.zoomLevel < root.maxZoomLevel * 0.92
                 size: Theme.fontTiny
                 elide: Text.ElideRight
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 6
+
+                Repeater {
+                    model: [
+                        { label: "ZOOM-", factor: 0.78, tooltip: "Smoothly zoom the orbital map outward within the configured bounds." },
+                        { label: "ZOOM+", factor: 1.28, tooltip: "Smoothly zoom the orbital map inward within the configured bounds." }
+                    ]
+
+                    Rectangle {
+                        required property var modelData
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: Theme.densityControlHeight
+                        color: zoomButtonArea.containsMouse || activeFocus ? Theme.lineDim : "transparent"
+                        border.color: activeFocus ? Theme.line : Theme.lineDim
+                        border.width: Theme.lineWidth
+                        activeFocusOnTab: true
+                        Keys.onReturnPressed: root.adjustZoom(modelData.factor)
+                        Keys.onEnterPressed: root.adjustZoom(modelData.factor)
+                        Keys.onSpacePressed: root.adjustZoom(modelData.factor)
+
+                        MouseArea {
+                            id: zoomButtonArea
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onClicked: root.adjustZoom(parent.modelData.factor)
+                            onEntered: TooltipService.show("ORBIT " + parent.modelData.label, parent.modelData.tooltip, "orbit-" + parent.modelData.label)
+                            onExited: TooltipService.clear("orbit-" + parent.modelData.label)
+                        }
+
+                        TacticalLabel {
+                            anchors.centerIn: parent
+                            text: parent.modelData.label
+                            accent: zoomButtonArea.containsMouse || parent.activeFocus
+                            size: Theme.fontTiny
+                        }
+                    }
+                }
             }
 
             TacticalLabel {
