@@ -36,6 +36,8 @@ Item {
     property var cachedOrbitPaths: []
     readonly property real minZoomLevel: 0.42
     readonly property real maxZoomLevel: 4.2
+    readonly property real centuryDays: 36525
+    // Gaussian gravitational constant squared in AU^3/day^2. Used as the solar GM for visual ephemeris mean motion.
     readonly property real gmSun: 2.959122082855911e-4
 
     readonly property var planetColors: [
@@ -50,29 +52,29 @@ Item {
 
     readonly property var planets: [
         {
-            name: "MERCURY", code: "ME", a: 0.387099, e: 0.205630, i: 7.00487,
-            node: 48.33167, peri: 77.45612, meanLongitude: 252.25084, size: 5
+            name: "MERCURY", code: "ME", a: 0.38709927, da: 0.00000037, e: 0.20563593, de: 0.00001906, i: 7.00497902, di: -0.00594749,
+            node: 48.33076593, dnode: -0.12534081, peri: 77.45779628, dperi: 0.16047689, meanLongitude: 252.25032350, dmeanLongitude: 149472.67411175, size: 5, mag0: -0.6
         }, {
-            name: "VENUS", code: "VE", a: 0.723336, e: 0.006773, i: 3.39471,
-            node: 76.68069, peri: 131.60247, meanLongitude: 181.97973, size: 7
+            name: "VENUS", code: "VE", a: 0.72333566, da: 0.00000390, e: 0.00677672, de: -0.00004107, i: 3.39467605, di: -0.00078890,
+            node: 76.67984255, dnode: -0.27769418, peri: 131.60246718, dperi: 0.00268329, meanLongitude: 181.97909950, dmeanLongitude: 58517.81538729, size: 7, mag0: -4.4
         }, {
-            name: "EARTH", code: "EA", a: 1.000002, e: 0.016711, i: 0.00005,
-            node: 0.0, peri: 102.93768, meanLongitude: 100.46435, size: 8
+            name: "EARTH", code: "EA", a: 1.00000261, da: 0.00000562, e: 0.01671123, de: -0.00004392, i: -0.00001531, di: -0.01294668,
+            node: 0.0, dnode: 0.0, peri: 102.93768193, dperi: 0.32327364, meanLongitude: 100.46457166, dmeanLongitude: 35999.37244981, size: 8, mag0: -3.9
         }, {
-            name: "MARS", code: "MA", a: 1.523710, e: 0.093394, i: 1.84969,
-            node: 49.55809, peri: 336.05957, meanLongitude: 355.47252, size: 6
+            name: "MARS", code: "MA", a: 1.52371034, da: 0.00001847, e: 0.09339410, de: 0.00007882, i: 1.84969142, di: -0.00813131,
+            node: 49.55953891, dnode: -0.29257343, peri: 336.04084, dperi: 0.44390166, meanLongitude: 355.44691, dmeanLongitude: 19140.30268499, size: 6, mag0: -1.5
         }, {
-            name: "JUPITER", code: "JU", a: 5.202887, e: 0.048386, i: 1.30440,
-            node: 100.47391, peri: 14.33178, meanLongitude: 34.33480, size: 13
+            name: "JUPITER", code: "JU", a: 5.20288700, da: -0.00011607, e: 0.04838624, de: -0.00013253, i: 1.30439695, di: -0.00183714,
+            node: 100.47390909, dnode: 0.20469106, peri: 14.72847983, dperi: 0.21252668, meanLongitude: 34.39644051, dmeanLongitude: 3034.74612775, size: 13, mag0: -9.4
         }, {
-            name: "SATURN", code: "SA", a: 9.536676, e: 0.053862, i: 2.48599,
-            node: 113.66242, peri: 93.05727, meanLongitude: 49.94415, size: 12
+            name: "SATURN", code: "SA", a: 9.53667594, da: -0.00125060, e: 0.05386179, de: -0.00050991, i: 2.48599187, di: 0.00193609,
+            node: 113.66242448, dnode: -0.28867794, peri: 92.59887831, dperi: -0.41897216, meanLongitude: 49.95424423, dmeanLongitude: 1222.49362201, size: 12, mag0: -8.9
         }, {
-            name: "URANUS", code: "UR", a: 19.18916, e: 0.047257, i: 0.77264,
-            node: 74.01693, peri: 173.00529, meanLongitude: 313.23218, size: 10
+            name: "URANUS", code: "UR", a: 19.18916464, da: -0.00196176, e: 0.04725744, de: -0.00004397, i: 0.77263783, di: -0.00242939,
+            node: 74.01692503, dnode: 0.04240589, peri: 170.95427630, dperi: 0.40805281, meanLongitude: 313.23810451, dmeanLongitude: 428.48202785, size: 10, mag0: -7.1
         }, {
-            name: "NEPTUNE", code: "NE", a: 30.06992, e: 0.008590, i: 1.76817,
-            node: 131.78421, peri: 48.12369, meanLongitude: 304.88003, size: 10
+            name: "NEPTUNE", code: "NE", a: 30.06992276, da: 0.00026291, e: 0.00859048, de: 0.00005105, i: 1.77004347, di: 0.00035372,
+            node: 131.78422574, dnode: -0.00508664, peri: 44.96476227, dperi: -0.32241464, meanLongitude: 304.87997031, dmeanLongitude: 218.45945325, size: 10, mag0: -6.9
         }
     ]
 
@@ -93,12 +95,31 @@ Item {
         return value * 180 / Math.PI;
     }
 
-    function planetA(p: var): real { return typeof p.a === "number" && p.a > 0 ? p.a : 1; }
-    function planetE(p: var): real { return clamp(typeof p.e === "number" ? p.e : 0, 0, 0.4); }
-    function planetI(p: var): real { return typeof p.i === "number" ? p.i : 0; }
-    function planetNode(p: var): real { return typeof p.node === "number" ? p.node : 0; }
-    function planetPeri(p: var): real { return typeof p.peri === "number" ? p.peri : 0; }
-    function planetMeanLongitude(p: var): real { return typeof p.meanLongitude === "number" ? p.meanLongitude : 0; }
+    function elementValue(p: var, baseName: string, rateName: string, centuries: real): real {
+        const base = typeof p[baseName] === "number" ? p[baseName] : 0;
+        const rate = typeof p[rateName] === "number" ? p[rateName] : 0;
+        return base + rate * centuries;
+    }
+
+    function elementsFor(p: var, dayOffset: real): var {
+        const centuries = dayOffset / centuryDays;
+        const a = Math.max(0.0001, elementValue(p, "a", "da", centuries));
+        const e = clamp(elementValue(p, "e", "de", centuries), 0, 0.4);
+        const inc = elementValue(p, "i", "di", centuries);
+        const node = wrap360(elementValue(p, "node", "dnode", centuries));
+        const peri = wrap360(elementValue(p, "peri", "dperi", centuries));
+        const meanLongitude = wrap360(elementValue(p, "meanLongitude", "dmeanLongitude", centuries));
+        const m0 = wrap360(meanLongitude - peri);
+        const n = meanMotion(a);
+        return { a, e, i: inc, node, peri, meanLongitude, m0, n, centuries };
+    }
+
+    function planetA(p: var): real { return elementsFor(p, daysSinceEpoch).a; }
+    function planetE(p: var): real { return elementsFor(p, daysSinceEpoch).e; }
+    function planetI(p: var): real { return elementsFor(p, daysSinceEpoch).i; }
+    function planetNode(p: var): real { return elementsFor(p, daysSinceEpoch).node; }
+    function planetPeri(p: var): real { return elementsFor(p, daysSinceEpoch).peri; }
+    function planetMeanLongitude(p: var): real { return elementsFor(p, daysSinceEpoch).meanLongitude; }
     function planetSize(p: var): real { return typeof p.size === "number" && p.size > 0 ? p.size : 7; }
 
     function meanMotion(a: real): real {
@@ -106,9 +127,8 @@ Item {
     }
 
     function meanAnomaly(p: var, dayOffset: real): real {
-        const n = meanMotion(planetA(p));
-        const m0 = planetMeanLongitude(p) - planetPeri(p);
-        return wrap360(m0 + n * dayOffset);
+        const el = elementsFor(p, dayOffset);
+        return wrap360(el.m0);
     }
 
     function solveKepler(meanAnomalyDeg: real, e: real): real {
@@ -124,12 +144,13 @@ Item {
     }
 
     function orbitalState(p: var, dayOffset: real): var {
-        const a = planetA(p);
-        const e = planetE(p);
-        const inc = degToRad(planetI(p));
-        const node = degToRad(planetNode(p));
-        const peri = degToRad(planetPeri(p));
-        const M = meanAnomaly(p, dayOffset);
+        const el = elementsFor(p, dayOffset);
+        const a = el.a;
+        const e = el.e;
+        const inc = degToRad(el.i);
+        const node = degToRad(el.node);
+        const peri = degToRad(el.peri);
+        const M = el.m0;
         const E = solveKepler(M, e);
         const cosE = Math.cos(E);
         const sinE = Math.sin(E);
@@ -158,7 +179,8 @@ Item {
             eclLon, eclLat,
             trueAnomaly: wrap360(radToDeg(nu)),
             meanAnomaly: wrap360(M),
-            eccentricAnomaly: wrap360(radToDeg(E))
+            eccentricAnomaly: wrap360(radToDeg(E)),
+            elements: el
         };
     }
 
@@ -167,9 +189,9 @@ Item {
     }
 
     function phaseAngle(planetXYZ: var, earthXYZ: var): real {
-        const dx = planetXYZ.x - earthXYZ.x;
-        const dy = planetXYZ.y - earthXYZ.y;
-        const dz = planetXYZ.z - earthXYZ.z;
+        const dx = earthXYZ.x - planetXYZ.x;
+        const dy = earthXYZ.y - planetXYZ.y;
+        const dz = earthXYZ.z - planetXYZ.z;
         const distEarth = Math.sqrt(dx * dx + dy * dy + dz * dz);
         if (distEarth < 1e-9)
             return 0;
@@ -178,10 +200,15 @@ Item {
     }
 
     function apparentMagnitude(p: var, rHelio: real, distEarth: real, phaseDeg: real): real {
-        const absMag = p.code === "ME" ? -0.6 : (p.code === "VE" ? -4.4 : (p.code === "MA" ? -1.5 : (p.code === "JU" ? -9.4 : (p.code === "SA" ? -8.9 : (p.code === "UR" ? -7.1 : (p.code === "NE" ? -6.9 : -3.9))))));
-        const phaseRad = degToRad(phaseDeg);
-        const phaseTerm = phaseDeg < 90 ? 0.013 * phaseDeg : 0.013 * (180 - phaseDeg);
-        return absMag + 5 * Math.log10(rHelio * distEarth) + phaseTerm;
+        const absMag = typeof p.mag0 === "number" ? p.mag0 : -3.9;
+        const safeDistance = Math.max(0.0001, distEarth);
+        const phaseTerm = Math.max(0, phaseDeg) * 0.013;
+        return absMag + 5 * Math.log10(Math.max(0.0001, rHelio * safeDistance)) + phaseTerm;
+    }
+
+    function earthDistanceFor(state: var): real {
+        const earthState = orbitalState(planets[2], daysSinceEpoch);
+        return Math.sqrt((state.x - earthState.x) ** 2 + (state.y - earthState.y) ** 2 + (state.z - earthState.z) ** 2);
     }
 
     function stateFor(p: var): var {
@@ -213,9 +240,10 @@ Item {
         const s = stateFor(p);
         const code = p.code;
         const r = s.r.toFixed(3);
+        const d = earthDistanceFor(s).toFixed(3);
         const lon = s.eclLon.toFixed(1);
         const lat = s.eclLat.toFixed(1);
-        return code + " r" + r + " λ" + lon + "° β" + lat + "°";
+        return code + " r" + r + " d" + d + " λ" + lon + "° β" + lat + "°";
     }
 
     function planetDetailLine(p: var): string {
@@ -225,9 +253,10 @@ Item {
 
     function buildOrbitPath(p: var, samples: int): var {
         const path = [];
-        const periodDays = 2 * Math.PI / (meanMotion(planetA(p)) * Math.PI / 180);
+        const el = elementsFor(p, daysSinceEpoch);
+        const periodDays = 360 / el.n;
         for (let sample = 0; sample <= samples; sample++)
-            path.push(orbitalState(p, sample * periodDays / samples));
+            path.push(orbitalState(p, daysSinceEpoch + sample * periodDays / samples));
         return path;
     }
 
@@ -436,7 +465,8 @@ Item {
                 const isSelected = p === root.selectedPlanetIndex;
 
                 if (isSelected) {
-                    ctx.globalAlpha = 0.22 + (scr.depth >= 0 ? 0.12 : 0.04) + 0.1 * Math.sin(Date.now() / 600);
+                    const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 520);
+                    ctx.globalAlpha = 0.20 + (scr.depth >= 0 ? 0.12 : 0.04) + 0.14 * pulse;
                     ctx.strokeStyle = accent;
                     ctx.lineWidth = 1.2;
                     ctx.setLineDash([6, 3]);
@@ -444,6 +474,12 @@ Item {
                     ctx.arc(scr.x, scr.y, nodeSize + 22, 0, Math.PI * 2);
                     ctx.stroke();
                     ctx.setLineDash([]);
+
+                    ctx.globalAlpha = 0.18 + 0.12 * pulse;
+                    ctx.beginPath();
+                    ctx.arc(scr.x, scr.y, nodeSize + 30, Math.PI * 0.12, Math.PI * 0.46);
+                    ctx.arc(scr.x, scr.y, nodeSize + 30, Math.PI * 1.12, Math.PI * 1.46);
+                    ctx.stroke();
 
                     ctx.globalAlpha = 0.35;
                     for (let r = 0; r < 4; r++) {
@@ -705,7 +741,7 @@ Item {
         anchors.margins: 10
         anchors.topMargin: 42
         anchors.bottomMargin: 140
-        width: Math.min(parent.width * 0.28, 280)
+        width: Math.min(parent.width * 0.32, 340)
         color: "#1a000000"
         border.color: Theme.lineDim
         border.width: Theme.lineWidth
@@ -735,16 +771,16 @@ Item {
 
             Repeater {
                 model: {
-                    const p = root.selectedPlanet();
-                    const m0 = p.meanLongitude - p.peri;
+                    const s = root.selectedState();
+                    const el = s.elements;
                     return [
-                        ["a", p.a.toFixed(6) + " AU"],
-                        ["e", p.e.toFixed(6)],
-                        ["i", p.i.toFixed(4) + "\u00b0"],
-                        ["\u03a9", p.node.toFixed(4) + "\u00b0"],
-                        ["\u03d6", p.peri.toFixed(4) + "\u00b0"],
-                        ["L\u2080", p.meanLongitude.toFixed(4) + "\u00b0"],
-                        ["M\u2080", wrap360(m0).toFixed(4) + "\u00b0"]
+                        ["a", el.a.toFixed(6) + " AU"],
+                        ["e", el.e.toFixed(6)],
+                        ["i", el.i.toFixed(4) + "\u00b0"],
+                        ["\u03a9", el.node.toFixed(4) + "\u00b0"],
+                        ["\u03d6", el.peri.toFixed(4) + "\u00b0"],
+                        ["L", el.meanLongitude.toFixed(4) + "\u00b0"],
+                        ["M", el.m0.toFixed(4) + "\u00b0"]
                     ]
                 }
 
@@ -784,17 +820,21 @@ Item {
                 model: {
                     const p = root.selectedPlanet();
                     const s = root.selectedState();
+                    const el = s.elements;
                     const earthState = root.orbitalState(root.planets[2], root.daysSinceEpoch);
                     const distEarth = Math.sqrt((s.x - earthState.x) ** 2 + (s.y - earthState.y) ** 2 + (s.z - earthState.z) ** 2);
                     const phase = root.phaseAngle(s, earthState);
                     const mag = root.apparentMagnitude(p, s.r, distEarth, phase);
                     const zIdx = root.zodiacIndex(s.eclLon);
                     return [
+                        ["JD", root.jd.toFixed(4)],
                         ["r", s.r.toFixed(4) + " AU (heliocentric)"],
                         ["dist", distEarth.toFixed(4) + " AU (from Earth)"],
                         ["\u03bd", s.trueAnomaly.toFixed(2) + "\u00b0 (true anomaly)"],
+                        ["E", s.eccentricAnomaly.toFixed(2) + "\u00b0 (ecc anomaly)"],
                         ["\u03bb", s.eclLon.toFixed(3) + "\u00b0 (ecliptic lon)"],
                         ["\u03b2", s.eclLat.toFixed(4) + "\u00b0 (ecliptic lat)"],
+                        ["n", el.n.toFixed(6) + "\u00b0/day"],
                         ["phase", phase.toFixed(1) + "\u00b0"],
                         ["mag", mag.toFixed(2) + " (apparent)"],
                         ["const", root.zodiacSymbols[zIdx]]

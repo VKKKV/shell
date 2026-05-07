@@ -1319,6 +1319,8 @@ Decision status:
 
 User feedback captured 2026-05-07: update the development plan to optimize the planetary/orbital panel using the provided redesign summary. The current J2000 surface should be strengthened scientifically and visually rather than replaced with a network-backed astronomy dependency.
 
+Implemented 2026-05-07 as a focused local `OrbitalExpansionPanel.qml` pass.
+
 Requirements:
 
 - Improve scientific grounding of `OrbitalExpansionPanel.qml` while staying offline and deterministic.
@@ -1353,17 +1355,26 @@ Visual/cyber-machine scope:
 
 Acceptance Criteria:
 
-- [ ] Selected-planet detail readout exposes the full orbital element set and current derived state.
-- [ ] Phase angle, apparent magnitude, and zodiac sector are computed from local state rather than static labels.
-- [ ] Bottom ephemeris table is compact, color-coded, and readable at common central panel sizes.
-- [ ] Orbit paths, planet nodes, trails, and selection reticle use per-planet/cyberpunk visual language without regressing readability.
-- [ ] Cached orbit paths and scratch projection pattern remain in place; drag/zoom does not reintroduce obvious frame stalls.
-- [ ] Dead helper code is removed as part of the redesign cleanup.
-- [ ] Existing central expansion deployment, close behavior, and tooltip placement changes do not conflict.
-- [ ] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+- [x] Selected-planet detail readout exposes the full orbital element set and current derived state.
+- [x] Phase angle, apparent magnitude, and zodiac sector are computed from local state rather than static labels.
+- [x] Bottom ephemeris table is compact, color-coded, and readable at common central panel sizes.
+- [x] Orbit paths, planet nodes, trails, and selection reticle use per-planet/cyberpunk visual language without regressing readability.
+- [x] Cached orbit paths and scratch projection pattern remain in place; drag/zoom does not reintroduce obvious frame stalls.
+- [x] Dead helper code is removed as part of the redesign cleanup.
+- [x] Existing central expansion deployment, close behavior, and tooltip placement changes do not conflict.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
 
 Decision (ADR-lite):
 
 - Context: the J2000 orbital panel already moved beyond a flat top-down ASCII/2D surface, but user feedback calls for stronger scientific readouts, richer ephemeris information, and a more cyberpunk visual hierarchy.
 - Decision: plan a focused `OrbitalExpansionPanel.qml` redesign pass that improves approximate offline ephemeris calculation, readout density, and visual coding while preserving existing central expansion contracts.
 - Consequences: the orbital surface becomes more meaningful and visually distinct without adding network astronomy dependencies. The trade-off is more local mathematical/rendering complexity inside the panel; extract only if another astronomy surface reuses it.
+
+Implementation notes:
+
+- Planet rows now include approximate J2000 base elements plus secular rates and absolute magnitude metadata.
+- `elementsFor()` derives current approximate `a`, `e`, `i`, `Ω`, `ϖ`, `L`, `M`, and mean motion from the active Julian offset.
+- Orbit paths remain cached and sampled around the current epoch, while current planet nodes/readouts remain live from `Time.now`.
+- Phase angle now uses planet-to-Earth and planet-to-Sun vectors, and apparent magnitude uses local distance/phase approximations.
+- Detail readout includes JD, eccentric anomaly, mean motion, and widened panel space for dense scientific rows.
+- Selection reticle gained a stronger pulse/arc overlay while preserving the Canvas rendering path.

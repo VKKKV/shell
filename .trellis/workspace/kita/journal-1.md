@@ -783,6 +783,17 @@
 - Moved `HudTooltipBox` into `BottomStatusBar.qml` as a compact fixed hint bus and removed the standalone central tooltip region from `HudLayout.qml`, so the central safe area stays clear for windows and expansion panels.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Scientific Readout Pass
+
+- Continued from the planned orbital scientific/cyberpunk redesign slice.
+- Updated `OrbitalExpansionPanel.qml` planet rows with approximate J2000 base elements, secular rates, and absolute magnitude metadata.
+- Added `elementsFor()` so selected/current rows derive `a`, `e`, `i`, `Ω`, `ϖ`, `L`, `M`, and mean motion from the current Julian offset instead of showing only static base rows.
+- Kept orbit paths cached while sampling them around the current epoch; live planet positions/readouts still derive from `Time.now`.
+- Corrected phase-angle vector geometry and kept apparent magnitude local/offline from distance and phase approximation.
+- Expanded selected-planet state readouts with JD, eccentric anomaly, and mean motion, and widened the right detail panel for dense rows.
+- Strengthened selected-planet reticle pulse/arc styling without changing drag, zoom, right-click selection, reset/top/edge controls, close behavior, or central expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 
