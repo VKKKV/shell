@@ -802,6 +802,15 @@
 - Preserved cached orbit paths, Canvas rendering, drag/zoom/right-click selection, close behavior, and central expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Overlay Bounds Pass
+
+- Continued orbital readability work after widening the detail panel.
+- Added explicit map/overlay geometry properties in `OrbitalExpansionPanel.qml` so the orbital map reserves the actual right detail pane width instead of the old fixed side allowance.
+- Reused map bounds for map size, center, planet label clamp, zodiac label clamp, and axis label clamp so labels avoid the detail/ephemeris overlays more consistently.
+- Reused shared `detailWidth` and `ephemerisWidth` for overlay panels to avoid mismatched geometry constants.
+- Preserved cached orbit paths, Canvas rendering, selected-planet controls, close behavior, and central expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

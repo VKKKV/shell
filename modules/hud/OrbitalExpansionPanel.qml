@@ -11,9 +11,18 @@ Item {
     readonly property date epochJ2000: new Date(Date.UTC(2000, 0, 1, 12, 0, 0))
     readonly property real daysSinceEpoch: (Time.now.getTime() - epochJ2000.getTime()) / dayMs
     readonly property real jd: 2451545.0 + daysSinceEpoch
-    readonly property real mapSize: Math.max(220, Math.min(width - 230, height - 96))
-    readonly property real mapCenterX: width * 0.46
-    readonly property real mapCenterY: height * 0.52
+    readonly property real overlayMargin: 10
+    readonly property real detailWidth: Math.min(width * 0.32, 340)
+    readonly property real ephemerisWidth: Math.min(width * 0.52, 500)
+    readonly property real mapLeftBound: overlayMargin + 8
+    readonly property real mapRightBound: Math.max(mapLeftBound + 260, width - detailWidth - overlayMargin * 3)
+    readonly property real mapTopBound: 42
+    readonly property real mapBottomBound: Math.max(mapTopBound + 220, height - 152)
+    readonly property real mapAvailableWidth: Math.max(260, mapRightBound - mapLeftBound)
+    readonly property real mapAvailableHeight: Math.max(220, mapBottomBound - mapTopBound)
+    readonly property real mapSize: Math.max(220, Math.min(mapAvailableWidth, mapAvailableHeight))
+    readonly property real mapCenterX: mapLeftBound + mapAvailableWidth * 0.52
+    readonly property real mapCenterY: mapTopBound + mapAvailableHeight * 0.52
     readonly property real yawRad: degToRad(yawDeg)
     readonly property real pitchRad: degToRad(pitchDeg)
     readonly property real cosYaw: Math.cos(yawRad)
@@ -264,11 +273,11 @@ Item {
 
     function pinLabelX(proj: var, labelW: real): real {
         const pref = proj.depth >= 0 ? proj.x + 14 : proj.x - labelW - 14;
-        return Math.min(width - labelW - 10, Math.max(10, pref));
+        return Math.min(mapRightBound - labelW - 10, Math.max(mapLeftBound + 4, pref));
     }
 
     function pinLabelY(proj: var, labelH: real): real {
-        return Math.min(height - labelH - 72, Math.max(42, proj.y - labelH / 2));
+        return Math.min(mapBottomBound - labelH, Math.max(mapTopBound, proj.y - labelH / 2));
     }
 
     function requestScenePaint(): void { orbitCanvas.requestPaint(); }
@@ -394,7 +403,9 @@ Item {
             for (let z = 0; z < 12; z++) {
                 const angle = z * Math.PI / 6 - Math.PI / 2;
                 const lr = gridRadius + 16;
-                ctx.fillText(root.zodiacSymbols[z], cx + Math.cos(angle) * lr, cy + Math.sin(angle) * lr);
+                const labelX = root.clamp(cx + Math.cos(angle) * lr, root.mapLeftBound + 16, root.mapRightBound - 16);
+                const labelY = root.clamp(cy + Math.sin(angle) * lr, root.mapTopBound + 12, root.mapBottomBound - 12);
+                ctx.fillText(root.zodiacSymbols[z], labelX, labelY);
             }
 
             ctx.globalAlpha = 0.26;
@@ -411,8 +422,8 @@ Item {
             ctx.fillStyle = accent;
             ctx.font = Theme.fontTiny + "px " + Theme.fontFamily;
             ctx.textAlign = "left";
-            ctx.fillText("+X ♈", cx + gridRadius * 1.06 + 4, cy + 1);
-            ctx.fillText("+Y", cx - 4, cy - gridRadius * 1.06 - 8);
+            ctx.fillText("+X ♈", Math.min(root.mapRightBound - 42, cx + gridRadius * 1.06 + 4), cy + 1);
+            ctx.fillText("+Y", cx - 4, Math.max(root.mapTopBound + 8, cy - gridRadius * 1.06 - 8));
 
             for (let p = 0; p < root.planets.length; p++) {
                 const path = root.orbitPathFor(p);
@@ -667,7 +678,7 @@ Item {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.margins: 10
-        width: Math.min(parent.width * 0.52, 500)
+        width: root.ephemerisWidth
         height: Math.min(parent.height * 0.38, ephemerisColumn.implicitHeight + 18)
         color: "#1a000000"
         border.color: Theme.lineDim
@@ -730,7 +741,7 @@ Item {
         anchors.margins: 10
         anchors.topMargin: 42
         anchors.bottomMargin: 140
-        width: Math.min(parent.width * 0.32, 340)
+        width: root.detailWidth
         color: "#1a000000"
         border.color: Theme.lineDim
         border.width: Theme.lineWidth

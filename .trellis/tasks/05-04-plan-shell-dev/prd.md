@@ -1384,3 +1384,10 @@ Follow-up cleanup implemented 2026-05-07:
 - Removed leftover helper functions superseded by `elementsFor()`.
 - Added visible source/precision lines to the selected-planet detail pane, including the local GM constant and the visual-ephemeris limitation.
 - Preserved all routing, rendering, and interaction behavior.
+
+Follow-up layout/readability pass implemented 2026-05-07:
+
+- Made orbital map bounds account for the actual widened right detail pane instead of using the old fixed right-side allowance.
+- Reused explicit map bounds for map size, map center, planet label clamping, zodiac label clamping, and axis label clamping.
+- Reused shared `detailWidth` and `ephemerisWidth` geometry properties for overlay panels.
+- Preserved Canvas rendering, cached orbit paths, selected-planet controls, and expansion routing.
