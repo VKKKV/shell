@@ -16,4 +16,12 @@ pub fn build(b: *std.Build) void {
     });
 
     b.installArtifact(settings);
+
+    const settings_tests = b.addTest(.{
+        .root_module = settings_module,
+    });
+    const run_settings_tests = b.addRunArtifact(settings_tests);
+
+    const test_step = b.step("test", "Run Zig tests");
+    test_step.dependOn(&run_settings_tests.step);
 }

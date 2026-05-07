@@ -300,3 +300,90 @@ fn writeStderrAlloc(allocator: std.mem.Allocator, io: std.Io, comptime fmt: []co
     defer allocator.free(message);
     try writeStderr(io, message);
 }
+
+fn expectContains(haystack: []const u8, needle: []const u8) !void {
+    try std.testing.expect(std.mem.indexOf(u8, haystack, needle) != null);
+}
+
+test "normalizeSettings clamps visual and data ranges" {
+    const payload =
+        \\{
+        \\  "visual": {
+        \\    "intensity": 9.0,
+        \\    "fontScale": 0.1,
+        \\    "panelOpacity": 0.1,
+        \\    "scanlineStrength": 9.0,
+        \\    "borderOpacity": 0.1,
+        \\    "dimTextOpacity": 0.1,
+        \\    "lineContrast": 9.0
+        \\  },
+        \\  "data": { "updateIntervalMs": 5 }
+        \\}
+    ;
+
+    const normalized = try normalizeSettings(std.testing.allocator, payload);
+    defer std.testing.allocator.free(normalized);
+
+    try expectContains(normalized, "\"intensity\": 1.5");
+    try expectContains(normalized, "\"fontScale\": 0.85");
+    try expectContains(normalized, "\"panelOpacity\": 0.55");
+    try expectContains(normalized, "\"scanlineStrength\": 1.75");
+    try expectContains(normalized, "\"borderOpacity\": 0.35");
+    try expectContains(normalized, "\"dimTextOpacity\": 0.45");
+    try expectContains(normalized, "\"lineContrast\": 1.35");
+    try expectContains(normalized, "\"updateIntervalMs\": 1000");
+}
+
+test "normalizeSettings keeps valid enum and color values" {
+    const payload =
+        \\{
+        \\  "visual": {
+        \\    "density": "dense",
+        \\    "profile": "blue",
+        \\    "accentColor": "#12ABef",
+        \\    "backgroundMode": "radar"
+        \\  },
+        \\  "data": { "liveDataEnabled": false },
+        \\  "panels": { "leftVisible": false, "centerVisible": true, "rightVisible": false }
+        \\}
+    ;
+
+    const normalized = try normalizeSettings(std.testing.allocator, payload);
+    defer std.testing.allocator.free(normalized);
+
+    try expectContains(normalized, "\"density\": \"dense\"");
+    try expectContains(normalized, "\"profile\": \"blue\"");
+    try expectContains(normalized, "\"accentColor\": \"#12ABef\"");
+    try expectContains(normalized, "\"backgroundMode\": \"radar\"");
+    try expectContains(normalized, "\"liveDataEnabled\": false");
+    try expectContains(normalized, "\"leftVisible\": false");
+    try expectContains(normalized, "\"centerVisible\": true");
+    try expectContains(normalized, "\"rightVisible\": false");
+}
+
+test "normalizeSettings falls back for invalid enum and color values" {
+    const payload =
+        \\{
+        \\  "visual": {
+        \\    "density": "huge",
+        \\    "profile": "purple",
+        \\    "accentColor": "#BADHEX",
+        \\    "backgroundMode": "noise"
+        \\  },
+        \\  "data": { "updateIntervalMs": 999999 }
+        \\}
+    ;
+
+    const normalized = try normalizeSettings(std.testing.allocator, payload);
+    defer std.testing.allocator.free(normalized);
+
+    try expectContains(normalized, "\"density\": \"normal\"");
+    try expectContains(normalized, "\"profile\": \"amber\"");
+    try expectContains(normalized, "\"accentColor\": \"#F2C94C\"");
+    try expectContains(normalized, "\"backgroundMode\": \"void\"");
+    try expectContains(normalized, "\"updateIntervalMs\": 30000");
+}
+
+test "normalizeSettings rejects non-object root" {
+    try std.testing.expectError(error.InvalidSettingsJson, normalizeSettings(std.testing.allocator, "[]"));
+}

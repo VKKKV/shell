@@ -1150,6 +1150,8 @@ Decision (ADR-lite):
 
 Review source captured 2026-05-07: extensibility comments for Void Shell. These are medium/long-term planning items unless user prioritizes them.
 
+First implementation slice completed 2026-05-07: added Zig settings-helper validation tests and `zig build test` support.
+
 Requirements:
 
 - Revisit `CompositorService` after Niri validation; consider backend registration/delegation instead of repeated Hyprland/Niri ternaries before adding a third compositor.
@@ -1165,8 +1167,8 @@ Requirements:
 
 Acceptance Criteria:
 
-- [ ] Extensibility work is split into separate implementation tasks before coding, not mixed into bug-fix slices.
-- [ ] Any settings schema/migration change includes Zig validation tests.
+- [x] Extensibility work is split into separate implementation tasks before coding, not mixed into bug-fix slices.
+- [x] Any settings schema/migration change includes Zig validation tests.
 - [ ] Any compositor-backend extensibility change preserves Hyprland behavior and Niri fallback behavior.
 - [ ] Multi-monitor/plugin/lazy-loading work has explicit product requirements before implementation.
 

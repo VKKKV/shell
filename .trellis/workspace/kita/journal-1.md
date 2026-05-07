@@ -729,6 +729,13 @@
 - Staggered startup polling for system stats, battery, media, Niri, network detail, and clipboard services to avoid synchronized process spikes while preserving `SettingsService.liveDataEnabled` stop behavior and update interval restarts.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Settings Helper Tests
+
+- Continued the route into extensibility/test infrastructure with the most concrete low-risk test slice.
+- Added a `zig build test` step in `build.zig` for `src/settings/main.zig`.
+- Added settings normalization tests covering visual/data clamp bounds, valid enum/color preservation, invalid enum/color fallback, panel booleans, and non-object root rejection.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 
