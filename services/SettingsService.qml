@@ -185,106 +185,54 @@ Singleton {
         return decodeURIComponent(Qt.resolvedUrl("../zig-out/bin/void-shell-settings").toString().replace(/^file:\/\//, ""));
     }
 
+    function normalizeAndSave(current: var, normalized: var, setter: var): void {
+        if (normalized !== current) {
+            setter(normalized);
+            return;
+        }
+        scheduleSave();
+    }
+
     onScanlinesEnabledChanged: scheduleSave()
     onLiveDataEnabledChanged: scheduleSave()
     onLeftVisibleChanged: scheduleSave()
     onCenterVisibleChanged: scheduleSave()
     onRightVisibleChanged: scheduleSave()
     onThemeProfileChanged: {
-        const normalized = normalizeThemeProfile(themeProfile);
-        if (normalized !== themeProfile) {
-            themeProfile = normalized;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(themeProfile, normalizeThemeProfile(themeProfile), value => themeProfile = value);
     }
     onAccentColorChanged: {
-        const normalized = normalizeAccentColor(accentColor);
-        if (normalized !== accentColor) {
-            accentColor = normalized;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(accentColor, normalizeAccentColor(accentColor), value => accentColor = value);
     }
     onBackgroundModeChanged: {
-        const normalized = normalizeBackgroundMode(backgroundMode);
-        if (normalized !== backgroundMode) {
-            backgroundMode = normalized;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(backgroundMode, normalizeBackgroundMode(backgroundMode), value => backgroundMode = value);
     }
     onDensityChanged: {
-        const normalized = normalizeDensity(density);
-        if (normalized !== density) {
-            density = normalized;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(density, normalizeDensity(density), value => density = value);
     }
     onIntensityChanged: {
-        const clamped = clampIntensity(intensity);
-        if (clamped !== intensity) {
-            intensity = clamped;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(intensity, clampIntensity(intensity), value => intensity = value);
     }
     onFontScaleChanged: {
-        const clamped = clampFontScale(fontScale);
-        if (clamped !== fontScale) {
-            fontScale = clamped;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(fontScale, clampFontScale(fontScale), value => fontScale = value);
     }
     onPanelOpacityChanged: {
-        const clamped = clampPanelOpacity(panelOpacity);
-        if (clamped !== panelOpacity) {
-            panelOpacity = clamped;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(panelOpacity, clampPanelOpacity(panelOpacity), value => panelOpacity = value);
     }
     onScanlineStrengthChanged: {
-        const clamped = clampScanlineStrength(scanlineStrength);
-        if (clamped !== scanlineStrength) {
-            scanlineStrength = clamped;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(scanlineStrength, clampScanlineStrength(scanlineStrength), value => scanlineStrength = value);
     }
     onBorderOpacityChanged: {
-        const clamped = clampBorderOpacity(borderOpacity);
-        if (clamped !== borderOpacity) {
-            borderOpacity = clamped;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(borderOpacity, clampBorderOpacity(borderOpacity), value => borderOpacity = value);
     }
     onDimTextOpacityChanged: {
-        const clamped = clampDimTextOpacity(dimTextOpacity);
-        if (clamped !== dimTextOpacity) {
-            dimTextOpacity = clamped;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(dimTextOpacity, clampDimTextOpacity(dimTextOpacity), value => dimTextOpacity = value);
     }
     onLineContrastChanged: {
-        const clamped = clampLineContrast(lineContrast);
-        if (clamped !== lineContrast) {
-            lineContrast = clamped;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(lineContrast, clampLineContrast(lineContrast), value => lineContrast = value);
     }
     onUpdateIntervalMsChanged: {
-        const clamped = clampUpdateInterval(updateIntervalMs);
-        if (clamped !== updateIntervalMs) {
-            updateIntervalMs = clamped;
-            return;
-        }
-        scheduleSave();
+        normalizeAndSave(updateIntervalMs, clampUpdateInterval(updateIntervalMs), value => updateIntervalMs = value);
     }
 
     Component.onCompleted: helperProbeProcess.running = true

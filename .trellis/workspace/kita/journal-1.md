@@ -713,6 +713,13 @@
 - Updated `CalendarService` to build month rows and flattened month cells from one cached object instead of rebuilding rows twice per tick.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Settings Handler Refactor
+
+- Continued the code-review performance/duplication route with a focused `SettingsService` cleanup.
+- Added `normalizeAndSave()` to route repeated normalize/clamp-then-save handlers through one helper.
+- Replaced repeated handlers for theme profile, accent color, background mode, density, visual tuning values, and update interval while preserving existing clamping and save debounce behavior.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 
