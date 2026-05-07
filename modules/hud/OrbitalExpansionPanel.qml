@@ -3,6 +3,7 @@ import "../../services"
 import "../../theme"
 import QtQuick
 import QtQuick.Layouts
+import "OrbitalEphemeris.js" as Ephemeris
 
 Item {
     id: root
@@ -23,8 +24,8 @@ Item {
     readonly property real mapSize: Math.max(220, Math.min(mapAvailableWidth, mapAvailableHeight))
     readonly property real mapCenterX: mapLeftBound + mapAvailableWidth * 0.52
     readonly property real mapCenterY: mapTopBound + mapAvailableHeight * 0.52
-    readonly property real yawRad: degToRad(yawDeg)
-    readonly property real pitchRad: degToRad(pitchDeg)
+    readonly property real yawRad: Ephemeris.degToRad(yawDeg)
+    readonly property real pitchRad: Ephemeris.degToRad(pitchDeg)
     readonly property real cosYaw: Math.cos(yawRad)
     readonly property real sinYaw: Math.sin(yawRad)
     readonly property real cosPitch: Math.cos(pitchRad)
@@ -32,8 +33,8 @@ Item {
     readonly property real currentViewScale: mapSize * 0.44 * zoomLevel / 30.2
     readonly property int selectedPlanetId: Math.max(0, Math.min(7, selectedPlanetIndex))
     readonly property var selectedPlanetData: planets[selectedPlanetId]
-    readonly property var selectedPlanetState: orbitalState(selectedPlanetData, daysSinceEpoch)
-    readonly property var earthState: orbitalState(planets[2], daysSinceEpoch)
+    readonly property var selectedPlanetState: Ephemeris.orbitalState(selectedPlanetData, daysSinceEpoch)
+    readonly property var earthState: Ephemeris.orbitalState(planets[2], daysSinceEpoch)
     property real yawDeg: -34
     property real pitchDeg: 58
     property real zoomLevel: 1
@@ -49,9 +50,7 @@ Item {
     property var cachedOrbitPaths: []
     readonly property real minZoomLevel: 0.22
     readonly property real maxZoomLevel: 8.0
-    readonly property real centuryDays: 36525
-    // Gaussian gravitational constant squared in AU^3/day^2. Used as the solar GM for visual ephemeris mean motion.
-    readonly property real gmSun: 2.959122082855911e-4
+    readonly property real gmSun: Ephemeris.gmSun
 
     Behavior on zoomLevel {
         NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
@@ -95,129 +94,12 @@ Item {
         }
     ]
 
-    function clamp(value: real, minimum: real, maximum: real): real {
-        return Math.max(minimum, Math.min(maximum, value));
-    }
-
-    function wrap360(value: real): real {
-        const wrapped = value % 360;
-        return wrapped < 0 ? wrapped + 360 : wrapped;
-    }
-
-    function degToRad(value: real): real {
-        return value * Math.PI / 180;
-    }
-
-    function radToDeg(value: real): real {
-        return value * 180 / Math.PI;
-    }
-
-    function elementValue(p: var, baseName: string, rateName: string, centuries: real): real {
-        const base = typeof p[baseName] === "number" ? p[baseName] : 0;
-        const rate = typeof p[rateName] === "number" ? p[rateName] : 0;
-        return base + rate * centuries;
-    }
-
-    function elementsFor(p: var, dayOffset: real): var {
-        const centuries = dayOffset / centuryDays;
-        const a = Math.max(0.0001, elementValue(p, "a", "da", centuries));
-        const e = clamp(elementValue(p, "e", "de", centuries), 0, 0.4);
-        const inc = elementValue(p, "i", "di", centuries);
-        const node = wrap360(elementValue(p, "node", "dnode", centuries));
-        const peri = wrap360(elementValue(p, "peri", "dperi", centuries));
-        const meanLongitude = wrap360(elementValue(p, "meanLongitude", "dmeanLongitude", centuries));
-        const m0 = wrap360(meanLongitude - peri);
-        const n = meanMotion(a);
-        return { a, e, i: inc, node, peri, meanLongitude, m0, n, centuries };
-    }
-
-    function planetSize(p: var): real { return typeof p.size === "number" && p.size > 0 ? p.size : 7; }
-
-    function meanMotion(a: real): real {
-        return Math.sqrt(gmSun / (a * a * a)) * (180 / Math.PI);
-    }
-
-    function solveKepler(meanAnomalyDeg: real, e: real): real {
-        const m = degToRad(meanAnomalyDeg);
-        let E = m + e * Math.sin(m) / (1 - Math.sin(m + e) + Math.sin(m));
-        for (let step = 0; step < 20; step++) {
-            const dE = (E - e * Math.sin(E) - m) / (1 - e * Math.cos(E));
-            E -= dE;
-            if (Math.abs(dE) < 1e-12)
-                break;
-        }
-        return E;
-    }
-
-    function orbitalState(p: var, dayOffset: real): var {
-        const el = elementsFor(p, dayOffset);
-        const a = el.a;
-        const e = el.e;
-        const inc = degToRad(el.i);
-        const node = degToRad(el.node);
-        const peri = degToRad(el.peri);
-        const M = el.m0;
-        const E = solveKepler(M, e);
-        const cosE = Math.cos(E);
-        const sinE = Math.sin(E);
-        const xv = a * (cosE - e);
-        const yv = a * Math.sqrt(1 - e * e) * sinE;
-        const nu = Math.atan2(yv, xv);
-        const r = Math.sqrt(xv * xv + yv * yv);
-
-        const arg = nu + peri - node;
-        const cosNode = Math.cos(node);
-        const sinNode = Math.sin(node);
-        const cosArg = Math.cos(arg);
-        const sinArg = Math.sin(arg);
-        const cosI = Math.cos(inc);
-        const sinI = Math.sin(inc);
-
-        const x = r * (cosNode * cosArg - sinNode * sinArg * cosI);
-        const y = r * (sinNode * cosArg + cosNode * sinArg * cosI);
-        const z = r * (sinArg * sinI);
-
-        const eclLon = wrap360(radToDeg(Math.atan2(y, x)));
-        const eclLat = radToDeg(Math.atan2(z, Math.sqrt(x * x + y * y)));
-
-        return {
-            x, y, z, r,
-            eclLon, eclLat,
-            trueAnomaly: wrap360(radToDeg(nu)),
-            meanAnomaly: wrap360(M),
-            eccentricAnomaly: wrap360(radToDeg(E)),
-            elements: el
-        };
-    }
-
-    function zodiacIndex(eclLon: real): int {
-        return Math.floor(wrap360(eclLon) / 30);
-    }
-
-    function phaseAngle(planetXYZ: var, earthXYZ: var): real {
-        const dx = earthXYZ.x - planetXYZ.x;
-        const dy = earthXYZ.y - planetXYZ.y;
-        const dz = earthXYZ.z - planetXYZ.z;
-        const distEarth = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (distEarth < 1e-9)
-            return 0;
-        const dot = -(dx * planetXYZ.x + dy * planetXYZ.y + dz * planetXYZ.z) / (distEarth * planetXYZ.r);
-        return radToDeg(Math.acos(clamp(dot, -1, 1)));
-    }
-
-    function apparentMagnitude(p: var, rHelio: real, distEarth: real, phaseDeg: real): real {
-        const absMag = typeof p.mag0 === "number" ? p.mag0 : -3.9;
-        const safeDistance = Math.max(0.0001, distEarth);
-        const phaseTerm = Math.max(0, phaseDeg) * 0.013;
-        return absMag + 5 * Math.log10(Math.max(0.0001, rHelio * safeDistance)) + phaseTerm;
+    function stateFor(p: var): var {
+        return Ephemeris.orbitalState(p, daysSinceEpoch);
     }
 
     function earthDistanceFor(state: var): real {
         return Math.sqrt((state.x - earthState.x) ** 2 + (state.y - earthState.y) ** 2 + (state.z - earthState.z) ** 2);
-    }
-
-    function stateFor(p: var): var {
-        return orbitalState(p, daysSinceEpoch);
     }
 
     function selectedState(): var {
@@ -266,10 +148,10 @@ Item {
 
     function buildOrbitPath(p: var, samples: int): var {
         const path = [];
-        const el = elementsFor(p, daysSinceEpoch);
+        const el = Ephemeris.elementsFor(p, daysSinceEpoch);
         const periodDays = 360 / el.n;
         for (let sample = 0; sample <= samples; sample++)
-            path.push(orbitalState(p, daysSinceEpoch + sample * periodDays / samples));
+            path.push(Ephemeris.orbitalState(p, daysSinceEpoch + sample * periodDays / samples));
         return path;
     }
 
@@ -316,7 +198,7 @@ Item {
     }
 
     function adjustZoom(factor: real): void {
-        zoomLevel = clamp(zoomLevel * factor, minZoomLevel, maxZoomLevel);
+        zoomLevel = Ephemeris.clamp(zoomLevel * factor, minZoomLevel, maxZoomLevel);
     }
 
     function setTopDownView(): void {
@@ -424,8 +306,8 @@ Item {
             for (let z = 0; z < 12; z++) {
                 const angle = z * Math.PI / 6 - Math.PI / 2;
                 const lr = gridRadius + 16;
-                const labelX = root.clamp(cx + Math.cos(angle) * lr, root.mapLeftBound + 16, root.mapRightBound - 16);
-                const labelY = root.clamp(cy + Math.sin(angle) * lr, root.mapTopBound + 12, root.mapBottomBound - 12);
+                const labelX = Ephemeris.clamp(cx + Math.cos(angle) * lr, root.mapLeftBound + 16, root.mapRightBound - 16);
+                const labelY = Ephemeris.clamp(cy + Math.sin(angle) * lr, root.mapTopBound + 12, root.mapBottomBound - 12);
                 ctx.fillText(root.zodiacSymbols[z], labelX, labelY);
             }
 
@@ -483,7 +365,7 @@ Item {
                 const color = root.planetColors[p];
 
                 for (let trail = 28; trail >= 0; trail--) {
-                    const tState = root.orbitalState(planet, root.daysSinceEpoch - (trail + 1) * 1.2);
+                    const tState = Ephemeris.orbitalState(planet, root.daysSinceEpoch - (trail + 1) * 1.2);
                     root.projectPointInto(tState, scr2);
                     const alpha = 0.18 - trail * 0.006;
                     if (alpha <= 0)
@@ -496,7 +378,7 @@ Item {
                 }
 
                 root.projectPointInto(s, scr);
-                const nodeSize = root.planetSize(planet) * Math.max(0.72, Math.min(1.28, scr.perspective));
+                const nodeSize = Ephemeris.planetSize(planet) * Math.max(0.72, Math.min(1.28, scr.perspective));
                 const isSelected = p === root.selectedPlanetIndex;
 
                 if (isSelected) {
@@ -621,7 +503,7 @@ Item {
         onPositionChanged: mouse => {
             if (!pressed)
                 return;
-            scheduleViewUpdate(dragStartYaw + (mouse.x - dragPressX) * 0.35, clamp(dragStartPitch + (mouse.y - dragPressY) * 0.22, 18, 78));
+            scheduleViewUpdate(dragStartYaw + (mouse.x - dragPressX) * 0.35, Ephemeris.clamp(dragStartPitch + (mouse.y - dragPressY) * 0.22, 18, 78));
             mouse.accepted = true;
         }
         onReleased: mouse => {
@@ -661,7 +543,7 @@ Item {
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: event => {
             const step = event.angleDelta.y > 0 ? 1.16 : 0.86;
-            root.zoomLevel = root.clamp(root.zoomLevel * step, root.minZoomLevel, root.maxZoomLevel);
+            root.zoomLevel = Ephemeris.clamp(root.zoomLevel * step, root.minZoomLevel, root.maxZoomLevel);
         }
     }
 
@@ -882,9 +764,9 @@ Item {
                     const s = root.selectedState();
                     const el = s.elements;
                     const distEarth = Math.sqrt((s.x - root.earthState.x) ** 2 + (s.y - root.earthState.y) ** 2 + (s.z - root.earthState.z) ** 2);
-                    const phase = root.phaseAngle(s, root.earthState);
-                    const mag = root.apparentMagnitude(p, s.r, distEarth, phase);
-                    const zIdx = root.zodiacIndex(s.eclLon);
+                    const phase = Ephemeris.phaseAngle(s, root.earthState);
+                    const mag = Ephemeris.apparentMagnitude(p, s.r, distEarth, phase);
+                    const zIdx = Ephemeris.zodiacIndex(s.eclLon);
                     return [
                         ["JD", root.jd.toFixed(4)],
                         ["r", s.r.toFixed(4) + " AU (heliocentric)"],

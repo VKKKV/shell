@@ -884,6 +884,16 @@
 - Preserved wheel/trackpad zoom, reset/top/edge controls, drag rotation, and expansion routing.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Ephemeris Math Refactor
+
+- Architecture review confirmed current granularity matches project guidelines, but `OrbitalExpansionPanel.qml` had crossed the internal-seam threshold.
+- Extracted pure orbital math helpers into a local `modules/hud/OrbitalEphemeris.js` pragmatic library.
+- Moved `clamp`, `wrap360`, `degToRad`, `radToDeg`, `elementValue`, `elementsFor`, `planetSize`, `meanMotion`, `solveKepler`, `orbitalState`, `zodiacIndex`, `phaseAngle`, and `apparentMagnitude` into the JS helper.
+- Added `gmSun` and `centuryDays` as helper constants.
+- Updated `OrbitalExpansionPanel.qml` to import `OrbitalEphemeris.js` and route all pure-math calls through it.
+- Preserved all UI state, Canvas rendering, cached orbit paths, zoom/drag controls, selected-planet readouts, and central expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

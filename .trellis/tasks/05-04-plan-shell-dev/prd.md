@@ -1626,3 +1626,27 @@ Implementation notes:
 
 - Added `adjustZoom()` helper that clamps button zoom to the existing min/max range.
 - Added `ZOOM-` and `ZOOM+` controls to the orbital detail pane with keyboard activation and fixed tooltip hints.
+
+### Refactor Checkpoint: Orbital Ephemeris Math Helper
+
+Architecture review captured 2026-05-07: current PRD/code granularity still follows the project's small vertical-slice workflow, but `OrbitalExpansionPanel.qml` has crossed the threshold where internal seams are useful. The next refactor should be local and behavior-preserving, not a broad renderer or service rewrite.
+
+Requirements:
+
+- Extract pure orbital math from `OrbitalExpansionPanel.qml` into an orbital-local helper module.
+- Keep the helper private to the orbital surface; do not promote astronomy state into `services/` unless another surface needs it.
+- Preserve all visual output and interactions: cached orbit paths, Canvas rendering, selected detail pane, ephemeris rows, smooth zoom, drag rotation, close behavior, and central expansion routing.
+- Keep `OrbitalExpansionPanel.qml` as the composition module for the central expansion surface.
+
+Acceptance Criteria:
+
+- [x] Pure math helpers (`clamp`, angle conversion/wrapping, element derivation, Kepler solve, orbital state, phase, magnitude) are moved out of the root panel.
+- [x] `OrbitalExpansionPanel.qml` still owns UI state, layout, rendering, and interactions.
+- [x] No behavior change is introduced in orbital output or controls.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the orbital panel accumulated scientific calculations, Canvas rendering, viewport controls, readouts, selection, and tooltip wiring in one file during rapid vertical slices.
+- Decision: introduce an orbital-local helper seam for pure ephemeris math first. Do not split rendering/detail panes yet, and do not add a global service.
+- Consequences: improves locality for future scientific fixes and reduces root panel complexity with low product risk. The trade-off is one additional local module import.
