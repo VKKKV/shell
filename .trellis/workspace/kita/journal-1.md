@@ -611,3 +611,9 @@
 - Current session environment reports `XDG_CURRENT_DESKTOP=Hyprland`, `XDG_SESSION_DESKTOP=Hyprland`, `WAYLAND_DISPLAY=wayland-1`.
 - Added a manual validation checklist to `docs/niri.md` and recorded Niri runtime validation as environment-blocked, not failed.
 - Verification passed: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-06 - Move Niri Validation To Waiting For Test
+
+- User directed that local Niri validation should be moved into waiting-for-test because this machine has no active Niri session.
+- Updated PLAN and PRD so Niri runtime validation is no longer part of the active development path.
+- Kept `docs/niri.md` as the manual validation checklist source for a future real Niri session.

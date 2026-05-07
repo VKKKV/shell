@@ -837,14 +837,14 @@ Decision (ADR-lite):
 - Decision: store raw workspace payloads and recompute shaped workspace rows immediately after the window payload updates.
 - Consequences: makes occupancy indicators more accurate in the same poll cycle. The trade-off is one extra raw-state property inside `NiriService`.
 
-### Final Explicit Requirement Check: Niri Runtime Validation
+### Waiting For Test: Niri Runtime Validation
 
-Plan source: only remaining explicit Niri plan item after implementing the shared compositor facade and Niri backend.
+Plan source: only remaining explicit Niri plan item after implementing the shared compositor facade and Niri backend. This is not active development while the local machine is not running Niri.
 
 Requirements:
 
-- Check whether a real Niri session is available for runtime IPC validation.
-- If unavailable, document the exact environment blocker and provide a manual validation checklist.
+- Track real Niri session runtime IPC validation as waiting-for-test.
+- Document the exact environment blocker and provide a manual validation checklist.
 - Do not mark Niri runtime behavior as manually validated unless `niri msg --json workspaces` and `niri msg --json windows` run inside a Niri session.
 
 Acceptance Criteria:
@@ -853,11 +853,12 @@ Acceptance Criteria:
 - [x] `niri msg --json workspaces` and `niri msg --json windows` were attempted.
 - [x] Environment blocker is documented: current session is Hyprland and `NIRI_SOCKET` is not set.
 - [x] `docs/niri.md` includes a manual validation checklist with assertion points.
+- [x] Niri runtime validation is moved out of the active development path and into waiting-for-test tracking.
 - [x] `qmllint`, `zig build`, `git diff --check`, and a short `quickshell -p .` smoke check pass before commit.
 - [x] The completed phase is committed and pushed, or any push blocker is reported explicitly.
 
 Decision (ADR-lite):
 
 - Context: all code-level Niri support slices are complete, but actual runtime behavior still needs validation in a Niri session.
-- Decision: treat Niri runtime validation as environment-blocked in the current Hyprland session and document exact commands/assertions for the first Niri session run.
-- Consequences: the plan is not left ambiguous. The trade-off is that real Niri behavior still needs a future manual run on the target compositor.
+- Decision: treat Niri runtime validation as waiting-for-test in the current Hyprland session and document exact commands/assertions for the first Niri session run.
+- Consequences: active development can continue without pretending Niri was manually validated. The trade-off is that real Niri behavior still needs a future manual run on the target compositor.

@@ -213,7 +213,7 @@ Current status: all concrete planned phases below are covered by first-party sli
 
 Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
 
-Current next phase: review screenshot/user feedback for the next visual tuning slice or open a new Trellis task for any larger product direction; all concrete planned shell-development slices in this task are now covered.
+Current next phase: choose the next product direction with the user. All concrete planned shell-development slices in this task are covered; Niri runtime validation is tracked under Waiting For Test and is not on the active development path while this machine is not running Niri.
 
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.
@@ -370,7 +370,7 @@ Status: covered by the completed orbital planet map optimization phase; future o
     - Covered: compositor workspace/focus actions update visible action status and structured service-log entries.
     - Covered: top workspace strip clamps and elides compositor-provided workspace labels for Niri compatibility.
     - Covered: Niri workspace occupancy is recomputed after window payload refreshes so occupied indicators do not lag a poll cycle.
-    - Manual validation inside a real Niri session is documented in `docs/niri.md`; current Hyprland session blocks Niri IPC validation because `NIRI_SOCKET` is not set.
+    - Runtime validation inside a real Niri session is moved to Waiting For Test; current Hyprland session blocks Niri IPC validation because `NIRI_SOCKET` is not set.
 
 6. Orbital planet map optimization.
     - Covered: graphical orbital depth, label hierarchy, and bounded repaint behavior were improved while preserving current ephemeris contracts.
@@ -378,6 +378,25 @@ Status: covered by the completed orbital planet map optimization phase; future o
 ## Reference Feature Gap Analysis
 
 The reference shells provide a much broader desktop environment than the current tactical HUD. Missing features should be added as vertical slices, preserving this project's machine-interface visual language instead of copying Material/Noctalia/Caelestia styling.
+
+## Waiting For Test
+
+### Niri Runtime Validation
+
+Status: waiting for a real Niri session, not active development.
+
+Reason:
+
+- `niri` is installed, but this machine is currently running Hyprland.
+- `niri msg --json workspaces` and `niri msg --json windows` fail because `NIRI_SOCKET` is not set.
+
+Validation checklist lives in `docs/niri.md`.
+
+Exit criteria:
+
+- Run the checklist inside Niri.
+- Confirm workspace/window rows, workspace labels, `windowKey` focus, action status, and diagnostics events work without QML errors.
+- Record the result in this PLAN and the Trellis journal.
 
 ### Already Covered In This Project
 - Full-screen tactical HUD surface.
