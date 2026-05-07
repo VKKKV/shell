@@ -49,6 +49,8 @@ TacticalFrame {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    onEntered: TooltipService.show("CPU DRILLDOWN", "Open per-core CPU matrix expansion in the central safe area.", "right-cpu")
+                    onExited: TooltipService.clear("right-cpu")
                     onClicked: ExpansionService.show("cpu", "right-cpu")
                 }
             }
@@ -79,6 +81,8 @@ TacticalFrame {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    onEntered: TooltipService.show("POWER DRILLDOWN", "Open battery/AC power expansion in the central safe area.", "right-power")
+                    onExited: TooltipService.clear("right-power")
                     onClicked: ExpansionService.show("power", "right-power")
                 }
             }
@@ -115,6 +119,8 @@ TacticalFrame {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    onEntered: TooltipService.show("NETWORK DRILLDOWN", "Open network detail/throughput/wifi expansion in the central safe area.", "right-network")
+                    onExited: TooltipService.clear("right-network")
                     onClicked: ExpansionService.show("network", "right-network")
                 }
             }
@@ -134,6 +140,8 @@ TacticalFrame {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    onEntered: TooltipService.show("FILESYSTEM DRILLDOWN", "Open filesystem usage/mount expansion in the central safe area.", "right-filesystem")
+                    onExited: TooltipService.clear("right-filesystem")
                     onClicked: ExpansionService.show("filesystem", "right-filesystem")
                 }
             }
@@ -157,6 +165,8 @@ TacticalFrame {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    onEntered: TooltipService.show("LOG DRILLDOWN", "Open service log stream expansion in the central safe area.", "right-logs")
+                    onExited: TooltipService.clear("right-logs")
                     onClicked: ExpansionService.show("logs", "right-logs")
                 }
             }

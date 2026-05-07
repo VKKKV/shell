@@ -213,7 +213,7 @@ Current status: all concrete first-party feature phases below are covered. New c
 
 Checkpoint policy: every completed development phase must be verified, recorded, committed, and pushed before moving to the next phase, unless verification or remote push is blocked. Use this policy for future optimization slices in this task.
 
-Current next phase: code-review correctness/security fixes are complete. Continue with code-review performance and duplication refactors unless the user explicitly selects a different slice. Niri runtime validation is tracked under Waiting For Test and is not on the active development path while this machine is not running Niri.
+Current next phase: fixed HUD tooltip box is implemented. Continue with the next user-chosen direction. Niri runtime validation is tracked under Waiting For Test.
 
 ### Phase A: Runtime Cleanliness And Visual Tuning
 - Fix all Quickshell runtime warnings before adding larger features.
@@ -419,46 +419,51 @@ Status: partially completed 2026-05-07. Added `zig build test` and focused tests
 
 ## Prioritized Next Steps
 
-1. Code-review correctness/security fixes.
+1. Fixed HUD tooltip box.
+   - Implement a single FL Studio-style fixed hint/readout box that updates on hover instead of following the mouse.
+   - Start with high-value interactive controls and keep the API reusable for future controls.
+   - Preserve existing click, hover, keyboard, close, and expansion behavior.
+
+2. Code-review correctness/security fixes.
    - Fix the high-risk review items first: weather shell injection, compositor-aware logout, settings helper path, audio/wallpaper process races, Niri polling contract, network bar visibility, theme fallback, notification naming, and exclusion-zone mask clarity.
    - Keep this as a focused maintenance slice, not a broad refactor.
    - Covered: completed 2026-05-07 with verification passing.
 
-2. Code-review performance and duplication refactors.
+3. Code-review performance and duplication refactors.
    - Extract expansion-panel boilerplate, reduce settings handler repetition, continue orbital Canvas/object-allocation optimization, stagger service polls, and cache calendar/theme work where useful.
    - Covered: shared `ExpansionPanelSlot` deployment primitive and calendar month cache.
    - Covered: shared `SettingsService.normalizeAndSave()` clamp/save routing.
    - Covered: orbital projection allocation reduction and staggered polling startup.
 
-3. Extensibility/test infrastructure.
+4. Extensibility/test infrastructure.
    - Start with Zig settings-helper validation tests and settings migration/version checks before larger plugin or multi-monitor architecture.
    - Covered: `zig build test` plus settings normalization boundary tests.
    - Covered: settings version normalization and future-version rejection.
    - Covered: keyboard activation foundation for shared controls and high-value central actions.
 
-4. Screenshot-driven visual tuning.
+5. Screenshot-driven visual tuning.
     - Tune panel proportions, font sizes, yellow intensity, scanline opacity, and graph density from real screenshots.
     - Keep `quickshell -p .` warning-free after every visual pass.
     - Verify edge exclusion zones push real Hyprland windows into the center safe area on the target monitor.
 
-5. Tactical command center.
+6. Tactical command center.
    - Convert the settings overlay into a broader command center with quick toggles, system overview, service statuses, and power actions.
    - Keep settings controls available, but group them so the panel does not become a long flat list.
    - Use existing services first; avoid adding plugin registries.
 
-6. Broader reference-shell features.
+7. Broader reference-shell features.
     - Candidate features: interactive tactical expansion surfaces, richer tray drawers, idle/power profile controls, wallpaper/theme management, keyboard layout/keybind surfaces, and optional desktop widgets.
     - Each feature should include a tactical visual module, service boundary, fallback behavior, validation, and commit checkpoint.
     - Current selected direction: expanded interaction panels.
 
-7. Left/right panel interaction model.
+8. Left/right panel interaction model.
    - Current left orbital entry is `AnalogOrbitClock`; it replaced the original globe affordance after time-based orbital ephemeris work.
    - Use a central overlay module controlled by small shared state instead of turning each edge panel into a separate popup owner.
     - Apply the same interaction pattern to additional right/edge drill-downs when new domains need central detail surfaces.
     - Covered: right-panel `POWER SOURCE` now opens `PowerExpansionPanel.qml` with battery/profile/idle controls through the shared central overlay path.
     - Covered: left-panel `TELEMETRY` now opens `MediaExpansionPanel.qml` with player/audio/lyrics controls through the shared central overlay path.
 
-8. Niri compositor support.
+9. Niri compositor support.
     - Covered: `CompositorService.qml` provides the shared boundary and `NiriService.qml` provides Niri fallback/documented command integration.
     - Covered: command-center diagnostics now surface active backend, Hyprland/Niri status, workspace rows, and active window identity through `CompositorService.diagnosticRows`.
     - Covered: compositor backend/status/workspace transitions are recorded in `ServiceLogService` for diagnostics history.
@@ -469,11 +474,11 @@ Status: partially completed 2026-05-07. Added `zig build test` and focused tests
     - Covered: Niri workspace occupancy is recomputed after window payload refreshes so occupied indicators do not lag a poll cycle.
     - Runtime validation inside a real Niri session is moved to Waiting For Test; current Hyprland session blocks Niri IPC validation because `NIRI_SOCKET` is not set.
 
-9. Orbital planet map optimization.
+10. Orbital planet map optimization.
     - Covered: graphical orbital depth, label hierarchy, and bounded repaint behavior were improved while preserving current ephemeris contracts.
     - Covered: selected-planet detail telemetry, local planet selection, zodiac/ecliptic labels, and runtime Repeater index warning cleanup.
 
-10. Expansion panel density and cyber style pass.
+11. Expansion panel density and cyber style pass.
     - Covered: `PanelStatusStrip` unifies top status chrome across CPU/Network/Filesystem/Log/Power/Media panels.
     - Planned: deeper content redesign for each panel's internal widget density and cyber-machine visual language.
     - Planned: J2000 3D side-view orbital rewrite with drag/zoom, real-time heliocentric XYZ, cosmic coordinate frame, and cyber-sci-fi rendering.

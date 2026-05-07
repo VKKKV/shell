@@ -64,6 +64,8 @@ TacticalFrame {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    onEntered: TooltipService.show("TELEMETRY DRILLDOWN", "Open media/audio/link telemetry expansion in the central safe area.", "left-telemetry")
+                    onExited: TooltipService.clear("left-telemetry")
                     onClicked: ExpansionService.show("media", "left-telemetry")
                 }
             }

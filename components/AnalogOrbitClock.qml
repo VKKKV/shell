@@ -178,6 +178,8 @@ Item {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
+        onEntered: TooltipService.show("ORBITAL CLOCK", "Open the fixed central J2000 orbital map. The expanded sensor keeps drag, zoom, and planet targeting controls.", "analog-orbit-clock")
+        onExited: TooltipService.clear("analog-orbit-clock")
         onClicked: root.activated()
     }
 }

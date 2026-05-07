@@ -762,6 +762,15 @@
 - Preserved mouse behavior, existing command routing, global `Escape` close behavior, and visual styling.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Fixed HUD Tooltip Box
+
+- Implemented user-requested FL Studio-style fixed tooltip: hovering HUD controls updates a single framed tactical box in a stable position instead of following the mouse.
+- Added `services/TooltipService.qml` with show/clear API and standby state.
+- Added `modules/hud/HudTooltipBox.qml` positioned in the center-safe area, with tactical framing, active/standby styling, and opacity transition.
+- Placed the tooltip box in `HudLayout.qml` with a dedicated input region so the tooltip surface is clickable without sending clicks through to the backdrop.
+- Wired tooltip hover text into shared components (`PanelCloseButton`, `ToggleRow`, `AnalogOrbitClock`) and key HUD surfaces (workspace buttons, audio/mute/volume controls, media transport, command-center entry, left telemetry drill-down, CPU/power/network/filesystem/log drill-downs).
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

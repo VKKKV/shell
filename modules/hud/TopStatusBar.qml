@@ -76,8 +76,14 @@ TacticalFrame {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         hoverEnabled: true
-                        onEntered: workspaceButton.hovered = true
-                        onExited: workspaceButton.hovered = false
+                        onEntered: {
+                            workspaceButton.hovered = true;
+                            TooltipService.show("WORKSPACE " + workspaceButton.label, "Switch compositor workspace. Active backend: " + CompositorService.compositorName + ".", "workspace-" + workspaceButton.workspaceId);
+                        }
+                        onExited: {
+                            workspaceButton.hovered = false;
+                            TooltipService.clear("workspace-" + workspaceButton.workspaceId);
+                        }
                         onClicked: CompositorService.switchWorkspace(workspaceButton.workspaceId)
                     }
 
@@ -145,6 +151,9 @@ TacticalFrame {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onEntered: TooltipService.show("AUDIO DOWN", "Lower sink volume by 5 percent via wpctl.", "audio-down")
+                        onExited: TooltipService.clear("audio-down")
                         onClicked: AudioService.changeVolume(-0.05)
                     }
 
@@ -166,6 +175,9 @@ TacticalFrame {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onEntered: TooltipService.show("AUDIO MUTE", "Toggle default sink mute. Current: " + AudioService.volumeText + ".", "audio-mute")
+                        onExited: TooltipService.clear("audio-mute")
                         onClicked: AudioService.toggleMute()
                     }
 
@@ -188,6 +200,9 @@ TacticalFrame {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onEntered: TooltipService.show("AUDIO UP", "Raise sink volume by 5 percent via wpctl.", "audio-up")
+                        onExited: TooltipService.clear("audio-up")
                         onClicked: AudioService.changeVolume(0.05)
                     }
 
@@ -218,6 +233,8 @@ TacticalFrame {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         hoverEnabled: true
+                        onEntered: TooltipService.show("COMMAND CENTER", "Open the tactical command/settings panel. Shortcut: Ctrl+Alt+S.", "settings-entry")
+                        onExited: TooltipService.clear("settings-entry")
                         onClicked: SettingsService.togglePanel()
                     }
 
@@ -251,6 +268,9 @@ TacticalFrame {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onEntered: TooltipService.show("MEDIA PREVIOUS", "Dispatch previous-track through MediaService/playerctl.", "media-prev")
+                        onExited: TooltipService.clear("media-prev")
                         onClicked: MediaService.control("previous")
                     }
 
@@ -273,6 +293,9 @@ TacticalFrame {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onEntered: TooltipService.show("MEDIA PLAY/PAUSE", "Toggle active MPRIS playback. Current: " + MediaService.status + ".", "media-toggle")
+                        onExited: TooltipService.clear("media-toggle")
                         onClicked: MediaService.control("play-pause")
                     }
 
@@ -295,6 +318,9 @@ TacticalFrame {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onEntered: TooltipService.show("MEDIA NEXT", "Dispatch next-track through MediaService/playerctl.", "media-next")
+                        onExited: TooltipService.clear("media-next")
                         onClicked: MediaService.control("next")
                     }
 

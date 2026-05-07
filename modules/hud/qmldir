@@ -2,6 +2,7 @@ HudWindow 1.0 HudWindow.qml
 HudExclusionZone 1.0 HudExclusionZone.qml
 HudLayout 1.0 HudLayout.qml
 ExpansionPanelSlot 1.0 ExpansionPanelSlot.qml
+HudTooltipBox 1.0 HudTooltipBox.qml
 TopStatusBar 1.0 TopStatusBar.qml
 BottomStatusBar 1.0 BottomStatusBar.qml
 MissionDock 1.0 MissionDock.qml

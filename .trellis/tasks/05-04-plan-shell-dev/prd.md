@@ -1227,3 +1227,32 @@ Decision (ADR-lite):
 - Context: the shell was mostly mouse-driven, with only global shortcuts and the keybind recorder handling keyboard input.
 - Decision: add keyboard support first to shared primitives and high-value controls instead of building a large focus-management abstraction.
 - Consequences: improves accessibility and everyday usability while keeping implementation risk low. The trade-off is that some lower-priority custom controls still need future focus-chain work.
+
+### Next Optimization MVP: Fixed HUD Tooltip Box
+
+User direction captured 2026-05-07: add mouse-hover tooltips, but show them like FL Studio in a fixed framed box instead of positioning the tooltip near the mouse cursor.
+
+Implemented 2026-05-07 as the first tooltip infrastructure slice.
+
+Requirements:
+
+- Add a reusable tooltip state/service for hover help text from HUD controls.
+- Render tooltip content in a fixed tactical frame/box in the HUD, not next to the pointer.
+- Use FL Studio-like behavior conceptually: hovering controls updates a shared information box with label/detail text.
+- Preserve existing mouse click/hover behavior and keyboard activation behavior.
+- Start with key interactive controls, not every decorative label.
+- Keep visual language tactical: framed, monospaced, warning-yellow accents, readable at a glance.
+
+Acceptance Criteria:
+
+- [x] Hovering supported controls updates one fixed tooltip box.
+- [x] Tooltip box position is layout-owned and stable; it does not follow mouse coordinates.
+- [x] Tooltip hides or returns to standby when leaving supported controls.
+- [x] Shared tooltip API is reusable from modules/components without duplicating popup rectangles.
+- [x] `qmllint`, `zig build test`, `zig build`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the HUD has many dense custom controls, and conventional cursor-following tooltips would fight the tactical layout and edge panels.
+- Decision: use a single fixed tooltip/readout surface updated by hover events, similar in spirit to FL Studio's fixed hint panel.
+- Consequences: improves discoverability without visual jitter or pointer occlusion. The trade-off is that controls need explicit tooltip wiring over time.

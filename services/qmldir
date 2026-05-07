@@ -19,6 +19,7 @@ singleton WeatherService 1.0 WeatherService.qml
 singleton PowerProfileService 1.0 PowerProfileService.qml
 singleton KeyboardService 1.0 KeyboardService.qml
 singleton ExpansionService 1.0 ExpansionService.qml
+singleton TooltipService 1.0 TooltipService.qml
 singleton KeybindService 1.0 KeybindService.qml
 singleton EmojiService 1.0 EmojiService.qml
 singleton WallpaperService 1.0 WallpaperService.qml

@@ -1,4 +1,5 @@
 import "../theme"
+import "../services"
 import QtQuick
 
 Rectangle {
@@ -22,6 +23,8 @@ Rectangle {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
+        onEntered: TooltipService.show("CLOSE PANEL", "Close the active command or expansion surface. Escape performs the same close route.", "panel-close")
+        onExited: TooltipService.clear("panel-close")
         onClicked: root.closeRequested()
     }
 

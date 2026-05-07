@@ -8,6 +8,7 @@ RowLayout {
 
     property string label: ""
     property bool checked: false
+    property string tooltip: "Toggle this shell setting."
 
     signal toggled(bool checked)
 
@@ -42,6 +43,9 @@ RowLayout {
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+            onEntered: TooltipService.show(root.label, root.tooltip, "toggle-" + root.label)
+            onExited: TooltipService.clear("toggle-" + root.label)
             onClicked: root.toggled(!root.checked)
         }
 
