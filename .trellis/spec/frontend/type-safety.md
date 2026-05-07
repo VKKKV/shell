@@ -83,6 +83,8 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - `visual.density` default is `normal`, preserving current layout density.
 - `visual.density` allowed values are `compact`, `normal`, and `dense`; invalid values normalize to `normal`.
 - QML must clamp immediate UI writes before scheduling persistence.
+- QML must queue a second settings write when values change while the helper `write` process is already running.
+- QML must not apply stale helper stdout over newer in-memory settings when a newer write is queued.
 - Zig must clamp persisted input and emit normalized JSON.
 - `Theme.qml` is the only place that multiplies base font sizes by `fontScale`; individual panels should keep using theme font properties.
 - `Theme.qml` is the only place that derives global tactical panel colors from `panelOpacity`; individual panels should keep using `Theme.panel`/`Theme.panelSoft`.
@@ -115,6 +117,7 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - Panel adds new repeated control/row/graph heights after this contract -> fail review; use density sizing from `Theme.qml` where the size is part of shared HUD rhythm.
 - Scanline call site ignores `SettingsService.scanlineStrength` -> fail review unless the overlay is explicitly decorative and not user-facing.
 - Settings-helper test writes without temp `XDG_CONFIG_HOME` -> risky; may alter the user's live settings.
+- Settings changes while `writeProcess.running` is true -> queue the latest payload and run one follow-up write after the current process exits.
 
 ### 5. Good/Base/Bad Cases
 
@@ -123,6 +126,7 @@ The frontend uses QML typed properties plus JavaScript for local shaping/parsing
 - Good: settings column changes `SettingsService.scanlineStrength`, existing scanline overlays get stronger/weaker while the toggle still disables them.
 - Good: settings column changes fine contrast settings, and existing panels update through `Theme.border`, `Theme.textDim`, `Theme.line`, and `Theme.lineDim`.
 - Good: default startup uses `visual.profile = "gray"` and `visual.accentColor = "#8A8A8A"`, while persisted user settings still override these defaults.
+- Good: rapid settings changes update in memory immediately, skip stale write stdout if another payload is queued, then persist the final queued payload.
 - Good: settings column changes `SettingsService.density`, and shared row/control/graph heights update through `Theme.qml`.
 - Base: a visual-only component uses `Theme.fontTiny`/`Theme.fontNormal` and automatically inherits scaling.
 - Bad: a panel implements its own `property int localFontSize` and bypasses `Theme.qml`, causing inconsistent scaling.

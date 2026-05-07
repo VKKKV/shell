@@ -79,6 +79,7 @@ Make the shell start in a gray tactical palette by default, while keeping the ex
 * Fix `SettingsService.saveNow()` so changes made while `writeProcess` is running are not lost.
 * Add a `dirtyWhileWriting` or queued-payload mechanism.
 * Verify rapid settings changes persist the latest payload.
+* Status: implemented with `activeWritePayload`, `queuedWritePayload`, and `writeQueued`.
 
 ### PR3: Network Action Serialization
 

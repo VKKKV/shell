@@ -29,7 +29,9 @@ Singleton {
     property int updateIntervalMs: 5000
     property string statusLine: "settings: probing helper"
     property string helperPath: "void-shell-settings"
-    property string pendingPayload: ""
+    property string activeWritePayload: ""
+    property string queuedWritePayload: ""
+    property bool writeQueued: false
     property bool loading: true
     property bool applyingSettings: false
 
@@ -172,7 +174,15 @@ Singleton {
     }
 
     function saveNow(): void {
-        pendingPayload = settingsPayload();
+        const payload = settingsPayload();
+        if (writeProcess.running) {
+            queuedWritePayload = payload;
+            writeQueued = true;
+            statusLine = "settings: helper write queued";
+            return;
+        }
+
+        activeWritePayload = payload;
         writeProcess.running = true;
     }
 
@@ -284,13 +294,24 @@ Singleton {
     }
 
     property Process writeProcess: Process {
-        command: [root.helperPath, "write", root.pendingPayload]
+        command: [root.helperPath, "write", root.activeWritePayload]
         stdout: StdioCollector {
-            onStreamFinished: root.updateFromText(text)
+            onStreamFinished: {
+                if (root.writeQueued)
+                    root.statusLine = "settings: helper write queued";
+                else
+                    root.updateFromText(text);
+            }
         }
         onExited: (exitCode) => {
             if (exitCode !== 0)
                 root.statusLine = "settings: helper write fallback";
+            if (root.writeQueued) {
+                root.writeQueued = false;
+                root.activeWritePayload = root.queuedWritePayload;
+                root.queuedWritePayload = "";
+                root.writeProcess.running = true;
+            }
         }
     }
 }
