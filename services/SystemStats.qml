@@ -246,11 +246,23 @@ Singleton {
         }
     }
 
+    property Timer startupPoll: Timer {
+        interval: PollingSchedule.startupDelay(1)
+        repeat: false
+        running: SettingsService.liveDataEnabled
+        onTriggered: {
+            root.memoryProcess.running = true;
+            root.filesystemProcess.running = true;
+            root.cpuProcess.running = true;
+            root.networkProcess.running = true;
+            root.poller.start();
+        }
+    }
+
     property Timer poller: Timer {
         interval: SettingsService.updateIntervalMs
         repeat: true
-        running: SettingsService.liveDataEnabled
-        triggeredOnStart: true
+        running: false
         onTriggered: {
             root.memoryProcess.running = true;
             root.filesystemProcess.running = true;
@@ -262,8 +274,16 @@ Singleton {
     Connections {
         target: SettingsService
         function onLiveDataEnabledChanged(): void {
-            if (SettingsService.liveDataEnabled)
+            if (SettingsService.liveDataEnabled) {
+                root.memoryProcess.running = true;
+                root.filesystemProcess.running = true;
+                root.cpuProcess.running = true;
+                root.networkProcess.running = true;
                 root.poller.restart();
+            } else {
+                root.startupPoll.stop();
+                root.poller.stop();
+            }
         }
         function onUpdateIntervalMsChanged(): void {
             if (SettingsService.liveDataEnabled)

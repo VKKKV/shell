@@ -14,6 +14,13 @@ Item {
     readonly property real mapSize: Math.max(220, Math.min(width - 260, height - 96))
     readonly property real mapCenterX: width * 0.5
     readonly property real mapCenterY: height * 0.52
+    readonly property real yawRad: degToRad(yawDeg)
+    readonly property real pitchRad: degToRad(pitchDeg)
+    readonly property real cosYaw: Math.cos(yawRad)
+    readonly property real sinYaw: Math.sin(yawRad)
+    readonly property real cosPitch: Math.cos(pitchRad)
+    readonly property real sinPitch: Math.sin(pitchRad)
+    readonly property real currentViewScale: viewScale()
     property real yawDeg: -34
     property real pitchDeg: 58
     property real zoomLevel: 1
@@ -145,12 +152,6 @@ Item {
     }
 
     function projectPoint(point: var): var {
-        const yaw = degToRad(yawDeg);
-        const pitch = degToRad(pitchDeg);
-        const cosYaw = Math.cos(yaw);
-        const sinYaw = Math.sin(yaw);
-        const cosPitch = Math.cos(pitch);
-        const sinPitch = Math.sin(pitch);
         const x1 = point.x * cosYaw - point.y * sinYaw;
         const y1 = point.x * sinYaw + point.y * cosYaw;
         const z1 = point.z;
@@ -159,11 +160,25 @@ Item {
         const perspective = 1 / (1 + z2 * 0.016);
 
         return {
-            x: mapCenterX + x1 * viewScale() * perspective,
-            y: mapCenterY + y2 * viewScale() * perspective,
+            x: mapCenterX + x1 * currentViewScale * perspective,
             depth: z2,
+            y: mapCenterY + y2 * currentViewScale * perspective,
             perspective: perspective
         };
+    }
+
+    function projectPointInto(point: var, target: var): void {
+        const x1 = point.x * cosYaw - point.y * sinYaw;
+        const y1 = point.x * sinYaw + point.y * cosYaw;
+        const z1 = point.z;
+        const y2 = y1 * cosPitch - z1 * sinPitch;
+        const z2 = y1 * sinPitch + z1 * cosPitch;
+        const perspective = 1 / (1 + z2 * 0.016);
+
+        target.x = mapCenterX + x1 * currentViewScale * perspective;
+        target.y = mapCenterY + y2 * currentViewScale * perspective;
+        target.depth = z2;
+        target.perspective = perspective;
     }
 
     function projectedPlanet(planet: var): var {
@@ -312,6 +327,8 @@ Item {
             const cx = root.mapCenterX;
             const cy = root.mapCenterY;
             const gridRadius = root.mapSize * 0.46 * root.zoomLevel;
+            const projectedScratch = { x: 0, y: 0, depth: 0, perspective: 1 };
+            const trailScratch = { x: 0, y: 0, depth: 0, perspective: 1 };
 
             ctx.save();
             ctx.globalAlpha = 0.12;
@@ -345,11 +362,11 @@ Item {
                 const path = root.orbitPathFor(p);
                 ctx.beginPath();
                 for (let sample = 0; sample < path.length; sample++) {
-                    const projected = root.projectPoint(path[sample]);
+                    root.projectPointInto(path[sample], projectedScratch);
                     if (sample === 0)
-                        ctx.moveTo(projected.x, projected.y);
+                        ctx.moveTo(projectedScratch.x, projectedScratch.y);
                     else
-                        ctx.lineTo(projected.x, projected.y);
+                        ctx.lineTo(projectedScratch.x, projectedScratch.y);
                 }
                 ctx.globalAlpha = 0.22 + p * 0.035;
                 ctx.strokeStyle = p === 2 ? accent : dim;
@@ -364,12 +381,12 @@ Item {
 
                 for (let trail = 4; trail >= 0; trail--) {
                     const trailState = root.orbitalState(planet, root.daysSinceEpoch - (trail + 1) * Math.max(3, 460 / root.planetPeriod(planet)));
-                    const trailPoint = root.projectPoint(trailState);
+                    root.projectPointInto(trailState, trailScratch);
                     const trailSize = Math.max(2, nodeSize - trail * 1.45);
                     ctx.globalAlpha = 0.25 - trail * 0.035;
                     ctx.fillStyle = accent;
                     ctx.beginPath();
-                    ctx.arc(trailPoint.x, trailPoint.y, trailSize / 2, 0, Math.PI * 2);
+                    ctx.arc(trailScratch.x, trailScratch.y, trailSize / 2, 0, Math.PI * 2);
                     ctx.fill();
                 }
 

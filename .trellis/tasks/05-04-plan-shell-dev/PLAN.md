@@ -389,7 +389,7 @@ Acceptance:
 - Polling load is smoother without changing user-facing update semantics.
 - `qmllint`, `zig build` when settings helper behavior changes, `git diff --check`, and `quickshell -p .` pass before checkpoint.
 
-Status: partially completed 2026-05-07. `ExpansionPanelSlot.qml` now owns shared expansion panel deployment animation/position boilerplate for orbital/media/CPU/network/power/filesystem/log surfaces, `CalendarService` now builds month rows/cells from a single cache, and `SettingsService` now routes repeated clamp/normalize/save handlers through a shared helper. Remaining follow-ups: orbital object-allocation/redraw optimization, poll staggering, and optional theme/stat profiling. Verification passed for each completed slice: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+Status: completed 2026-05-07 for the actionable review items. `ExpansionPanelSlot.qml` now owns shared expansion panel deployment animation/position boilerplate for orbital/media/CPU/network/power/filesystem/log surfaces, `CalendarService` now builds month rows/cells from a single cache, `SettingsService` now routes repeated clamp/normalize/save handlers through a shared helper, orbital Canvas projection uses cached view trig/scale plus reusable scratch projection objects, and primary polling services now start in staggered slots. Optional future profiling can still revisit theme/stat micro-optimizations if measured hot. Verification passed for each completed slice: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
 ### Phase L: Extensibility, Migrations, And Tests
 
@@ -428,6 +428,7 @@ Status: planned medium/long-term. Tests and settings migrations are the most con
    - Extract expansion-panel boilerplate, reduce settings handler repetition, continue orbital Canvas/object-allocation optimization, stagger service polls, and cache calendar/theme work where useful.
    - Covered: shared `ExpansionPanelSlot` deployment primitive and calendar month cache.
    - Covered: shared `SettingsService.normalizeAndSave()` clamp/save routing.
+   - Covered: orbital projection allocation reduction and staggered polling startup.
 
 3. Extensibility/test infrastructure.
    - Start with Zig settings-helper validation tests and settings migration/version checks before larger plugin or multi-monitor architecture.

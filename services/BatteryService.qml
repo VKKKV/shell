@@ -41,12 +41,22 @@ Singleton {
         readProcess.running = true;
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: startupPoll.start()
+
+    property Timer startupPoll: Timer {
+        interval: PollingSchedule.startupDelay(2)
+        repeat: false
+        running: SettingsService.liveDataEnabled
+        onTriggered: {
+            root.refresh();
+            root.poller.start();
+        }
+    }
 
     property Timer poller: Timer {
         interval: SettingsService.updateIntervalMs
         repeat: true
-        running: SettingsService.liveDataEnabled
+        running: false
         onTriggered: root.refresh()
     }
 
@@ -56,6 +66,9 @@ Singleton {
             if (SettingsService.liveDataEnabled) {
                 root.refresh();
                 root.poller.restart();
+            } else {
+                root.startupPoll.stop();
+                root.poller.stop();
             }
         }
         function onUpdateIntervalMsChanged(): void {

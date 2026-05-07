@@ -1119,7 +1119,7 @@ Decision (ADR-lite):
 
 Review source captured 2026-05-07: performance and duplication comments for Void Shell. These are planned follow-up slices, not immediate implementation.
 
-Implementation slices completed 2026-05-07: extracted shared expansion-panel deployment slot, cached calendar month rows/cells, and reduced repeated settings clamp/save handlers.
+Implementation slices completed 2026-05-07: extracted shared expansion-panel deployment slot, cached calendar month rows/cells, reduced repeated settings clamp/save handlers, reduced orbital projection allocations, and staggered polling startup.
 
 Requirements:
 
@@ -1135,8 +1135,8 @@ Acceptance Criteria:
 
 - [x] Expansion panel deployment boilerplate is reduced without changing safe-area deployment, close, backdrop, or `Escape` behavior.
 - [x] Settings persistence remains validated/clamped while reducing repeated handler code.
-- [ ] Orbital drag/zoom remains smooth and preserves J2000/Kepler metadata and readability.
-- [ ] Service polling avoids avoidable synchronized CPU spikes.
+- [x] Orbital drag/zoom remains smooth and preserves J2000/Kepler metadata and readability.
+- [x] Service polling avoids avoidable synchronized CPU spikes.
 - [x] Calendar/theme/stat optimizations preserve existing visible behavior.
 - [x] `qmllint`, `zig build` when settings helper changes, `git diff --check`, and `quickshell -p .` pass before checkpoint.
 

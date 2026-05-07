@@ -48,12 +48,22 @@ Singleton {
         pasteProcess.running = true;
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: startupPoll.start()
+
+    property Timer startupPoll: Timer {
+        interval: PollingSchedule.startupDelay(6)
+        repeat: false
+        running: SettingsService.liveDataEnabled
+        onTriggered: {
+            root.refresh();
+            root.poller.start();
+        }
+    }
 
     property Timer poller: Timer {
         interval: 3000
         repeat: true
-        running: SettingsService.liveDataEnabled
+        running: false
         onTriggered: root.refresh()
     }
 
@@ -63,6 +73,9 @@ Singleton {
             if (SettingsService.liveDataEnabled) {
                 root.refresh();
                 root.poller.restart();
+            } else {
+                root.startupPoll.stop();
+                root.poller.stop();
             }
         }
     }

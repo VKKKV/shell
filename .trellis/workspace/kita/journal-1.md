@@ -720,6 +720,15 @@
 - Replaced repeated handlers for theme profile, accent color, background mode, density, visual tuning values, and update interval while preserving existing clamping and save debounce behavior.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Projection And Poll Staggering
+
+- Finished the actionable code-review performance/duplication route.
+- Optimized `OrbitalExpansionPanel.qml` projection hot paths by caching yaw/pitch trig values and view scale, and by using reusable scratch projection objects inside the Canvas orbit/trail draw loops.
+- Preserved J2000/Kepler state, metadata labels, drag/zoom/reset controls, and central expansion behavior.
+- Added `services/PollingSchedule.qml` and registered it in `services/qmldir`.
+- Staggered startup polling for system stats, battery, media, Niri, network detail, and clipboard services to avoid synchronized process spikes while preserving `SettingsService.liveDataEnabled` stop behavior and update interval restarts.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `zig build`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 
