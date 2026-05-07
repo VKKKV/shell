@@ -93,6 +93,7 @@ Make the shell start in a gray tactical palette by default, while keeping the ex
 * Preserve raw clipboard text in history instead of `trim()`-normalizing it.
 * Keep preview compaction separate from stored text.
 * Decide whether all-whitespace clipboard entries should be stored or ignored explicitly.
+* Status: implemented by storing raw non-whitespace clipboard text and keeping whitespace normalization only in preview/filtering.
 
 ### PR5: Network Parser Robustness
 

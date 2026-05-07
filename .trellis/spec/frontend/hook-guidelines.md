@@ -52,6 +52,7 @@ Patterns:
 - Parse command output in the service and expose shaped properties to modules.
 - Missing commands or parse failures should update fallback state instead of throwing through bindings.
 - Pollers should stop when `SettingsService.liveDataEnabled` is false.
+- When a service captures user/system text for later reuse, store the raw value unless there is an explicit product decision to normalize it; apply trimming/compaction to previews only.
 
 ---
 
@@ -101,6 +102,7 @@ Patterns:
 - Command missing -> `available = false`, readable fallback `statusLine`, no QML exception.
 - Command exits non-zero -> fallback state, no raw stderr in normal UI.
 - Parse fails -> empty/default shaped rows and parse fallback status.
+- Raw text contains leading/trailing whitespace -> preserve it in stored service state when it may be copied back later; preview may compact it.
 - Live data disabled -> poll timers stop and no repeated external reads continue.
 - Module imports backend-specific service directly when a facade exists -> fail review.
 - Rapid repeated service actions -> commands run in order or later actions are explicitly rejected with status text; no silent command overwrite.
@@ -110,6 +112,7 @@ Patterns:
 - Good: `SystemStats.qml` parses `/proc`/command output and exposes `cpuRows`; HUD modules only render rows.
 - Good: `CompositorService.qml` hides Hyprland/Niri differences behind a shared contract.
 - Good: `NetworkDetailService.qml` queues reconnect/down/bluetooth actions before feeding the shared action `Process`.
+- Good: `ClipboardService.qml` stores raw clipboard text while deriving a compact preview separately.
 - Base: a local visual timer in one panel is acceptable when it does not fetch external state.
 - Bad: a HUD component runs `Process { command: [...] }` and parses stdout inline.
 

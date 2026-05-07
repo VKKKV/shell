@@ -18,16 +18,15 @@ Singleton {
     }
 
     function updateClipboard(text: string): void {
-        const value = text.trim();
-        if (value.length === 0)
+        if (text.trim().length === 0)
             return;
-        if (history.length > 0 && history[0].text === value)
+        if (history.length > 0 && history[0].text === text)
             return;
 
-        const next = history.filter(entry => entry.text !== value);
+        const next = history.filter(entry => entry.text !== text);
         next.unshift({
-            text: value,
-            preview: compact(value),
+            text: text,
+            preview: compact(text),
             time: Qt.formatDateTime(new Date(), "hh:mm:ss")
         });
         history = next.slice(0, 8);
