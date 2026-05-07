@@ -736,6 +736,15 @@
 - Added settings normalization tests covering visual/data clamp bounds, valid enum/color preservation, invalid enum/color fallback, panel booleans, and non-object root rejection.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Settings Version Migration
+
+- Continued settings test infrastructure by adding minimal version handling to `void-shell-settings`.
+- `normalizeSettings()` now migrates missing/old settings versions to the current version and rejects future versions as unsupported.
+- `read` now normalizes persisted settings and falls back to defaults when the stored file has an invalid or unsupported schema, so QML does not consume future/incompatible settings JSON.
+- Updated `docs/settings.md` with version behavior and `zig build test` usage.
+- Added Zig tests for missing-version migration, old-version migration, and future-version rejection.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

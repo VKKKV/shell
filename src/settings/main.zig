@@ -20,6 +20,8 @@ const Settings = struct {
     right_visible: bool = true,
 };
 
+const current_settings_version = 1;
+
 const defaults_json =
     \\{
     \\  "version": 1,
@@ -98,9 +100,17 @@ fn readSettings(allocator: std.mem.Allocator, io: std.Io, environ_map: *const st
         else => return err,
     };
     defer allocator.free(data);
-    try writeStdout(io, data);
-    if (data.len == 0 or data[data.len - 1] != '\n')
-        try writeStdout(io, "\n");
+    const normalized = normalizeSettings(allocator, data) catch |err| switch (err) {
+        error.InvalidSettingsJson, error.UnsupportedSettingsVersion => {
+            try writeStdout(io, defaults_json ++ "\n");
+            return;
+        },
+        else => return err,
+    };
+    defer allocator.free(normalized);
+
+    try writeStdout(io, normalized);
+    try writeStdout(io, "\n");
 }
 
 fn writeSettings(allocator: std.mem.Allocator, io: std.Io, environ_map: *const std.process.Environ.Map, payload: []const u8) !void {
@@ -127,6 +137,10 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
     const root = parsed.value;
     if (root != .object)
         return error.InvalidSettingsJson;
+
+    const version = integerField(root, "version") orelse current_settings_version;
+    if (version > current_settings_version)
+        return error.UnsupportedSettingsVersion;
 
     if (objectField(root, "visual")) |visual| {
         settings.scanlines_enabled = boolField(visual, "scanlinesEnabled") orelse settings.scanlines_enabled;
@@ -156,7 +170,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
 
     return std.fmt.allocPrint(allocator,
         \\{{
-        \\  "version": 1,
+        \\  "version": {},
         \\  "visual": {{
         \\    "scanlinesEnabled": {},
         \\    "intensity": {d:.1},
@@ -182,6 +196,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\  }}
         \\}}
     , .{
+        current_settings_version,
         settings.scanlines_enabled,
         settings.intensity,
         settings.font_scale,
@@ -386,4 +401,18 @@ test "normalizeSettings falls back for invalid enum and color values" {
 
 test "normalizeSettings rejects non-object root" {
     try std.testing.expectError(error.InvalidSettingsJson, normalizeSettings(std.testing.allocator, "[]"));
+}
+
+test "normalizeSettings migrates missing and old versions to current version" {
+    const missing_version = try normalizeSettings(std.testing.allocator, "{}");
+    defer std.testing.allocator.free(missing_version);
+    try expectContains(missing_version, "\"version\": 1");
+
+    const old_version = try normalizeSettings(std.testing.allocator, "{\"version\":0}");
+    defer std.testing.allocator.free(old_version);
+    try expectContains(old_version, "\"version\": 1");
+}
+
+test "normalizeSettings rejects future versions" {
+    try std.testing.expectError(error.UnsupportedSettingsVersion, normalizeSettings(std.testing.allocator, "{\"version\":999}"));
 }

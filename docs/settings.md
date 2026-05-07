@@ -51,7 +51,8 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 
 ## Validation Rules
 
-- `version` must be `1` for this initial contract.
+- `version` is normalized to `1` for missing or older settings payloads.
+- Future versions greater than `1` are treated as unsupported; `read` falls back to defaults instead of passing an unknown schema to QML.
 - `visual.scanlinesEnabled` is boolean.
 - `visual.intensity` is clamped to `0.5..1.5`.
 - `visual.fontScale` is clamped to `0.85..1.25` and drives global QML theme font sizes.
@@ -105,7 +106,13 @@ zig build
 ./zig-out/bin/void-shell-settings read
 ```
 
-The helper is intentionally small. `read` falls back to defaults when no settings file exists. `write` validates and normalizes known fields, clamps numeric values, writes the normalized JSON, and prints the normalized JSON to stdout.
+The helper is intentionally small. `read` falls back to defaults when no settings file exists or when an existing file has an invalid/unsupported schema. `write` validates and normalizes known fields, clamps numeric values, migrates missing/old versions to the current version, writes the normalized JSON, and prints the normalized JSON to stdout.
+
+Tests:
+
+```bash
+zig build test
+```
 
 ## QML Boundary
 

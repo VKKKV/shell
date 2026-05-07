@@ -1150,7 +1150,7 @@ Decision (ADR-lite):
 
 Review source captured 2026-05-07: extensibility comments for Void Shell. These are medium/long-term planning items unless user prioritizes them.
 
-First implementation slice completed 2026-05-07: added Zig settings-helper validation tests and `zig build test` support.
+Implementation slices completed 2026-05-07: added Zig settings-helper validation tests, `zig build test` support, and settings version normalization/future-version rejection.
 
 Requirements:
 
@@ -1169,6 +1169,7 @@ Acceptance Criteria:
 
 - [x] Extensibility work is split into separate implementation tasks before coding, not mixed into bug-fix slices.
 - [x] Any settings schema/migration change includes Zig validation tests.
+- [x] Settings version checks/migration behavior are covered for missing, old, current, and future versions.
 - [ ] Any compositor-backend extensibility change preserves Hyprland behavior and Niri fallback behavior.
 - [ ] Multi-monitor/plugin/lazy-loading work has explicit product requirements before implementation.
 

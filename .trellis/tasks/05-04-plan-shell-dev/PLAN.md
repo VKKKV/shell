@@ -415,7 +415,7 @@ Acceptance:
 - Compositor backend changes preserve Hyprland behavior and Niri fallback behavior.
 - Plugin, multi-monitor, and lazy-loading work have explicit product requirements before implementation.
 
-Status: partially completed 2026-05-07. Added `zig build test` and focused tests for settings normalization clamps, enum/color fallback, valid settings preservation, panel booleans, update interval bounds, and invalid root rejection. Remaining medium/long-term work: settings migrations/version checks, compositor backend registration if a third compositor is added, keyboard navigation, multi-monitor planning, and plugin/lazy-loading only with explicit requirements.
+Status: partially completed 2026-05-07. Added `zig build test` and focused tests for settings normalization clamps, enum/color fallback, valid settings preservation, panel booleans, update interval bounds, invalid root rejection, missing/old version migration, and future-version rejection. `read` now normalizes stored settings and falls back to defaults on invalid/unsupported schemas. Remaining medium/long-term work: compositor backend registration if a third compositor is added, keyboard navigation, multi-monitor planning, and plugin/lazy-loading only with explicit requirements.
 
 ## Prioritized Next Steps
 
@@ -433,6 +433,7 @@ Status: partially completed 2026-05-07. Added `zig build test` and focused tests
 3. Extensibility/test infrastructure.
    - Start with Zig settings-helper validation tests and settings migration/version checks before larger plugin or multi-monitor architecture.
    - Covered: `zig build test` plus settings normalization boundary tests.
+   - Covered: settings version normalization and future-version rejection.
 
 4. Screenshot-driven visual tuning.
     - Tune panel proportions, font sizes, yellow intensity, scanline opacity, and graph density from real screenshots.
