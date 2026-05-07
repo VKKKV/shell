@@ -17,22 +17,34 @@ Singleton {
     property var wifiNetworks: []
     property string wifiStatus: "SCANNING"
     property string actionStatusLine: "network actions: standby"
-    property string pendingConnection: ""
     property string pendingWifiSsid: ""
+    property string pendingActionLabel: ""
+    property var actionQueue: []
     property string statusLine: "network detail: initializing"
 
-    function refreshConnection(name: string): void {
-        pendingConnection = name;
-        actionProcess.command = ["nmcli", "connection", "up", name];
+    function runNextAction(): void {
+        if (actionProcess.running || actionQueue.length === 0)
+            return;
+
+        const next = actionQueue[0];
+        actionQueue = actionQueue.slice(1);
+        pendingActionLabel = next.label;
+        actionProcess.command = next.command;
         actionProcess.running = true;
-        actionStatusLine = "network actions: reconnect " + name;
+        actionStatusLine = next.status;
+    }
+
+    function queueAction(command: var, label: string, status: string): void {
+        actionQueue = actionQueue.concat([{ command, label, status }]);
+        runNextAction();
+    }
+
+    function refreshConnection(name: string): void {
+        queueAction(["nmcli", "connection", "up", name], name, "network actions: reconnect " + name);
     }
 
     function deactivateConnection(name: string): void {
-        pendingConnection = name;
-        actionProcess.command = ["nmcli", "connection", "down", name];
-        actionProcess.running = true;
-        actionStatusLine = "network actions: down " + name;
+        queueAction(["nmcli", "connection", "down", name], name, "network actions: down " + name);
     }
 
     function connectWifi(ssid: string): void {
@@ -53,9 +65,8 @@ Singleton {
     }
 
     function toggleBluetoothPower(): void {
-        bluetoothToggleProcess.command = ["bluetoothctl", "power", bluetoothStatus === "POWERED" ? "off" : "on"];
-        bluetoothToggleProcess.running = true;
-        actionStatusLine = bluetoothStatus === "POWERED" ? "network actions: bluetooth off" : "network actions: bluetooth on";
+        const nextPower = bluetoothStatus === "POWERED" ? "off" : "on";
+        queueAction(["bluetoothctl", "power", nextPower], "bluetooth " + nextPower, "network actions: bluetooth " + nextPower);
     }
 
     function updateNetwork(output: string): void {
@@ -216,8 +227,9 @@ Singleton {
     property Process actionProcess: Process {
         command: ["true"]
         onExited: (exitCode) => {
-            root.actionStatusLine = exitCode === 0 ? "network actions: ok " + root.pendingConnection : "network actions: nmcli action fallback";
+            root.actionStatusLine = exitCode === 0 ? "network actions: ok " + root.pendingActionLabel : "network actions: action fallback " + root.pendingActionLabel;
             root.refresh();
+            root.runNextAction();
         }
     }
 
@@ -237,11 +249,4 @@ Singleton {
         }
     }
 
-    property Process bluetoothToggleProcess: Process {
-        command: ["true"]
-        onExited: (exitCode) => {
-            root.actionStatusLine = exitCode === 0 ? "network actions: bluetooth toggled" : "network actions: bluetooth fallback";
-            root.refresh();
-        }
-    }
 }

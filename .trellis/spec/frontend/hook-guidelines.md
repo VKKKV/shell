@@ -94,6 +94,7 @@ Patterns:
 - Modules consume service fields and actions; they should not parse raw command output.
 - Polling stops or remains disabled when live data is disabled.
 - Startup polling may use a short delayed timer through `PollingSchedule` when many collectors start together.
+- If multiple user actions share one `Process`, serialize commands with a queue or reject new actions while running; do not overwrite `command` on an active process.
 
 ### 4. Validation & Error Matrix
 
@@ -102,11 +103,13 @@ Patterns:
 - Parse fails -> empty/default shaped rows and parse fallback status.
 - Live data disabled -> poll timers stop and no repeated external reads continue.
 - Module imports backend-specific service directly when a facade exists -> fail review.
+- Rapid repeated service actions -> commands run in order or later actions are explicitly rejected with status text; no silent command overwrite.
 
 ### 5. Good/Base/Bad Cases
 
 - Good: `SystemStats.qml` parses `/proc`/command output and exposes `cpuRows`; HUD modules only render rows.
 - Good: `CompositorService.qml` hides Hyprland/Niri differences behind a shared contract.
+- Good: `NetworkDetailService.qml` queues reconnect/down/bluetooth actions before feeding the shared action `Process`.
 - Base: a local visual timer in one panel is acceptable when it does not fetch external state.
 - Bad: a HUD component runs `Process { command: [...] }` and parses stdout inline.
 

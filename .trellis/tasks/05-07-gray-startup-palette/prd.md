@@ -86,6 +86,7 @@ Make the shell start in a gray tactical palette by default, while keeping the ex
 * Prevent `NetworkDetailService` shared action processes from dropping rapid reconnect/down/toggle commands.
 * Use action queues or running guards per action category.
 * Keep status lines readable and refresh after each completed action.
+* Status: implemented with a generic `actionQueue` and serialized `actionProcess` dispatch for reconnect/down/bluetooth power actions.
 
 ### PR4: Clipboard Fidelity
 
