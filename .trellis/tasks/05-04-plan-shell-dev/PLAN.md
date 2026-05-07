@@ -470,6 +470,7 @@ Status: partially completed 2026-05-07. Added `zig build test` and focused tests
 
 9. Orbital planet map optimization.
     - Covered: graphical orbital depth, label hierarchy, and bounded repaint behavior were improved while preserving current ephemeris contracts.
+    - Covered: selected-planet detail telemetry, local planet selection, zodiac/ecliptic labels, and runtime Repeater index warning cleanup.
 
 10. Expansion panel density and cyber style pass.
     - Covered: `PanelStatusStrip` unifies top status chrome across CPU/Network/Filesystem/Log/Power/Media panels.

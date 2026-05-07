@@ -10,9 +10,9 @@ Item {
     readonly property real dayMs: 86400000
     readonly property date epochJ2000: new Date(Date.UTC(2000, 0, 1, 12, 0, 0))
     readonly property real daysSinceEpoch: (Time.now.getTime() - epochJ2000.getTime()) / dayMs
-    readonly property real coreSize: Math.min(width, height)
-    readonly property real mapSize: Math.max(220, Math.min(width - 260, height - 96))
-    readonly property real mapCenterX: width * 0.5
+    readonly property real jd: 2451545.0 + daysSinceEpoch
+    readonly property real mapSize: Math.max(220, Math.min(width - 230, height - 96))
+    readonly property real mapCenterX: width * 0.46
     readonly property real mapCenterY: height * 0.52
     readonly property real yawRad: degToRad(yawDeg)
     readonly property real pitchRad: degToRad(pitchDeg)
@@ -20,7 +20,7 @@ Item {
     readonly property real sinYaw: Math.sin(yawRad)
     readonly property real cosPitch: Math.cos(pitchRad)
     readonly property real sinPitch: Math.sin(pitchRad)
-    readonly property real currentViewScale: viewScale()
+    readonly property real currentViewScale: mapSize * 0.44 * zoomLevel / 30.2
     property real yawDeg: -34
     property real pitchDeg: 58
     property real zoomLevel: 1
@@ -31,26 +31,56 @@ Item {
     property real pendingYawDeg: yawDeg
     property real pendingPitchDeg: pitchDeg
     property bool dragActive: false
+    property int selectedPlanetIndex: 2
     readonly property int orbitSampleCount: dragActive ? 42 : 96
     property var cachedOrbitPaths: []
     readonly property real minZoomLevel: 0.42
     readonly property real maxZoomLevel: 4.2
+    readonly property real gmSun: 2.959122082855911e-4
+
+    readonly property var planetColors: [
+        "#c8c8c8", "#e8c060", "#48A0FF", "#e04040",
+        "#d8a060", "#e0c880", "#70d0d0", "#4060ff"
+    ]
+
+    readonly property var zodiacSymbols: [
+        "ARI", "TAU", "GEM", "CNC", "LEO", "VIR",
+        "LIB", "SCO", "SGR", "CAP", "AQR", "PSC"
+    ]
+
     readonly property var planets: [
-        { name: "MERCURY", code: "ME", a: 0.387099, e: 0.20564, i: 7.005, node: 48.331, peri: 77.457, meanLongitude: 252.251, period: 87.969, size: 5 },
-        { name: "VENUS", code: "VE", a: 0.723332, e: 0.00678, i: 3.395, node: 76.680, peri: 131.602, meanLongitude: 181.979, period: 224.701, size: 7 },
-        { name: "EARTH", code: "EA", a: 1.000000, e: 0.01671, i: 0.000, node: 0.000, peri: 102.937, meanLongitude: 100.464, period: 365.256, size: 8 },
-        { name: "MARS", code: "MA", a: 1.523679, e: 0.09340, i: 1.850, node: 49.558, peri: 336.041, meanLongitude: 355.453, period: 686.980, size: 6 },
-        { name: "JUPITER", code: "JU", a: 5.202600, e: 0.04849, i: 1.303, node: 100.464, peri: 14.331, meanLongitude: 34.404, period: 4332.589, size: 13 },
-        { name: "SATURN", code: "SA", a: 9.554900, e: 0.05551, i: 2.489, node: 113.665, peri: 93.057, meanLongitude: 49.944, period: 10759.220, size: 12 },
-        { name: "URANUS", code: "UR", a: 19.218400, e: 0.04630, i: 0.773, node: 74.006, peri: 173.005, meanLongitude: 313.232, period: 30685.400, size: 10 },
-        { name: "NEPTUNE", code: "NE", a: 30.110400, e: 0.00946, i: 1.770, node: 131.784, peri: 48.124, meanLongitude: 304.880, period: 60189.000, size: 10 }
+        {
+            name: "MERCURY", code: "ME", a: 0.387099, e: 0.205630, i: 7.00487,
+            node: 48.33167, peri: 77.45612, meanLongitude: 252.25084, size: 5
+        }, {
+            name: "VENUS", code: "VE", a: 0.723336, e: 0.006773, i: 3.39471,
+            node: 76.68069, peri: 131.60247, meanLongitude: 181.97973, size: 7
+        }, {
+            name: "EARTH", code: "EA", a: 1.000002, e: 0.016711, i: 0.00005,
+            node: 0.0, peri: 102.93768, meanLongitude: 100.46435, size: 8
+        }, {
+            name: "MARS", code: "MA", a: 1.523710, e: 0.093394, i: 1.84969,
+            node: 49.55809, peri: 336.05957, meanLongitude: 355.47252, size: 6
+        }, {
+            name: "JUPITER", code: "JU", a: 5.202887, e: 0.048386, i: 1.30440,
+            node: 100.47391, peri: 14.33178, meanLongitude: 34.33480, size: 13
+        }, {
+            name: "SATURN", code: "SA", a: 9.536676, e: 0.053862, i: 2.48599,
+            node: 113.66242, peri: 93.05727, meanLongitude: 49.94415, size: 12
+        }, {
+            name: "URANUS", code: "UR", a: 19.18916, e: 0.047257, i: 0.77264,
+            node: 74.01693, peri: 173.00529, meanLongitude: 313.23218, size: 10
+        }, {
+            name: "NEPTUNE", code: "NE", a: 30.06992, e: 0.008590, i: 1.76817,
+            node: 131.78421, peri: 48.12369, meanLongitude: 304.88003, size: 10
+        }
     ]
 
     function clamp(value: real, minimum: real, maximum: real): real {
         return Math.max(minimum, Math.min(maximum, value));
     }
 
-    function positiveDegrees(value: real): real {
+    function wrap360(value: real): real {
         const wrapped = value % 360;
         return wrapped < 0 ? wrapped + 360 : wrapped;
     }
@@ -59,112 +89,111 @@ Item {
         return value * Math.PI / 180;
     }
 
-    function planetName(planet: var): string {
-        return typeof planet.name === "string" && planet.name.length > 0 ? planet.name : "UNKNOWN";
+    function radToDeg(value: real): real {
+        return value * 180 / Math.PI;
     }
 
-    function planetCode(planet: var): string {
-        return typeof planet.code === "string" && planet.code.length > 0 ? planet.code : planetName(planet).slice(0, 2).toUpperCase();
+    function planetA(p: var): real { return typeof p.a === "number" && p.a > 0 ? p.a : 1; }
+    function planetE(p: var): real { return clamp(typeof p.e === "number" ? p.e : 0, 0, 0.4); }
+    function planetI(p: var): real { return typeof p.i === "number" ? p.i : 0; }
+    function planetNode(p: var): real { return typeof p.node === "number" ? p.node : 0; }
+    function planetPeri(p: var): real { return typeof p.peri === "number" ? p.peri : 0; }
+    function planetMeanLongitude(p: var): real { return typeof p.meanLongitude === "number" ? p.meanLongitude : 0; }
+    function planetSize(p: var): real { return typeof p.size === "number" && p.size > 0 ? p.size : 7; }
+
+    function meanMotion(a: real): real {
+        return Math.sqrt(gmSun / (a * a * a)) * (180 / Math.PI);
     }
 
-    function planetA(planet: var): real {
-        return typeof planet.a === "number" && planet.a > 0 ? planet.a : 1;
+    function meanAnomaly(p: var, dayOffset: real): real {
+        const n = meanMotion(planetA(p));
+        const m0 = planetMeanLongitude(p) - planetPeri(p);
+        return wrap360(m0 + n * dayOffset);
     }
 
-    function planetE(planet: var): real {
-        return clamp(typeof planet.e === "number" ? planet.e : 0, 0, 0.4);
-    }
-
-    function planetI(planet: var): real {
-        return typeof planet.i === "number" ? planet.i : 0;
-    }
-
-    function planetNode(planet: var): real {
-        return typeof planet.node === "number" ? planet.node : 0;
-    }
-
-    function planetPeri(planet: var): real {
-        return typeof planet.peri === "number" ? planet.peri : 0;
-    }
-
-    function planetMeanLongitude(planet: var): real {
-        return typeof planet.meanLongitude === "number" ? planet.meanLongitude : 0;
-    }
-
-    function planetPeriod(planet: var): real {
-        return typeof planet.period === "number" && planet.period > 0 ? planet.period : 365.256;
-    }
-
-    function planetSize(planet: var): real {
-        return typeof planet.size === "number" && planet.size > 0 ? planet.size : 7;
-    }
-
-    function meanAnomaly(planet: var, dayOffset: real): real {
-        const base = planetMeanLongitude(planet) - planetPeri(planet);
-        return positiveDegrees(base + dayOffset * 360 / planetPeriod(planet));
-    }
-
-    function solveKepler(meanAnomalyDeg: real, eccentricity: real): real {
-        const mean = degToRad(meanAnomalyDeg);
-        let eccentric = mean;
-        for (let step = 0; step < 5; step++) {
-            eccentric = eccentric - (eccentric - eccentricity * Math.sin(eccentric) - mean) / (1 - eccentricity * Math.cos(eccentric));
+    function solveKepler(meanAnomalyDeg: real, e: real): real {
+        const m = degToRad(meanAnomalyDeg);
+        let E = m + e * Math.sin(m) / (1 - Math.sin(m + e) + Math.sin(m));
+        for (let step = 0; step < 20; step++) {
+            const dE = (E - e * Math.sin(E) - m) / (1 - e * Math.cos(E));
+            E -= dE;
+            if (Math.abs(dE) < 1e-12)
+                break;
         }
-        return eccentric;
+        return E;
     }
 
-    function orbitalState(planet: var, dayOffset: real): var {
-        const a = planetA(planet);
-        const e = planetE(planet);
-        const i = degToRad(planetI(planet));
-        const node = degToRad(planetNode(planet));
-        const peri = degToRad(planetPeri(planet));
-        const anomaly = meanAnomaly(planet, dayOffset);
-        const eccentric = solveKepler(anomaly, e);
-        const xv = a * (Math.cos(eccentric) - e);
-        const yv = a * Math.sqrt(1 - e * e) * Math.sin(eccentric);
-        const trueAnomaly = Math.atan2(yv, xv);
-        const radius = Math.sqrt(xv * xv + yv * yv);
-        const argument = trueAnomaly + peri - node;
+    function orbitalState(p: var, dayOffset: real): var {
+        const a = planetA(p);
+        const e = planetE(p);
+        const inc = degToRad(planetI(p));
+        const node = degToRad(planetNode(p));
+        const peri = degToRad(planetPeri(p));
+        const M = meanAnomaly(p, dayOffset);
+        const E = solveKepler(M, e);
+        const cosE = Math.cos(E);
+        const sinE = Math.sin(E);
+        const xv = a * (cosE - e);
+        const yv = a * Math.sqrt(1 - e * e) * sinE;
+        const nu = Math.atan2(yv, xv);
+        const r = Math.sqrt(xv * xv + yv * yv);
+
+        const arg = nu + peri - node;
         const cosNode = Math.cos(node);
         const sinNode = Math.sin(node);
-        const cosArg = Math.cos(argument);
-        const sinArg = Math.sin(argument);
-        const cosI = Math.cos(i);
-        const sinI = Math.sin(i);
-        const x = radius * (cosNode * cosArg - sinNode * sinArg * cosI);
-        const y = radius * (sinNode * cosArg + cosNode * sinArg * cosI);
-        const z = radius * (sinArg * sinI);
+        const cosArg = Math.cos(arg);
+        const sinArg = Math.sin(arg);
+        const cosI = Math.cos(inc);
+        const sinI = Math.sin(inc);
+
+        const x = r * (cosNode * cosArg - sinNode * sinArg * cosI);
+        const y = r * (sinNode * cosArg + cosNode * sinArg * cosI);
+        const z = r * (sinArg * sinI);
+
+        const eclLon = wrap360(radToDeg(Math.atan2(y, x)));
+        const eclLat = radToDeg(Math.atan2(z, Math.sqrt(x * x + y * y)));
 
         return {
-            x: x,
-            y: y,
-            z: z,
-            r: radius,
-            meanAnomaly: positiveDegrees(anomaly),
-            trueLongitude: positiveDegrees((Math.atan2(y, x) * 180 / Math.PI)),
-            eccentricAnomaly: positiveDegrees(eccentric * 180 / Math.PI)
+            x, y, z, r,
+            eclLon, eclLat,
+            trueAnomaly: wrap360(radToDeg(nu)),
+            meanAnomaly: wrap360(M),
+            eccentricAnomaly: wrap360(radToDeg(E))
         };
     }
 
-    function viewScale(): real {
-        return mapSize * 0.43 * zoomLevel / 30.2;
+    function zodiacIndex(eclLon: real): int {
+        return Math.floor(wrap360(eclLon) / 30);
     }
 
-    function projectPoint(point: var): var {
-        const x1 = point.x * cosYaw - point.y * sinYaw;
-        const y1 = point.x * sinYaw + point.y * cosYaw;
-        const z1 = point.z;
-        const y2 = y1 * cosPitch - z1 * sinPitch;
-        const z2 = y1 * sinPitch + z1 * cosPitch;
-        const perspective = 1 / (1 + z2 * 0.016);
+    function phaseAngle(planetXYZ: var, earthXYZ: var): real {
+        const dx = planetXYZ.x - earthXYZ.x;
+        const dy = planetXYZ.y - earthXYZ.y;
+        const dz = planetXYZ.z - earthXYZ.z;
+        const distEarth = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (distEarth < 1e-9)
+            return 0;
+        const dot = -(dx * planetXYZ.x + dy * planetXYZ.y + dz * planetXYZ.z) / (distEarth * planetXYZ.r);
+        return radToDeg(Math.acos(clamp(dot, -1, 1)));
+    }
 
-        return {
-            x: mapCenterX + x1 * currentViewScale * perspective,
-            depth: z2,
-            y: mapCenterY + y2 * currentViewScale * perspective,
-            perspective: perspective
-        };
+    function apparentMagnitude(p: var, rHelio: real, distEarth: real, phaseDeg: real): real {
+        const absMag = p.code === "ME" ? -0.6 : (p.code === "VE" ? -4.4 : (p.code === "MA" ? -1.5 : (p.code === "JU" ? -9.4 : (p.code === "SA" ? -8.9 : (p.code === "UR" ? -7.1 : (p.code === "NE" ? -6.9 : -3.9))))));
+        const phaseRad = degToRad(phaseDeg);
+        const phaseTerm = phaseDeg < 90 ? 0.013 * phaseDeg : 0.013 * (180 - phaseDeg);
+        return absMag + 5 * Math.log10(rHelio * distEarth) + phaseTerm;
+    }
+
+    function stateFor(p: var): var {
+        return orbitalState(p, daysSinceEpoch);
+    }
+
+    function selectedState(): var {
+        return stateFor(planets[Math.max(0, Math.min(7, selectedPlanetIndex))]);
+    }
+
+    function selectedPlanet(): var {
+        return planets[Math.max(0, Math.min(7, selectedPlanetIndex))];
     }
 
     function projectPointInto(point: var, target: var): void {
@@ -173,47 +202,39 @@ Item {
         const z1 = point.z;
         const y2 = y1 * cosPitch - z1 * sinPitch;
         const z2 = y1 * sinPitch + z1 * cosPitch;
-        const perspective = 1 / (1 + z2 * 0.016);
-
-        target.x = mapCenterX + x1 * currentViewScale * perspective;
-        target.y = mapCenterY + y2 * currentViewScale * perspective;
+        const persp = 1 / (1 + z2 * 0.016);
+        target.x = mapCenterX + x1 * currentViewScale * persp;
+        target.y = mapCenterY + y2 * currentViewScale * persp;
         target.depth = z2;
-        target.perspective = perspective;
+        target.perspective = persp;
     }
 
-    function projectedPlanet(planet: var): var {
-        const state = orbitalState(planet, daysSinceEpoch);
-        const projected = projectPoint(state);
-        return {
-            x: projected.x,
-            y: projected.y,
-            depth: projected.depth,
-            perspective: projected.perspective,
-            r: state.r,
-            z: state.z,
-            meanAnomaly: state.meanAnomaly,
-            trueLongitude: state.trueLongitude,
-            eccentricAnomaly: state.eccentricAnomaly
-        };
+    function planetLineCompact(p: var): string {
+        const s = stateFor(p);
+        const code = p.code;
+        const r = s.r.toFixed(3);
+        const lon = s.eclLon.toFixed(1);
+        const lat = s.eclLat.toFixed(1);
+        return code + " r" + r + " λ" + lon + "° β" + lat + "°";
     }
 
-    function earthState(): var {
-        return orbitalState(planets[2], daysSinceEpoch);
+    function planetDetailLine(p: var): string {
+        const s = stateFor(p);
+        return p.code + " X " + s.x.toFixed(3) + " Y " + s.y.toFixed(3) + " Z " + s.z.toFixed(3) + " AU";
     }
 
-    function buildOrbitPath(planet: var, samples: int): var {
+    function buildOrbitPath(p: var, samples: int): var {
         const path = [];
-        for (let sample = 0; sample <= samples; sample++) {
-            path.push(orbitalState(planet, sample * planetPeriod(planet) / samples));
-        }
+        const periodDays = 2 * Math.PI / (meanMotion(planetA(p)) * Math.PI / 180);
+        for (let sample = 0; sample <= samples; sample++)
+            path.push(orbitalState(p, sample * periodDays / samples));
         return path;
     }
 
     function buildOrbitPaths(): void {
         const paths = [];
-        for (let i = 0; i < planets.length; i++) {
+        for (let i = 0; i < planets.length; i++)
             paths.push({ high: buildOrbitPath(planets[i], 96), low: buildOrbitPath(planets[i], 42) });
-        }
         cachedOrbitPaths = paths;
     }
 
@@ -223,33 +244,16 @@ Item {
         return dragActive ? cachedOrbitPaths[index].low : cachedOrbitPaths[index].high;
     }
 
-    function labelX(projected: var, labelWidth: real): real {
-        const preferred = projected.depth >= 0 ? projected.x + 16 : projected.x - labelWidth - 16;
-        return Math.min(width - labelWidth - 10, Math.max(10, preferred));
+    function pinLabelX(proj: var, labelW: real): real {
+        const pref = proj.depth >= 0 ? proj.x + 14 : proj.x - labelW - 14;
+        return Math.min(width - labelW - 10, Math.max(10, pref));
     }
 
-    function labelY(projected: var, labelHeight: real): real {
-        return Math.min(height - labelHeight - 72, Math.max(42, projected.y - labelHeight / 2));
+    function pinLabelY(proj: var, labelH: real): real {
+        return Math.min(height - labelH - 72, Math.max(42, proj.y - labelH / 2));
     }
 
-    function formattedPeriod(planet: var): string {
-        const period = planetPeriod(planet);
-        return period >= 1000 ? (period / 365.256).toFixed(1) + "Y" : period.toFixed(1) + "D";
-    }
-
-    function planetLine(planet: var): string {
-        const state = orbitalState(planet, daysSinceEpoch);
-        return planetCode(planet) + " XYZ " + state.x.toFixed(2) + " " + state.y.toFixed(2) + " " + state.z.toFixed(2) + " AU // LON " + state.trueLongitude.toFixed(1) + " // M " + state.meanAnomaly.toFixed(1);
-    }
-
-    function planetCoordinateLabel(planet: var): string {
-        const state = orbitalState(planet, daysSinceEpoch);
-        return planetCode(planet) + " X " + state.x.toFixed(2) + " Y " + state.y.toFixed(2) + " Z " + state.z.toFixed(2) + " AU";
-    }
-
-    function requestScenePaint(): void {
-        orbitCanvas.requestPaint();
-    }
+    function requestScenePaint(): void { orbitCanvas.requestPaint(); }
 
     function scheduleViewUpdate(nextYaw: real, nextPitch: real): void {
         pendingYawDeg = nextYaw;
@@ -267,7 +271,16 @@ Item {
         yawDeg = -34;
         pitchDeg = 58;
         zoomLevel = 1;
-        requestScenePaint();
+    }
+
+    function setTopDownView(): void {
+        yawDeg = 0;
+        pitchDeg = 90;
+    }
+
+    function setEdgeOnView(): void {
+        yawDeg = 0;
+        pitchDeg = 0;
     }
 
     onDaysSinceEpochChanged: requestScenePaint()
@@ -277,12 +290,12 @@ Item {
     onOrbitSampleCountChanged: requestScenePaint()
     onWidthChanged: requestScenePaint()
     onHeightChanged: requestScenePaint()
+    onSelectedPlanetIndexChanged: requestScenePaint()
 
     Component.onCompleted: buildOrbitPaths()
 
     Timer {
         id: viewUpdateTimer
-
         interval: 16
         repeat: false
         onTriggered: root.applyPendingView()
@@ -308,13 +321,15 @@ Item {
         anchors.fill: parent
         visible: SettingsService.scanlinesEnabled
         lineOpacity: 0.035 * SettingsService.intensity * SettingsService.scanlineStrength
+        z: 100
     }
 
     Canvas {
         id: orbitCanvas
-
         anchors.fill: parent
         opacity: 0.98
+        z: 0
+
         onPaint: {
             const ctx = getContext("2d");
             ctx.reset();
@@ -324,126 +339,188 @@ Item {
             const dim = Theme.border.toString();
             const lineDim = Theme.lineDim.toString();
             const textDim = Theme.textDim.toString();
+            const danger = Theme.danger.toString();
             const cx = root.mapCenterX;
             const cy = root.mapCenterY;
             const gridRadius = root.mapSize * 0.46 * root.zoomLevel;
-            const projectedScratch = { x: 0, y: 0, depth: 0, perspective: 1 };
-            const trailScratch = { x: 0, y: 0, depth: 0, perspective: 1 };
+            const scr = { x: 0, y: 0, depth: 0, perspective: 1 };
+            const scr2 = { x: 0, y: 0, depth: 0, perspective: 1 };
 
             ctx.save();
-            ctx.globalAlpha = 0.12;
+
+            ctx.globalAlpha = 0.08;
             ctx.strokeStyle = accent;
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 0.7;
             for (let ring = 1; ring <= 5; ring++) {
                 ctx.beginPath();
                 ctx.arc(cx, cy, gridRadius * ring / 5, 0, Math.PI * 2);
                 ctx.stroke();
             }
 
-            ctx.globalAlpha = 0.2;
-            for (let axis = 0; axis < 12; axis++) {
-                const angle = axis * Math.PI / 6;
+            ctx.globalAlpha = 0.14;
+            for (let a = 0; a < 12; a++) {
+                const angle = a * Math.PI / 6 - Math.PI / 2;
+                const r1 = gridRadius * 0.82;
+                const r2 = gridRadius;
                 ctx.beginPath();
-                ctx.moveTo(cx + Math.cos(angle) * 32, cy + Math.sin(angle) * 32);
-                ctx.lineTo(cx + Math.cos(angle) * gridRadius, cy + Math.sin(angle) * gridRadius);
+                ctx.moveTo(cx + Math.cos(angle) * r1, cy + Math.sin(angle) * r1);
+                ctx.lineTo(cx + Math.cos(angle) * r2, cy + Math.sin(angle) * r2);
                 ctx.stroke();
             }
 
-            ctx.globalAlpha = 0.24;
+            ctx.globalAlpha = 0.28;
+            ctx.fillStyle = accent;
+            ctx.font = "bold " + Theme.fontTiny + "px " + Theme.fontFamily;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            for (let z = 0; z < 12; z++) {
+                const angle = z * Math.PI / 6 - Math.PI / 2;
+                const lr = gridRadius + 16;
+                ctx.fillText(root.zodiacSymbols[z], cx + Math.cos(angle) * lr, cy + Math.sin(angle) * lr);
+            }
+
+            ctx.globalAlpha = 0.26;
             ctx.strokeStyle = textDim;
+            ctx.lineWidth = 0.8;
             ctx.beginPath();
-            ctx.moveTo(cx - gridRadius, cy);
-            ctx.lineTo(cx + gridRadius, cy);
-            ctx.moveTo(cx, cy - gridRadius);
-            ctx.lineTo(cx, cy + gridRadius);
+            ctx.moveTo(cx - gridRadius * 1.06, cy);
+            ctx.lineTo(cx + gridRadius * 1.06, cy);
+            ctx.moveTo(cx, cy - gridRadius * 1.06);
+            ctx.lineTo(cx, cy + gridRadius * 1.06);
             ctx.stroke();
+
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = accent;
+            ctx.font = Theme.fontTiny + "px " + Theme.fontFamily;
+            ctx.textAlign = "left";
+            ctx.fillText("+X ♈", cx + gridRadius * 1.06 + 4, cy + 1);
+            ctx.fillText("+Y", cx - 4, cy - gridRadius * 1.06 - 8);
 
             for (let p = 0; p < root.planets.length; p++) {
                 const path = root.orbitPathFor(p);
+                const color = root.planetColors[p];
                 ctx.beginPath();
-                for (let sample = 0; sample < path.length; sample++) {
-                    root.projectPointInto(path[sample], projectedScratch);
-                    if (sample === 0)
-                        ctx.moveTo(projectedScratch.x, projectedScratch.y);
+                for (let s = 0; s < path.length; s++) {
+                    root.projectPointInto(path[s], scr);
+                    if (s === 0)
+                        ctx.moveTo(scr.x, scr.y);
                     else
-                        ctx.lineTo(projectedScratch.x, projectedScratch.y);
+                        ctx.lineTo(scr.x, scr.y);
                 }
-                ctx.globalAlpha = 0.22 + p * 0.035;
-                ctx.strokeStyle = p === 2 ? accent : dim;
-                ctx.lineWidth = p === 2 ? 1.6 : 0.9;
+                ctx.globalAlpha = 0.16 + p * 0.03;
+                ctx.strokeStyle = color;
+                ctx.lineWidth = p === 2 ? 1.8 : 0.8;
                 ctx.stroke();
             }
 
-            for (let p = 0; p < root.planets.length; p++) {
+            for (let p = root.planets.length - 1; p >= 0; p--) {
                 const planet = root.planets[p];
-                const projectedPlanet = root.projectedPlanet(planet);
-                const nodeSize = root.planetSize(planet) * Math.max(0.72, Math.min(1.28, projectedPlanet.perspective));
+                const s = root.stateFor(planet);
+                const color = root.planetColors[p];
 
-                for (let trail = 4; trail >= 0; trail--) {
-                    const trailState = root.orbitalState(planet, root.daysSinceEpoch - (trail + 1) * Math.max(3, 460 / root.planetPeriod(planet)));
-                    root.projectPointInto(trailState, trailScratch);
-                    const trailSize = Math.max(2, nodeSize - trail * 1.45);
-                    ctx.globalAlpha = 0.25 - trail * 0.035;
-                    ctx.fillStyle = accent;
+                for (let trail = 28; trail >= 0; trail--) {
+                    const tState = root.orbitalState(planet, root.daysSinceEpoch - (trail + 1) * 1.2);
+                    root.projectPointInto(tState, scr2);
+                    const alpha = 0.18 - trail * 0.006;
+                    if (alpha <= 0)
+                        continue;
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = color;
                     ctx.beginPath();
-                    ctx.arc(trailScratch.x, trailScratch.y, trailSize / 2, 0, Math.PI * 2);
+                    ctx.arc(scr2.x, scr2.y, 2.2, 0, Math.PI * 2);
                     ctx.fill();
                 }
 
-                ctx.globalAlpha = 0.22 + Math.max(0, projectedPlanet.depth) * 0.008;
-                ctx.strokeStyle = accent;
+                root.projectPointInto(s, scr);
+                const nodeSize = root.planetSize(planet) * Math.max(0.72, Math.min(1.28, scr.perspective));
+                const isSelected = p === root.selectedPlanetIndex;
+
+                if (isSelected) {
+                    ctx.globalAlpha = 0.22 + (scr.depth >= 0 ? 0.12 : 0.04) + 0.1 * Math.sin(Date.now() / 600);
+                    ctx.strokeStyle = accent;
+                    ctx.lineWidth = 1.2;
+                    ctx.setLineDash([6, 3]);
+                    ctx.beginPath();
+                    ctx.arc(scr.x, scr.y, nodeSize + 22, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    ctx.globalAlpha = 0.35;
+                    for (let r = 0; r < 4; r++) {
+                        ctx.beginPath();
+                        ctx.moveTo(scr.x, scr.y + nodeSize + 16 + r * 4);
+                        ctx.lineTo(scr.x, scr.y + nodeSize + 28 + r * 4);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(scr.x + nodeSize + 16 + r * 4, scr.y);
+                        ctx.lineTo(scr.x + nodeSize + 28 + r * 4, scr.y);
+                        ctx.stroke();
+                    }
+                }
+
+                ctx.globalAlpha = 0.16 + Math.max(0, scr.depth) * 0.006;
+                ctx.strokeStyle = isSelected ? accent : color;
                 ctx.lineWidth = Theme.lineWidth;
                 ctx.beginPath();
-                ctx.arc(projectedPlanet.x, projectedPlanet.y, (nodeSize + 12) / 2, 0, Math.PI * 2);
+                ctx.arc(scr.x, scr.y, (nodeSize + 10) / 2, 0, Math.PI * 2);
                 ctx.stroke();
 
-                ctx.globalAlpha = projectedPlanet.depth >= 0 ? 0.98 : 0.58;
-                ctx.fillStyle = root.planetCode(planet) === "EA" ? Theme.text.toString() : accent;
+                ctx.globalAlpha = scr.depth >= 0 ? 0.96 : 0.54;
+                ctx.fillStyle = planet.code === "EA" ? Theme.text.toString() : color;
                 ctx.beginPath();
-                ctx.arc(projectedPlanet.x, projectedPlanet.y, nodeSize / 2, 0, Math.PI * 2);
+                ctx.arc(scr.x, scr.y, nodeSize / 2, 0, Math.PI * 2);
                 ctx.fill();
 
-                ctx.globalAlpha = 0.3;
+                if (planet.code !== "ME" && planet.code !== "VE") {
+                    ctx.globalAlpha = 0.06 + Math.max(0, scr.depth) * 0.002;
+                    const glowGrad = ctx.createRadialGradient(scr.x, scr.y, nodeSize * 0.3, scr.x, scr.y, nodeSize * 1.6);
+                    glowGrad.addColorStop(0, color);
+                    glowGrad.addColorStop(1, "transparent");
+                    ctx.fillStyle = glowGrad;
+                    ctx.beginPath();
+                    ctx.arc(scr.x, scr.y, nodeSize * 1.6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.globalAlpha = 0.28;
                 ctx.strokeStyle = accent;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.5;
+                const crossSize = isSelected ? 16 : 12;
                 ctx.beginPath();
-                ctx.moveTo(projectedPlanet.x, projectedPlanet.y - 14);
-                ctx.lineTo(projectedPlanet.x, projectedPlanet.y + 14);
-                ctx.moveTo(projectedPlanet.x - 14, projectedPlanet.y);
-                ctx.lineTo(projectedPlanet.x + 14, projectedPlanet.y);
+                ctx.moveTo(scr.x, scr.y - crossSize);
+                ctx.lineTo(scr.x, scr.y + crossSize);
+                ctx.moveTo(scr.x - crossSize, scr.y);
+                ctx.lineTo(scr.x + crossSize, scr.y);
                 ctx.stroke();
             }
-
-            ctx.globalAlpha = 0.34;
-            ctx.strokeStyle = accent;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(cx, cy, 24, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(cx - 42, cy);
-            ctx.lineTo(cx + 42, cy);
-            ctx.moveTo(cx, cy - 42);
-            ctx.lineTo(cx, cy + 42);
-            ctx.stroke();
 
             ctx.globalAlpha = 0.38;
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = 2.2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(cx - 38, cy);
+            ctx.lineTo(cx + 38, cy);
+            ctx.moveTo(cx, cy - 38);
+            ctx.lineTo(cx, cy + 38);
+            ctx.stroke();
+
+            ctx.globalAlpha = 0.15;
+            ctx.fillStyle = danger;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 9, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.globalAlpha = 0.36;
             ctx.fillStyle = accent;
             ctx.font = Theme.fontTiny + "px " + Theme.fontFamily;
-            ctx.fillText("ECLIPTIC XYZ FRAME // J2000 // AU", 18, height - 26);
-            ctx.fillText("YAW " + Math.round(root.yawDeg) + " // PITCH " + Math.round(root.pitchDeg) + " // ZOOM " + root.zoomLevel.toFixed(2) + "X", width - 326, height - 26);
-            ctx.globalAlpha = 0.3;
-            ctx.fillText("+X VERNAL", cx + gridRadius + 8, cy + 4);
-            ctx.fillText("+Y ECLIPTIC", cx + 8, cy - gridRadius - 8);
-
-            ctx.globalAlpha = 0.16;
-            ctx.strokeStyle = lineDim;
-            for (let scan = 0; scan < height; scan += 18) {
-                ctx.beginPath();
-                ctx.moveTo(0, scan);
-                ctx.lineTo(width, scan);
-                ctx.stroke();
-            }
+            ctx.textAlign = "left";
+            ctx.fillText("HELIOCENTRIC ECLIPTIC  J2000.0  AU", 18, height - 26);
+            ctx.textAlign = "right";
+            ctx.fillText("YAW " + Math.round(root.yawDeg) + "  PITCH " + Math.round(root.pitchDeg) + "  ZOOM " + root.zoomLevel.toFixed(2) + "X", width - 18, height - 26);
+            ctx.textAlign = "left";
 
             ctx.restore();
         }
@@ -451,15 +528,16 @@ Item {
 
     MouseArea {
         id: viewDragArea
-
         anchors.fill: parent
-        anchors.topMargin: 42
+        anchors.topMargin: 38
         anchors.bottomMargin: 52
-        acceptedButtons: Qt.LeftButton
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
         preventStealing: true
         propagateComposedEvents: false
         onPressed: mouse => {
+            if (mouse.button === Qt.RightButton)
+                return;
             dragActive = true;
             dragStartYaw = yawDeg;
             dragStartPitch = pitchDeg;
@@ -485,6 +563,24 @@ Item {
             applyPendingView();
         }
         onClicked: mouse => {
+            if (mouse.button === Qt.RightButton) {
+                const mx = mouse.x;
+                const my = mouse.y;
+                let bestDist = 640;
+                let bestIdx = root.selectedPlanetIndex;
+                for (let p = 0; p < root.planets.length; p++) {
+                    const s = root.stateFor(root.planets[p]);
+                    const proj = { x: 0, y: 0, depth: 0, perspective: 1 };
+                    root.projectPointInto(s, proj);
+                    const dist = Math.sqrt((proj.x - mx) * (proj.x - mx) + (proj.y - my) * (proj.y - my));
+                    if (dist < bestDist) {
+                        bestDist = dist;
+                        bestIdx = p;
+                    }
+                }
+                if (bestDist < 50)
+                    root.selectedPlanetIndex = bestIdx;
+            }
             mouse.accepted = true;
         }
     }
@@ -502,33 +598,40 @@ Item {
         model: root.planets
 
         Item {
+            required property int index
             required property var modelData
+            readonly property var s: root.stateFor(modelData)
 
-            readonly property var projected: root.projectedPlanet(modelData)
+            function pointScratch(): var {
+                const p = { x: 0, y: 0, depth: 0, perspective: 1 };
+                root.projectPointInto(s, p);
+                return p;
+            }
+
+            readonly property var proj: pointScratch()
 
             TacticalLabel {
                 id: labelProbe
-
-                visible: false
-                text: root.planetCoordinateLabel(modelData)
+                visible: modelData.code !== root.planets[root.selectedPlanetIndex].code
+                text: modelData.code + " " + root.planetDetailLine(modelData)
                 size: Theme.fontTiny
             }
 
             Rectangle {
-                x: parent.projected.depth >= 0 ? parent.projected.x + 6 : root.labelX(parent.projected, labelProbe.implicitWidth) + labelProbe.implicitWidth
-                y: parent.projected.y
-                width: Math.max(8, Math.abs(root.labelX(parent.projected, labelProbe.implicitWidth) - parent.projected.x) - 10)
+                x: proj.depth >= 0 ? proj.x + 6 : root.pinLabelX(proj, labelProbe.implicitWidth) + labelProbe.implicitWidth
+                y: proj.y
+                width: Math.max(6, Math.abs(root.pinLabelX(proj, labelProbe.implicitWidth) - proj.x) - 8)
                 height: Theme.lineWidth
-                color: Theme.lineDim
-                opacity: 0.38
+                color: root.planetColors[index]
+                opacity: 0.32
             }
 
             TacticalLabel {
-                x: root.labelX(parent.projected, implicitWidth)
-                y: root.labelY(parent.projected, implicitHeight)
+                x: root.pinLabelX(proj, implicitWidth)
+                y: root.pinLabelY(proj, implicitHeight)
                 text: labelProbe.text
-                accent: parent.projected.depth >= 0
-                dim: parent.projected.depth < 0
+                accent: proj.depth >= 0
+                dim: proj.depth < 0
                 size: Theme.fontTiny
                 elide: Text.ElideRight
             }
@@ -539,22 +642,21 @@ Item {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.margins: 10
-        width: Math.min(parent.width * 0.47, 440)
-        height: Math.min(parent.height * 0.43, ephemerisColumn.implicitHeight + 22)
-        color: "#33000000"
+        width: Math.min(parent.width * 0.52, 500)
+        height: Math.min(parent.height * 0.38, ephemerisColumn.implicitHeight + 18)
+        color: "#1a000000"
         border.color: Theme.lineDim
         border.width: Theme.lineWidth
 
         ColumnLayout {
             id: ephemerisColumn
-
             anchors.fill: parent
             anchors.margins: 10
-            spacing: 4
+            spacing: 2
 
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "APPROX EPHEMERIS // J2000 KEPLER // HELIOCENTRIC AU"
+                text: "APPROX EPHEMERIS  J2000 KEPLER  HELIOCENTRIC AU  //  JD " + root.jd.toFixed(1)
                 accent: true
                 size: Theme.fontTiny
                 elide: Text.ElideRight
@@ -564,22 +666,29 @@ Item {
                 model: root.planets
 
                 RowLayout {
+                    required property int index
                     required property var modelData
-
                     Layout.fillWidth: true
-                    spacing: 8
+                    spacing: 6
+
+                    Rectangle {
+                        Layout.preferredWidth: 8
+                        Layout.preferredHeight: 8
+                        radius: 4
+                        color: root.planetColors[index]
+                    }
 
                     TacticalLabel {
-                        text: root.planetCode(modelData)
-                        accent: true
+                        text: modelData.code
+                        accent: index === root.selectedPlanetIndex
                         size: Theme.fontTiny
                     }
 
                     TacticalLabel {
                         Layout.fillWidth: true
-                        text: root.planetLine(modelData)
-                        dim: root.planetCode(modelData) !== "EA"
-                        accent: root.planetCode(modelData) === "EA"
+                        text: root.planetLineCompact(modelData)
+                        dim: index !== root.selectedPlanetIndex
+                        accent: index === root.selectedPlanetIndex
                         size: Theme.fontTiny
                         elide: Text.ElideRight
                     }
@@ -589,86 +698,208 @@ Item {
     }
 
     Rectangle {
+        id: detailPanel
         anchors.right: parent.right
+        anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.margins: 10
-        width: Math.min(parent.width * 0.31, 280)
-        height: controlsColumn.implicitHeight + 20
-        color: "#33000000"
+        anchors.topMargin: 42
+        anchors.bottomMargin: 140
+        width: Math.min(parent.width * 0.28, 280)
+        color: "#1a000000"
         border.color: Theme.lineDim
         border.width: Theme.lineWidth
 
         ColumnLayout {
-            id: controlsColumn
-
             anchors.fill: parent
             anchors.margins: 10
-            spacing: 6
+            spacing: 4
 
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "VIEW CONTROL // DRAG ROTATE // WHEEL ZOOM 0.42X-4.20X"
+                text: "TARGET ACQUIRED  //  " + root.selectedPlanet().name.toUpperCase()
                 accent: true
                 size: Theme.fontTiny
                 elide: Text.ElideRight
             }
 
+            Item { Layout.preferredHeight: 2 }
+
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "YAW " + Math.round(root.yawDeg) + " DEG // PITCH " + Math.round(root.pitchDeg) + " DEG // SCALE " + root.zoomLevel.toFixed(2) + "X"
+                text: "ORBITAL ELEMENTS  J2000"
+                accent: true
+                size: Theme.fontTiny
+                elide: Text.ElideRight
+            }
+
+            Repeater {
+                model: {
+                    const p = root.selectedPlanet();
+                    const m0 = p.meanLongitude - p.peri;
+                    return [
+                        ["a", p.a.toFixed(6) + " AU"],
+                        ["e", p.e.toFixed(6)],
+                        ["i", p.i.toFixed(4) + "\u00b0"],
+                        ["\u03a9", p.node.toFixed(4) + "\u00b0"],
+                        ["\u03d6", p.peri.toFixed(4) + "\u00b0"],
+                        ["L\u2080", p.meanLongitude.toFixed(4) + "\u00b0"],
+                        ["M\u2080", wrap360(m0).toFixed(4) + "\u00b0"]
+                    ]
+                }
+
+                RowLayout {
+                    required property var modelData
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    TacticalLabel {
+                        Layout.preferredWidth: 26
+                        text: modelData[0]
+                        accent: true
+                        size: Theme.fontTiny
+                    }
+
+                    TacticalLabel {
+                        Layout.fillWidth: true
+                        text: modelData[1]
+                        dim: true
+                        size: Theme.fontTiny
+                        elide: Text.ElideRight
+                    }
+                }
+            }
+
+            Item { Layout.preferredHeight: 2 }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "CURRENT STATE  " + Qt.formatDateTime(Time.now, "hh:mm:ss")
+                accent: true
+                size: Theme.fontTiny
+                elide: Text.ElideRight
+            }
+
+            Repeater {
+                model: {
+                    const p = root.selectedPlanet();
+                    const s = root.selectedState();
+                    const earthState = root.orbitalState(root.planets[2], root.daysSinceEpoch);
+                    const distEarth = Math.sqrt((s.x - earthState.x) ** 2 + (s.y - earthState.y) ** 2 + (s.z - earthState.z) ** 2);
+                    const phase = root.phaseAngle(s, earthState);
+                    const mag = root.apparentMagnitude(p, s.r, distEarth, phase);
+                    const zIdx = root.zodiacIndex(s.eclLon);
+                    return [
+                        ["r", s.r.toFixed(4) + " AU (heliocentric)"],
+                        ["dist", distEarth.toFixed(4) + " AU (from Earth)"],
+                        ["\u03bd", s.trueAnomaly.toFixed(2) + "\u00b0 (true anomaly)"],
+                        ["\u03bb", s.eclLon.toFixed(3) + "\u00b0 (ecliptic lon)"],
+                        ["\u03b2", s.eclLat.toFixed(4) + "\u00b0 (ecliptic lat)"],
+                        ["phase", phase.toFixed(1) + "\u00b0"],
+                        ["mag", mag.toFixed(2) + " (apparent)"],
+                        ["const", root.zodiacSymbols[zIdx]]
+                    ]
+                }
+
+                RowLayout {
+                    required property var modelData
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    TacticalLabel {
+                        Layout.preferredWidth: 34
+                        text: modelData[0]
+                        accent: true
+                        size: Theme.fontTiny
+                    }
+
+                    TacticalLabel {
+                        Layout.fillWidth: true
+                        text: modelData[1]
+                        dim: true
+                        size: Theme.fontTiny
+                        elide: Text.ElideRight
+                    }
+                }
+            }
+
+            Item { Layout.fillHeight: true }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "VIEWPORT"
+                accent: true
+                size: Theme.fontTiny
+            }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "YAW " + Math.round(root.yawDeg) + "  PITCH " + Math.round(root.pitchDeg) + "  ZOOM " + root.zoomLevel.toFixed(2)
+                dim: true
+                size: Theme.fontTiny
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 6
+
+                Repeater {
+                    model: [
+                        { label: "RESET", color: Theme.line, action: function() { root.resetView(); } },
+                        { label: "TOP", color: Theme.lineDim, action: function() { root.setTopDownView(); } },
+                        { label: "EDGE", color: Theme.lineDim, action: function() { root.setEdgeOnView(); } }
+                    ]
+
+                    Rectangle {
+                        required property var modelData
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: Theme.densityControlHeight
+                        color: btnArea.containsMouse ? Theme.lineDim : "transparent"
+                        border.color: modelData.color
+                        border.width: Theme.lineWidth
+
+                        MouseArea {
+                            id: btnArea
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onClicked: parent.modelData.action()
+                        }
+
+                        TacticalLabel {
+                            anchors.centerIn: parent
+                            text: parent.modelData.label
+                            accent: btnArea.containsMouse
+                            size: Theme.fontTiny
+                        }
+                    }
+                }
+            }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "RIGHT-CLICK PLANET TO SELECT"
                 dim: true
                 size: Theme.fontTiny
                 elide: Text.ElideRight
-            }
-
-            TacticalLabel {
-                Layout.fillWidth: true
-                text: "EARTH XYZ " + root.earthState().x.toFixed(3) + " / " + root.earthState().y.toFixed(3) + " / " + root.earthState().z.toFixed(3) + " AU"
-                accent: true
-                size: Theme.fontTiny
-                elide: Text.ElideRight
-            }
-
-            Rectangle {
-                Layout.preferredWidth: 92
-                Layout.preferredHeight: Theme.densityControlHeight
-                color: resetArea.containsMouse ? Theme.lineDim : "transparent"
-                border.color: resetArea.containsMouse ? Theme.line : Theme.lineDim
-                border.width: Theme.lineWidth
-
-                TacticalLabel {
-                    anchors.centerIn: parent
-                    text: "RESET VIEW"
-                    accent: resetArea.containsMouse
-                    size: Theme.fontTiny
-                }
-
-                MouseArea {
-                    id: resetArea
-
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: root.resetView()
-                }
             }
         }
     }
 
     Rectangle {
         anchors.centerIn: parent
-        width: 34
-        height: 34
-        radius: width / 2
+        width: 30
+        height: 30
+        radius: 15
         color: Theme.line
-        opacity: 0.14
+        opacity: 0.10
     }
 
     Rectangle {
         anchors.centerIn: parent
-        width: 12
-        height: 12
-        radius: width / 2
+        width: 10
+        height: 10
+        radius: 5
         color: Theme.line
     }
 
@@ -685,10 +916,8 @@ Item {
 
             Item {
                 required property var modelData
-
                 readonly property bool leftSide: modelData.left
                 readonly property bool topSide: modelData.top
-
                 x: leftSide ? 0 : parent.width - width
                 y: topSide ? 0 : parent.height - height
                 width: 82
@@ -724,9 +953,8 @@ Item {
 
         TacticalLabel {
             id: statusText
-
             anchors.centerIn: parent
-            text: "ORBIT SENSOR // UTC " + Qt.formatDateTime(Time.now, "yyyy-MM-dd hh:mm:ss") + " // J2000+" + Math.floor(root.daysSinceEpoch) + "D // KEPLER APPROX"
+            text: "ORBIT SENSOR  //  UTC " + Qt.formatDateTime(Time.now, "yyyy-MM-dd hh:mm:ss") + "  //  JD " + root.jd.toFixed(1) + "  //  J2000+" + Math.floor(root.daysSinceEpoch) + "D  //  KEPLER APPROX"
             accent: true
             size: Theme.fontTiny
             elide: Text.ElideRight
@@ -749,5 +977,57 @@ Item {
         text: "[ACTIVE]"
         accent: true
         size: Theme.fontTiny
+    }
+
+    Rectangle {
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.panelPadding + 64
+        anchors.top: parent.top
+        anchors.topMargin: 4
+        width: 24
+        height: 18
+        color: "transparent"
+        border.color: Theme.lineDim
+        border.width: Theme.lineWidth
+
+        TacticalLabel {
+            anchors.centerIn: parent
+            text: "<"
+            accent: selectedPlanetIndex > 0
+            dim: selectedPlanetIndex === 0
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: selectedPlanetIndex > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+            enabled: selectedPlanetIndex > 0
+            onClicked: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
+        }
+    }
+
+    Rectangle {
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.panelPadding + 36
+        anchors.top: parent.top
+        anchors.topMargin: 4
+        width: 24
+        height: 18
+        color: "transparent"
+        border.color: Theme.lineDim
+        border.width: Theme.lineWidth
+
+        TacticalLabel {
+            anchors.centerIn: parent
+            text: ">"
+            accent: selectedPlanetIndex < 7
+            dim: selectedPlanetIndex === 7
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: selectedPlanetIndex < 7 ? Qt.PointingHandCursor : Qt.ArrowCursor
+            enabled: selectedPlanetIndex < 7
+            onClicked: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
+        }
     }
 }

@@ -745,6 +745,14 @@
 - Added Zig tests for missing-version migration, old-version migration, and future-version rejection.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Detail Telemetry Polish
+
+- Continued with the remaining orbital panel work as a separate slice after settings migration was committed.
+- Expanded `OrbitalExpansionPanel.qml` with refined J2000 element values, Julian date display, zodiac/ecliptic sector labels, selected-planet detail telemetry, phase/apparent-magnitude estimates, top/edge/reset view controls, right-click planet selection, and previous/next target buttons.
+- Preserved central expansion routing, safe-area deployment, close behavior, drag rotation, zoom controls, and offline Kepler-style orbital approximation.
+- Fixed runtime Repeater `index` warnings by declaring `required property int index` in delegates that use `index`.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

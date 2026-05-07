@@ -1178,3 +1178,27 @@ Decision (ADR-lite):
 - Context: review found several architectural seams that are acceptable for the current first-party shell but will become expensive as compositors, panels, settings, and optional services grow.
 - Decision: record them as planned extensibility/test-infrastructure work, with tests and settings migrations as the most concrete early candidates.
 - Consequences: keeps the current shell pragmatic while preventing these concerns from being lost. The trade-off is that plugin, multi-monitor, and registry work remain intentionally deferred.
+
+### Orbital Detail Telemetry Polish
+
+Implemented 2026-05-07 as a focused orbital panel detail/readability slice after the rendering optimization work.
+
+Requirements:
+
+- Improve the J2000 orbital panel's tactical readout density without changing central expansion routing.
+- Add a selected-planet detail pane with orbital elements, live heliocentric/geocentric state, phase, apparent magnitude estimate, and zodiac sector.
+- Add local planet selection controls and right-click planet selection.
+- Preserve drag rotation, zoom, reset behavior, safe-area deployment, close behavior, and offline Kepler approximation.
+
+Acceptance Criteria:
+
+- [x] Orbital panel exposes richer per-planet metadata while preserving the existing J2000/Kepler offline model.
+- [x] Selected planet can be changed locally without adding backend state.
+- [x] Runtime smoke shows no Repeater `index` reference warnings.
+- [x] `qmllint`, `zig build test`, `zig build`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the orbital panel had the computational model and performance optimizations, but the detail surface could expose more useful orbital metadata and target-selection affordances.
+- Decision: keep the work local to `OrbitalExpansionPanel.qml`, expanding the visual/readout layer without changing services or deployment contracts.
+- Consequences: improves the highest-value central panel's usefulness and cyber-machine feel. The trade-off is more QML logic in the orbital surface; extract only if another astronomy surface reuses it.
