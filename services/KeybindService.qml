@@ -151,7 +151,7 @@ Singleton {
             if (exitCode !== 0) {
                 root.keybinds = [];
                 root.available = false;
-                root.statusLine = "keybinds: hyprctl fallback";
+                root.statusLine = "keybinds: " + root.bindBackend + " fallback";
             }
         }
     }

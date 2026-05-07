@@ -105,6 +105,7 @@ Make the shell start in a gray tactical palette by default, while keeping the ex
 
 * Fix backend-specific fallback text in `KeybindService` so Niri failures do not report `hyprctl fallback`.
 * Validate the real `niri msg binds` output shape before expanding parser support.
+* Status: fallback text now uses `bindBackend`; real Niri payload validation remains future work.
 
 ## Research Notes
 
