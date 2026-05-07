@@ -651,43 +651,44 @@ Item {
         color: Theme.line
     }
 
-    Repeater {
-        model: 4
+    Item {
+        anchors.fill: parent
 
-        Rectangle {
-            required property int index
-
-            readonly property bool rightSide: index === 1 || index === 3
-            readonly property bool bottomSide: index >= 2
-
-            x: rightSide ? parent.width - width : 0
-            y: bottomSide ? parent.height - height : 0
-            width: 82
-            height: 82
-            color: "transparent"
-
-            Rectangle {
-                width: parent.width
-                height: Theme.lineWidth
-                color: Theme.line
-                anchors.top: parent.top
-            }
-
-            Rectangle {
-                width: Theme.lineWidth
-                height: parent.height
-                color: Theme.line
-                anchors.left: parent.left
-            }
-
-            transform: [
-                Scale {
-                    origin.x: parent.width / 2
-                    origin.y: parent.height / 2
-                    xScale: parent.rightSide ? -1 : 1
-                    yScale: parent.bottomSide ? -1 : 1
-                }
+        Repeater {
+            model: [
+                { left: true, top: true },
+                { left: false, top: true },
+                { left: true, top: false },
+                { left: false, top: false }
             ]
+
+            Item {
+                required property var modelData
+
+                readonly property bool leftSide: modelData.left
+                readonly property bool topSide: modelData.top
+
+                x: leftSide ? 0 : parent.width - width
+                y: topSide ? 0 : parent.height - height
+                width: 82
+                height: 82
+
+                Rectangle {
+                    x: parent.leftSide ? 0 : parent.width - width
+                    y: parent.topSide ? 0 : parent.height - height
+                    width: parent.width
+                    height: Theme.lineWidth
+                    color: Theme.line
+                }
+
+                Rectangle {
+                    x: parent.leftSide ? 0 : parent.width - width
+                    y: parent.topSide ? 0 : parent.height - height
+                    width: Theme.lineWidth
+                    height: parent.height
+                    color: Theme.line
+                }
+            }
         }
     }
 
@@ -717,38 +718,6 @@ Item {
         anchors.rightMargin: Theme.panelPadding
         anchors.topMargin: 8
         onCloseRequested: ExpansionService.close()
-    }
-
-    Rectangle {
-        anchors.left: parent.left
-        anchors.top: parent.top
-        width: 26
-        height: Theme.heavyLineWidth
-        color: Theme.line
-    }
-
-    Rectangle {
-        anchors.left: parent.left
-        anchors.top: parent.top
-        width: Theme.heavyLineWidth
-        height: 26
-        color: Theme.line
-    }
-
-    Rectangle {
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        width: 26
-        height: Theme.heavyLineWidth
-        color: Theme.line
-    }
-
-    Rectangle {
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        width: Theme.heavyLineWidth
-        height: 26
-        color: Theme.line
     }
 
     TacticalLabel {

@@ -986,3 +986,45 @@ Decision (ADR-lite):
 - Context: the orbital expansion panel was already graphical and time-derived, but it was still a top-down circular/elliptical view with limited astronomical shape and no 3D viewpoint control.
 - Decision: keep the implementation local to `OrbitalExpansionPanel.qml` and use approximate J2000 orbital elements plus a small Kepler solver to produce heliocentric ecliptic XYZ positions, projected through a bounded pseudo-3D camera.
 - Consequences: the highest-priority orbital surface now carries stronger sci-fi depth and more meaningful metadata without adding services or network ephemerides. The trade-off is that the result remains approximate visual astronomy, not precision ephemeris output.
+
+### Planned Future Work: Orbital Map Rendering Optimization
+
+User direction captured 2026-05-07: keep optimizing the planetary/orbital map after the initial J2000 rewrite.
+
+Requirements:
+
+- Improve drag/zoom smoothness beyond the current Canvas throttling and reduced drag-time sampling.
+- Investigate replacing or supplementing QML Canvas orbit drawing with more GPU-friendly Qt Quick primitives, cached layers, or a dedicated renderer path.
+- Preserve the current J2000/Kepler offline ephemeris, heliocentric XYZ/AU metadata, drag/zoom/reset interaction, and central expansion routing.
+- Keep coordinate readability high when zoomed in or out, including clear axis labeling and unclipped planet readouts.
+- Avoid adding network ephemeris data or external astronomy dependencies unless a later precision task explicitly requires them.
+
+Acceptance Criteria:
+
+- [ ] Dragging the orbital map remains responsive on common shell hardware without obvious frame stalls.
+- [ ] Orbit tracks and coordinate overlays retain visual quality after any rendering backend change.
+- [ ] Planet labels and metadata stay readable at minimum/default/maximum zoom.
+- [ ] Rendering changes do not regress close/backdrop/`Escape` behavior or safe-area deployment.
+- [ ] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the first performance pass reduced JS/Canvas churn but the orbital surface is still Canvas-heavy and may benefit from cached or GPU-friendlier rendering.
+- Decision: track deeper rendering optimization as a future slice rather than mixing it with small visual bug fixes.
+- Consequences: preserves current stability while making room for a more deliberate rendering backend evaluation.
+
+### Next Optimization MVP: Orbital Corner Chrome Fix
+
+User issue captured 2026-05-07: the planetary panel has four incorrect right-angle corner effects.
+
+Requirements:
+
+- Fix the four orbital panel corner chrome effects so each corner draws the correct inward-facing L shape.
+- Remove duplicated or mirrored corner primitives that create visually incorrect right-angle artifacts.
+- Keep the existing orbital panel content, drag/zoom behavior, close button, and central deployment unchanged.
+
+Acceptance Criteria:
+
+- [x] The orbital panel shows exactly four correctly oriented corner brackets.
+- [x] No duplicate top-left/bottom-right heavy corner artifacts remain.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.

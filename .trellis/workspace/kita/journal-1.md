@@ -660,3 +660,10 @@
 - Loosened orbital zoom limits to `0.42x..4.20x` and made coordinate labels/readouts explicitly show J2000 ecliptic `X/Y/Z` values in AU.
 - Kept the current QML Canvas implementation; the bottleneck addressed here is JS/Canvas redraw and binding churn, not a missing GPU backend switch.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+## 2026-05-07 - Orbital Corner Chrome Fix
+
+- Added a future PRD slice for deeper orbital map rendering optimization, including GPU-friendlier Qt Quick primitives/cached layers investigation while preserving J2000/Kepler behavior.
+- Fixed the orbital panel's four corner bracket effects by replacing mirrored `Scale`-based corner drawing and duplicate heavy corner fragments with explicit per-corner L brackets.
+- Preserved orbital content, drag/zoom controls, close behavior, and central deployment routing.
+- Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
