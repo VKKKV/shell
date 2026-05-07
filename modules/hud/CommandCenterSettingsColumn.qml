@@ -387,47 +387,11 @@ ColumnLayout {
         accent: true
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Theme.densitySmallSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.intensity = Math.max(0.5, SettingsService.intensity - 0.1)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "-"
-                accent: true
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.intensity = Math.min(1.5, SettingsService.intensity + 0.1)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "+"
-                accent: true
-            }
-        }
+    AdjustmentRow {
+        decrementText: "-"
+        incrementText: "+"
+        onDecrement: SettingsService.intensity = Math.max(0.5, SettingsService.intensity - 0.1)
+        onIncrement: SettingsService.intensity = Math.min(1.5, SettingsService.intensity + 0.1)
     }
 
     TacticalLabel {
@@ -478,47 +442,11 @@ ColumnLayout {
         accent: true
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Theme.densitySmallSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.fontScale = Math.max(0.85, SettingsService.fontScale - 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "FONT -"
-                accent: true
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.fontScale = Math.min(1.25, SettingsService.fontScale + 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "FONT +"
-                accent: true
-            }
-        }
+    AdjustmentRow {
+        decrementText: "FONT -"
+        incrementText: "FONT +"
+        onDecrement: SettingsService.fontScale = Math.max(0.85, SettingsService.fontScale - 0.05)
+        onIncrement: SettingsService.fontScale = Math.min(1.25, SettingsService.fontScale + 0.05)
     }
 
     SectionHeader {
@@ -533,47 +461,11 @@ ColumnLayout {
         accent: true
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Theme.densitySmallSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.panelOpacity = Math.max(0.55, SettingsService.panelOpacity - 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "PANEL -"
-                accent: true
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.panelOpacity = Math.min(0.95, SettingsService.panelOpacity + 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "PANEL +"
-                accent: true
-            }
-        }
+    AdjustmentRow {
+        decrementText: "PANEL -"
+        incrementText: "PANEL +"
+        onDecrement: SettingsService.panelOpacity = Math.max(0.55, SettingsService.panelOpacity - 0.05)
+        onIncrement: SettingsService.panelOpacity = Math.min(0.95, SettingsService.panelOpacity + 0.05)
     }
 
     MetricRow {
@@ -583,47 +475,11 @@ ColumnLayout {
         accent: SettingsService.scanlinesEnabled
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Theme.densitySmallSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.scanlineStrength = Math.max(0.25, SettingsService.scanlineStrength - 0.25)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "SCAN -"
-                accent: true
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.scanlineStrength = Math.min(1.75, SettingsService.scanlineStrength + 0.25)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "SCAN +"
-                accent: true
-            }
-        }
+    AdjustmentRow {
+        decrementText: "SCAN -"
+        incrementText: "SCAN +"
+        onDecrement: SettingsService.scanlineStrength = Math.max(0.25, SettingsService.scanlineStrength - 0.25)
+        onIncrement: SettingsService.scanlineStrength = Math.min(1.75, SettingsService.scanlineStrength + 0.25)
     }
 
     SectionHeader {
@@ -638,47 +494,11 @@ ColumnLayout {
         accent: true
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Theme.densitySmallSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.borderOpacity = Math.max(0.35, SettingsService.borderOpacity - 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "BORDER -"
-                accent: true
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.borderOpacity = Math.min(1, SettingsService.borderOpacity + 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "BORDER +"
-                accent: true
-            }
-        }
+    AdjustmentRow {
+        decrementText: "BORDER -"
+        incrementText: "BORDER +"
+        onDecrement: SettingsService.borderOpacity = Math.max(0.35, SettingsService.borderOpacity - 0.05)
+        onIncrement: SettingsService.borderOpacity = Math.min(1, SettingsService.borderOpacity + 0.05)
     }
 
     MetricRow {
@@ -688,47 +508,11 @@ ColumnLayout {
         accent: true
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Theme.densitySmallSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.dimTextOpacity = Math.max(0.45, SettingsService.dimTextOpacity - 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "DIM -"
-                accent: true
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.dimTextOpacity = Math.min(1, SettingsService.dimTextOpacity + 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "DIM +"
-                accent: true
-            }
-        }
+    AdjustmentRow {
+        decrementText: "DIM -"
+        incrementText: "DIM +"
+        onDecrement: SettingsService.dimTextOpacity = Math.max(0.45, SettingsService.dimTextOpacity - 0.05)
+        onIncrement: SettingsService.dimTextOpacity = Math.min(1, SettingsService.dimTextOpacity + 0.05)
     }
 
     MetricRow {
@@ -738,47 +522,11 @@ ColumnLayout {
         accent: true
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Theme.densitySmallSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.lineContrast = Math.max(0.65, SettingsService.lineContrast - 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "LINE -"
-                accent: true
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.lineContrast = Math.min(1.35, SettingsService.lineContrast + 0.05)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "LINE +"
-                accent: true
-            }
-        }
+    AdjustmentRow {
+        decrementText: "LINE -"
+        incrementText: "LINE +"
+        onDecrement: SettingsService.lineContrast = Math.max(0.65, SettingsService.lineContrast - 0.05)
+        onIncrement: SettingsService.lineContrast = Math.min(1.35, SettingsService.lineContrast + 0.05)
     }
 
     SectionHeader {
@@ -793,46 +541,10 @@ ColumnLayout {
         accent: true
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Theme.densitySmallSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.updateIntervalMs = Math.max(1000, SettingsService.updateIntervalMs - 1000)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "-1S"
-                accent: true
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Theme.densityControlHeight
-            color: "transparent"
-            border.color: Theme.lineDim
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: SettingsService.updateIntervalMs = Math.min(30000, SettingsService.updateIntervalMs + 1000)
-            }
-
-            TacticalLabel {
-                anchors.centerIn: parent
-                text: "+1S"
-                accent: true
-            }
-        }
+    AdjustmentRow {
+        decrementText: "-1S"
+        incrementText: "+1S"
+        onDecrement: SettingsService.updateIntervalMs = Math.max(1000, SettingsService.updateIntervalMs - 1000)
+        onIncrement: SettingsService.updateIntervalMs = Math.min(30000, SettingsService.updateIntervalMs + 1000)
     }
 }
