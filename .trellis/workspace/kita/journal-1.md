@@ -688,3 +688,57 @@
 - Kept QML `TacticalLabel` planet coordinate labels for crisp/elidable text while reducing per-planet live item and binding count during drag/zoom.
 - Preserved cached orbit paths, current-time planet positions, drag/zoom controls, and existing central expansion behavior.
 - Verification passed: `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
+
+## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
+
+**Date**: 2026-05-07
+**Task**: Orbital Rewrite, Perf Passes & Visual Fixes
+**Branch**: `master`
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+| Slice | Commits | Description |
+|-------|---------|-------------|
+| J2000 Orbital Rewrite | `2b4d5d5` | Rewrote `OrbitalExpansionPanel.qml` to 2.5D pseudo-3D J2000 Kepler projection with heliocentric XYZ/AU, orbit tracks, grid, reticles, trails, drag/zoom/reset controls |
+| Drag Input Fix | `f6b57aa` | Fixed `pressX` undefined error and click-through-to-backdrop bug |
+| Interaction Smoothing | `a8d1ec2` | 16ms view update throttle, reduced drag-time orbit sampling |
+| Corner Chrome Fix | `00631ab` | Replaced mirrored Scale corners with explicit per-corner L brackets |
+| Clock Concentric Fix | `562eb87` | Unified `AnalogOrbitClock` dialFace coordinate system |
+| Cached Orbit Tracks | `117df23` | Precomputed orbit path samples, no Kepler solving per Canvas repaint |
+| Canvas Planet Nodes | `8493db3` | Moved trails/halos/crosses from QML delegates to Canvas draw |
+
+**Files Modified**:
+- `modules/hud/OrbitalExpansionPanel.qml` — major rewrite + 3 optimization passes
+- `components/AnalogOrbitClock.qml` — concentric alignment fix
+- `.trellis/tasks/05-04-plan-shell-dev/prd.md` — updated with all completed slices + future plans
+- `.trellis/workspace/kita/journal-1.md` — session journal entries
+
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8493db3` | (see git log) |
+| `117df23` | (see git log) |
+| `562eb87` | (see git log) |
+| `00631ab` | (see git log) |
+| `a8d1ec2` | (see git log) |
+| `f6b57aa` | (see git log) |
+| `2b4d5d5` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
