@@ -40,10 +40,15 @@ ColumnLayout {
                 Keys.onSpacePressed: PowerProfileService.setProfile(modelData)
 
                 MouseArea {
+                    id: profileArea
+
                     anchors.fill: parent
                     cursorShape: PowerProfileService.available ? Qt.PointingHandCursor : Qt.ArrowCursor
                     enabled: PowerProfileService.available
+                    hoverEnabled: true
                     onClicked: PowerProfileService.setProfile(parent.modelData)
+                    onEntered: TooltipService.show("POWER PROFILE", "Switch power profile to " + parent.modelData.toUpperCase() + " through PowerProfileService.", "profile-" + parent.modelData)
+                    onExited: TooltipService.clear("profile-" + parent.modelData)
                 }
 
                 TacticalLabel {
@@ -68,9 +73,14 @@ ColumnLayout {
         Keys.onSpacePressed: PowerProfileService.toggleIdleInhibitor()
 
         MouseArea {
+            id: idleArea
+
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
             onClicked: PowerProfileService.toggleIdleInhibitor()
+            onEntered: TooltipService.show("IDLE INHIBITOR", "Toggle idle inhibition for presentations, media, or long-running tasks.", "idle-inhibitor")
+            onExited: TooltipService.clear("idle-inhibitor")
         }
 
         TacticalLabel {
@@ -104,9 +114,14 @@ ColumnLayout {
                 Keys.onSpacePressed: SessionService.confirm(modelData)
 
                 MouseArea {
+                    id: sessionArea
+
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
                     onClicked: SessionService.confirm(parent.modelData)
+                    onEntered: TooltipService.show("SESSION " + parent.modelData.toUpperCase(), "Click once to arm; click again to execute the compositor-aware session action.", "session-" + parent.modelData)
+                    onExited: TooltipService.clear("session-" + parent.modelData)
                 }
 
                 TacticalLabel {
@@ -155,6 +170,8 @@ ColumnLayout {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
+            onEntered: TooltipService.show("KEYBIND RECORDER", "Click to arm capture. Press Escape to cancel; captured chord becomes a bind template.", "keybind-recorder")
+            onExited: TooltipService.clear("keybind-recorder")
             onClicked: {
                 parent.forceActiveFocus();
                 KeybindService.startRecording();
@@ -207,6 +224,8 @@ ColumnLayout {
                     enabled: KeybindService.recordedCombo.length > 0
                     hoverEnabled: true
                     onClicked: KeybindService.copyBindTemplate()
+                    onEntered: TooltipService.show("COPY KEYBIND", "Copy the captured Hyprland bind template to clipboard.", "keybind-copy")
+                    onExited: TooltipService.clear("keybind-copy")
                 }
 
                 TacticalLabel {
@@ -288,6 +307,8 @@ ColumnLayout {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: EmojiService.copy(parent.modelData.glyph)
+                    onEntered: TooltipService.show("COPY EMOJI", "Copy " + parent.modelData.glyph + " to clipboard.", "emoji-" + parent.modelData.glyph)
+                    onExited: TooltipService.clear("emoji-" + parent.modelData.glyph)
                 }
 
                 TacticalLabel {
@@ -402,9 +423,14 @@ ColumnLayout {
             Keys.onSpacePressed: ClipboardService.refresh()
 
             MouseArea {
+                id: clipboardRefreshArea
+
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
                 onClicked: ClipboardService.refresh()
+                onEntered: TooltipService.show("CLIPBOARD REFRESH", "Refresh clipboard history from the configured local clipboard tool.", "clipboard-refresh")
+                onExited: TooltipService.clear("clipboard-refresh")
             }
 
             TacticalLabel {
@@ -426,9 +452,14 @@ ColumnLayout {
             Keys.onSpacePressed: ClipboardService.clear()
 
             MouseArea {
+                id: clipboardClearArea
+
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
                 onClicked: ClipboardService.clear()
+                onEntered: TooltipService.show("CLIPBOARD CLEAR", "Clear the shell clipboard history buffer.", "clipboard-clear")
+                onExited: TooltipService.clear("clipboard-clear")
             }
 
             TacticalLabel {
@@ -462,6 +493,8 @@ ColumnLayout {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onClicked: ClipboardService.copy(parent.modelData.text)
+                onEntered: TooltipService.show("COPY CLIPBOARD ITEM", "Copy buffered clipboard entry from " + parent.modelData.time + ".", "clipboard-item-" + parent.modelData.time)
+                onExited: TooltipService.clear("clipboard-item-" + parent.modelData.time)
             }
 
             RowLayout {
@@ -555,6 +588,8 @@ ColumnLayout {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onClicked: LauncherService.launch(parent.modelData)
+                onEntered: TooltipService.show("LAUNCH " + parent.modelData.type.toUpperCase(), "Run launcher result: " + parent.modelData.name + ".", "launcher-" + parent.modelData.name)
+                onExited: TooltipService.clear("launcher-" + parent.modelData.name)
             }
 
             RowLayout {

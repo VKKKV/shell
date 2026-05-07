@@ -1256,3 +1256,114 @@ Decision (ADR-lite):
 - Context: the HUD has many dense custom controls, and conventional cursor-following tooltips would fight the tactical layout and edge panels.
 - Decision: use a single fixed tooltip/readout surface updated by hover events, similar in spirit to FL Studio's fixed hint panel.
 - Consequences: improves discoverability without visual jitter or pointer occlusion. The trade-off is that controls need explicit tooltip wiring over time.
+
+### Next Optimization MVP: Expanded Tooltip Coverage
+
+Implemented 2026-05-07 as the follow-up tooltip infrastructure coverage slice.
+
+Requirements:
+
+- Extend the fixed HUD tooltip/readout box to more high-value interactive controls.
+- Reuse `TooltipService.qml`; do not add another tooltip state model or cursor-following popup.
+- Cover command-center network actions, active window focus rows, tray drawer entries, session/power controls, keybind recorder/copy, emoji copy, clipboard controls/items, and launcher results.
+- Preserve existing mouse click behavior, keyboard activation behavior, command routing, and panel layout.
+
+Acceptance Criteria:
+
+- [x] Mission dock and command-center window rows expose focus-action hover help.
+- [x] Command-center network, notification, power/session, keybind, emoji, clipboard, launcher, and tray drawer controls update the fixed tooltip box on hover.
+- [x] Tooltip integration reuses `TooltipService.show()`/`clear()` without creating duplicate popup rectangles or services.
+- [x] Existing click/keyboard command behavior remains unchanged.
+- [x] `qmllint`, `zig build test`, `zig build`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the fixed tooltip box existed and covered the most visible HUD/edge controls, but many command-center and tray interactions still required prior knowledge.
+- Decision: add explicit hover wiring to the next tier of high-value controls while leaving decorative/read-only rows untouched.
+- Consequences: improves discoverability using the established fixed hint pattern. The trade-off is incremental per-control wiring until a reusable interactive-button primitive is justified.
+
+### Planning Update: Fixed Tooltip Box Placement
+
+User feedback captured 2026-05-07: the fixed hover tooltip box should be moved out of the central empty/safe area because it can interfere with normal window usage and central expansion panels. The exact destination needs discussion before implementation.
+
+Requirements:
+
+- Keep the FL Studio-like fixed hover readout behavior; do not switch to cursor-following tooltips.
+- Move `HudTooltipBox` out of the central safe-area slot used by normal windows and central expansion surfaces.
+- Preserve hover wiring through `TooltipService.show()`/`clear()` and avoid per-control popup rectangles.
+- Choose a placement that remains visible without blocking high-value HUD controls, expansion panels, or common application windows.
+- Keep input-region semantics honest: the tooltip should not create a large invisible click shield over normal workspace content.
+
+Placement options to discuss:
+
+- Bottom status strip, above or integrated with the bottom bar: closest to FL Studio's hint-line pattern, low central interference, but may compete with bottom HUD content.
+- Top-right compact readout near the command/settings entry: discoverable and away from center, but may crowd tray/audio/media controls.
+- Left panel footer under telemetry/orbital clock: thematically HUD-like and out of center, but can increase left panel height pressure.
+- Right panel footer under monitor blocks: useful near drill-down controls, but can worsen right-panel text density.
+- Hidden-until-hover edge drawer: least intrusive while idle, but adds more motion/complexity and is less fixed/readout-like.
+
+Acceptance Criteria:
+
+- [x] Tooltip box no longer occupies the central empty/safe area.
+- [x] Central expansion panels and normal application windows are not covered by the tooltip surface during idle or hover states.
+- [x] Hovering supported controls still updates one fixed tactical readout.
+- [x] Tooltip location remains stable and does not follow cursor coordinates.
+- [x] Input regions match the visible tooltip bounds only.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision status:
+
+- Decision: bottom status strip/hint-line placement, because it best matches the requested FL Studio behavior while freeing the central safe area.
+
+### Planned Next: Orbital Panel Scientific And Cyberpunk Redesign
+
+User feedback captured 2026-05-07: update the development plan to optimize the planetary/orbital panel using the provided redesign summary. The current J2000 surface should be strengthened scientifically and visually rather than replaced with a network-backed astronomy dependency.
+
+Requirements:
+
+- Improve scientific grounding of `OrbitalExpansionPanel.qml` while staying offline and deterministic.
+- Replace inaccurate or ambiguous orbital element handling with a clearer J2000/Meeus-style orbital element contract suitable for visual ephemerides.
+- Remove hardcoded orbital-period mean motion where orbital elements can derive mean anomaly progression more explicitly.
+- Improve Kepler solving robustness beyond fixed five-iteration `E0 = M` behavior where needed.
+- Correct Earth element semantics so the model does not mix geocentric solar values with heliocentric planet rows.
+- Add or document the gravitational/solar constant assumptions used by the visual model when deriving motion/state.
+- Display Julian Date/current ephemeris timestamp in the panel.
+- Keep current interaction contracts: central expansion routing, safe-area sizing, close/backdrop/`Escape`, drag rotate, wheel zoom, reset/top/edge controls, and right-click planet selection.
+- Keep performance optimizations: cached orbit paths, scratch projection objects, bounded Canvas repaints, and no dead helper code.
+
+Information display scope:
+
+- Right detail panel should show all seven orbital elements for the selected planet: `a`, `e`, `i`, `Ω`, `ϖ`, `L0`, and `M0`.
+- Current state should show `r`, Earth distance, true anomaly `ν`, ecliptic longitude `λ`, and ecliptic latitude `β`.
+- Phase angle should be calculated from Sun/planet/Earth XYZ vectors.
+- Apparent magnitude should derive from absolute magnitude, distance, and phase approximation.
+- Constellation/zodiac sector should derive from ecliptic longitude, using labels from `ARI` through `PSC`.
+- Bottom ephemeris should show a compact color-coded row per planet, for example `ME r0.395 λ324.8° β-6.1°`.
+
+Visual/cyber-machine scope:
+
+- Assign distinct per-planet colors and use them for planet nodes and orbit paths instead of all dim-gray tracks.
+- Add zodiac/constellation markers around the ecliptic ring.
+- Extend motion trails to a denser fading trail history, around 29 points where performance allows.
+- Add stronger outer-planet glow using radial gradient styling for Jupiter through Neptune.
+- Add animated pulsing/dashed selection reticle using deterministic sine alpha.
+- Improve Sun center marker with a stronger crosshair and red core dot.
+- Preserve view preset controls `[RESET]`, `[TOP]`, and `[EDGE]`.
+- Preserve selected-planet cycle buttons near the close/control area.
+
+Acceptance Criteria:
+
+- [ ] Selected-planet detail readout exposes the full orbital element set and current derived state.
+- [ ] Phase angle, apparent magnitude, and zodiac sector are computed from local state rather than static labels.
+- [ ] Bottom ephemeris table is compact, color-coded, and readable at common central panel sizes.
+- [ ] Orbit paths, planet nodes, trails, and selection reticle use per-planet/cyberpunk visual language without regressing readability.
+- [ ] Cached orbit paths and scratch projection pattern remain in place; drag/zoom does not reintroduce obvious frame stalls.
+- [ ] Dead helper code is removed as part of the redesign cleanup.
+- [ ] Existing central expansion deployment, close behavior, and tooltip placement changes do not conflict.
+- [ ] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Decision (ADR-lite):
+
+- Context: the J2000 orbital panel already moved beyond a flat top-down ASCII/2D surface, but user feedback calls for stronger scientific readouts, richer ephemeris information, and a more cyberpunk visual hierarchy.
+- Decision: plan a focused `OrbitalExpansionPanel.qml` redesign pass that improves approximate offline ephemeris calculation, readout density, and visual coding while preserving existing central expansion contracts.
+- Consequences: the orbital surface becomes more meaningful and visually distinct without adding network astronomy dependencies. The trade-off is more local mathematical/rendering complexity inside the panel; extract only if another astronomy surface reuses it.

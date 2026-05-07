@@ -771,6 +771,18 @@
 - Wired tooltip hover text into shared components (`PanelCloseButton`, `ToggleRow`, `AnalogOrbitClock`) and key HUD surfaces (workspace buttons, audio/mute/volume controls, media transport, command-center entry, left telemetry drill-down, CPU/power/network/filesystem/log drill-downs).
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Expanded Tooltip Coverage
+
+- Continued tooltip discoverability by wiring the fixed HUD hint box into the next tier of interactive controls.
+- Added hover help for mission dock/window focus rows, command-center network actions, Bluetooth/DND/notification controls, tray drawer entries, power profile/session controls, keybind recorder/copy, emoji copy, clipboard controls/items, and launcher results.
+- Reused `TooltipService.show()`/`clear()` only; no extra tooltip popup/state model was added.
+- User redirected before checkpoint: update plan for tooltip placement and orbital panel redesign first.
+- Added PRD planning notes that the fixed tooltip box must move out of the central safe area, with placement options pending discussion.
+- Added PRD planning scope for a scientific/cyberpunk orbital redesign pass covering orbital elements, current state, phase, magnitude, zodiac, color-coded ephemeris, trails/glow/reticle polish, and performance constraints.
+- Chose bottom hint-line placement for the tooltip box.
+- Moved `HudTooltipBox` into `BottomStatusBar.qml` as a compact fixed hint bus and removed the standalone central tooltip region from `HudLayout.qml`, so the central safe area stays clear for windows and expansion panels.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

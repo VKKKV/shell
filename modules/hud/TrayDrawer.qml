@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import "../../components"
+import "../../services"
 import "../../theme"
 import QtQuick
 import QtQuick.Layouts
@@ -79,6 +80,8 @@ ColumnLayout {
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
+                onEntered: TooltipService.show("TRAY ITEM", "Left click activates " + (trayEntry.modelData.title || trayEntry.modelData.id || "tray item") + "; right click uses menu fallback: " + root.affordanceText(trayEntry.modelData) + ".", "tray-drawer-" + (trayEntry.modelData.id || trayEntry.modelData.title))
+                onExited: TooltipService.clear("tray-drawer-" + (trayEntry.modelData.id || trayEntry.modelData.title))
                 onClicked: (mouse) => {
                     if (mouse.button === Qt.RightButton)
                         root.openMenu(trayEntry.modelData);

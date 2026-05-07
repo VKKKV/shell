@@ -32,6 +32,8 @@ RowLayout {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onClicked: CompositorService.focusWindow(dockItem.windowKey)
+                onEntered: TooltipService.show("FOCUS WINDOW", "Focus " + dockItem.modelData.appClass + " via compositor window key. Target: " + dockItem.modelData.title + ".", "dock-" + dockItem.windowKey)
+                onExited: TooltipService.clear("dock-" + dockItem.windowKey)
             }
 
             RowLayout {

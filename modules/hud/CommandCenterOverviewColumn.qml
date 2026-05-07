@@ -42,6 +42,8 @@ ColumnLayout {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onClicked: NetworkDetailService.rescanWifi()
+                onEntered: TooltipService.show("WIFI RESCAN", "Refresh nearby access points through NetworkDetailService.", "overview-wifi-rescan")
+                onExited: TooltipService.clear("overview-wifi-rescan")
             }
 
             TacticalLabel {
@@ -60,10 +62,15 @@ ColumnLayout {
             opacity: NetworkDetailService.bluetoothStatus !== "OFFLINE" ? 1 : 0.45
 
             MouseArea {
+                id: bluetoothArea
+
                 anchors.fill: parent
                 cursorShape: NetworkDetailService.bluetoothStatus !== "OFFLINE" ? Qt.PointingHandCursor : Qt.ArrowCursor
                 enabled: NetworkDetailService.bluetoothStatus !== "OFFLINE"
+                hoverEnabled: true
                 onClicked: NetworkDetailService.toggleBluetoothPower()
+                onEntered: TooltipService.show("BLUETOOTH POWER", "Toggle Bluetooth power when the adapter is available. Current: " + NetworkDetailService.bluetoothStatus + ".", "overview-bluetooth")
+                onExited: TooltipService.clear("overview-bluetooth")
             }
 
             TacticalLabel {
@@ -117,6 +124,9 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
+                hoverEnabled: true
+                onEntered: TooltipService.show("WIFI PROFILE", "Left click connects saved/open profile: " + parent.modelData.ssid + ".", "wifi-profile-" + parent.modelData.ssid)
+                onExited: TooltipService.clear("wifi-profile-" + parent.modelData.ssid)
                 onClicked: mouse => {
                     if (mouse.button === Qt.LeftButton)
                         NetworkDetailService.connectWifi(parent.modelData.ssid);
@@ -144,6 +154,8 @@ ColumnLayout {
                 cursorShape: Qt.PointingHandCursor
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 hoverEnabled: true
+                onEntered: TooltipService.show("NETWORK LINK", "Left click refreshes " + parent.modelData.name + "; right click deactivates it.", "active-link-" + parent.modelData.name)
+                onExited: TooltipService.clear("active-link-" + parent.modelData.name)
                 onClicked: mouse => {
                     if (mouse.button === Qt.RightButton)
                         NetworkDetailService.deactivateConnection(parent.modelData.name);
@@ -203,6 +215,8 @@ ColumnLayout {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onClicked: CompositorService.focusWindow(parent.modelData.windowKey || parent.modelData.title)
+                onEntered: TooltipService.show("FOCUS WINDOW", "Focus " + parent.modelData.appClass + " from command-center overview. Uses stable compositor key when available.", "overview-window-" + (parent.modelData.windowKey || parent.modelData.title))
+                onExited: TooltipService.clear("overview-window-" + (parent.modelData.windowKey || parent.modelData.title))
             }
 
             RowLayout {
@@ -315,9 +329,14 @@ ColumnLayout {
             border.width: Theme.lineWidth
 
             MouseArea {
+                id: dndArea
+
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
                 onClicked: NotificationService.toggleDnd()
+                onEntered: TooltipService.show("NOTIFICATION DND", "Toggle shell do-not-disturb mode for notification handling.", "overview-dnd")
+                onExited: TooltipService.clear("overview-dnd")
             }
 
             TacticalLabel {
@@ -335,9 +354,14 @@ ColumnLayout {
             border.width: Theme.lineWidth
 
             MouseArea {
+                id: clearAlertsArea
+
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
                 onClicked: NotificationService.clear()
+                onEntered: TooltipService.show("CLEAR ALERTS", "Clear stored notification history from the shell buffer.", "overview-clear-alerts")
+                onExited: TooltipService.clear("overview-clear-alerts")
             }
 
             TacticalLabel {

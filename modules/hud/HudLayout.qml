@@ -41,7 +41,7 @@ Item {
     readonly property int filesystemOriginY: rightPanel.y + Math.min(rightPanel.height - 50, 470)
     readonly property int logOriginX: rightPanel.x + rightPanel.width * 0.5
     readonly property int logOriginY: rightPanel.y + Math.min(rightPanel.height - 30, 600)
-    readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion, expansionInputRegion, toastInputRegion, tooltipInputRegion]
+    readonly property var inputRegions: [topInputRegion, leftInputRegion, rightInputRegion, bottomInputRegion, settingsInputRegion, expansionInputRegion, toastInputRegion]
 
     function syncMetrics(): void {
         HudMetrics.topReserved = topReserved;
@@ -326,16 +326,6 @@ Item {
         anchors.topMargin: Theme.gap
     }
 
-    HudTooltipBox {
-        id: tooltipBox
-
-        width: Math.min(460, Math.max(320, root.centerSafeWidth * 0.42))
-        height: implicitHeight
-        x: root.expansionTargetX + Math.max(Theme.gap, (root.expansionWidth - width) * 0.5)
-        y: Math.min(root.height - bottomReserved - height - Theme.gap, root.expansionTargetY + root.expansionHeight - height - Theme.gap)
-        z: 900
-    }
-
     Region {
         id: topInputRegion
 
@@ -403,16 +393,6 @@ Item {
         y: notificationToast.y
         width: notificationToast.visible ? notificationToast.width : 0
         height: notificationToast.visible ? notificationToast.height : 0
-        intersection: Intersection.Subtract
-    }
-
-    Region {
-        id: tooltipInputRegion
-
-        x: tooltipBox.x
-        y: tooltipBox.y
-        width: tooltipBox.width
-        height: tooltipBox.height
         intersection: Intersection.Subtract
     }
 
