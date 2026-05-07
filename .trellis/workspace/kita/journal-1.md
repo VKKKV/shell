@@ -820,6 +820,14 @@
 - Verified the first smoke run exposed a bottom `RowLayout` recursive rearrange warning; simplified dock sizing to remove the feedback loop.
 - Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
 
+## 2026-05-07 - Orbital Track Stroke Quality
+
+- Captured user feedback that orbital track lines were too thin and visibly jagged.
+- Updated the orbit track Canvas rendering in `OrbitalExpansionPanel.qml` to use rounded caps/joins and layered strokes.
+- Added a wider translucent color underlay, thicker per-planet core line, and subtle light highlight to improve perceived anti-aliasing.
+- Preserved per-planet color coding, cached orbit paths, J2000/Kepler ephemeris math, drag/zoom behavior, and expansion routing.
+- Verification passed: `zig build test`, `zig build`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, `git diff --check`, and `timeout 8s quickshell -p .`.
+
 
 ## Session 1: Orbital Rewrite, Perf Passes & Visual Fixes
 

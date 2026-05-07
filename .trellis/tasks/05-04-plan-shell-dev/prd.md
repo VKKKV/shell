@@ -1435,3 +1435,28 @@ Implementation notes:
 - `HudExclusionZone.qml` now uses `mask: Region {}` so transparent reservation windows do not intercept top/bottom/side HUD clicks.
 - `BottomStatusBar.qml` now constrains fixed labels, status text, and the dock lane with elision/clipping instead of allowing overlap.
 - `MissionDock.qml` clips its row and uses bounded fixed item widths so many windows do not collide with bottom status text.
+
+### Priority Visual Fix: Orbital Track Stroke Quality
+
+User issue captured 2026-05-07: the planetary map panel orbit lines are too thin and visibly jagged.
+
+Requirements:
+
+- Make orbit tracks in `OrbitalExpansionPanel.qml` thicker and smoother/readable.
+- Preserve per-planet color coding, cached orbit paths, current J2000/Kepler ephemeris logic, drag/zoom controls, and central expansion routing.
+- Avoid introducing a new renderer/backend for this fix; keep the slice local to the existing Canvas rendering unless a later performance task requires more.
+- Improve perceived anti-aliasing with layered strokes, alpha tuning, or rounded stroke caps/joins where supported.
+
+Acceptance Criteria:
+
+- [x] Orbit tracks are visibly thicker and less jagged at default zoom.
+- [x] Selected/Earth/or major orbit hierarchy remains clear.
+- [x] Per-planet color coding remains visible.
+- [x] Canvas rendering remains bounded to existing repaint paths and cached orbit samples.
+- [x] `qmllint`, `git diff --check`, and `quickshell -p .` pass before checkpoint.
+
+Implementation notes:
+
+- Orbit tracks now draw with rounded caps/joins and layered strokes: a wider translucent color underlay, a brighter core line, and a subtle light highlight.
+- Selected, Earth, and outer/major orbits receive stronger width/alpha hierarchy while preserving per-planet color coding.
+- The fix stays inside the existing Canvas paint path and keeps cached orbit paths unchanged.

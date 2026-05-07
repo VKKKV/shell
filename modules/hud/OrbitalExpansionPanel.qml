@@ -374,6 +374,8 @@ Item {
             const scr2 = { x: 0, y: 0, depth: 0, perspective: 1 };
 
             ctx.save();
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
 
             ctx.globalAlpha = 0.08;
             ctx.strokeStyle = accent;
@@ -436,9 +438,23 @@ Item {
                     else
                         ctx.lineTo(scr.x, scr.y);
                 }
-                ctx.globalAlpha = 0.16 + p * 0.03;
+
+                const selectedOrbit = p === root.selectedPlanetIndex;
+                const majorOrbit = p === 2 || p >= 4;
+                const baseWidth = selectedOrbit ? 3.4 : (majorOrbit ? 2.6 : 2.1);
+                ctx.globalAlpha = selectedOrbit ? 0.28 : 0.16;
                 ctx.strokeStyle = color;
-                ctx.lineWidth = p === 2 ? 1.8 : 0.8;
+                ctx.lineWidth = baseWidth + 2.2;
+                ctx.stroke();
+
+                ctx.globalAlpha = selectedOrbit ? 0.72 : (0.40 + p * 0.025);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = baseWidth;
+                ctx.stroke();
+
+                ctx.globalAlpha = selectedOrbit ? 0.34 : 0.12;
+                ctx.strokeStyle = Theme.text.toString();
+                ctx.lineWidth = Math.max(0.7, baseWidth * 0.34);
                 ctx.stroke();
             }
 
