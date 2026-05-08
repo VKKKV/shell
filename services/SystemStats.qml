@@ -203,7 +203,7 @@ Singleton {
     }
 
     property Process filesystemProcess: Process {
-        command: ["sh", "-c", "set -- / /home /data; targets=''; for mount in \"$@\"; do [ -e \"$mount\" ] && targets=\"$targets '$mount'\"; done; if [ -n \"$targets\" ]; then eval df -B1 $targets; else df -B1 /; fi"]
+        command: ["sh", "-c", "df -B1 \"$@\" 2>/dev/null || true", "df", "/", "/home", "/data"]
         stdout: StdioCollector {
             onStreamFinished: root.updateFilesystem(text)
         }

@@ -12,6 +12,12 @@ Singleton {
 
     function push(source: string, level: string, message: string): void {
         const normalizedLevel = ["info", "warn", "error"].indexOf(level) >= 0 ? level : "info";
+        const latest = events.length > 0 ? events[0] : null;
+        if (latest && latest.source === source && latest.level === normalizedLevel && latest.message === message) {
+            statusLine = "service log: " + normalizedLevel + " " + source;
+            return;
+        }
+
         const entry = {
             time: Qt.formatDateTime(new Date(), "hh:mm:ss"),
             source,

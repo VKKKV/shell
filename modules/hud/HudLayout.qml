@@ -207,7 +207,9 @@ Item {
     Item {
         id: expansionLayer
 
-        visible: ExpansionService.open
+        readonly property bool hasValidSurface: ExpansionService.validSurface(ExpansionService.activeSurface)
+
+        visible: ExpansionService.open && hasValidSurface
         opacity: visible ? 1 : 0
         anchors.fill: parent
 
