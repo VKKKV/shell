@@ -29,16 +29,11 @@ Avoid mixing these in the same task:
 - Agent prompt surface: added a staged prompt input that routes submit intent to `AgentService.submit()` while command execution remains blocked.
 - Agent local command execution MVP: added a non-persistent argv provider command path in `AgentService.qml`, disabled by default, with shaped unavailable/busy/failed/timeout/ok states.
 - Agent provider session config: added session-local provider presets for disabled, Hermes, and OpenClaw without settings persistence.
+- Agent provider persistence contract: persists only `agent.providerId` (`disabled`, `hermes`, `openclaw`) while keeping commands and custom providers out of persisted settings.
 
 ### Next Slices
 
-1. Agent provider persistence contract
-   - Decide if provider selection should be persisted after session-local behavior is proven.
-   - If persistent, update `SettingsService.qml`, `src/settings/main.zig`, and `docs/settings.md` together.
-   - Add Zig validation tests before accepting stored provider fields.
-   - Verification: `zig build test`, `zig build`, `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.
-
-2. Hermes/OpenClaw adapter mapping
+1. Hermes/OpenClaw adapter mapping
    - Map each adapter onto the generic local command contract.
    - Do not add provider-specific UI until the generic contract works.
    - Keep custom providers out of scope until an allowlist is defined.

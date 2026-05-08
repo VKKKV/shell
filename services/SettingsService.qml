@@ -17,6 +17,7 @@ Singleton {
     property string themeProfile: "gray"
     property string accentColor: "#8A8A8A"
     property string backgroundMode: "void"
+    property string agentProviderId: "disabled"
     property bool networkGeolocationEnabled: false
     property real intensity: 1
     property real fontScale: 1
@@ -80,6 +81,10 @@ Singleton {
         return ["void", "grid", "radar", "nixie"].indexOf(value) >= 0 ? value : "void";
     }
 
+    function normalizeAgentProviderId(value: string): string {
+        return ["disabled", "hermes", "openclaw"].indexOf(value) >= 0 ? value : "disabled";
+    }
+
     function normalizeDensity(value: string): string {
         return ["compact", "normal", "dense"].indexOf(value) >= 0 ? value : "normal";
     }
@@ -135,6 +140,10 @@ Singleton {
             if (typeof settings.panels.rightVisible === "boolean")
                 rightVisible = settings.panels.rightVisible;
         }
+        if (settings.agent) {
+            if (typeof settings.agent.providerId === "string")
+                agentProviderId = normalizeAgentProviderId(settings.agent.providerId);
+        }
         applyingSettings = false;
     }
 
@@ -164,6 +173,9 @@ Singleton {
                 leftVisible: leftVisible,
                 centerVisible: centerVisible,
                 rightVisible: rightVisible
+            },
+            agent: {
+                providerId: normalizeAgentProviderId(agentProviderId)
             }
         });
     }
@@ -228,6 +240,9 @@ Singleton {
     }
     onBackgroundModeChanged: {
         normalizeAndSave(backgroundMode, normalizeBackgroundMode(backgroundMode), value => backgroundMode = value);
+    }
+    onAgentProviderIdChanged: {
+        normalizeAndSave(agentProviderId, normalizeAgentProviderId(agentProviderId), value => agentProviderId = value);
     }
     onDensityChanged: {
         normalizeAndSave(density, normalizeDensity(density), value => density = value);

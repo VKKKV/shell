@@ -19,6 +19,7 @@ const Settings = struct {
     left_visible: bool = true,
     center_visible: bool = true,
     right_visible: bool = true,
+    agent_provider_id: []const u8 = "disabled",
 };
 
 const current_settings_version = 1;
@@ -49,6 +50,9 @@ const defaults_json =
     \\    "leftVisible": true,
     \\    "centerVisible": true,
     \\    "rightVisible": true
+    \\  },
+    \\  "agent": {
+    \\    "providerId": "disabled"
     \\  }
     \\}
 ;
@@ -174,6 +178,10 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.right_visible = boolField(panels, "rightVisible") orelse settings.right_visible;
     }
 
+    if (objectField(root, "agent")) |agent| {
+        settings.agent_provider_id = agentProviderField(agent, "providerId") orelse settings.agent_provider_id;
+    }
+
     return std.fmt.allocPrint(allocator,
         \\{{
         \\  "version": {},
@@ -200,6 +208,9 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         \\    "leftVisible": {},
         \\    "centerVisible": {},
         \\    "rightVisible": {}
+        \\  }},
+        \\  "agent": {{
+        \\    "providerId": "{s}"
         \\  }}
         \\}}
     , .{
@@ -222,6 +233,7 @@ fn normalizeSettings(allocator: std.mem.Allocator, payload: []const u8) ![]u8 {
         settings.left_visible,
         settings.center_visible,
         settings.right_visible,
+        settings.agent_provider_id,
     });
 }
 
@@ -280,6 +292,16 @@ fn accentColorField(value: std.json.Value, key: []const u8) ?[]const u8 {
             return null;
     }
     return color;
+}
+
+fn agentProviderField(value: std.json.Value, key: []const u8) ?[]const u8 {
+    const field = objectField(value, key) orelse return null;
+    if (field != .string)
+        return null;
+    const provider_id = field.string;
+    if (std.mem.eql(u8, provider_id, "disabled") or std.mem.eql(u8, provider_id, "hermes") or std.mem.eql(u8, provider_id, "openclaw"))
+        return provider_id;
+    return null;
 }
 
 fn numberField(value: std.json.Value, key: []const u8) ?f64 {
@@ -367,7 +389,8 @@ test "normalizeSettings keeps valid enum and color values" {
         \\    "backgroundMode": "nixie"
         \\  },
         \\  "data": { "liveDataEnabled": false, "networkGeolocationEnabled": true },
-        \\  "panels": { "leftVisible": false, "centerVisible": true, "rightVisible": false }
+        \\  "panels": { "leftVisible": false, "centerVisible": true, "rightVisible": false },
+        \\  "agent": { "providerId": "hermes" }
         \\}
     ;
 
@@ -383,6 +406,7 @@ test "normalizeSettings keeps valid enum and color values" {
     try expectContains(normalized, "\"leftVisible\": false");
     try expectContains(normalized, "\"centerVisible\": true");
     try expectContains(normalized, "\"rightVisible\": false");
+    try expectContains(normalized, "\"providerId\": \"hermes\"");
 }
 
 test "normalizeSettings falls back for invalid enum and color values" {
@@ -406,6 +430,19 @@ test "normalizeSettings falls back for invalid enum and color values" {
     try expectContains(normalized, "\"accentColor\": \"#8A8A8A\"");
     try expectContains(normalized, "\"backgroundMode\": \"void\"");
     try expectContains(normalized, "\"updateIntervalMs\": 30000");
+}
+
+test "normalizeSettings falls back invalid agent provider ids" {
+    const payload =
+        \\{
+        \\  "agent": { "providerId": "custom" }
+        \\}
+    ;
+
+    const normalized = try normalizeSettings(std.testing.allocator, payload);
+    defer std.testing.allocator.free(normalized);
+
+    try expectContains(normalized, "\"providerId\": \"disabled\"");
 }
 
 test "normalizeSettings rejects non-object root" {

@@ -38,14 +38,39 @@ Singleton {
             return;
         }
 
+        applyProvider(id, false);
+    }
+
+    function applyProvider(id: string, fromSettings: bool): void {
+        if (running)
+            return;
+
         const preset = providerPresets.find(entry => entry.id === id) || providerPresets[0];
         providerName = preset.name;
         providerCommand = preset.available ? preset.command : [];
         state = providerCommand.length > 0 ? "idle" : "unavailable";
         statusLine = providerCommand.length > 0 ? "agent: provider selected " + preset.name.toLowerCase() : "agent: provider unavailable " + preset.name.toLowerCase();
         responseText = preset.detail;
-        errorDetail = providerCommand.length > 0 ? "" : "provider preset is session-local and unavailable";
+        errorDetail = providerCommand.length > 0 ? "" : "provider preset unavailable; command not configured";
+        if (!fromSettings && SettingsService.agentProviderId !== preset.id)
+            SettingsService.agentProviderId = preset.id;
         ServiceLogService.push("agent", providerCommand.length > 0 ? "info" : "warn", statusLine);
+    }
+
+    Component.onCompleted: {
+        if (!SettingsService.loading)
+            applyProvider(SettingsService.agentProviderId, true);
+    }
+
+    Connections {
+        target: SettingsService
+        function onLoadingChanged(): void {
+            if (!SettingsService.loading)
+                root.applyProvider(SettingsService.agentProviderId, true);
+        }
+        function onAgentProviderIdChanged(): void {
+            root.applyProvider(SettingsService.agentProviderId, true);
+        }
     }
 
     function submit(prompt: string): void {

@@ -45,6 +45,9 @@ Fallback if `XDG_CONFIG_HOME` is unset:
     "leftVisible": true,
     "centerVisible": true,
     "rightVisible": true
+  },
+  "agent": {
+    "providerId": "disabled"
   }
 }
 ```
@@ -70,6 +73,8 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `data.liveDataEnabled` is boolean.
 - `data.updateIntervalMs` is clamped to `1000..30000`.
 - panel visibility fields are booleans.
+- `agent.providerId` is one of `disabled`, `hermes`, or `openclaw` and defaults to `disabled`.
+- `agent.providerId` persists only the selected provider preset id. It does not persist provider commands, argv arrays, prompts, responses, or custom providers.
 - Unknown fields are currently dropped by the Zig helper during normalization. Preserving unknown fields is a future compatibility improvement.
 
 ## Zig Helper
