@@ -116,3 +116,12 @@ Continue shell development with a small, verifiable feature slice focused on doc
 * `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
 * `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
 * Independent `trellis-check` review: passed with no findings.
+
+### Network Panel Copy Refinement Slice
+
+* `modules/hud/NetworkExpansionPanel.qml` now describes current network behavior in present tense instead of saying connection flows are deferred.
+* The right-side status block surfaces `NetworkDetailService.actionStatusLine` next to link telemetry so current action state is visible without changing service behavior.
+* Tactical notes clarify that Wi-Fi saved/open profile connection exists, active link controls live in the command center, packet history is live, and external auth prompts remain outside the shell.
+* `git diff --check`: passed.
+* `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
+* `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.

@@ -102,7 +102,7 @@ CentralPanelChrome {
 
                 TextBlock {
                     title: "LINK STATUS"
-                    lines: [NetworkDetailService.statusLine, "PRIMARY: " + NetworkDetailService.primaryName, "TYPE: " + NetworkDetailService.primaryType, "VPN: " + NetworkDetailService.vpnStatus, "BT: " + NetworkDetailService.bluetoothStatus]
+                    lines: [NetworkDetailService.statusLine, NetworkDetailService.actionStatusLine, "PRIMARY: " + NetworkDetailService.primaryName, "TYPE: " + NetworkDetailService.primaryType, "VPN: " + NetworkDetailService.vpnStatus, "BT: " + NetworkDetailService.bluetoothStatus]
                 }
 
                 TextBlock {
@@ -112,7 +112,7 @@ CentralPanelChrome {
 
                 TextBlock {
                     title: "TACTICAL NOTES"
-                    lines: ["CLICK BACKDROP TO DISMISS", "CONNECTION FLOWS: DEFERRED", "PACKET GRAPH: LIVE HISTORY", "WIFI AUTH: OUT OF SCOPE"]
+                    lines: ["BACKDROP / ESC CLOSES PANEL", "LEFT AP: CONNECT SAVED/OPEN PROFILE", "LINK ACTIONS LIVE IN COMMAND CENTER", "PACKET GRAPH: LIVE HISTORY", "WIFI AUTH PROMPTS REMAIN EXTERNAL"]
                 }
             }
         }
