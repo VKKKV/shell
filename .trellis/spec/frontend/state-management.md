@@ -267,3 +267,124 @@ onClicked: CompositorService.focusWindow(modelData.windowKey || modelData.title)
 ```
 
 Use `windowKey` first so Hyprland addresses and Niri window ids handle duplicate titles safely.
+
+## Scenario: Persistent Background Mode Contract
+
+### 1. Scope / Trigger
+
+- Trigger: adding or changing a persistent shell background mode, such as `visual.backgroundMode: "nixie"`.
+- Applies to: `services/SettingsService.qml`, `modules/hud/CommandCenterSettingsColumn.qml`, `modules/hud/HudLayout.qml`, reusable visual components under `components/`, `src/settings/main.zig`, and `docs/settings.md`.
+- This is a cross-layer settings contract because the same enum value must round-trip through settings UI, QML session state, Zig normalization, persisted JSON, and HUD rendering.
+
+### 2. Signatures
+
+- QML setting owner: `services/SettingsService.qml`
+
+```qml
+property string backgroundMode: "void"
+function normalizeBackgroundMode(value: string): string
+function settingsPayload(): string
+```
+
+- Settings panel selector: `modules/hud/CommandCenterSettingsColumn.qml`
+
+```qml
+Repeater { model: ["void", "grid", "radar", "nixie"] }
+onClicked: SettingsService.backgroundMode = parent.modelData
+```
+
+- HUD renderer: `modules/hud/HudLayout.qml`
+
+```qml
+Loader {
+    active: SettingsService.backgroundMode === "nixie"
+    sourceComponent: Component { NixieWallpaper { anchors.fill: parent } }
+}
+```
+
+- Zig helper CLI: `src/settings/main.zig`
+
+```bash
+./zig-out/bin/void-shell-settings defaults
+./zig-out/bin/void-shell-settings read
+./zig-out/bin/void-shell-settings write '{"visual":{"backgroundMode":"nixie"}}'
+```
+
+- Persisted payload field:
+
+```json
+{
+  "visual": {
+    "backgroundMode": "void"
+  }
+}
+```
+
+Allowed values: `void`, `grid`, `radar`, `nixie`.
+
+### 3. Contracts
+
+- `void` is the default and means optional background effects are off.
+- `grid`, `radar`, and `nixie` are opt-in background modes selected from the settings panel.
+- QML and Zig must accept the same enum set. Adding a value in QML but not in Zig causes persisted writes to normalize back to `void`.
+- `SettingsService.settingsPayload()` must write `visual.backgroundMode` through `normalizeBackgroundMode(backgroundMode)`.
+- `SettingsService.applySettings()` must only apply string background modes through `normalizeBackgroundMode`.
+- `src/settings/main.zig` must validate `visual.backgroundMode` through `backgroundModeField()` and emit the normalized field in `normalizeSettings()` output.
+- Visual background components must remain presentation-only. They may read `SettingsService`, `Time`, and `Theme`, but must not run shell commands, fetch network data, or own durable state.
+- First-pass wallpaper-like effects should render inside the existing `HudLayout` background layer. A separate `PanelWindow` with `WlrLayershell.layer = WlrLayer.Background` is a future option, not required for first-pass background modes.
+
+### 4. Validation & Error Matrix
+
+- Missing `visual.backgroundMode` -> QML and Zig default to `void`.
+- Invalid `visual.backgroundMode` such as `"noise"` -> `SettingsService.normalizeBackgroundMode()` and `backgroundModeField()` fall back to `void`.
+- QML selector includes a mode that Zig rejects -> `write` normalizes to `void`; fail review because UI and persistence disagree.
+- Zig accepts a mode that `HudLayout` does not render -> persisted config appears accepted but no visual output; fail review because renderer is missing.
+- Background component starts commands or network fetches -> fail review; reusable visual components must remain presentation-only.
+- Runtime smoke logs QML startup errors after enabling a mode -> fail verification; fix component registration/imports or bindings.
+
+### 5. Good/Base/Bad Cases
+
+- Good: adding `nixie` updates the settings panel model, `SettingsService.normalizeBackgroundMode()`, `src/settings/main.zig backgroundModeField()`, docs, tests, and `HudLayout` rendering in one slice.
+- Base: adding a non-persistent experimental background can stay local to `HudLayout`, but it must not be exposed in settings until the QML/Zig contract is complete.
+- Bad: adding `"nixie"` only to `CommandCenterSettingsColumn.qml`; the user can click it, but the helper later writes `"void"` and the setting does not survive restart.
+
+### 6. Tests Required
+
+- QML lint: `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`.
+- Runtime smoke: `timeout 8s quickshell -p .` must show `Configuration Loaded` without startup QML errors.
+- Zig build: `zig build`.
+- Zig tests after helper enum changes: `zig build test`.
+- Defaults assertion: `./zig-out/bin/void-shell-settings defaults` includes `"backgroundMode": "void"`.
+- Valid enum assertion: `./zig-out/bin/void-shell-settings write '{"visual":{"backgroundMode":"nixie"}}'` emits `"backgroundMode": "nixie"`.
+- Invalid enum assertion: `./zig-out/bin/void-shell-settings write '{"visual":{"backgroundMode":"noise"}}'` emits `"backgroundMode": "void"`.
+- After manual helper writes during tests, restore local config to default-off with `./zig-out/bin/void-shell-settings write '{"visual":{"backgroundMode":"void"}}'` unless intentionally testing persisted enabled state.
+
+### 7. Wrong vs Correct
+
+#### Wrong
+
+```qml
+// UI accepts a value the durable helper does not know about.
+Repeater { model: ["void", "grid", "radar", "nixie"] }
+```
+
+```zig
+// Missing "nixie" here means writes normalize back to "void".
+if (std.mem.eql(u8, mode, "void") or std.mem.eql(u8, mode, "grid") or std.mem.eql(u8, mode, "radar"))
+    return mode;
+```
+
+#### Correct
+
+```qml
+function normalizeBackgroundMode(value: string): string {
+    return ["void", "grid", "radar", "nixie"].indexOf(value) >= 0 ? value : "void";
+}
+```
+
+```zig
+if (std.mem.eql(u8, mode, "void") or std.mem.eql(u8, mode, "grid") or std.mem.eql(u8, mode, "radar") or std.mem.eql(u8, mode, "nixie"))
+    return mode;
+```
+
+Keep the settings UI, QML state owner, Zig helper normalization, docs, and renderer in lockstep for every persistent background mode.

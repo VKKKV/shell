@@ -270,3 +270,4 @@ This project is visual-first and desktop-shell-specific, but minimum interaction
 - bypassing `Theme.qml` with ad-hoc constants
 - copying the visual language of reference shells instead of adapting it to this project
 - adding hand-rolled status bars per expansion panel when `PanelStatusStrip` provides the shared contract
+- copying external reference assets or scripts directly into visual components; use references such as `../DivergenceMeter/` for behavior and visual inspiration, then reimplement locally with QML/Canvas unless licensing and fit are explicitly checked
