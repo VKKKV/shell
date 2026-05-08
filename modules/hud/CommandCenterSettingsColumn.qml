@@ -89,7 +89,7 @@ ColumnLayout {
 
     TacticalLabel {
         Layout.fillWidth: true
-        text: "BACKGROUND // " + SettingsService.backgroundMode.toUpperCase()
+        text: "BACKDROP LAYER // " + SettingsService.backgroundMode.toUpperCase() + (SettingsService.backgroundMode === "void" ? " // DEFAULT OFF" : "")
         accent: SettingsService.backgroundMode !== "void"
     }
 
@@ -98,9 +98,18 @@ ColumnLayout {
         text: "BACKDROP AND WALLPAPER"
     }
 
+    TextBlock {
+        title: "BACKDROP MODE // OPTIONAL LAYER"
+        lines: [
+            "default: VOID keeps the nixie/vacuum-tube layer off",
+            "NIXIE: background layer mode; not a wallpaper scan/apply action",
+            "active mode persists as visual.backgroundMode"
+        ]
+    }
+
     GridLayout {
         Layout.fillWidth: true
-        columns: 3
+        columns: 2
         rowSpacing: Theme.densitySmallSpacing
         columnSpacing: Theme.densitySmallSpacing
 
@@ -110,23 +119,47 @@ ColumnLayout {
             Rectangle {
                 required property string modelData
 
+                readonly property bool isActive: SettingsService.backgroundMode === modelData
+                readonly property bool isNixie: modelData === "nixie"
+
                 Layout.fillWidth: true
-                Layout.preferredHeight: Theme.densityControlHeight
-                color: SettingsService.backgroundMode === modelData ? Theme.lineDim : "transparent"
-                border.color: SettingsService.backgroundMode === modelData ? Theme.line : Theme.lineDim
-                border.width: Theme.lineWidth
+                Layout.preferredHeight: isNixie ? Theme.densityControlHeight * 1.35 : Theme.densityControlHeight
+                color: isActive ? Theme.lineDim : (backgroundModeArea.containsMouse ? Theme.panelSoft : "transparent")
+                border.color: isActive || isNixie ? Theme.line : Theme.lineDim
+                border.width: isActive || isNixie ? Theme.lineWidth * 1.5 : Theme.lineWidth
 
                 MouseArea {
+                    id: backgroundModeArea
+
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
                     onClicked: SettingsService.backgroundMode = parent.modelData
                 }
 
-                TacticalLabel {
-                    anchors.centerIn: parent
-                    text: parent.modelData.toUpperCase()
-                    accent: SettingsService.backgroundMode === parent.modelData
-                    dim: SettingsService.backgroundMode !== parent.modelData
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: Theme.densitySmallSpacing
+                    spacing: 0
+
+                    TacticalLabel {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
+                        text: parent.parent.modelData.toUpperCase() + (parent.parent.isNixie ? " // OPTIONAL" : "")
+                        accent: parent.parent.isActive || parent.parent.isNixie
+                        dim: !parent.parent.isActive && !parent.parent.isNixie
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    TacticalLabel {
+                        Layout.fillWidth: true
+                        visible: parent.parent.isNixie
+                        text: parent.parent.isActive ? "layer armed; wallpaper unchanged" : "default-off vacuum tube backdrop"
+                        accent: parent.parent.isActive
+                        dim: !parent.parent.isActive
+                        size: Theme.fontTiny
+                        horizontalAlignment: Text.AlignHCenter
+                    }
                 }
             }
         }

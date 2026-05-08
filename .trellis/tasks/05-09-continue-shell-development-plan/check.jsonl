@@ -1,0 +1,2 @@
+{"file":".trellis/spec/frontend/index.md","reason":"Check QML/frontend changes against available project frontend guidance and docs convention."}
+{"file":".trellis/spec/guides/index.md","reason":"Check config/settings surface change for reuse and boundary consistency."}

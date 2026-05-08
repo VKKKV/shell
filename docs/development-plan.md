@@ -34,12 +34,19 @@ Avoid mixing these in the same task:
 - Agent adapter polish and race fixes: gates persisted provider application on probe completion, updates stale Agent panel copy, and replaces duplicate planned rows with live availability rows.
 - Agent Hermes CLI contract mapping: replaces `hermes agent` with the real `hermes --oneshot` contract and switches prompt delivery to positional argv.
 - Earth globe optimization: extracted the transitional 110m-style offline coastline vectors into a static JS module and added horizontal drag-to-rotate longitude control; future Natural Earth 110m preprocessing can replace the dataset without runtime fetching.
+- Nixie background settings polish: made the optional/default-off Nixie backdrop easier to discover in command-center settings while keeping it separate from wallpaper scan/apply actions and preserving the existing `visual.backgroundMode` values.
 
 ### Next Slices
 
 1. OpenClaw CLI contract discovery (deferred until a local validation environment exists)
    - Find the real OpenClaw CLI entry point and map it to the generic contract.
    - Keep missing-command and unvalidated-adapter fallback language until the contract is confirmed.
+2. Earth globe high-precision coastline and procedural terrain upgrade
+   - Replace the current hand-authored/transitional coastline polylines with preprocessed Natural Earth 10m coastline data, targeting 10K+ coordinate points while keeping all data offline.
+   - Add a one-time preprocessing pipeline that converts GeoJSON into compact QML/JS coordinate arrays suitable for the current Canvas2D renderer.
+   - Split the Canvas2D composition into controlled tactical layers: ocean depth gradient plus seabed procedural noise, land fill plus terrain noise, high-precision coastline stroke plus atmospheric rim glow, and the existing tactical grid, signal nodes, and location markers.
+   - Reference Natural Earth data, D3 geo projection math, and `world-map-gen` for projection/data-pipeline ideas without introducing runtime network dependencies.
+   - Expected trade-off: medium difficulty, mainly data preprocessing and render-pipeline splitting; larger embedded data around 200KB compressed; procedural noise approximates terrain instead of using real land textures.
 
 ## Review Findings
 

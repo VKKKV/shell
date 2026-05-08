@@ -1,0 +1,2 @@
+{"file":".trellis/spec/frontend/index.md","reason":"Frontend/QML slice; index documents available frontend guidelines and documentation language convention."}
+{"file":".trellis/spec/guides/index.md","reason":"Cross-cutting thinking guide index; this task changes a settings/config surface and should preserve reuse and boundary checks."}
