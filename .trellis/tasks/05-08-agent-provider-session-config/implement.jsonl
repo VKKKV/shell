@@ -1,0 +1,4 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": "docs/development-plan.md", "reason": "provider config slice is session-local before persistence"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "provider selection UI reads service state"}

@@ -28,11 +28,12 @@ Avoid mixing these in the same task:
 - Agent service scaffold: added importable `AgentService` state and wired the Agent panel to shaped service state without command execution.
 - Agent prompt surface: added a staged prompt input that routes submit intent to `AgentService.submit()` while command execution remains blocked.
 - Agent local command execution MVP: added a non-persistent argv provider command path in `AgentService.qml`, disabled by default, with shaped unavailable/busy/failed/timeout/ok states.
+- Agent provider session config: added session-local provider presets for disabled, Hermes, and OpenClaw without settings persistence.
 
 ### Next Slices
 
-1. Agent provider configuration contract
-   - Decide whether provider selection becomes session-local UI state or persistent settings.
+1. Agent provider persistence contract
+   - Decide if provider selection should be persisted after session-local behavior is proven.
    - If persistent, update `SettingsService.qml`, `src/settings/main.zig`, and `docs/settings.md` together.
    - Add Zig validation tests before accepting stored provider fields.
    - Verification: `zig build test`, `zig build`, `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.

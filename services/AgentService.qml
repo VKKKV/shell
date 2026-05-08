@@ -17,12 +17,35 @@ Singleton {
     property string activePrompt: ""
     property string stdoutText: ""
     property string stderrText: ""
+    readonly property var providerPresets: [
+        { id: "disabled", name: "DISABLED", command: [], available: true, detail: "No provider command configured." },
+        { id: "hermes", name: "HERMES", command: ["hermes", "agent"], available: false, detail: "Planned local Hermes adapter; command availability not confirmed." },
+        { id: "openclaw", name: "OPENCLAW", command: ["openclaw", "agent"], available: false, detail: "Planned local OpenClaw adapter; command availability not confirmed." }
+    ]
     readonly property bool available: providerCommand.length > 0
     readonly property bool running: state === "running"
 
     function compact(text: string): string {
         const clean = text.replace(/\s+/g, " ").trim();
         return clean.length > 120 ? clean.slice(0, 117) + "..." : clean;
+    }
+
+    function selectProvider(id: string): void {
+        if (running) {
+            statusLine = "agent: provider switch blocked while running";
+            errorDetail = "wait for current provider request to finish";
+            ServiceLogService.push("agent", "warn", statusLine);
+            return;
+        }
+
+        const preset = providerPresets.find(entry => entry.id === id) || providerPresets[0];
+        providerName = preset.name;
+        providerCommand = preset.available ? preset.command : [];
+        state = providerCommand.length > 0 ? "idle" : "unavailable";
+        statusLine = providerCommand.length > 0 ? "agent: provider selected " + preset.name.toLowerCase() : "agent: provider unavailable " + preset.name.toLowerCase();
+        responseText = preset.detail;
+        errorDetail = providerCommand.length > 0 ? "" : "provider preset is session-local and unavailable";
+        ServiceLogService.push("agent", providerCommand.length > 0 ? "info" : "warn", statusLine);
     }
 
     function submit(prompt: string): void {

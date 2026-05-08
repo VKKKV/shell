@@ -58,6 +58,48 @@ CentralPanelChrome {
                 rows: [["ACTIVE", AgentService.providerName, -1, AgentService.available], ["STATE", AgentService.state.toUpperCase(), -1, AgentService.running], ["HERMES", "PLANNED", -1, false], ["OPENCLAW", "PLANNED", -1, false], ["CUSTOM", "DEFERRED", -1, false]]
             }
 
+            GridLayout {
+                Layout.fillWidth: true
+                columns: 3
+                rowSpacing: Theme.densitySmallSpacing
+                columnSpacing: Theme.densitySmallSpacing
+
+                Repeater {
+                    model: AgentService.providerPresets
+
+                    Rectangle {
+                        required property var modelData
+
+                        readonly property bool selected: AgentService.providerName === modelData.name
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: Theme.densityControlHeight
+                        color: selected ? Theme.lineDim : (providerArea.containsMouse ? Theme.panelSoft : "transparent")
+                        border.color: selected ? Theme.line : Theme.lineDim
+                        border.width: Theme.lineWidth
+                        opacity: modelData.available || modelData.id === "disabled" ? 1 : 0.55
+
+                        MouseArea {
+                            id: providerArea
+
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: AgentService.selectProvider(parent.modelData.id)
+                            onEntered: TooltipService.show("AGENT PROVIDER", parent.modelData.detail, "agent-provider-" + parent.modelData.id)
+                            onExited: TooltipService.clear("agent-provider-" + parent.modelData.id)
+                        }
+
+                        TacticalLabel {
+                            anchors.centerIn: parent
+                            text: parent.modelData.name
+                            accent: parent.selected
+                            dim: !parent.selected
+                        }
+                    }
+                }
+            }
+
             TextBlock {
                 Layout.fillWidth: true
                 title: "INTERACTION MODEL"
