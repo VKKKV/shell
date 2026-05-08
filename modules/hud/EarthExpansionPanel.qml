@@ -62,9 +62,10 @@ CentralPanelChrome {
                 Layout.fillWidth: true
                 title: "SURFACE MODEL"
                 lines: [
-                    "COAST: LOCAL VECTOR APPROX",
-                    "GRID: 30 DEG LAT/LON",
-                    "MARKER: TIMEZONE BY DEFAULT",
+                    "COAST: LOCAL VECTOR + TACTICAL OVERLAY",
+                    "GRID: 15/30 DEG LAT/LON",
+                    "NODES: LOCAL SIGNAL BEACONS",
+                    "LIGHT: SYNTHETIC NIGHT TERMINATOR",
                     "IP GEO: SETTINGS OPT-IN",
                     "FALLBACK: GLOBE REMAINS LIVE"
                 ]

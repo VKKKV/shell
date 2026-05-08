@@ -19,6 +19,7 @@ Item {
     readonly property real globeRadius: globeSize * 0.5
     readonly property real globeCenterX: width * 0.5
     readonly property real globeCenterY: height * 0.5
+    readonly property var signalNodes: [[51.5, -0.1], [40.7, -74.0], [35.7, 139.7], [1.3, 103.8], [52.5, 13.4], [-33.9, 151.2], [19.4, -99.1], [25.2, 55.3]]
 
     function wrapLongitude(value: real): real {
         const wrapped = ((value + 180) % 360 + 360) % 360 - 180;
@@ -58,6 +59,17 @@ Item {
             }
         }
         ctx.stroke();
+    }
+
+    function drawProjectedNode(ctx: var, lat: real, lon: real, radius: real, color: string, alpha: real): void {
+        const point = project(lat, lon);
+        if (!point.visible)
+            return;
+        ctx.globalAlpha = alpha * point.edge;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, radius, 0, Math.PI * 2);
+        ctx.fill();
     }
 
     readonly property var coastlines: [
@@ -138,14 +150,50 @@ Item {
                 ctx.stroke();
             }
 
+            ctx.globalAlpha = root.expanded ? 0.16 : 0.1;
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = Math.max(0.6, Theme.lineWidth);
+            for (let latFine = -75; latFine <= 75; latFine += 15) {
+                const y = cy - Math.sin(latFine * Math.PI / 180) * radius * 0.76;
+                const w = Math.cos(latFine * Math.PI / 180) * radius * 1.68;
+                ctx.beginPath();
+                ctx.ellipse(cx, y, w / 2, radius * 0.035, 0, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
             for (let c = 0; c < root.coastlines.length; c++)
                 root.drawPolyline(ctx, root.coastlines[c], accent, root.expanded ? 0.74 : 0.62, root.expanded ? 2.0 : 1.35);
 
+            ctx.globalCompositeOperation = "screen";
+            for (let n = 0; n < root.signalNodes.length; n++)
+                root.drawProjectedNode(ctx, root.signalNodes[n][0], root.signalNodes[n][1], root.expanded ? 3.2 : 2.2, accent, root.expanded ? 0.58 : 0.42);
+            ctx.globalCompositeOperation = "source-over";
+
+            const night = ctx.createLinearGradient(cx + radius * 0.18, cy - radius, cx + radius * 0.88, cy + radius);
+            night.addColorStop(0, "#00000000");
+            night.addColorStop(0.45, "#22000000");
+            night.addColorStop(1, "#cc000000");
+            ctx.globalAlpha = 0.7;
+            ctx.fillStyle = night;
+            ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+
             ctx.restore();
+
+            ctx.globalAlpha = root.expanded ? 0.22 : 0.16;
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = Theme.lineWidth;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, radius * 1.14, radius * 0.26, -0.28 + root.rotationPhase * Math.PI / 720, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.globalAlpha = root.expanded ? 0.18 : 0.12;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, radius * 0.98, radius * 0.18, 0.72 - root.rotationPhase * Math.PI / 900, 0, Math.PI * 2);
+            ctx.stroke();
 
             ctx.globalAlpha = 0.95;
             ctx.strokeStyle = accent;
-            ctx.lineWidth = Theme.heavyLineWidth;
+            ctx.lineWidth = root.expanded ? Math.max(3, Theme.heavyLineWidth + 1) : Theme.heavyLineWidth;
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.stroke();
