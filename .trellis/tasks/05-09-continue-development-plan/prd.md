@@ -30,6 +30,7 @@ Continue the shell development plan with the next independently verifiable slice
 * Add a repeatable offline path that can convert GeoJSON-like coastline data into compact JS arrays compatible with `EarthCoastlineData.coastlines`.
 * Add a small visible procedural Earth slice that improves realism without waiting for full Natural Earth 10m data replacement.
 * Add Natural Earth generated-data evaluation support before replacing the active runtime coastline data.
+* Add a local-only generated coastline candidate review workflow with manifest validation before any Natural Earth runtime replacement.
 * Preserve the existing `RotatingGlobe` public contract and runtime rendering behavior in this slice.
 * Keep all globe data offline at runtime.
 * Document how future Natural Earth 10m input should flow through the pipeline without checking in unverified large generated data yet.
@@ -44,6 +45,7 @@ Continue the shell development plan with the next independently verifiable slice
 * [ ] Current runtime coastline data remains unchanged unless a tiny fixture/sample is clearly separated from active runtime data.
 * [ ] The globe includes visible ocean/land/atmosphere procedural detail while preserving the tactical HUD style.
 * [ ] Generated coastline candidates can be inspected offline for polyline count, point count, byte size, coordinate bounds, and longest polyline before runtime replacement.
+* [ ] Generated coastline candidates can be reviewed through a manifest that records provenance, generation command, inspector stats, smoke checks, and reviewer notes.
 * [ ] Verification includes `git diff --check`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, and a short `quickshell -p .` smoke run where available.
 
 ## Definition Of Done
@@ -94,6 +96,14 @@ Continue the shell development plan with the next independently verifiable slice
 **Decision**: Add a small dependency-free generated coastline inspector plus a documented Natural Earth review checklist. Keep `components/EarthCoastlineData.js` unchanged until a generated candidate has source/version/license notes, generation command, inspector output, and smoke-check results.
 
 **Consequences**: The next data replacement slice can be reviewed with objective stats instead of only visual inspection. This adds no runtime cost and does not introduce network access or large unverified data into the repository.
+
+## Follow-up Decision 3 (ADR-lite)
+
+**Context**: The inspector reports objective generated-data stats, but a real Natural Earth replacement still needs a repeatable review artifact that ties those stats to source provenance, generation inputs, smoke checks, and reviewer approval without committing large intermediate files.
+
+**Decision**: Add a local-only candidate review workflow. Use `/tmp/opencode/coastline-candidates/<candidate-name>/` for raw input, generated output, and review manifests; add a dependency-free manifest validator that can compare recorded inspector stats against a local generated JS file. Keep runtime coastline data unchanged in this slice.
+
+**Consequences**: A future replacement task can require a validated manifest before touching `components/EarthCoastlineData.js`. The manifest fixture is intentionally tiny and synthetic, so it validates tooling shape but does not prove Natural Earth visual quality or Canvas repaint performance.
 
 ## Candidate Slices
 

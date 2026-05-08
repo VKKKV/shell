@@ -222,11 +222,16 @@ function formatStats(stats, inputPath) {
     ].join("\n");
 }
 
-function main() {
-    const { inputPath, json } = parseArgs(process.argv);
+function inspectFile(inputPath) {
     const source = fs.readFileSync(inputPath, "utf8");
     const coastlines = loadCoastlines(source, inputPath);
-    const stats = inspectCoastlines(coastlines, Buffer.byteLength(source, "utf8"));
+
+    return inspectCoastlines(coastlines, Buffer.byteLength(source, "utf8"));
+}
+
+function main() {
+    const { inputPath, json } = parseArgs(process.argv);
+    const stats = inspectFile(inputPath);
 
     if (json) {
         console.log(JSON.stringify(stats, null, 2));
@@ -235,9 +240,18 @@ function main() {
     }
 }
 
-try {
-    main();
-} catch (error) {
-    console.error(`inspect-coastlines: ${error.message}`);
-    process.exit(1);
+if (require.main === module) {
+    try {
+        main();
+    } catch (error) {
+        console.error(`inspect-coastlines: ${error.message}`);
+        process.exit(1);
+    }
+} else {
+    module.exports = {
+        formatStats,
+        inspectCoastlines,
+        inspectFile,
+        loadCoastlines
+    };
 }

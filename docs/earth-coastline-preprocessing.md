@@ -109,3 +109,78 @@ Before checking in any Natural Earth 10m-generated replacement for `components/E
   - `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`
   - `timeout 8s quickshell -p .`
   - Manual globe checks: click/activate, horizontal drag rotation, signal nodes, grid, optional location marker, and no runtime map-data fetches.
+
+## Candidate Review Workflow
+
+Generated Natural Earth candidates must be reviewed as local artifacts before any runtime data replacement. Keep raw downloads, converted GeoJSON, and large generated JS modules outside the repo unless a follow-up replacement task explicitly approves them. `/tmp/opencode/coastline-candidates/<candidate-name>/` is the preferred scratch location for agent runs.
+
+Suggested local layout:
+
+```text
+/tmp/opencode/coastline-candidates/ne-10m-coastline-YYYY-MM-DD/
+├── input.geojson
+├── generated.js
+└── manifest.json
+```
+
+The manifest records provenance and review evidence. Start from this shape:
+
+```json
+{
+    "candidateName": "ne-10m-coastline-YYYY-MM-DD",
+    "sourceUrl": "https://...",
+    "naturalEarthVersion": "Natural Earth 10m, downloaded YYYY-MM-DD",
+    "resolution": "10m",
+    "licenseNote": "Natural Earth public-domain notice copied from the source page.",
+    "inputPath": "/tmp/opencode/coastline-candidates/ne-10m-coastline-YYYY-MM-DD/input.geojson",
+    "generationCommand": "node tools/preprocess-coastlines.js /tmp/opencode/coastline-candidates/ne-10m-coastline-YYYY-MM-DD/input.geojson /tmp/opencode/coastline-candidates/ne-10m-coastline-YYYY-MM-DD/generated.js --precision 3",
+    "generatedOutputPath": "/tmp/opencode/coastline-candidates/ne-10m-coastline-YYYY-MM-DD/generated.js",
+    "inspectionCommand": "node tools/inspect-coastlines.js /tmp/opencode/coastline-candidates/ne-10m-coastline-YYYY-MM-DD/generated.js --json",
+    "inspectorStats": {
+        "polylines": 0,
+        "points": 0,
+        "byteSize": 0,
+        "bounds": {
+            "minLat": 0,
+            "maxLat": 0,
+            "minLon": 0,
+            "maxLon": 0
+        },
+        "longestPolyline": {
+            "index": 0,
+            "points": 0
+        },
+        "averagePointsPerPolyline": 0,
+        "shortPolylineCount": 0
+    },
+    "smokeChecks": [
+        {
+            "command": "git diff --check",
+            "status": "pending"
+        },
+        {
+            "command": "qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml",
+            "status": "pending"
+        },
+        {
+            "command": "timeout 8s quickshell -p .",
+            "status": "pending"
+        }
+    ],
+    "reviewerNotes": "Record size/performance concerns, visual review notes, and whether this candidate is approved for a runtime replacement task."
+}
+```
+
+Validate the manifest shape without touching runtime data:
+
+```bash
+node tools/validate-coastline-candidate.js /tmp/opencode/coastline-candidates/ne-10m-coastline-YYYY-MM-DD/manifest.json
+```
+
+When the generated output file is present locally, compare the manifest's recorded `inspectorStats` against the file:
+
+```bash
+node tools/validate-coastline-candidate.js /tmp/opencode/coastline-candidates/ne-10m-coastline-YYYY-MM-DD/manifest.json --check-output
+```
+
+`tools/fixtures/coastline-candidate-sample.manifest.json` is a tiny validator fixture for the checked-in sample pipeline. It is not a Natural Earth candidate and is not imported by the shell.

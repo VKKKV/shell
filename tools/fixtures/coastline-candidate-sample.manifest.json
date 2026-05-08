@@ -1,0 +1,43 @@
+{
+    "candidateName": "fixture-coastline-sample",
+    "sourceUrl": "local fixture: tools/fixtures/coastline-sample.geojson",
+    "naturalEarthVersion": "not Natural Earth; tool fixture only",
+    "resolution": "fixture",
+    "licenseNote": "Project-local synthetic fixture for validating the candidate review workflow.",
+    "inputPath": "tools/fixtures/coastline-sample.geojson",
+    "generationCommand": "node tools/preprocess-coastlines.js tools/fixtures/coastline-sample.geojson /tmp/coastline-sample.generated.js",
+    "generatedOutputPath": "/tmp/coastline-sample.generated.js",
+    "inspectionCommand": "node tools/inspect-coastlines.js /tmp/coastline-sample.generated.js --json",
+    "inspectorStats": {
+        "polylines": 2,
+        "points": 8,
+        "byteSize": 291,
+        "bounds": {
+            "minLat": 22,
+            "maxLat": 38.125,
+            "minLon": -10.25,
+            "maxLon": 122
+        },
+        "longestPolyline": {
+            "index": 1,
+            "points": 5
+        },
+        "averagePointsPerPolyline": 4,
+        "shortPolylineCount": 0
+    },
+    "smokeChecks": [
+        {
+            "command": "git diff --check",
+            "status": "pending"
+        },
+        {
+            "command": "qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml",
+            "status": "pending"
+        },
+        {
+            "command": "timeout 8s quickshell -p .",
+            "status": "pending"
+        }
+    ],
+    "reviewerNotes": "Fixture manifest for validator coverage only. Do not use as runtime coastline data."
+}
