@@ -1,139 +1,66 @@
-# Finish Work - Pre-Commit Checklist
+# Finish Work
 
-Before submitting or committing, use this checklist to ensure work completeness.
+Wrap up the current session: archive the active task (and any other completed-but-unarchived tasks the user wants to clean up) and record the session journal. Code commits are NOT done here — those happen in workflow Phase 3.4 before you invoke this command.
 
-**Timing**: After code is written and tested, before commit.
-
-This repository is a **Quickshell/QML + Zig helper** project, not a `pnpm` web app. Use the checks below instead of generic frontend TypeScript commands.
-
----
-
-## Checklist
-
-### 1. Code Quality
+## Step 1: Survey current state
 
 ```bash
-# Use the real project checks
-zig build
-qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml
-timeout 8s quickshell -p .
+python3 ./.trellis/scripts/get_context.py --mode record
 ```
 
-- [ ] `zig build` passes?
-- [ ] `qmllint ...` passes with 0 errors?
-- [ ] `quickshell -p .` loads without runtime warnings/errors?
-- [ ] If helper/backend behavior changed, did you exercise the relevant CLI contract manually?
-  - Example: `./zig-out/bin/void-shell-settings defaults/read/write`
+This prints:
 
-### 2. Code-Spec Sync
+- **My active tasks** — review whether any besides the current one are actually done (code merged, AC met) and should be archived this round.
+- **Git status** — quick visual on what's dirty.
+- **Recent commits** — you'll need their hashes in Step 4 for `--commit`.
 
-**Code-Spec Docs**:
-- [ ] Does `.trellis/spec/backend/` need updates?
-  - Zig helper conventions, logging rules, validation behavior
-- [ ] Does `.trellis/spec/frontend/` need updates?
-  - New QML service patterns, HUD modules, state ownership, component conventions
-- [ ] Does `.trellis/spec/guides/` need updates?
-  - New cross-layer lessons, fallback behavior, integration gotchas
+If `--mode record` surfaces other completed tasks not tied to the current session, surface them to the user with a one-shot confirmation: "These N tasks look done — archive them too in this round? [y/N]". Default is no; the current active task is always archived in Step 3 regardless.
 
-**Key Question**:
-> "If I fixed a bug or discovered something non-obvious, should I document it so future me (or others) won't hit the same issue?"
+## Step 2: Sanity check — classify dirty paths
 
-If YES -> Update the relevant code-spec doc.
-
-### 2.5. Code-Spec Hard Block (Infra/Cross-Layer)
-
-If the change touches helper contracts, service boundaries, or persistence rules, this is blocking:
-
-- [ ] Spec content is executable, not principle-only text
-- [ ] Includes file paths + command names + payload field names
-- [ ] Includes fallback/validation behavior
-- [ ] Includes Good/Base/Bad cases where appropriate
-- [ ] Includes the actual verification commands used in this repo
-
-### 3. QML / Shell Runtime Changes
-
-If you modified QML modules or services:
-
-- [ ] `quickshell -p .` still loads?
-- [ ] No binding loop warnings?
-- [ ] No layout/anchor undefined behavior warnings?
-- [ ] No panel clipping or unreadable text on your monitor?
-
-### 4. Zig Helper Changes
-
-If you modified `src/` or `build.zig`:
-
-- [ ] `zig build` succeeds?
-- [ ] Helper output is valid JSON on stdout?
-- [ ] Diagnostics stay on stderr?
-- [ ] Config path / normalization / clamping behavior is documented?
-
-### 5. Cross-Layer Verification
-
-If the change spans QML + service + Zig helper:
-
-- [ ] QML reads shaped state from services rather than parsing backend output inline?
-- [ ] Helper failures leave safe defaults active?
-- [ ] Settings/state contracts stay consistent across docs, QML, and Zig?
-
-### 6. Manual Testing
-
-- [ ] Feature works in the running shell?
-- [ ] Edge cases tested?
-- [ ] Error/fallback states tested?
-- [ ] Restarting `quickshell -p .` preserves expected behavior?
-
----
-
-## Quick Check Flow
+Run:
 
 ```bash
-# 1. Project checks
-zig build
-qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml
-timeout 8s quickshell -p .
-
-# 2. Optional helper contract checks
-./zig-out/bin/void-shell-settings defaults
-./zig-out/bin/void-shell-settings read
-
-# 3. View changes
-git status
-git diff --name-only
+git status --porcelain
 ```
 
----
+Filter out paths under `.trellis/workspace/` and `.trellis/tasks/` — those are managed by `add_session.py` and `task.py archive` auto-commits and will appear dirty as part of this skill's own work.
 
-## Common Oversights
+For each remaining dirty path, decide whether it belongs to **the current task** or to **other parallel work** (e.g., another terminal window editing the same repo). Heuristics:
 
-| Oversight | Consequence | Check |
-|-----------|-------------|-------|
-| QML service owns too much backend logic | Hard-to-debug state drift | Keep parsing/normalization in services or Zig helper |
-| Spec docs not updated | Future changes break hidden conventions | Check `.trellis/spec/` |
-| Runtime warnings ignored | Visual regressions accumulate | Run `quickshell -p .` |
-| Zig artifacts committed | Dirty repo noise | Ignore `.zig-cache/`, `zig-out/` |
-| Settings helper writes unnormalized JSON | Persistent config drift | Test `write` + `read` |
+- Paths referenced in the current task's `prd.md` / `implement.jsonl` / `check.jsonl` → current task
+- Paths in code areas matching the task's stated scope, or that you remember editing this session → current task
+- Paths in unrelated areas you have no recollection of touching this session → other parallel work
 
----
+Then route:
 
-## Relationship to Other Commands
+- **Any remaining path looks like current-task work** — bail out with:
+  > "Working tree has uncommitted code changes from this task: `<list>`. Return to workflow Phase 3.4 to commit them before running `/trellis:finish-work`."
 
-```text
-Development Flow:
-  Write code -> Validate -> /trellis:finish-work -> git commit -> /trellis:record-session
+  Do NOT run `git commit` here. Do NOT prompt the user to commit. The user goes back to Phase 3.4 and the AI drives the batched commit there.
+- **All remaining paths look unrelated** (other parallel-window work) — report them once and continue to Step 3:
+  > "FYI, dirty files outside this task's scope — leaving them for the other window: `<list>`."
+- **Genuinely unsure** — ask the user once: "Are `<list>` this task's work I forgot to commit, or another window's? (commit / ignore)" — then route per their answer.
 
-Debug Flow:
-  Hit bug -> Fix -> /trellis:break-loop -> Knowledge capture
+## Step 3: Archive task(s)
+
+```bash
+python3 ./.trellis/scripts/task.py archive <task-name>
 ```
 
-- `/trellis:finish-work` - Check work completeness
-- `/trellis:record-session` - Record session and commits
-- `/trellis:break-loop` - Deep analysis after debugging
+At minimum: the current active task (if any). Plus any extra tasks the user confirmed in Step 1. Each archive produces a `chore(task): archive ...` commit via the script's auto-commit.
 
----
+If there is no active task and the user did not confirm any cleanup archives, skip this step.
 
-## Core Principle
+## Step 4: Record session journal
 
-> **Delivery includes not just code, but also documentation, verification, and knowledge capture.**
+```bash
+python3 ./.trellis/scripts/add_session.py \
+  --title "Session Title" \
+  --commit "hash1,hash2" \
+  --summary "Brief summary"
+```
 
-Complete work = Code + Docs + Validation + Runtime Verification
+Use the work-commit hashes produced in Phase 3.4 (visible in Step 1's `Recent commits` list, or via `git log --oneline`) for `--commit`. Do not include the archive commit hashes from Step 3. This produces a `chore: record journal` commit.
+
+Final git log order: `<work commits from 3.4>` → `chore(task): archive ...` (one or more) → `chore: record journal`.
