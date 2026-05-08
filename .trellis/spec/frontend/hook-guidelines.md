@@ -96,7 +96,9 @@ Patterns:
 - Modules consume service fields and actions; they should not parse raw command output.
 - Polling stops or remains disabled when live data is disabled.
 - Startup polling may use a short delayed timer through `PollingSchedule` when many collectors start together.
+- Do not combine `Timer { running: SettingsService.liveDataEnabled }` bindings with imperative `restart()`/`start()` calls on the same timer; QML start/restart assigns `running` and breaks the binding. Use either a pure binding or explicit `start()`/`stop()` lifecycle management.
 - If multiple user actions share one `Process`, serialize commands with a queue or reject new actions while running; do not overwrite `command` on an active process.
+- If one service can read from multiple backend commands, tag or isolate each `Process` output by backend before parsing so stale output cannot update the active backend state after a compositor switch.
 
 ### 4. Validation & Error Matrix
 
@@ -108,12 +110,14 @@ Patterns:
 - Live data disabled -> poll timers stop and no repeated external reads continue.
 - Module imports backend-specific service directly when a facade exists -> fail review.
 - Rapid repeated service actions -> commands run in order or later actions are explicitly rejected with status text; no silent command overwrite.
+- Backend command switches while an old command is still running -> old stdout is ignored or cannot reach the active parser path; no stale backend status or rows.
 
 ### 5. Good/Base/Bad Cases
 
 - Good: `SystemStats.qml` parses `/proc`/command output and exposes `cpuRows`; HUD modules only render rows.
 - Good: `CompositorService.qml` hides Hyprland/Niri differences behind a shared contract.
 - Good: `NetworkDetailService.qml` queues reconnect/down/bluetooth actions before feeding the shared action `Process`.
+- Good: `KeyboardService.qml` and `KeybindService.qml` keep Hyprland/Niri reads separated and ignore output that no longer matches the active backend.
 - Good: `ClipboardService.qml` stores raw clipboard text while deriving a compact preview separately.
 - Good: `NetworkDetailService.qml` parses `nmcli -t` rows with escaped-colon handling before shaping connection/Wi-Fi rows.
 - Base: a local visual timer in one panel is acceptable when it does not fetch external state.

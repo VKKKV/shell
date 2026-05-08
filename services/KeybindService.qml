@@ -80,7 +80,10 @@ Singleton {
         copyProcess.running = true;
     }
 
-    function updateBinds(output: string): void {
+    function updateBinds(output: string, backend: string): void {
+        if (!SettingsService.liveDataEnabled || bindBackend !== backend)
+            return;
+
         try {
             const payload = JSON.parse(output);
             if (!Array.isArray(payload))
@@ -98,37 +101,50 @@ Singleton {
             }
             keybinds = next.slice(0, 12);
             available = next.length > 0;
-            statusLine = available ? "keybinds: " + next.length + " binds // " + bindBackend : "keybinds: no binds // " + bindBackend;
+            statusLine = available ? "keybinds: " + next.length + " binds // " + backend : "keybinds: no binds // " + backend;
         } catch (error) {
             keybinds = [];
             available = false;
-            statusLine = "keybinds: parse fallback // " + bindBackend;
+            statusLine = "keybinds: parse fallback // " + backend;
         }
+    }
+
+    function stopBindProcesses(): void {
+        hyprBindsProcess.running = false;
+        niriBindsProcess.running = false;
     }
 
     function refresh(): void {
         if (CompositorService.hyprlandActive) {
             bindBackend = "hyprland";
-            bindsProcess.command = ["hyprctl", "binds", "-j"];
+            niriBindsProcess.running = false;
+            if (!hyprBindsProcess.running)
+                hyprBindsProcess.running = true;
         } else if (CompositorService.niriActive) {
             bindBackend = "niri";
-            bindsProcess.command = ["niri", "msg", "binds"];
+            hyprBindsProcess.running = false;
+            if (!niriBindsProcess.running)
+                niriBindsProcess.running = true;
         } else {
+            stopBindProcesses();
             bindBackend = "fallback";
             keybinds = [];
             available = false;
             statusLine = "keybinds: compositor fallback";
             return;
         }
-        bindsProcess.running = true;
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: {
+        if (SettingsService.liveDataEnabled) {
+            refresh();
+            poller.start();
+        }
+    }
 
     property Timer poller: Timer {
         interval: 30000
         repeat: true
-        running: SettingsService.liveDataEnabled
         onTriggered: root.refresh()
     }
 
@@ -137,21 +153,38 @@ Singleton {
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled) {
                 root.refresh();
-                root.poller.restart();
+                root.poller.start();
+            } else {
+                root.poller.stop();
+                root.stopBindProcesses();
             }
         }
     }
 
-    property Process bindsProcess: Process {
+    property Process hyprBindsProcess: Process {
         command: ["hyprctl", "binds", "-j"]
         stdout: StdioCollector {
-            onStreamFinished: root.updateBinds(text)
+            onStreamFinished: root.updateBinds(text, "hyprland")
         }
         onExited: (exitCode) => {
-            if (exitCode !== 0) {
+            if (exitCode !== 0 && root.bindBackend === "hyprland") {
                 root.keybinds = [];
                 root.available = false;
-                root.statusLine = "keybinds: " + root.bindBackend + " fallback";
+                root.statusLine = "keybinds: hyprland fallback";
+            }
+        }
+    }
+
+    property Process niriBindsProcess: Process {
+        command: ["niri", "msg", "binds"]
+        stdout: StdioCollector {
+            onStreamFinished: root.updateBinds(text, "niri")
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0 && root.bindBackend === "niri") {
+                root.keybinds = [];
+                root.available = false;
+                root.statusLine = "keybinds: niri fallback";
             }
         }
     }

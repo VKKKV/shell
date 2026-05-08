@@ -271,7 +271,7 @@ Item {
     Timer {
         interval: 80
         repeat: true
-        running: true
+        running: ExpansionService.open && ExpansionService.activeSurface === "orbital"
         onTriggered: {
             root.selectedPulsePhase = (root.selectedPulsePhase + 0.153846) % (Math.PI * 2);
             root.requestScenePaint();

@@ -54,12 +54,16 @@ Singleton {
         availabilityProcess.running = true;
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: {
+        if (SettingsService.liveDataEnabled) {
+            refresh();
+            poller.start();
+        }
+    }
 
     property Timer poller: Timer {
         interval: 30000
         repeat: true
-        running: SettingsService.liveDataEnabled
         onTriggered: root.refresh()
     }
 
@@ -68,8 +72,9 @@ Singleton {
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled) {
                 root.refresh();
-                root.poller.restart();
-            }
+                root.poller.start();
+            } else
+                root.poller.stop();
         }
     }
 

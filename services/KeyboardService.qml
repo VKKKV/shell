@@ -20,10 +20,13 @@ Singleton {
         return text.length > 0 ? text.toUpperCase() : "UNKNOWN";
     }
 
-    function updateDevices(output: string): void {
+    function updateDevices(output: string, backend: string): void {
+        if (!SettingsService.liveDataEnabled || deviceBackend !== backend)
+            return;
+
         try {
             const payload = JSON.parse(output);
-            const source = deviceBackend === "niri" ? (Array.isArray(payload) ? payload : (payload.layouts || payload.keyboards || [])) : (payload.keyboards || []);
+            const source = backend === "niri" ? (Array.isArray(payload) ? payload : (payload.layouts || payload.keyboards || [])) : (payload.keyboards || []);
             const next = [];
             let active = null;
 
@@ -45,24 +48,34 @@ Singleton {
             available = next.length > 0;
             activeKeyboard = active ? active.name : "UNKNOWN";
             activeLayout = active ? active.layout : "UNKNOWN";
-            statusLine = available ? "keyboard: " + activeLayout + " // " + next.length + " devices // " + deviceBackend : "keyboard: no devices // " + deviceBackend;
+            statusLine = available ? "keyboard: " + activeLayout + " // " + next.length + " devices // " + backend : "keyboard: no devices // " + backend;
         } catch (error) {
             available = false;
             activeLayout = "UNKNOWN";
             activeKeyboard = "UNKNOWN";
             keyboards = [];
-            statusLine = "keyboard: parse fallback // " + deviceBackend;
+            statusLine = "keyboard: parse fallback // " + backend;
         }
+    }
+
+    function stopDeviceProcesses(): void {
+        hyprDevicesProcess.running = false;
+        niriDevicesProcess.running = false;
     }
 
     function refresh(): void {
         if (CompositorService.hyprlandActive) {
             deviceBackend = "hyprland";
-            devicesProcess.command = ["hyprctl", "devices", "-j"];
+            niriDevicesProcess.running = false;
+            if (!hyprDevicesProcess.running)
+                hyprDevicesProcess.running = true;
         } else if (CompositorService.niriActive) {
             deviceBackend = "niri";
-            devicesProcess.command = ["niri", "msg", "keyboard-layouts"];
+            hyprDevicesProcess.running = false;
+            if (!niriDevicesProcess.running)
+                niriDevicesProcess.running = true;
         } else {
+            stopDeviceProcesses();
             deviceBackend = "fallback";
             available = false;
             activeLayout = "UNAVAILABLE";
@@ -71,15 +84,18 @@ Singleton {
             statusLine = "keyboard: compositor fallback";
             return;
         }
-        devicesProcess.running = true;
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: {
+        if (SettingsService.liveDataEnabled) {
+            refresh();
+            poller.start();
+        }
+    }
 
     property Timer poller: Timer {
         interval: 10000
         repeat: true
-        running: SettingsService.liveDataEnabled
         onTriggered: root.refresh()
     }
 
@@ -88,23 +104,42 @@ Singleton {
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled) {
                 root.refresh();
-                root.poller.restart();
+                root.poller.start();
+            } else {
+                root.poller.stop();
+                root.stopDeviceProcesses();
             }
         }
     }
 
-    property Process devicesProcess: Process {
+    property Process hyprDevicesProcess: Process {
         command: ["hyprctl", "devices", "-j"]
         stdout: StdioCollector {
-            onStreamFinished: root.updateDevices(text)
+            onStreamFinished: root.updateDevices(text, "hyprland")
         }
         onExited: (exitCode) => {
-            if (exitCode !== 0) {
+            if (exitCode !== 0 && root.deviceBackend === "hyprland") {
                 root.available = false;
                 root.activeLayout = "UNAVAILABLE";
                 root.activeKeyboard = "UNKNOWN";
                 root.keyboards = [];
-                root.statusLine = "keyboard: hyprctl fallback";
+                root.statusLine = "keyboard: hyprland fallback";
+            }
+        }
+    }
+
+    property Process niriDevicesProcess: Process {
+        command: ["niri", "msg", "keyboard-layouts"]
+        stdout: StdioCollector {
+            onStreamFinished: root.updateDevices(text, "niri")
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0 && root.deviceBackend === "niri") {
+                root.available = false;
+                root.activeLayout = "UNAVAILABLE";
+                root.activeKeyboard = "UNKNOWN";
+                root.keyboards = [];
+                root.statusLine = "keyboard: niri fallback";
             }
         }
     }

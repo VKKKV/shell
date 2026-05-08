@@ -1,0 +1,6 @@
+{"file": ".opencode/commands/trellis/finish-work.md", "reason": "Finish work checklist"}
+{"file": ".opencode/commands/trellis/check.md", "reason": "Code quality check spec"}
+{"file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "Verify polling and Process lifecycle fixes"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify expansion component behavior"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Verify service state changes"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Verify runtime cleanliness"}

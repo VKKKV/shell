@@ -67,41 +67,64 @@ Make the shell start in a gray tactical palette by default, while keeping the ex
 
 ## Development Plan
 
-### PR1: Gray Startup Palette (implemented in this task)
+### PR1: Gray Startup Palette
 
 * Add `gray` as a persistent `visual.profile` value.
 * Set default startup `visual.profile` to `gray`.
 * Set default startup `visual.accentColor` to `#8A8A8A`.
 * Update QML settings controls, Zig helper defaults/validation/tests, docs, and code-spec.
 
-### PR2: Settings Save Reliability
+### PR2: Runtime Stability Sweep
+
+Fix the review findings in a separate pass so the startup-palette change stays focused and easy to verify.
+
+#### PR2A: Timer and animation lifecycle leaks
+
+* Add `else { stop(); }` branches for live-data pollers in `AudioService`, `WeatherService`, `PowerProfileService`, `KeyboardService`, `KeybindService`, and `EnvironmentService`.
+* Gate `OrbitalExpansionPanel`'s render timer on panel visibility and the active surface.
+* Gate `RotatingGlobe` animation loops on visibility.
+* Remove `restart()` patterns that overwrite QML bindings for live-data timers.
+
+#### PR2B: Service race conditions and stale process handling
+
+* Fix the `AudioService.refresh()` TOCTOU window.
+* Prevent `AudioService.refreshSink()` / `refreshMic()` from double-starting the same process.
+* Reset or separate process instances when `KeyboardService` and `KeybindService` switch compositor backends.
+* Validate `ExpansionService.show()` surface names before opening the overlay.
+
+#### PR2C: Lower-priority cleanup
+
+* Review the remaining medium/low findings for follow-up or separate tickets.
+* Keep unrelated behavior changes out of the gray palette task unless they block verification.
+
+### PR3: Settings Save Reliability
 
 * Fix `SettingsService.saveNow()` so changes made while `writeProcess` is running are not lost.
 * Add a `dirtyWhileWriting` or queued-payload mechanism.
 * Verify rapid settings changes persist the latest payload.
 * Status: implemented with `activeWritePayload`, `queuedWritePayload`, and `writeQueued`.
 
-### PR3: Network Action Serialization
+### PR4: Network Action Serialization
 
 * Prevent `NetworkDetailService` shared action processes from dropping rapid reconnect/down/toggle commands.
 * Use action queues or running guards per action category.
 * Keep status lines readable and refresh after each completed action.
 * Status: implemented with a generic `actionQueue` and serialized `actionProcess` dispatch for reconnect/down/bluetooth power actions.
 
-### PR4: Clipboard Fidelity
+### PR5: Clipboard Fidelity
 
 * Preserve raw clipboard text in history instead of `trim()`-normalizing it.
 * Keep preview compaction separate from stored text.
 * Decide whether all-whitespace clipboard entries should be stored or ignored explicitly.
 * Status: implemented by storing raw non-whitespace clipboard text and keeping whitespace normalization only in preview/filtering.
 
-### PR5: Network Parser Robustness
+### PR6: Network Parser Robustness
 
 * Replace naive `line.split(":")` parsing for `nmcli -t` output with an escaped-colon-aware parser or a more stable output format.
 * Validate active connections and Wi-Fi rows with names/SSIDs containing colons.
 * Status: implemented with `splitNmcliFields()` for escaped colon handling in active connection and Wi-Fi parsing.
 
-### PR6: Niri Keybind Diagnostics
+### PR7: Niri Keybind Diagnostics
 
 * Fix backend-specific fallback text in `KeybindService` so Niri failures do not report `hyprctl fallback`.
 * Validate the real `niri msg binds` output shape before expanding parser support.

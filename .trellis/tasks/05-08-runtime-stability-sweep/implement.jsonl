@@ -1,0 +1,7 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend development guide"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "Polling timers and Process lifecycle patterns"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Expansion surface and component visibility patterns"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Service singleton and compositor state patterns"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Runtime cleanliness and verification expectations"}

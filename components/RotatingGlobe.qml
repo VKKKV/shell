@@ -78,7 +78,7 @@ Item {
         to: 360
         duration: expanded ? 26000 : 18000
         loops: Animation.Infinite
-        running: true
+        running: root.visible
     }
 
     Canvas {

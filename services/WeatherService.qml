@@ -38,12 +38,14 @@ Singleton {
         fetchProcess.running = true;
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: {
+        if (SettingsService.liveDataEnabled)
+            poller.start();
+    }
 
     property Timer poller: Timer {
         interval: 300000
         repeat: true
-        running: SettingsService.liveDataEnabled
         triggeredOnStart: true
         onTriggered: root.refresh()
     }
@@ -52,7 +54,9 @@ Singleton {
         target: SettingsService
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled)
-                root.poller.restart();
+                root.poller.start();
+            else
+                root.poller.stop();
         }
     }
 

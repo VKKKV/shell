@@ -70,29 +70,25 @@ Singleton {
     }
 
     function refresh(): void {
-        if (readProcess.running)
-            pendingSinkRefresh = true;
-        else
-            readProcess.running = true;
-        if (micReadProcess.running)
-            pendingMicRefresh = true;
-        else
-            micReadProcess.running = true;
+        refreshSink();
+        refreshMic();
     }
 
     function refreshSink(): void {
+        pendingSinkRefresh = true;
         if (readProcess.running) {
-            pendingSinkRefresh = true;
             return;
         }
+        pendingSinkRefresh = false;
         readProcess.running = true;
     }
 
     function refreshMic(): void {
+        pendingMicRefresh = true;
         if (micReadProcess.running) {
-            pendingMicRefresh = true;
             return;
         }
+        pendingMicRefresh = false;
         micReadProcess.running = true;
     }
 
@@ -144,19 +140,23 @@ Singleton {
         queueMicAction(["wpctl", "set-volume", "@DEFAULT_AUDIO_SOURCE@", next.toFixed(2)]);
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: {
+        if (SettingsService.liveDataEnabled) {
+            refresh();
+            poller.start();
+            spectrumTimer.start();
+        }
+    }
 
     property Timer poller: Timer {
         interval: 5000
         repeat: true
-        running: SettingsService.liveDataEnabled
         onTriggered: root.refresh()
     }
 
     property Timer spectrumTimer: Timer {
         interval: 180
         repeat: true
-        running: SettingsService.liveDataEnabled
         triggeredOnStart: true
         onTriggered: root.updateSpectrum()
     }
@@ -166,8 +166,13 @@ Singleton {
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled) {
                 root.refresh();
-                root.poller.restart();
-                root.spectrumTimer.restart();
+                root.poller.start();
+                root.spectrumTimer.start();
+            } else {
+                root.poller.stop();
+                root.spectrumTimer.stop();
+                root.pendingSinkRefresh = false;
+                root.pendingMicRefresh = false;
             }
         }
     }
