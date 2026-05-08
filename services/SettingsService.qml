@@ -34,6 +34,7 @@ Singleton {
     property bool writeQueued: false
     property bool loading: true
     property bool applyingSettings: false
+    property bool normalizingSettings: false
 
     function togglePanel(): void {
         panelOpen = !panelOpen;
@@ -200,8 +201,14 @@ Singleton {
     }
 
     function normalizeAndSave(current: var, normalized: var, setter: var): void {
+        if (normalizingSettings)
+            return;
+
         if (normalized !== current) {
+            normalizingSettings = true;
             setter(normalized);
+            normalizingSettings = false;
+            scheduleSave();
             return;
         }
         scheduleSave();

@@ -62,6 +62,18 @@ Singleton {
         readProcess.running = true;
     }
 
+    function startPollingIfReady(): void {
+        if (SettingsService.loading || !SettingsService.liveDataEnabled)
+            return;
+
+        startupPoll.start();
+    }
+
+    function stopPolling(): void {
+        startupPoll.stop();
+        poller.stop();
+    }
+
     function control(action: string): void {
         if (action !== "play-pause" && action !== "next" && action !== "previous")
             return;
@@ -69,12 +81,11 @@ Singleton {
         actionProcess.running = true;
     }
 
-    Component.onCompleted: startupPoll.start()
+    Component.onCompleted: startPollingIfReady()
 
     property Timer startupPoll: Timer {
         interval: PollingSchedule.startupDelay(3)
         repeat: false
-        running: SettingsService.liveDataEnabled
         onTriggered: {
             root.refresh();
             root.poller.start();
@@ -90,17 +101,24 @@ Singleton {
 
     Connections {
         target: SettingsService
+        function onLoadingChanged(): void {
+            if (SettingsService.loading)
+                root.stopPolling();
+            else
+                root.startPollingIfReady();
+        }
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled) {
-                root.refresh();
-                root.poller.restart();
+                if (!SettingsService.loading) {
+                    root.refresh();
+                    root.poller.restart();
+                }
             } else {
-                root.startupPoll.stop();
-                root.poller.stop();
+                root.stopPolling();
             }
         }
         function onUpdateIntervalMsChanged(): void {
-            if (SettingsService.liveDataEnabled)
+            if (!SettingsService.loading && SettingsService.liveDataEnabled)
                 root.poller.restart();
         }
     }

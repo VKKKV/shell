@@ -73,8 +73,8 @@ TacticalFrame {
         }
 
         TacticalLabel {
-            Layout.preferredWidth: 132
-            Layout.maximumWidth: 132
+            Layout.preferredWidth: Math.min(220, implicitWidth)
+            Layout.maximumWidth: 220
             text: TooltipService.title
             accent: TooltipService.active
             elide: Text.ElideRight

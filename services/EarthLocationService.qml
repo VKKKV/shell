@@ -60,19 +60,32 @@ Singleton {
     }
 
     function refresh(): void {
-        if (!timezoneProcess.running)
-            timezoneProcess.running = true;
         if (!SettingsService.liveDataEnabled) {
             applyTimezoneLocation();
             statusLine = "earth: live data disabled";
             return;
         }
+        if (!timezoneProcess.running)
+            timezoneProcess.running = true;
         if (!SettingsService.networkGeolocationEnabled) {
             applyTimezoneLocation();
             return;
         }
         if (!fetchProcess.running)
             fetchProcess.running = true;
+    }
+
+    function startPollingIfReady(): void {
+        if (SettingsService.loading || !SettingsService.liveDataEnabled)
+            return;
+
+        startupPoll.start();
+        locationPoller.start();
+    }
+
+    function stopPolling(): void {
+        startupPoll.stop();
+        locationPoller.stop();
     }
 
     function updateLocation(output: string): void {
@@ -98,7 +111,7 @@ Singleton {
         }
     }
 
-    Component.onCompleted: startupPoll.start()
+    Component.onCompleted: startPollingIfReady()
 
     function updateTimezone(output: string): void {
         const value = output.trim();
@@ -111,24 +124,39 @@ Singleton {
         id: startupPoll
         interval: PollingSchedule.startupDelay(9)
         repeat: false
-        running: SettingsService.liveDataEnabled
         onTriggered: root.refresh()
     }
 
     Timer {
+        id: locationPoller
         interval: 1800000
         repeat: true
-        running: SettingsService.liveDataEnabled
         onTriggered: root.refresh()
     }
 
     Connections {
         target: SettingsService
+        function onLoadingChanged(): void {
+            if (SettingsService.loading)
+                root.stopPolling();
+            else
+                root.startPollingIfReady();
+        }
         function onLiveDataEnabledChanged(): void {
-            root.refresh();
+            if (SettingsService.liveDataEnabled) {
+                if (!SettingsService.loading) {
+                    root.refresh();
+                    root.locationPoller.start();
+                }
+            } else {
+                root.stopPolling();
+                root.applyTimezoneLocation();
+                root.statusLine = "earth: live data disabled";
+            }
         }
         function onNetworkGeolocationEnabledChanged(): void {
-            root.refresh();
+            if (!SettingsService.loading && SettingsService.liveDataEnabled)
+                root.refresh();
         }
     }
 

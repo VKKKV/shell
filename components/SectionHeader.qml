@@ -18,9 +18,11 @@ RowLayout {
     }
 
     TacticalLabel {
+        Layout.fillWidth: true
         text: root.tag.length > 0 ? root.tag + " // " + root.text : root.text
         accent: true
         size: Theme.fontTiny
+        elide: Text.ElideRight
     }
 
     Rectangle {

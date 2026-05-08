@@ -5,8 +5,34 @@ import QtQuick
 import QtQuick.Layouts
 
 TacticalFrame {
+    id: root
+
+    readonly property string fullDateText: "[" + CalendarService.dayText + " // " + CalendarService.dateText + "]"
+    readonly property string shortDateText: "[" + CalendarService.dateText + "]"
+    readonly property int fixedRowWidth: Theme.panelPadding * 2 + 240 + 720 + 328 + 8 * 5
+    readonly property int availableDateWidth: Math.max(shortDateProbe.implicitWidth, width - fixedRowWidth)
+    readonly property bool useShortDate: availableDateWidth < fullDateProbe.implicitWidth
+
     highlighted: true
     implicitHeight: Math.min(Theme.bottomBarMaxHeight, Math.max(Theme.bottomBarMinHeight, content.implicitHeight + 12))
+
+    TacticalLabel {
+        id: fullDateProbe
+
+        visible: false
+        text: root.fullDateText
+        accent: true
+        size: Theme.fontNormal
+    }
+
+    TacticalLabel {
+        id: shortDateProbe
+
+        visible: false
+        text: root.shortDateText
+        accent: true
+        size: Theme.fontNormal
+    }
 
     ColumnLayout {
         id: content
@@ -29,14 +55,33 @@ TacticalFrame {
                 elide: Text.ElideRight
             }
 
-            TacticalLabel {
-                Layout.preferredWidth: 184
-                Layout.maximumWidth: 184
-                horizontalAlignment: Text.AlignLeft
-                text: "[" + CalendarService.dayText + " // " + CalendarService.dateText + "]"
-                accent: true
-                size: Theme.fontNormal
-                elide: Text.ElideRight
+            Item {
+                Layout.preferredWidth: root.useShortDate ? shortDateProbe.implicitWidth : fullDateProbe.implicitWidth
+                Layout.maximumWidth: root.useShortDate ? shortDateProbe.implicitWidth : Math.max(fullDateProbe.implicitWidth, root.availableDateWidth)
+                Layout.minimumWidth: shortDateProbe.implicitWidth
+                Layout.alignment: Qt.AlignVCenter
+                Layout.preferredHeight: dateLabel.implicitHeight
+
+                TacticalLabel {
+                    id: dateLabel
+
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width
+                    horizontalAlignment: Text.AlignLeft
+                    text: root.useShortDate ? root.shortDateText : root.fullDateText
+                    accent: true
+                    size: Theme.fontNormal
+                    elide: Text.ElideRight
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: root.useShortDate
+                    enabled: root.useShortDate
+                    onEntered: TooltipService.show("CALENDAR DATE", root.fullDateText, "bottom-date")
+                    onExited: TooltipService.clear("bottom-date")
+                }
             }
 
             Item {

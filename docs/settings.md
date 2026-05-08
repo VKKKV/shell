@@ -23,17 +23,17 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 ```json
 {
   "version": 1,
-    "visual": {
-      "scanlinesEnabled": true,
-      "intensity": 1.0,
-      "fontScale": 1.0,
-      "panelOpacity": 0.8,
-      "scanlineStrength": 1.0,
-      "borderOpacity": 1.0,
-      "dimTextOpacity": 1.0,
-      "lineContrast": 1.0,
-      "density": "normal",
-      "profile": "gray",
+  "visual": {
+    "scanlinesEnabled": true,
+    "intensity": 1.0,
+    "fontScale": 1.0,
+    "panelOpacity": 0.8,
+    "scanlineStrength": 1.0,
+    "borderOpacity": 1.0,
+    "dimTextOpacity": 1.0,
+    "lineContrast": 1.0,
+    "density": "normal",
+    "profile": "gray",
     "accentColor": "#8A8A8A",
     "backgroundMode": "void"
   },

@@ -74,6 +74,22 @@ Singleton {
         refreshMic();
     }
 
+    function startPollingIfReady(): void {
+        if (SettingsService.loading || !SettingsService.liveDataEnabled)
+            return;
+
+        refresh();
+        poller.start();
+        spectrumTimer.start();
+    }
+
+    function stopPolling(): void {
+        poller.stop();
+        spectrumTimer.stop();
+        pendingSinkRefresh = false;
+        pendingMicRefresh = false;
+    }
+
     function refreshSink(): void {
         pendingSinkRefresh = true;
         if (readProcess.running) {
@@ -140,13 +156,7 @@ Singleton {
         queueMicAction(["wpctl", "set-volume", "@DEFAULT_AUDIO_SOURCE@", next.toFixed(2)]);
     }
 
-    Component.onCompleted: {
-        if (SettingsService.liveDataEnabled) {
-            refresh();
-            poller.start();
-            spectrumTimer.start();
-        }
-    }
+    Component.onCompleted: startPollingIfReady()
 
     property Timer poller: Timer {
         interval: 5000
@@ -163,16 +173,21 @@ Singleton {
 
     Connections {
         target: SettingsService
+        function onLoadingChanged(): void {
+            if (SettingsService.loading)
+                root.stopPolling();
+            else
+                root.startPollingIfReady();
+        }
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled) {
-                root.refresh();
-                root.poller.start();
-                root.spectrumTimer.start();
+                if (!SettingsService.loading) {
+                    root.refresh();
+                    root.poller.start();
+                    root.spectrumTimer.start();
+                }
             } else {
-                root.poller.stop();
-                root.spectrumTimer.stop();
-                root.pendingSinkRefresh = false;
-                root.pendingMicRefresh = false;
+                root.stopPolling();
             }
         }
     }

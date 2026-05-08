@@ -60,6 +60,27 @@ Singleton {
         root.statusLine = memoryStatus + " // " + filesystemStatus + " // " + cpuStatus + " // " + networkStatus;
     }
 
+    function startPollingIfReady(): void {
+        if (SettingsService.loading || !SettingsService.liveDataEnabled)
+            return;
+
+        startupPoll.start();
+    }
+
+    function refresh(): void {
+        memoryProcess.running = true;
+        filesystemProcess.running = true;
+        cpuProcess.running = true;
+        networkProcess.running = true;
+    }
+
+    function stopPolling(): void {
+        startupPoll.stop();
+        poller.stop();
+    }
+
+    Component.onCompleted: startPollingIfReady()
+
     function updateMemory(output: string): void {
         const lines = output.trim().split("\n");
         let foundMemory = false;
@@ -249,12 +270,8 @@ Singleton {
     property Timer startupPoll: Timer {
         interval: PollingSchedule.startupDelay(1)
         repeat: false
-        running: SettingsService.liveDataEnabled
         onTriggered: {
-            root.memoryProcess.running = true;
-            root.filesystemProcess.running = true;
-            root.cpuProcess.running = true;
-            root.networkProcess.running = true;
+            root.refresh();
             root.poller.start();
         }
     }
@@ -263,30 +280,29 @@ Singleton {
         interval: SettingsService.updateIntervalMs
         repeat: true
         running: false
-        onTriggered: {
-            root.memoryProcess.running = true;
-            root.filesystemProcess.running = true;
-            root.cpuProcess.running = true;
-            root.networkProcess.running = true;
-        }
+        onTriggered: root.refresh()
     }
 
     Connections {
         target: SettingsService
+        function onLoadingChanged(): void {
+            if (SettingsService.loading)
+                root.stopPolling();
+            else
+                root.startPollingIfReady();
+        }
         function onLiveDataEnabledChanged(): void {
             if (SettingsService.liveDataEnabled) {
-                root.memoryProcess.running = true;
-                root.filesystemProcess.running = true;
-                root.cpuProcess.running = true;
-                root.networkProcess.running = true;
-                root.poller.restart();
+                if (!SettingsService.loading) {
+                    root.refresh();
+                    root.poller.restart();
+                }
             } else {
-                root.startupPoll.stop();
-                root.poller.stop();
+                root.stopPolling();
             }
         }
         function onUpdateIntervalMsChanged(): void {
-            if (SettingsService.liveDataEnabled)
+            if (!SettingsService.loading && SettingsService.liveDataEnabled)
                 root.poller.restart();
         }
     }

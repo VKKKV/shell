@@ -38,10 +38,18 @@ Singleton {
         fetchProcess.running = true;
     }
 
-    Component.onCompleted: {
-        if (SettingsService.liveDataEnabled)
-            poller.start();
+    function startPollingIfReady(): void {
+        if (SettingsService.loading || !SettingsService.liveDataEnabled)
+            return;
+
+        poller.start();
     }
+
+    function stopPolling(): void {
+        poller.stop();
+    }
+
+    Component.onCompleted: startPollingIfReady()
 
     property Timer poller: Timer {
         interval: 300000
@@ -52,11 +60,21 @@ Singleton {
 
     Connections {
         target: SettingsService
-        function onLiveDataEnabledChanged(): void {
-            if (SettingsService.liveDataEnabled)
-                root.poller.start();
+        function onLoadingChanged(): void {
+            if (SettingsService.loading)
+                root.stopPolling();
             else
-                root.poller.stop();
+                root.startPollingIfReady();
+        }
+        function onLiveDataEnabledChanged(): void {
+            if (SettingsService.liveDataEnabled) {
+                if (!SettingsService.loading) {
+                    root.refresh();
+                    root.poller.start();
+                }
+            } else {
+                root.stopPolling();
+            }
         }
     }
 

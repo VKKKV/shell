@@ -8,7 +8,7 @@ CentralPanelChrome {
     id: root
 
     title: "AGENT CORE // NEURAL MESH"
-    headerText: "DEPLOYED FROM LEFT AGENT NODE // VISUAL PLACEHOLDER // PROVIDER CONTRACT DEFERRED"
+    headerText: "DEPLOYED FROM LEFT AGENT NODE // STAGED VISUAL CONTRACT // PROVIDER API DEFERRED"
 
     RowLayout {
         anchors.fill: parent
@@ -37,7 +37,7 @@ CentralPanelChrome {
             PanelStatusStrip {
                 Layout.fillWidth: true
                 leftText: "AGENT BUS"
-                centerText: "PLACEHOLDER"
+                centerText: "STAGED UI"
                 rightText: "ESC // CLOSE"
             }
 
@@ -49,7 +49,7 @@ CentralPanelChrome {
             TextBlock {
                 Layout.fillWidth: true
                 title: "INTERACTION MODEL"
-                lines: ["HOVER: LOCAL NODE PERTURB", "DRAG: ROTATE MESH", "CLICK ENTRY: OPEN PANEL", "CONFIG: FUTURE SETTINGS PLACEHOLDER", "PERSISTENCE: NOT ENABLED"]
+                lines: ["HOVER: LOCAL NODE PERTURB", "DRAG: ROTATE MESH", "CLICK ENTRY: OPEN PANEL", "CONFIG: FUTURE CONTRACT ONLY", "PERSISTENCE: NOT ENABLED"]
             }
 
             TextBlock {
@@ -62,7 +62,7 @@ CentralPanelChrome {
 
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "Agent provider selection is intentionally staged as UI language only. Real Hermes/OpenClaw integration should define command or endpoint contracts before persistence is added."
+                text: "Agent provider selection is intentionally staged as UI language only. Real Hermes/OpenClaw integration needs a command or endpoint contract before persistence is added."
                 dim: true
                 wrapMode: Text.WordWrap
                 size: Theme.fontTiny
