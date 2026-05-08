@@ -1,0 +1,3 @@
+{"file":".trellis/spec/backend/index.md","reason":"The preprocessing scaffold may introduce an offline script/tool path; use backend/tooling guidance where applicable."}
+{"file":".trellis/spec/frontend/index.md","reason":"The generated data contract feeds a QML/Canvas frontend component; preserve frontend conventions and docs language."}
+{"file":".trellis/spec/guides/index.md","reason":"Settings/config/data contract change requires reuse and cross-layer boundary checks."}

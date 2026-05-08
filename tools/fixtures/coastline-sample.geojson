@@ -1,0 +1,37 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "sample-line"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-10.25, 35.5],
+          [-4, 38.125],
+          [2.5, 36]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "sample-island"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120, 22],
+            [122, 24],
+            [121, 26],
+            [119, 24],
+            [120, 22]
+          ]
+        ]
+      }
+    }
+  ]
+}
