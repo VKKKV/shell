@@ -19,6 +19,7 @@ Singleton {
     property string stderrText: ""
     property bool hermesAvailable: false
     property bool openClawAvailable: false
+    property bool probeComplete: false
     readonly property var providerPresets: [
         { id: "disabled", name: "DISABLED", command: [], available: true, detail: "No provider command configured." },
         { id: "hermes", name: "HERMES", command: ["hermes", "agent"], available: hermesAvailable, detail: hermesAvailable ? "Hermes local command adapter available." : "Hermes command not found." },
@@ -47,6 +48,16 @@ Singleton {
         if (running)
             return;
 
+        if (!probeComplete && id !== "disabled") {
+            providerName = id.toUpperCase();
+            providerCommand = [];
+            state = "probing";
+            statusLine = "agent: probing provider " + id;
+            responseText = "Checking provider command availability.";
+            errorDetail = "";
+            return;
+        }
+
         const preset = providerPresets.find(entry => entry.id === id) || providerPresets[0];
         providerName = preset.name;
         providerCommand = preset.available ? preset.command : [];
@@ -61,21 +72,22 @@ Singleton {
 
     Component.onCompleted: {
         probeProcess.running = true;
-        if (!SettingsService.loading)
+        if (!SettingsService.loading && SettingsService.agentProviderId === "disabled")
             applyProvider(SettingsService.agentProviderId, true);
     }
 
-    onHermesAvailableChanged: applyProvider(SettingsService.agentProviderId, true)
-    onOpenClawAvailableChanged: applyProvider(SettingsService.agentProviderId, true)
+    onHermesAvailableChanged: if (probeComplete) applyProvider(SettingsService.agentProviderId, true)
+    onOpenClawAvailableChanged: if (probeComplete) applyProvider(SettingsService.agentProviderId, true)
 
     Connections {
         target: SettingsService
         function onLoadingChanged(): void {
-            if (!SettingsService.loading)
+            if (!SettingsService.loading && (probeComplete || SettingsService.agentProviderId === "disabled"))
                 root.applyProvider(SettingsService.agentProviderId, true);
         }
         function onAgentProviderIdChanged(): void {
-            root.applyProvider(SettingsService.agentProviderId, true);
+            if (probeComplete || SettingsService.agentProviderId === "disabled")
+                root.applyProvider(SettingsService.agentProviderId, true);
         }
     }
 
@@ -137,13 +149,17 @@ Singleton {
             onStreamFinished: {
                 root.hermesAvailable = text.indexOf("hermes=1") >= 0;
                 root.openClawAvailable = text.indexOf("openclaw=1") >= 0;
+                root.probeComplete = true;
+                root.applyProvider(SettingsService.agentProviderId, true);
             }
         }
         onExited: (exitCode) => {
             if (exitCode !== 0) {
                 root.hermesAvailable = false;
                 root.openClawAvailable = false;
+                root.probeComplete = true;
                 root.statusLine = "agent: provider probe fallback";
+                root.applyProvider(SettingsService.agentProviderId, true);
             }
         }
     }

@@ -31,17 +31,11 @@ Avoid mixing these in the same task:
 - Agent provider session config: added session-local provider presets for disabled, Hermes, and OpenClaw without settings persistence.
 - Agent provider persistence contract: persists only `agent.providerId` (`disabled`, `hermes`, `openclaw`) while keeping commands and custom providers out of persisted settings.
 - Hermes/OpenClaw adapter mapping: probes local command availability and maps available adapters onto the generic argv `--prompt` contract without provider-specific UI.
+- Agent adapter polish and race fixes: gates persisted provider application on probe completion, updates stale Agent panel copy, and replaces duplicate planned rows with live availability rows.
 
 ### Next Slices
 
-1. Agent adapter polish and race fixes
-   - Add a probe-complete gate so persisted Hermes/OpenClaw selection is applied after command availability is known, avoiding temporary unavailable flicker.
-   - Update Agent panel copy now that provider id persistence and conditional command execution exist.
-   - Remove duplicate static `HERMES`/`OPENCLAW` planned rows or replace them with live availability state.
-   - Keep provider preset helper extraction and debounced/periodic re-probing deferred until more providers or runtime install workflows exist.
-   - Verification: `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.
-
-2. Agent provider runtime validation
+1. Agent provider runtime validation
    - Exercise real Hermes/OpenClaw commands when installed and document exact argv behavior.
    - Keep missing-command fallback as the expected behavior on systems without those tools.
    - Verification: provider missing fallback, available command response, `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.

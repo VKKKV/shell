@@ -1,0 +1,4 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": "docs/development-plan.md", "reason": "review findings and adapter polish scope"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Agent panel remains generic module UI"}

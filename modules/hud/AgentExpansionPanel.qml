@@ -55,7 +55,7 @@ CentralPanelChrome {
 
             MetricBlock {
                 title: "PROVIDER STAGE"
-                rows: [["ACTIVE", AgentService.providerName, -1, AgentService.available], ["STATE", AgentService.state.toUpperCase(), -1, AgentService.running], ["HERMES", "PLANNED", -1, false], ["OPENCLAW", "PLANNED", -1, false], ["CUSTOM", "DEFERRED", -1, false]]
+                rows: [["ACTIVE", AgentService.providerName, -1, AgentService.available], ["STATE", AgentService.state.toUpperCase(), -1, AgentService.running], ["HERMES", AgentService.hermesAvailable ? "AVAILABLE" : "NOT FOUND", -1, AgentService.hermesAvailable], ["OPENCLAW", AgentService.openClawAvailable ? "AVAILABLE" : "NOT FOUND", -1, AgentService.openClawAvailable], ["CUSTOM", "DEFERRED", -1, false]]
             }
 
             GridLayout {
@@ -175,7 +175,7 @@ CentralPanelChrome {
                             hoverEnabled: true
                             cursorShape: root.promptText.trim().length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: root.submitPrompt()
-                            onEntered: TooltipService.show("AGENT SUBMIT", "Stage prompt through AgentService. Provider execution remains disabled.", "agent-submit")
+                            onEntered: TooltipService.show("AGENT SUBMIT", "Dispatch prompt to the active provider when its command is available.", "agent-submit")
                             onExited: TooltipService.clear("agent-submit")
                         }
 
@@ -193,7 +193,7 @@ CentralPanelChrome {
 
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "Agent provider selection is intentionally staged as UI language only. Real Hermes/OpenClaw integration needs a command or endpoint contract before persistence is added."
+                text: "Provider selection persists across sessions. Commands execute only when the selected provider binary is available on PATH."
                 dim: true
                 wrapMode: Text.WordWrap
                 size: Theme.fontTiny
