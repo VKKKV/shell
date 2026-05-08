@@ -78,6 +78,24 @@ Continue shell development with a small, verifiable feature slice focused on doc
 * `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
 * Independent `trellis-check` review: passed with no findings.
 
+### Service Log Expansion Slice
+
+* `modules/hud/LogExpansionPanel.qml` now prefers `ServiceLogService.events` as the primary stream when recent local service events exist.
+* The existing service status mirror remains as the fallback snapshot when no events are available.
+* A tactical `CLEAR EVENTS` action now calls `ServiceLogService.clear()` and dims when there is nothing to clear.
+* Panel copy now says the scope is the local service event bus instead of implying a deferred external log tail.
+* `git diff --check`: passed.
+* `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
+* `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
+
+### Nixie Wallpaper Warning Fix
+
+* `components/NixieWallpaper.qml` now resolves numeric digit image paths through the Repeater delegate instead of the inner digit container.
+* Fixed repeated `assets/nixie//undefined` image warnings without changing colon rendering or visual layout.
+* `git diff --check`: passed.
+* `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
+* `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
+
 ### Earth Globe Optimization Slice
 
 * `components/RotatingGlobe.qml` now supports horizontal drag rotation around the vertical axis.
