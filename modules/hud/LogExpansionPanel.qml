@@ -11,6 +11,7 @@ CentralPanelChrome {
     headerText: "DEPLOYED FROM RIGHT LOG NODE // SERVICE STATUS EVENT BUS"
 
     readonly property var logLines: [CompositorService.statusLine, SystemStats.statusLine, NetworkDetailService.statusLine, AudioService.statusLine, AudioService.micStatusLine, BatteryService.statusLine, MediaService.statusLine, WeatherService.statusLine, KeyboardService.statusLine, PowerProfileService.statusLine, PowerProfileService.idleStatusLine].concat(SystemStats.logLines)
+    readonly property int warningCount: logLines.filter(line => line.toLowerCase().indexOf("fallback") >= 0 || line.toLowerCase().indexOf("missing") >= 0).length
 
     ColumnLayout {
         anchors.fill: parent
@@ -89,7 +90,12 @@ CentralPanelChrome {
 
                 TextBlock {
                     title: "EVENT BUS"
-                    lines: ["EVENTS: " + root.logLines.length, "SOURCE: SERVICES + SYSTEMSTATS", "WARN RULE: fallback/missing", "MODE: LOCAL STATUS MIRROR", "ACTIONS: READ ONLY"]
+                    lines: ["EVENTS: " + root.logLines.length, "WARNINGS: " + root.warningCount, "SOURCE: SERVICES + SYSTEMSTATS", "WARN RULE: fallback/missing", "MODE: LOCAL STATUS MIRROR", "ACTIONS: READ ONLY"]
+                }
+
+                MetricBlock {
+                    title: "EVENT HEALTH"
+                    rows: [["TOTAL", root.logLines.length.toString(), Math.min(1, root.logLines.length / 16), true], ["WARN", root.warningCount.toString(), Math.min(1, root.warningCount / 6), root.warningCount > 0], ["OK", Math.max(0, root.logLines.length - root.warningCount).toString(), Math.min(1, (root.logLines.length - root.warningCount) / 16), root.warningCount === 0]]
                 }
 
                 TextBlock {

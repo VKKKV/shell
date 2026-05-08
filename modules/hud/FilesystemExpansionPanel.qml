@@ -20,6 +20,15 @@ CentralPanelChrome {
         return "STABLE";
     }
 
+    function totalUsage(): real {
+        if (SystemStats.filesystemRows.length === 0)
+            return 0;
+        let total = 0;
+        for (const row of SystemStats.filesystemRows)
+            total += Math.max(0, Math.min(1, row[2]));
+        return total / SystemStats.filesystemRows.length;
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: Theme.densitySpacing
@@ -98,6 +107,39 @@ CentralPanelChrome {
                         }
                     }
                 }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: "#33000000"
+                    border.color: Theme.lineDim
+                    border.width: Theme.lineWidth
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: Theme.panelPadding
+                        spacing: Theme.densitySpacing
+
+                        TacticalLabel {
+                            Layout.fillWidth: true
+                            text: "STORAGE ARRAY LOAD // " + Math.round(root.totalUsage() * 100) + "%"
+                            accent: true
+                        }
+
+                        ProgressBar {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: Theme.densityProgressHeight + 8
+                            value: root.totalUsage()
+                            fillColor: root.totalUsage() >= 0.7 ? Theme.line : Theme.lineDim
+                        }
+
+                        TextBlock {
+                            Layout.fillWidth: true
+                            title: "MOUNT MAP"
+                            lines: SystemStats.filesystemRows.map(row => row[0] + " // " + row[1] + " // " + root.glyph(row[2]))
+                        }
+                    }
+                }
             }
 
             ColumnLayout {
@@ -117,7 +159,7 @@ CentralPanelChrome {
 
                 TextBlock {
                     title: "TACTICAL NOTES"
-                    lines: ["CLICK BACKDROP TO DISMISS", "LOW SPACE: >= 70%", "CRITICAL: >= 85%", "MOUNT ACTIONS: DEFERRED"]
+                    lines: ["CLICK BACKDROP TO DISMISS", "LOW SPACE: >= 70%", "CRITICAL: >= 85%", "MOUNT ACTIONS: DEFERRED", "SPARSE SURFACE: FILLED BY ARRAY SUMMARY"]
                 }
             }
         }

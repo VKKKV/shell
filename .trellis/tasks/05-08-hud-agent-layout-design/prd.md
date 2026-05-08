@@ -40,7 +40,7 @@ Improve the visual balance, information density, and interaction quality of the 
 - [x] Hover hint label and message never overlap.
 - [x] Orbital panel header controls never overlap at normal viewport sizes.
 - [x] Earth panel has an agreed visual direction and implementation scope.
-- [ ] Sparse central panels use more of the available expansion area with meaningful content or intentional composition.
+- [x] Sparse central panels use more of the available expansion area with meaningful content or intentional composition.
 - [x] CPU MATRIX content is legible at the target resolution.
 - [x] Analog orbital clock rings have stronger visual weight without losing the tactical thin-line language.
 - [x] Agent neural module has a clear interaction design and opens a central panel.
@@ -100,6 +100,19 @@ Improve the visual balance, information density, and interaction quality of the 
 - `./zig-out/bin/void-shell-settings defaults`: passed; `backgroundMode` defaults to `void`
 - `./zig-out/bin/void-shell-settings write '{"visual":{"backgroundMode":"nixie"}}'`: passed; normalized output keeps `backgroundMode: "nixie"`
 - `./zig-out/bin/void-shell-settings write '{"visual":{"backgroundMode":"void"}}'`: passed; restored local config to default-off background mode
+
+## Stage 5 Scope
+
+- Improve remaining sparse central panel density with meaningful summaries rather than filler.
+- Add filesystem array summary and mount map to use the main central area more deliberately.
+- Add log event health metrics so the log panel side rail carries more useful information.
+
+## Stage 5 Verification
+
+- `git diff --check`: passed
+- `zig build`: passed
+- `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`: passed
+- `timeout 8s quickshell -p .`: passed; logs included `Configuration Loaded` with no startup warnings observed
 
 ## Technical Notes
 
