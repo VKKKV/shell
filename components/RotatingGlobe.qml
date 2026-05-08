@@ -23,6 +23,15 @@ Item {
     readonly property int globeRadius: globeSize / 2
     readonly property int globeCenterX: width / 2
     readonly property int globeCenterY: height / 2
+    readonly property real surfaceRadius: globeRadius * (expanded ? 0.945 : 0.93)
+    readonly property real frameRadius: globeRadius * (expanded ? 0.96 : 0.945)
+    readonly property int coastlinePolylineStride: expanded ? 1 : (globeSize < 165 ? 4 : 3)
+    readonly property int coastlinePointStride: expanded ? 1 : (globeSize < 165 ? 5 : 4)
+    readonly property int landPolylineStride: expanded ? 1 : (globeSize < 165 ? 8 : 6)
+    readonly property int terrainPointStride: expanded ? 2 : (globeSize < 165 ? 12 : 9)
+    readonly property int minRenderedPolylinePoints: expanded ? 2 : (globeSize < 165 ? 10 : 7)
+    readonly property int textureLatStep: expanded ? 10 : 20
+    readonly property int textureLonStep: expanded ? 15 : 30
     readonly property var signalNodes: [[51.5, -0.1], [40.7, -74.0], [35.7, 139.7], [1.3, 103.8], [52.5, 13.4], [-33.9, 151.2], [19.4, -99.1], [25.2, 55.3]]
     readonly property var coastlines: EarthCoastlineData.coastlines
 
@@ -48,13 +57,17 @@ Item {
         };
     }
 
-    function drawPolyline(ctx, points, color, alpha, width) {
+    function drawPolyline(ctx, points, color, alpha, width, pointStride) {
+        if (points.length < root.minRenderedPolylinePoints)
+            return;
+
         var open = false;
+        var drawn = 0;
         ctx.strokeStyle = color;
         ctx.lineWidth = width;
         ctx.globalAlpha = alpha;
         ctx.beginPath();
-        for (var i = 0; i < points.length; i++) {
+        for (var i = 0; i < points.length; i += Math.max(1, pointStride)) {
             var point = project(points[i][0], points[i][1]);
             if (!point.visible) {
                 open = false;
@@ -66,8 +79,10 @@ Item {
             } else {
                 ctx.lineTo(point.x, point.y);
             }
+            drawn++;
         }
-        ctx.stroke();
+        if (drawn >= 2)
+            ctx.stroke();
     }
 
     function drawProjectedNode(ctx, lat, lon, radius, color, alpha) {
@@ -85,14 +100,27 @@ Item {
         return value - Math.floor(value);
     }
 
-    function buildVisibleCoastlinePath(ctx, points) {
+    function isClosedPolyline(points) {
+        if (points.length < 4)
+            return false;
+
+        var first = points[0];
+        var last = points[points.length - 1];
+        var latDistance = first[0] - last[0];
+        var lonDistance = wrapLongitude(first[1] - last[1]);
+        return Math.sqrt(latDistance * latDistance + lonDistance * lonDistance) <= 0.45;
+    }
+
+    function buildVisibleCoastlinePath(ctx, points, pointStride) {
         var open = false;
         var count = 0;
         ctx.beginPath();
-        for (var i = 0; i < points.length; i++) {
+        for (var i = 0; i < points.length; i += Math.max(1, pointStride)) {
             var point = project(points[i][0], points[i][1]);
-            if (!point.visible)
+            if (!point.visible) {
+                open = false;
                 continue;
+            }
 
             if (!open) {
                 ctx.moveTo(point.x, point.y);
@@ -110,8 +138,8 @@ Item {
         ctx.globalCompositeOperation = "screen";
         ctx.strokeStyle = dim;
         ctx.lineWidth = Math.max(0.5, Theme.lineWidth * 0.7);
-        for (var lat = -75; lat <= 75; lat += 10) {
-            for (var lon = -180; lon < 180; lon += 15) {
+        for (var lat = -75; lat <= 75; lat += root.textureLatStep) {
+            for (var lon = -180; lon < 180; lon += root.textureLonStep) {
                 var sampleLon = lon + displayPhase * 0.18;
                 var projected = project(lat, sampleLon);
                 if (!projected.visible)
@@ -146,9 +174,9 @@ Item {
     }
 
     function drawLandMasses(ctx, accent, terrain) {
-        for (var c = 0; c < root.coastlines.length; c++) {
+        for (var c = 0; c < root.coastlines.length; c += root.landPolylineStride) {
             var pts = root.coastlines[c];
-            if (pts.length < 4)
+            if (pts.length < Math.max(4, root.minRenderedPolylinePoints) || !isClosedPolyline(pts))
                 continue;
 
             var first = root.project(pts[0][0], pts[0][1]);
@@ -156,7 +184,7 @@ Item {
             if (!first.visible || !last.visible)
                 continue;
 
-            if (!buildVisibleCoastlinePath(ctx, pts))
+            if (!buildVisibleCoastlinePath(ctx, pts, root.coastlinePointStride))
                 continue;
 
             ctx.globalAlpha = 0.13;
@@ -180,7 +208,7 @@ Item {
             }
 
             ctx.fillStyle = terrain;
-            for (var i = 0; i < pts.length; i += 2) {
+            for (var i = 0; i < pts.length; i += root.terrainPointStride) {
                 var point = project(pts[i][0], pts[i][1]);
                 if (!point.visible)
                     continue;
@@ -213,7 +241,8 @@ Item {
             var ctx = getContext("2d");
             ctx.reset();
             ctx.clearRect(0, 0, width, height);
-            var radius = root.globeRadius * 0.94;
+            var radius = root.surfaceRadius;
+            var frameRadius = root.frameRadius;
             var cx = root.globeCenterX;
             var cy = root.globeCenterY;
             var accent = Theme.line.toString();
@@ -235,7 +264,7 @@ Item {
             ctx.globalAlpha = 0.94;
             ctx.fillStyle = fill;
             ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.arc(cx, cy, frameRadius, 0, Math.PI * 2);
             ctx.fill();
 
             // atmospheric rim glow
@@ -253,7 +282,7 @@ Item {
 
             ctx.save();
             ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.arc(cx, cy, frameRadius - Math.max(1, Theme.lineWidth * 0.5), 0, Math.PI * 2);
             ctx.clip();
 
             // procedural ocean depth/detail texture
@@ -298,8 +327,8 @@ Item {
             root.drawLandMasses(ctx, accent, terrain);
 
             // coastline strokes
-            for (var c = 0; c < root.coastlines.length; c++)
-                root.drawPolyline(ctx, root.coastlines[c], accent, root.expanded ? 0.82 : 0.68, root.expanded ? 2.0 : 1.4);
+            for (var c = 0; c < root.coastlines.length; c += root.coastlinePolylineStride)
+                root.drawPolyline(ctx, root.coastlines[c], accent, root.expanded ? 0.82 : 0.64, root.expanded ? 2.0 : 1.25, root.coastlinePointStride);
 
             // signal nodes
             ctx.globalCompositeOperation = "screen";
@@ -335,9 +364,17 @@ Item {
             // outer globe ring
             ctx.globalAlpha = 0.95;
             ctx.strokeStyle = accent;
-            ctx.lineWidth = root.expanded ? Math.max(3, Theme.heavyLineWidth + 1) : Theme.heavyLineWidth;
+            ctx.lineWidth = root.expanded ? Math.max(3, Theme.heavyLineWidth + 1) : Math.max(2, Theme.heavyLineWidth);
             ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.arc(cx, cy, frameRadius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // inner rim hides Canvas clip antialias seams between the surface and frame.
+            ctx.globalAlpha = root.expanded ? 0.48 : 0.38;
+            ctx.strokeStyle = Theme.alphaColor("#000000", 0.65);
+            ctx.lineWidth = root.expanded ? Math.max(2, Theme.lineWidth + 1) : Math.max(1.5, Theme.lineWidth);
+            ctx.beginPath();
+            ctx.arc(cx, cy, frameRadius - ctx.lineWidth * 0.5, 0, Math.PI * 2);
             ctx.stroke();
 
             // secondary outer ring
@@ -345,7 +382,7 @@ Item {
             ctx.strokeStyle = dim;
             ctx.lineWidth = Theme.lineWidth;
             ctx.beginPath();
-            ctx.arc(cx, cy, radius * 1.08, -0.45, Math.PI * 1.26);
+            ctx.arc(cx, cy, frameRadius * 1.08, -0.45, Math.PI * 1.26);
             ctx.stroke();
 
             // location marker

@@ -32,6 +32,7 @@ Continue the shell development plan with the next independently verifiable slice
 * Add Natural Earth generated-data evaluation support before replacing the active runtime coastline data.
 * Add a local-only generated coastline candidate review workflow with manifest validation before any Natural Earth runtime replacement.
 * Replace the active hand-authored coastline polygons with a reviewed Natural Earth generated runtime dataset that is visibly more realistic while remaining Canvas-friendly.
+* Optimize the Natural Earth runtime rendering for the compact left-panel globe, including bounded coastline/texture work and circular frame seam polish.
 * Preserve the existing `RotatingGlobe` public contract and runtime rendering behavior in this slice.
 * Keep all globe data offline at runtime.
 * Document how future Natural Earth 10m input should flow through the pipeline without checking in unverified large generated data yet.
@@ -48,6 +49,8 @@ Continue the shell development plan with the next independently verifiable slice
 * [ ] Generated coastline candidates can be inspected offline for polyline count, point count, byte size, coordinate bounds, and longest polyline before runtime replacement.
 * [ ] Generated coastline candidates can be reviewed through a manifest that records provenance, generation command, inspector stats, smoke checks, and reviewer notes.
 * [ ] The active globe uses substantially more realistic coastlines than the former hand-authored polygon pile.
+* [ ] Compact/left-panel Earth rendering does not process every Natural Earth polyline and point at expanded-panel detail on each repaint.
+* [ ] The globe frame/rim alignment avoids obvious circular edge gaps or internal clip seams.
 * [ ] Verification includes `git diff --check`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, and a short `quickshell -p .` smoke run where available.
 
 ## Definition Of Done
@@ -114,6 +117,14 @@ Continue the shell development plan with the next independently verifiable slice
 **Decision**: Replace `components/EarthCoastlineData.js` with generated Natural Earth 50m public-domain coastline vectors. Use the documented local candidate workflow, precision `2`, and deterministic Ramer-Douglas-Peucker simplification tolerance `0.03` degrees to keep the runtime JS around 493KB while preserving 28,853 coastline points.
 
 **Consequences**: The globe is materially more realistic offline at runtime and no longer depends on hand-authored placeholder geography. Natural Earth 10m can still be evaluated later if 50m detail is insufficient, but it must pass the same manifest and Canvas repaint review before replacing the runtime module.
+
+## Follow-up Decision 5 (ADR-lite)
+
+**Context**: After the Natural Earth 50m replacement, the expanded globe looked substantially better, but the compact left-panel instance inherited the full coastline point budget and the circular surface/frame edge could show antialias gaps or internal clip seams.
+
+**Decision**: Keep the `RotatingGlobe` public contract unchanged while adding internal render budgets derived from `expanded` and size. Expanded mode keeps full coastline and texture detail; compact mode strides coastline polylines/points, lowers texture density, skips small land fills, and uses a slightly larger frame/inner rim to hide clip-edge seams.
+
+**Consequences**: Left-panel repaint work is bounded without changing `EarthCoastlineData.js`, runtime remains offline, and the central expanded panel remains the fidelity reference. Compact mode is intentionally less geographically complete than expanded mode.
 
 ## Candidate Slices
 
