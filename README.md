@@ -191,6 +191,8 @@ See [docs/hyprland.md](docs/hyprland.md) for Hyprland layer-shell, blur, and wor
 
 See [docs/settings.md](docs/settings.md) for the settings persistence contract and Zig helper plan.
 
+See [docs/development-plan.md](docs/development-plan.md) for current implementation slice granularity, Agent provider next steps, and backlog guardrails.
+
 ## License
 
 GPLv3
