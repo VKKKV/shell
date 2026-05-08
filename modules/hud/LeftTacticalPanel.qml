@@ -43,15 +43,8 @@ TacticalFrame {
                 label: "EARTH FIX"
                 statusText: EarthLocationService.statusLine.toUpperCase()
                 onActivated: ExpansionService.show("earth", "left-earth")
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onEntered: TooltipService.show("EARTH GEO", "Open the central rotating Earth panel. IP geolocation marks the approximate current network location when available.", "left-earth")
-                    onExited: TooltipService.clear("left-earth")
-                    onClicked: ExpansionService.show("earth", "left-earth")
-                }
+                onHoverEntered: TooltipService.show("EARTH GEO", "Open the central rotating Earth panel. Drag horizontally to rotate the offline vector coastline; IP geolocation marks the approximate current network location when available.", "left-earth")
+                onHoverExited: TooltipService.clear("left-earth")
             }
 
             NeuralMeshSphere {

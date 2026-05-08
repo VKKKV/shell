@@ -77,3 +77,24 @@ Continue shell development with a small, verifiable feature slice focused on doc
 * `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
 * `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
 * Independent `trellis-check` review: passed with no findings.
+
+### Earth Globe Optimization Slice
+
+* `components/RotatingGlobe.qml` now supports horizontal drag rotation around the vertical axis.
+* `components/EarthCoastlineData.js` holds the static offline coastline dataset/module.
+* `modules/hud/EarthExpansionPanel.qml` copy mentions the offline coastline and drag affordance.
+* `modules/hud/LeftTacticalPanel.qml` forwards interaction to the globe without blocking drag behavior.
+* `docs/development-plan.md` includes a concise Earth optimization follow-up note.
+* `git diff --check`: passed.
+* `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
+* `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
+* Independent `trellis-check` review: passed with no findings.
+
+### Nixie Wallpaper Warning Fix
+
+* `components/NixieWallpaper.qml` now resolves numeric digit image paths through the Repeater delegate instead of the inner digit container.
+* Fixed repeated `assets/nixie//undefined` image warnings without changing colon rendering or visual layout.
+* `git diff --check`: passed.
+* `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
+* `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
+* Independent `trellis-check` review: passed with no findings.

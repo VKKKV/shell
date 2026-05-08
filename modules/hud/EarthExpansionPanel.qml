@@ -8,7 +8,7 @@ CentralPanelChrome {
     id: root
 
     title: "EARTH GEO // IP FIX"
-    headerText: "TERRESTRIAL LOCATION SURFACE // COASTLINE PROJECTION // OPTIONAL IP GEO"
+    headerText: "TERRESTRIAL LOCATION SURFACE // OFFLINE VECTOR COASTLINE // OPTIONAL IP GEO"
 
     RowLayout {
         anchors.fill: parent
@@ -62,7 +62,8 @@ CentralPanelChrome {
                 Layout.fillWidth: true
                 title: "SURFACE MODEL"
                 lines: [
-                    "COAST: LOCAL VECTOR + TACTICAL OVERLAY",
+                    "COAST: OFFLINE VECTOR DATASET + TACTICAL OVERLAY",
+                    "DRAG: HORIZONTAL SWIPE ROTATES LONGITUDE",
                     "GRID: 15/30 DEG LAT/LON",
                     "NODES: LOCAL SIGNAL BEACONS",
                     "LIGHT: SYNTHETIC NIGHT TERMINATOR",

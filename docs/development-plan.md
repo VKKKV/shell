@@ -33,6 +33,7 @@ Avoid mixing these in the same task:
 - Hermes/OpenClaw adapter mapping: probes local command availability and maps available adapters onto the generic argv `--prompt` contract without provider-specific UI.
 - Agent adapter polish and race fixes: gates persisted provider application on probe completion, updates stale Agent panel copy, and replaces duplicate planned rows with live availability rows.
 - Agent Hermes CLI contract mapping: replaces `hermes agent` with the real `hermes --oneshot` contract and switches prompt delivery to positional argv.
+- Earth globe optimization: extracted the transitional 110m-style offline coastline vectors into a static JS module and added horizontal drag-to-rotate longitude control; future Natural Earth 110m preprocessing can replace the dataset without runtime fetching.
 
 ### Next Slices
 

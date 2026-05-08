@@ -142,7 +142,7 @@ Item {
                         anchors.centerIn: parent
                         width: parent.width * 0.76
                         height: parent.height * 0.82
-                        source: root.digitsDir + "/" + parent.digitImage
+                        source: root.digitsDir + "/" + parent.parent.digitImage
                         fillMode: Image.PreserveAspectFit
                         opacity: 0.88 + parent.pulse * 0.1
                     }
