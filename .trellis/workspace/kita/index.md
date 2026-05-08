@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 4
+- **Total Sessions**: 5
 - **Last Active**: 2026-05-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1192 | Active |
+| `journal-1.md` | ~1236 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 5 | 2026-05-08 | Agent track: plan-contract-scaffold-prompt-cmd-session-persistence-adapter-polish-hermes-cli | `ae3f517`, `b6bffcf`, `69e8fc9`, `73c585a`, `975d308`, `3a068d1`, `d7ea0e5`, `eff8855`, `594aad7`, `8b85046`, `190b251`, `f1ce13f` | `master` |
 | 4 | 2026-05-08 | HUD Layout, Agent Module, Nixie Background, Earth Globe Polish | `8d678e9`, `4bfa000`, `cfeac31`, `13d0ee4`, `08019a3`, `62925ce`, `2732763`, `1e16ef9` | `master` |
 | 3 | 2026-05-07 | Privacy-aware Earth panel and shell hardening | `defbc79` | `master` |
 | 2 | 2026-05-07 | Orbital Panel Refinements, Runtime Fixes & Ephemeris Refactor | `6dd7a76`, `ce40a7e`, `45b93d2`, `c0ef56b`, `74e2f0f`, `a889b02`, `a91a919`, `6647c7c`, `db14d2c`, `abe61a0`, `a9e5065`, `34a023b`, `fe4d991` | `master` |

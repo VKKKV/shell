@@ -1190,3 +1190,47 @@ Rebalanced HUD top/bottom bars and fixed overlay overlap. Added visual-only Agen
 ### Next Steps
 
 - None - task complete
+
+
+## Session 5: Agent track: plan-contract-scaffold-prompt-cmd-session-persistence-adapter-polish-hermes-cli
+
+**Date**: 2026-05-08
+**Task**: Agent track: plan-contract-scaffold-prompt-cmd-session-persistence-adapter-polish-hermes-cli
+**Branch**: `master`
+
+### Summary
+
+Agent provider full track: contract plan, service scaffold, prompt surface, local command MVP, session presets, persisted provider selection, adapter availability probing, review polish fixes, Hermes CLI contract mapping to real oneshot. Trellis 0.5.9 migration.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ae3f517` | (see git log) |
+| `b6bffcf` | (see git log) |
+| `69e8fc9` | (see git log) |
+| `73c585a` | (see git log) |
+| `975d308` | (see git log) |
+| `3a068d1` | (see git log) |
+| `d7ea0e5` | (see git log) |
+| `eff8855` | (see git log) |
+| `594aad7` | (see git log) |
+| `8b85046` | (see git log) |
+| `190b251` | (see git log) |
+| `f1ce13f` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
