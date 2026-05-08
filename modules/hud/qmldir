@@ -25,3 +25,4 @@ PowerExpansionPanel 1.0 PowerExpansionPanel.qml
 MediaExpansionPanel 1.0 MediaExpansionPanel.qml
 NotificationToast 1.0 NotificationToast.qml
 EarthExpansionPanel 1.0 EarthExpansionPanel.qml
+AgentExpansionPanel 1.0 AgentExpansionPanel.qml

@@ -31,6 +31,8 @@ Item {
     readonly property int orbitalOriginY: leftPanel.y + Math.min(260, leftPanel.height * 0.42) * 0.5 + 38
     readonly property int earthOriginX: leftPanel.x + leftPanel.width * 0.5
     readonly property int earthOriginY: leftPanel.y + Math.min(leftPanel.height - 30, 330)
+    readonly property int agentOriginX: leftPanel.x + leftPanel.width * 0.5
+    readonly property int agentOriginY: leftPanel.y + Math.min(leftPanel.height - 30, 455)
     readonly property int mediaOriginX: leftPanel.x + leftPanel.width * 0.5
     readonly property int mediaOriginY: leftPanel.y + Math.min(leftPanel.height - 30, 560)
     readonly property int cpuOriginX: rightPanel.x + rightPanel.width * 0.5
@@ -265,6 +267,20 @@ Item {
             originY: root.earthOriginY
 
             EarthExpansionPanel {
+                anchors.fill: parent
+            }
+        }
+
+        ExpansionPanelSlot {
+            active: ExpansionService.activeSurface === "agent"
+            width: root.expansionWidth
+            height: root.expansionHeight
+            targetX: root.expansionTargetX
+            targetY: root.expansionTargetY
+            originX: root.agentOriginX
+            originY: root.agentOriginY
+
+            AgentExpansionPanel {
                 anchors.fill: parent
             }
         }

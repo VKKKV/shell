@@ -17,6 +17,7 @@ ToggleRow 1.0 ToggleRow.qml
 TrayStrip 1.0 TrayStrip.qml
 RotatingGlobe 1.0 RotatingGlobe.qml
 AnalogOrbitClock 1.0 AnalogOrbitClock.qml
+NeuralMeshSphere 1.0 NeuralMeshSphere.qml
 PanelCloseButton 1.0 PanelCloseButton.qml
 CentralPanelChrome 1.0 CentralPanelChrome.qml
 PanelStatusStrip 1.0 PanelStatusStrip.qml

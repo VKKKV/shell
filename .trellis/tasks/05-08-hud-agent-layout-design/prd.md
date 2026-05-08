@@ -40,11 +40,25 @@ Improve the visual balance, information density, and interaction quality of the 
 - [ ] Sparse central panels use more of the available expansion area with meaningful content or intentional composition.
 - [x] CPU MATRIX content is legible at the target resolution.
 - [x] Analog orbital clock rings have stronger visual weight without losing the tactical thin-line language.
-- [ ] Agent neural module has a clear interaction design and opens a central panel.
-- [ ] Agent provider selection is represented in settings or a documented staged follow-up.
+- [x] Agent neural module has a clear interaction design and opens a central panel.
+- [x] Agent provider selection is represented in settings or a documented staged follow-up.
 - [x] `zig build`, `qmllint ...`, and `timeout 8s quickshell -p .` pass after implementation.
 
 ## Stage 1 Verification
+
+- `git diff --check`: passed
+- `zig build`: passed
+- `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`: passed
+- `timeout 8s quickshell -p .`: passed; logs included `Configuration Loaded` with no startup warnings observed
+
+## Stage 2 Scope
+
+- Add a visual-only neural mesh Agent module to the left panel.
+- Add an Agent central expansion panel opened through `ExpansionService`.
+- Represent Hermes/OpenClaw/custom provider selection as placeholder UI language only.
+- Do not add provider persistence, IPC, commands, or settings schema changes.
+
+## Stage 2 Verification
 
 - `git diff --check`: passed
 - `zig build`: passed

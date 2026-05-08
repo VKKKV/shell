@@ -1,0 +1,72 @@
+import "../../components"
+import "../../services"
+import "../../theme"
+import QtQuick
+import QtQuick.Layouts
+
+CentralPanelChrome {
+    id: root
+
+    title: "AGENT CORE // NEURAL MESH"
+    headerText: "DEPLOYED FROM LEFT AGENT NODE // VISUAL PLACEHOLDER // PROVIDER CONTRACT DEFERRED"
+
+    RowLayout {
+        anchors.fill: parent
+        spacing: Theme.densitySpacing
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.minimumWidth: 360
+
+            NeuralMeshSphere {
+                anchors.centerIn: parent
+                width: Math.min(parent.width, parent.height) * 0.9
+                height: width
+                expanded: true
+                label: "NEURAL AGENT CORE"
+                statusText: "VISUAL LINK // STAGED"
+            }
+        }
+
+        ColumnLayout {
+            Layout.preferredWidth: Math.min(380, root.width * 0.34)
+            Layout.fillHeight: true
+            spacing: Theme.densitySpacing
+
+            PanelStatusStrip {
+                Layout.fillWidth: true
+                leftText: "AGENT BUS"
+                centerText: "PLACEHOLDER"
+                rightText: "ESC // CLOSE"
+            }
+
+            MetricBlock {
+                title: "PROVIDER STAGE"
+                rows: [["HERMES", "PLANNED", -1, false], ["OPENCLAW", "PLANNED", -1, false], ["CUSTOM", "DEFERRED", -1, false], ["IPC", "UNBOUND", -1, false]]
+            }
+
+            TextBlock {
+                Layout.fillWidth: true
+                title: "INTERACTION MODEL"
+                lines: ["HOVER: LOCAL NODE PERTURB", "DRAG: ROTATE MESH", "CLICK ENTRY: OPEN PANEL", "CONFIG: FUTURE SETTINGS PLACEHOLDER", "PERSISTENCE: NOT ENABLED"]
+            }
+
+            TextBlock {
+                Layout.fillWidth: true
+                title: "CONTRACT GUARD"
+                lines: ["NO PROVIDER COMMAND EXECUTION", "NO SETTINGS SCHEMA CHANGE", "NO IPC UNTIL CONTRACT EXISTS", "VISUAL-ONLY FIRST SLICE"]
+            }
+
+            Item { Layout.fillHeight: true }
+
+            TacticalLabel {
+                Layout.fillWidth: true
+                text: "Agent provider selection is intentionally staged as UI language only. Real Hermes/OpenClaw integration should define command or endpoint contracts before persistence is added."
+                dim: true
+                wrapMode: Text.WordWrap
+                size: Theme.fontTiny
+            }
+        }
+    }
+}

@@ -54,6 +54,15 @@ TacticalFrame {
                 }
             }
 
+            NeuralMeshSphere {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: Math.min(parent.width, 190)
+                Layout.preferredHeight: Layout.preferredWidth
+                label: "AGENT CORE"
+                statusText: "VISUAL LINK"
+                onActivated: ExpansionService.show("agent", "left-agent")
+            }
+
             MetricBlock {
                 title: "GLOBAL LINK"
                 rows: [["STATUS", EarthLocationService.available ? "GEO LOCK" : "TRACKING", -1, EarthLocationService.available], ["PLACE", EarthLocationService.displayText, -1, EarthLocationService.available], ["COORD", EarthLocationService.coordinateText, -1, EarthLocationService.available], ["SIGNAL", "98%", 0.98, false]]
