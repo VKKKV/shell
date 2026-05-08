@@ -105,7 +105,7 @@ ColumnLayout {
         columnSpacing: Theme.densitySmallSpacing
 
         Repeater {
-            model: ["void", "grid", "radar"]
+            model: ["void", "grid", "radar", "nixie"]
 
             Rectangle {
                 required property string modelData

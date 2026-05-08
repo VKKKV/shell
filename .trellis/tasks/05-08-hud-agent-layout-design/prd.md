@@ -16,6 +16,7 @@ Improve the visual balance, information density, and interaction quality of the 
 - The top SETTINGS button is too small and sits too close to tray content in the top center, making the layout feel odd.
 - The analog orbital clock module's two circular borders are too thin, making the widget look fragile and underbuilt.
 - Add a new left-panel module: a nearly spherical dynamic mesh structure reacting to hover and drag, representing a neural network. It should connect to an agent such as Hermes or OpenClaw, configurable from the settings panel. Clicking it opens a central panel.
+- Add an optional nixie/vacuum tube clock background setting in the settings panel. It should default off. Quickshell feasibility should be checked against docs. DivergenceMeter is cloned at `../DivergenceMeter/` and should be used as visual/code reference.
 
 ## Requirements
 
@@ -29,6 +30,8 @@ Improve the visual balance, information density, and interaction quality of the 
 - Design the new Agent neural module as an interactive QML component with hover and drag response.
 - Add a central Agent expansion panel opened from the left module.
 - Plan configuration surface for selecting an agent provider, without hard-coding a backend contract before requirements are confirmed.
+- Add a `nixie` optional background mode using a local QML/Canvas implementation first, with true background-layer window support left as a follow-up if needed.
+- Document Quickshell and DivergenceMeter reference information in `AGENTS.md`.
 
 ## Acceptance Criteria
 
@@ -43,6 +46,8 @@ Improve the visual balance, information density, and interaction quality of the 
 - [x] Agent neural module has a clear interaction design and opens a central panel.
 - [x] Agent provider selection is represented in settings or a documented staged follow-up.
 - [x] `zig build`, `qmllint ...`, and `timeout 8s quickshell -p .` pass after implementation.
+- [x] Optional nixie/vacuum tube clock background is available from settings and defaults off.
+- [x] Quickshell background feasibility and DivergenceMeter reference path are documented.
 
 ## Stage 1 Verification
 
@@ -77,6 +82,24 @@ Improve the visual balance, information density, and interaction quality of the 
 - `zig build`: passed
 - `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`: passed
 - `timeout 8s quickshell -p .`: passed; logs included `Configuration Loaded` with no startup warnings observed
+
+## Stage 4 Scope
+
+- Add a `nixie` background mode in settings, defaulting to `void` / off.
+- Implement the first vacuum tube clock wallpaper as local QML Canvas inside the existing HUD background layer.
+- Update QML and Zig settings normalization to accept `visual.backgroundMode: "nixie"`.
+- Document Quickshell background-layer feasibility and `../DivergenceMeter/` reference location in `AGENTS.md`.
+
+## Stage 4 Verification
+
+- `git diff --check`: passed
+- `zig build`: passed
+- `zig build test`: passed
+- `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`: passed
+- `timeout 8s quickshell -p .`: passed; logs included `Configuration Loaded` with no startup warnings observed
+- `./zig-out/bin/void-shell-settings defaults`: passed; `backgroundMode` defaults to `void`
+- `./zig-out/bin/void-shell-settings write '{"visual":{"backgroundMode":"nixie"}}'`: passed; normalized output keeps `backgroundMode: "nixie"`
+- `./zig-out/bin/void-shell-settings write '{"visual":{"backgroundMode":"void"}}'`: passed; restored local config to default-off background mode
 
 ## Technical Notes
 

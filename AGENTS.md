@@ -19,6 +19,16 @@ https://github.com/noctalia-dev/noctalia-shell
 
 https://github.com/AvengeMedia/DankMaterialShell
 ../DankMaterialShell/
+
+nixie/vacuum tube wallpaper reference
+
+https://github.com/FrancescoCaracciolo/DivergenceMeter
+../DivergenceMeter/
+
+Notes:
+- Quickshell v0.3.0 supports `PanelWindow`; Wayland layer-shell can place windows on `WlrLayer.Background`, but the current implementation first uses the existing HUD background layer via `SettingsService.backgroundMode`.
+- DivergenceMeter provides digit image/animation inspiration in `../DivergenceMeter/Website/images/` and update logic in `../DivergenceMeter/Website/divergence_meter.js`; do not copy assets blindly without checking licensing/fit.
+- The first nixie/vacuum tube clock background should default off and be enabled from the settings panel.
 <!-- TRELLIS:START -->
 # Trellis Instructions
 

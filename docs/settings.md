@@ -64,7 +64,9 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `visual.density` is one of `compact`, `normal`, or `dense` and drives coarse QML layout density.
 - `visual.profile` is one of `gray`, `amber`, `green`, `blue`, or `red` and defaults to `gray`.
 - `visual.accentColor` is a hex RGB color (`#RRGGBB`) and defaults to `#8A8A8A`.
-- `visual.backgroundMode` is one of `void`, `grid`, or `radar`.
+- `visual.backgroundMode` is one of `void`, `grid`, `radar`, or `nixie`.
+- `visual.backgroundMode: "void"` is the default, so optional wallpaper effects start disabled.
+- `visual.backgroundMode: "nixie"` renders the local Canvas-based vacuum tube clock backdrop inside the shell background layer; it does not start external processes or fetch network data.
 - `data.liveDataEnabled` is boolean.
 - `data.updateIntervalMs` is clamped to `1000..30000`.
 - panel visibility fields are booleans.

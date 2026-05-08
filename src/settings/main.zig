@@ -253,7 +253,7 @@ fn backgroundModeField(value: std.json.Value, key: []const u8) ?[]const u8 {
     if (field != .string)
         return null;
     const mode = field.string;
-    if (std.mem.eql(u8, mode, "void") or std.mem.eql(u8, mode, "grid") or std.mem.eql(u8, mode, "radar"))
+    if (std.mem.eql(u8, mode, "void") or std.mem.eql(u8, mode, "grid") or std.mem.eql(u8, mode, "radar") or std.mem.eql(u8, mode, "nixie"))
         return mode;
     return null;
 }
@@ -364,7 +364,7 @@ test "normalizeSettings keeps valid enum and color values" {
         \\    "density": "dense",
         \\    "profile": "blue",
         \\    "accentColor": "#12ABef",
-        \\    "backgroundMode": "radar"
+        \\    "backgroundMode": "nixie"
         \\  },
         \\  "data": { "liveDataEnabled": false, "networkGeolocationEnabled": true },
         \\  "panels": { "leftVisible": false, "centerVisible": true, "rightVisible": false }
@@ -377,7 +377,7 @@ test "normalizeSettings keeps valid enum and color values" {
     try expectContains(normalized, "\"density\": \"dense\"");
     try expectContains(normalized, "\"profile\": \"blue\"");
     try expectContains(normalized, "\"accentColor\": \"#12ABef\"");
-    try expectContains(normalized, "\"backgroundMode\": \"radar\"");
+    try expectContains(normalized, "\"backgroundMode\": \"nixie\"");
     try expectContains(normalized, "\"liveDataEnabled\": false");
     try expectContains(normalized, "\"networkGeolocationEnabled\": true");
     try expectContains(normalized, "\"leftVisible\": false");

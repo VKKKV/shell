@@ -76,7 +76,7 @@ Singleton {
     }
 
     function normalizeBackgroundMode(value: string): string {
-        return ["void", "grid", "radar"].indexOf(value) >= 0 ? value : "void";
+        return ["void", "grid", "radar", "nixie"].indexOf(value) >= 0 ? value : "void";
     }
 
     function normalizeDensity(value: string): string {
