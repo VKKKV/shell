@@ -22,7 +22,7 @@ Singleton {
     property bool probeComplete: false
     readonly property var providerPresets: [
         { id: "disabled", name: "DISABLED", command: [], available: true, detail: "No provider command configured." },
-        { id: "hermes", name: "HERMES", command: ["hermes", "agent"], available: hermesAvailable, detail: hermesAvailable ? "Hermes local command adapter available." : "Hermes command not found." },
+        { id: "hermes", name: "HERMES", command: ["hermes", "--oneshot"], available: hermesAvailable, detail: hermesAvailable ? "Hermes oneshot mode — prompt prints final response to stdout." : "Hermes command not found." },
         { id: "openclaw", name: "OPENCLAW", command: ["openclaw", "agent"], available: openClawAvailable, detail: openClawAvailable ? "OpenClaw local command adapter available." : "OpenClaw command not found." }
     ]
     readonly property bool available: providerCommand.length > 0
@@ -116,7 +116,7 @@ Singleton {
         activePrompt = clean;
         stdoutText = "";
         stderrText = "";
-        providerProcess.command = providerCommand.concat(["--prompt", clean]);
+        providerProcess.command = providerCommand.concat([clean]);
         state = "running";
         statusLine = "agent: provider running";
         errorDetail = "";
