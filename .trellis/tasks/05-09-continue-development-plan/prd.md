@@ -28,10 +28,11 @@ Continue the shell development plan with the next independently verifiable slice
 
 * Implement the Earth globe preprocessing pipeline scaffold slice.
 * Add a repeatable offline path that can convert GeoJSON-like coastline data into compact JS arrays compatible with `EarthCoastlineData.coastlines`.
+* Add a small visible procedural Earth slice that improves realism without waiting for full Natural Earth 10m data replacement.
 * Preserve the existing `RotatingGlobe` public contract and runtime rendering behavior in this slice.
 * Keep all globe data offline at runtime.
 * Document how future Natural Earth 10m input should flow through the pipeline without checking in unverified large generated data yet.
-* Avoid mixing full data replacement, procedural textures, and broad visual redesign into this pipeline scaffold task.
+* Avoid mixing full data replacement and broad visual redesign into this task.
 
 ## Acceptance Criteria (evolving)
 
@@ -40,6 +41,7 @@ Continue the shell development plan with the next independently verifiable slice
 * [ ] Existing globe interactions still work: click/activate, horizontal drag rotation, signal nodes, grid, and optional location marker.
 * [ ] Runtime does not fetch map data from the network.
 * [ ] Current runtime coastline data remains unchanged unless a tiny fixture/sample is clearly separated from active runtime data.
+* [ ] The globe includes visible ocean/land/atmosphere procedural detail while preserving the tactical HUD style.
 * [ ] Verification includes `git diff --check`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, and a short `quickshell -p .` smoke run where available.
 
 ## Definition Of Done
@@ -55,7 +57,6 @@ Continue the shell development plan with the next independently verifiable slice
 * Runtime network fetching for map/coastline data.
 * Full Earth rendering rewrite.
 * Full Natural Earth 10m data replacement.
-* Procedural terrain/ocean texture implementation.
 * Replacing the tactical HUD style with realistic satellite imagery.
 * Multi-monitor, plugin, or lazy-loading architecture work.
 
@@ -75,6 +76,14 @@ Continue the shell development plan with the next independently verifiable slice
 **Decision**: Start with the preprocessing pipeline scaffold. Build the offline conversion path first, keep the runtime globe data and rendering stable, and document the expected input/output contract for future Natural Earth data.
 
 **Consequences**: This reduces risk and makes future high-detail coastline work repeatable. It may not produce an immediate visible globe improvement until a later slice swaps in generated data.
+
+## Follow-up Decision (ADR-lite)
+
+**Context**: The preprocessing scaffold is complete, but the globe still needs a user-visible step toward the more realistic Earth roadmap before a reviewed Natural Earth 10m data swap is safe.
+
+**Decision**: Add a minimal procedural visual layer pass in `RotatingGlobe.qml`: ocean hash texture, clipped land terrain hints, and atmospheric rim glow. Keep existing coastline arrays, public properties/signals, drag behavior, signal nodes, grid, marker, and scan rings unchanged.
+
+**Consequences**: The globe reads as more detailed while the data pipeline remains stable. The procedural terrain is approximate tactical styling, not a real satellite or elevation texture, and should be tuned again after generated coastline data is reviewed.
 
 ## Candidate Slices
 

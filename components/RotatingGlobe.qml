@@ -80,6 +80,122 @@ Item {
         ctx.fill();
     }
 
+    function terrainNoise(lat, lon) {
+        var value = Math.sin(lat * 12.9898 + lon * 78.233) * 43758.5453;
+        return value - Math.floor(value);
+    }
+
+    function buildVisibleCoastlinePath(ctx, points) {
+        var open = false;
+        var count = 0;
+        ctx.beginPath();
+        for (var i = 0; i < points.length; i++) {
+            var point = project(points[i][0], points[i][1]);
+            if (!point.visible)
+                continue;
+
+            if (!open) {
+                ctx.moveTo(point.x, point.y);
+                open = true;
+            } else {
+                ctx.lineTo(point.x, point.y);
+            }
+            count++;
+        }
+        return count >= 4;
+    }
+
+    function drawOceanTexture(ctx, radius, accent, dim, displayPhase) {
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        ctx.strokeStyle = dim;
+        ctx.lineWidth = Math.max(0.5, Theme.lineWidth * 0.7);
+        for (var lat = -75; lat <= 75; lat += 10) {
+            for (var lon = -180; lon < 180; lon += 15) {
+                var sampleLon = lon + displayPhase * 0.18;
+                var projected = project(lat, sampleLon);
+                if (!projected.visible)
+                    continue;
+
+                var noise = terrainNoise(lat, lon);
+                if (noise < 0.42)
+                    continue;
+
+                var length = radius * (0.012 + noise * 0.018);
+                ctx.globalAlpha = (root.expanded ? 0.09 : 0.055) * projected.edge;
+                ctx.beginPath();
+                ctx.moveTo(projected.x - length, projected.y + length * 0.35);
+                ctx.lineTo(projected.x + length, projected.y - length * 0.35);
+                ctx.stroke();
+            }
+        }
+
+        ctx.fillStyle = accent;
+        for (var band = -60; band <= 60; band += 30) {
+            for (var meridian = -165; meridian < 180; meridian += 30) {
+                projected = project(band + 5, meridian - displayPhase * 0.1);
+                if (!projected.visible)
+                    continue;
+                ctx.globalAlpha = (root.expanded ? 0.045 : 0.03) * projected.edge;
+                ctx.beginPath();
+                ctx.arc(projected.x, projected.y, Math.max(0.7, radius * 0.008), 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        ctx.restore();
+    }
+
+    function drawLandMasses(ctx, accent, terrain) {
+        for (var c = 0; c < root.coastlines.length; c++) {
+            var pts = root.coastlines[c];
+            if (pts.length < 4)
+                continue;
+
+            var first = root.project(pts[0][0], pts[0][1]);
+            var last = root.project(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+            if (!first.visible || !last.visible)
+                continue;
+
+            if (!buildVisibleCoastlinePath(ctx, pts))
+                continue;
+
+            ctx.globalAlpha = 0.13;
+            ctx.fillStyle = accent;
+            ctx.fill();
+
+            if (!terrain)
+                continue;
+
+            ctx.save();
+            ctx.clip();
+
+            ctx.globalCompositeOperation = "screen";
+            ctx.strokeStyle = terrain;
+            ctx.lineWidth = Math.max(0.45, Theme.lineWidth * 0.55);
+            ctx.globalAlpha = root.expanded ? 0.1 : 0.065;
+            for (var line = -3; line <= 3; line++) {
+                ctx.beginPath();
+                ctx.ellipse(root.globeCenterX + line * root.globeRadius * 0.16, root.globeCenterY, root.globeRadius * 0.38, root.globeRadius * 0.12, -0.42, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = terrain;
+            for (var i = 0; i < pts.length; i += 2) {
+                var point = project(pts[i][0], pts[i][1]);
+                if (!point.visible)
+                    continue;
+                var noise = terrainNoise(pts[i][0], pts[i][1]);
+                if (noise < 0.34)
+                    continue;
+                ctx.globalAlpha = (root.expanded ? 0.1 : 0.06) * point.edge;
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 0.8 + noise * 1.2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+    }
+
     NumberAnimation on rotationPhase {
         from: 0
         to: 360
@@ -104,6 +220,7 @@ Item {
             var dim = Theme.lineDim.toString();
             var text = Theme.text.toString();
             var danger = Theme.danger.toString();
+            var terrain = Theme.terminalGreen.toString();
             var displayPhase = root.displayRotationPhase();
 
             ctx.save();
@@ -121,10 +238,26 @@ Item {
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.fill();
 
+            // atmospheric rim glow
+            var atmosphere = ctx.createRadialGradient(cx, cy, radius * 0.72, cx, cy, radius * 1.08);
+            atmosphere.addColorStop(0, "#00000000");
+            atmosphere.addColorStop(0.78, Theme.alphaColor(Theme.line.toString(), root.expanded ? 0.05 : 0.035));
+            atmosphere.addColorStop(1, Theme.alphaColor(Theme.line.toString(), root.expanded ? 0.3 : 0.22));
+            ctx.globalCompositeOperation = "screen";
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = atmosphere;
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius * 1.06, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalCompositeOperation = "source-over";
+
             ctx.save();
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.clip();
+
+            // procedural ocean depth/detail texture
+            root.drawOceanTexture(ctx, radius, accent, dim, displayPhase);
 
             // ocean grid - latitude lines
             ctx.strokeStyle = dim;
@@ -161,26 +294,11 @@ Item {
                 ctx.stroke();
             }
 
-            // land mass fill
-            ctx.globalAlpha = 0.14;
-            ctx.fillStyle = accent;
-            for (var c = 0; c < root.coastlines.length; c++) {
-                var pts = root.coastlines[c];
-                if (pts.length < 4) continue;
-                var first = root.project(pts[0][0], pts[0][1]);
-                var last = root.project(pts[pts.length - 1][0], pts[pts.length - 1][1]);
-                if (!first.visible || !last.visible) continue;
-                ctx.beginPath();
-                ctx.moveTo(first.x, first.y);
-                for (var i = 1; i < pts.length; i++) {
-                    var pt = root.project(pts[i][0], pts[i][1]);
-                    if (pt.visible) ctx.lineTo(pt.x, pt.y);
-                }
-                ctx.fill();
-            }
+            // land mass fill with clipped procedural terrain hints
+            root.drawLandMasses(ctx, accent, terrain);
 
             // coastline strokes
-            for (c = 0; c < root.coastlines.length; c++)
+            for (var c = 0; c < root.coastlines.length; c++)
                 root.drawPolyline(ctx, root.coastlines[c], accent, root.expanded ? 0.82 : 0.68, root.expanded ? 2.0 : 1.4);
 
             // signal nodes

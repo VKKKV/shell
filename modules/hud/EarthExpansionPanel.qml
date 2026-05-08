@@ -63,10 +63,12 @@ CentralPanelChrome {
                 title: "SURFACE MODEL"
                 lines: [
                     "COAST: OFFLINE VECTOR DATASET + TACTICAL OVERLAY",
+                    "OCEAN: PROCEDURAL DEPTH HASH + SCAN TEXTURE",
+                    "LAND: CLIPPED TERRAIN TINT / CONTOUR NOISE",
                     "DRAG: HORIZONTAL SWIPE ROTATES LONGITUDE",
                     "GRID: 15/30 DEG LAT/LON",
                     "NODES: LOCAL SIGNAL BEACONS",
-                    "LIGHT: SYNTHETIC NIGHT TERMINATOR",
+                    "LIGHT: SYNTHETIC NIGHT TERMINATOR + RIM GLOW",
                     "IP GEO: SETTINGS OPT-IN",
                     "FALLBACK: GLOBE REMAINS LIVE"
                 ]

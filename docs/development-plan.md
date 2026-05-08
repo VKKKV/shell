@@ -36,6 +36,7 @@ Avoid mixing these in the same task:
 - Earth globe optimization: extracted the transitional 110m-style offline coastline vectors into a static JS module and added horizontal drag-to-rotate longitude control; future Natural Earth 110m preprocessing can replace the dataset without runtime fetching.
 - Nixie background settings polish: made the optional/default-off Nixie backdrop easier to discover in command-center settings while keeping it separate from wallpaper scan/apply actions and preserving the existing `visual.backgroundMode` values.
 - Earth coastline preprocessing scaffold: added a dependency-free offline GeoJSON-to-QML/JS converter plus a tiny fixture and docs while keeping the active runtime coastline module unchanged.
+- Earth procedural terrain prototype: added Canvas2D ocean depth texture, clipped land terrain hints, and atmospheric rim glow while preserving the existing offline coastline data and tactical HUD interactions.
 
 ### Next Slices
 
@@ -45,7 +46,7 @@ Avoid mixing these in the same task:
 2. Earth globe high-precision coastline and procedural terrain upgrade
    - Run the documented preprocessing pipeline against reviewed Natural Earth 10m coastline GeoJSON, then replace the current hand-authored/transitional coastline polylines with generated data targeting 10K+ coordinate points while keeping all data offline.
    - Record source URL/version/license notes and inspect generated point counts/file size before checking in the generated QML/JS coordinate arrays.
-   - Split the Canvas2D composition into controlled tactical layers: ocean depth gradient plus seabed procedural noise, land fill plus terrain noise, high-precision coastline stroke plus atmospheric rim glow, and the existing tactical grid, signal nodes, and location markers.
+   - Refine the new procedural Canvas2D layers around generated data: tune ocean depth hash density, clipped terrain hints, high-precision coastline strokes, atmospheric rim glow, and the existing tactical grid, signal nodes, and location markers.
    - Reference Natural Earth data, D3 geo projection math, and `world-map-gen` for projection/data-pipeline ideas without introducing runtime network dependencies.
    - Expected trade-off: medium difficulty, mainly data preprocessing and render-pipeline splitting; larger embedded data around 200KB compressed; procedural noise approximates terrain instead of using real land textures.
 
