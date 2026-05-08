@@ -12,7 +12,7 @@ TacticalFrame {
     implicitWidth: 420
     implicitHeight: compactLine ? 38 : 72
     highlighted: TooltipService.active
-    title: compactLine ? "HINT BUS" : "TOOLTIP // FIXED HINT BUS"
+    title: compactLine ? "" : "TOOLTIP // FIXED HINT BUS"
     opacity: TooltipService.active ? 0.98 : 0.72
 
     Behavior on opacity {
@@ -61,9 +61,9 @@ TacticalFrame {
         anchors.fill: parent
         anchors.leftMargin: Theme.panelPadding
         anchors.rightMargin: Theme.panelPadding
-        anchors.topMargin: 10
+        anchors.topMargin: 8
         anchors.bottomMargin: 6
-        spacing: 8
+        spacing: 10
 
         TacticalLabel {
             text: TooltipService.active ? "[HOVER]" : "[STBY]"
@@ -73,10 +73,12 @@ TacticalFrame {
         }
 
         TacticalLabel {
-            Layout.preferredWidth: 160
+            Layout.preferredWidth: 132
+            Layout.maximumWidth: 132
             text: TooltipService.title
             accent: TooltipService.active
             elide: Text.ElideRight
+            clip: true
         }
 
         TacticalLabel {
@@ -85,6 +87,7 @@ TacticalFrame {
             dim: !TooltipService.active
             size: Theme.fontTiny
             elide: Text.ElideRight
+            clip: true
         }
     }
 }

@@ -20,9 +20,10 @@ RowLayout {
 
             readonly property string windowKey: modelData.windowKey || modelData.title
 
-            Layout.preferredWidth: 112
-            Layout.maximumWidth: 128
-            Layout.preferredHeight: 24
+            Layout.preferredWidth: 176
+            Layout.maximumWidth: 220
+            Layout.preferredHeight: 28
+            clip: true
             color: modelData.active ? Theme.lineDim : (dockArea.containsMouse ? Theme.panelSoft : "transparent")
             border.color: modelData.active ? Theme.line : Theme.lineDim
             border.width: Theme.lineWidth
@@ -45,9 +46,12 @@ RowLayout {
                 spacing: 6
 
                 TacticalLabel {
+                    Layout.maximumWidth: 74
                     text: modelData.appClass.toUpperCase()
                     accent: modelData.active
                     dim: !modelData.active
+                    elide: Text.ElideRight
+                    clip: true
                 }
 
                 TacticalLabel {
@@ -55,6 +59,7 @@ RowLayout {
                     text: modelData.title
                     accent: dockArea.containsMouse || modelData.active
                     elide: Text.ElideRight
+                    clip: true
                 }
             }
         }

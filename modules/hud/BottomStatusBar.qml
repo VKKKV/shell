@@ -40,8 +40,9 @@ TacticalFrame {
             }
 
             MissionDock {
-                Layout.fillWidth: true
-                Layout.minimumWidth: 120
+                Layout.preferredWidth: 720
+                Layout.maximumWidth: 760
+                Layout.minimumWidth: 360
                 Layout.alignment: Qt.AlignVCenter
             }
 
@@ -66,6 +67,8 @@ TacticalFrame {
 
         HudTooltipBox {
             Layout.fillWidth: true
+            Layout.maximumWidth: 760
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredHeight: implicitHeight
             compactLine: true
         }

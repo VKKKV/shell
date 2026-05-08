@@ -39,9 +39,9 @@ CentralPanelChrome {
             GridLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                columns: 3
-                columnSpacing: Theme.densitySmallSpacing
-                rowSpacing: Theme.densitySmallSpacing
+                columns: 2
+                columnSpacing: Theme.densitySpacing
+                rowSpacing: Theme.densitySpacing
 
                 Repeater {
                     model: SystemStats.cpuRows
@@ -50,15 +50,15 @@ CentralPanelChrome {
                         required property var modelData
 
                         Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.densityCardHeight
+                        Layout.preferredHeight: Math.max(104, Theme.densityCardHeight + 32)
                         color: modelData[3] ? Theme.lineDim : "#66000000"
                         border.color: modelData[3] ? Theme.line : Theme.lineDim
                         border.width: Theme.lineWidth
 
                         ColumnLayout {
                             anchors.fill: parent
-                            anchors.margins: 8
-                            spacing: Theme.densitySmallSpacing * 0.5
+                            anchors.margins: 12
+                            spacing: Theme.densitySmallSpacing
 
                             RowLayout {
                                 Layout.fillWidth: true
@@ -67,11 +67,13 @@ CentralPanelChrome {
                                     Layout.fillWidth: true
                                     text: modelData[0]
                                     accent: true
+                                    size: Theme.fontNormal
                                 }
 
                                 TacticalLabel {
                                     text: modelData[1]
                                     accent: modelData[3]
+                                    size: Theme.fontNormal
                                 }
                             }
 
@@ -79,13 +81,13 @@ CentralPanelChrome {
                                 Layout.fillWidth: true
                                 text: root.heatGlyph(modelData[2])
                                 accent: modelData[3]
-                                size: Theme.fontNormal
+                                size: Theme.fontLarge
                                 font.letterSpacing: 2
                             }
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: Math.max(4, Theme.densityProgressHeight - 3)
+                                Layout.preferredHeight: Math.max(8, Theme.densityProgressHeight)
                                 color: "transparent"
                                 border.color: Theme.lineDim
                                 border.width: Theme.lineWidth

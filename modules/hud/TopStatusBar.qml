@@ -218,11 +218,11 @@ TacticalFrame {
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 6
+                spacing: 10
 
                 Rectangle {
-                    Layout.preferredWidth: 84
-                    Layout.preferredHeight: 20
+                    Layout.preferredWidth: 118
+                    Layout.preferredHeight: 24
                     color: settingsArea.containsMouse || SettingsService.panelOpen ? Theme.lineDim : "transparent"
                     border.color: settingsArea.containsMouse || SettingsService.panelOpen ? Theme.line : Theme.border
                     border.width: Theme.lineWidth
@@ -242,11 +242,26 @@ TacticalFrame {
                         anchors.centerIn: parent
                         text: "SETTINGS"
                         accent: settingsArea.containsMouse || SettingsService.panelOpen
-                        size: Theme.fontTiny
+                        size: Theme.fontSmall
                     }
                 }
 
-                TrayStrip {
+                Rectangle {
+                    Layout.preferredWidth: Math.max(148, trayStrip.implicitWidth + 20)
+                    Layout.preferredHeight: 24
+                    color: "#33000000"
+                    border.color: Theme.border
+                    border.width: Theme.lineWidth
+
+                    TrayStrip {
+                        id: trayStrip
+
+                        anchors.centerIn: parent
+                    }
+                }
+
+                Item {
+                    Layout.preferredWidth: 18
                 }
 
                 TacticalLabel {

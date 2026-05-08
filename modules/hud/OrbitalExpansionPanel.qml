@@ -1055,17 +1055,24 @@ Item {
     }
 
     Rectangle {
+        id: headerStatus
+
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.leftMargin: Theme.panelPadding
+        anchors.right: headerControls.left
+        anchors.rightMargin: Theme.gap
         anchors.topMargin: 7
-        width: Math.min(parent.width - 116, statusText.implicitWidth + 18)
         height: 28
         color: "transparent"
+        clip: true
 
         TacticalLabel {
             id: statusText
-            anchors.centerIn: parent
+            anchors.fill: parent
+            anchors.leftMargin: 9
+            anchors.rightMargin: 9
+            verticalAlignment: Text.AlignVCenter
             text: "ORBIT SENSOR  //  UTC " + Qt.formatDateTime(Time.now, "yyyy-MM-dd hh:mm:ss") + "  //  JD " + root.jd.toFixed(1) + "  //  J2000+" + Math.floor(root.daysSinceEpoch) + "D  //  KEPLER APPROX"
             accent: true
             size: Theme.fontTiny
@@ -1081,83 +1088,82 @@ Item {
         onCloseRequested: ExpansionService.close()
     }
 
-    TacticalLabel {
+    RowLayout {
+        id: headerControls
+
         anchors.right: parent.right
         anchors.rightMargin: Theme.panelPadding + 96
         anchors.top: parent.top
-        anchors.topMargin: 7
-        text: "[ACTIVE]"
-        accent: true
-        size: Theme.fontTiny
-    }
-
-    Rectangle {
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.panelPadding + 64
-        anchors.top: parent.top
         anchors.topMargin: 4
-        width: 24
-        height: 18
-        color: "transparent"
-        border.color: activeFocus ? Theme.line : Theme.lineDim
-        border.width: Theme.lineWidth
-        activeFocusOnTab: selectedPlanetIndex > 0
-        Keys.onReturnPressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
-        Keys.onEnterPressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
-        Keys.onSpacePressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
+        spacing: 6
 
         TacticalLabel {
-            anchors.centerIn: parent
-            text: "<"
-            accent: selectedPlanetIndex > 0
-            dim: selectedPlanetIndex === 0
+            Layout.alignment: Qt.AlignVCenter
+            text: "[ACTIVE]"
+            accent: true
+            size: Theme.fontTiny
         }
 
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: selectedPlanetIndex > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
-            hoverEnabled: true
-            onClicked: {
-                if (selectedPlanetIndex > 0)
-                    root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1);
+        Rectangle {
+            Layout.preferredWidth: 28
+            Layout.preferredHeight: 20
+            color: "transparent"
+            border.color: activeFocus ? Theme.line : Theme.lineDim
+            border.width: Theme.lineWidth
+            activeFocusOnTab: selectedPlanetIndex > 0
+            Keys.onReturnPressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
+            Keys.onEnterPressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
+            Keys.onSpacePressed: root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1)
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: "<"
+                accent: selectedPlanetIndex > 0
+                dim: selectedPlanetIndex === 0
             }
-            onEntered: TooltipService.show("PREVIOUS PLANET", "Step the orbital detail target backward. Current target: " + root.selectedPlanet().name + ".", "orbit-prev")
-            onExited: TooltipService.clear("orbit-prev")
-        }
-    }
 
-    Rectangle {
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.panelPadding + 36
-        anchors.top: parent.top
-        anchors.topMargin: 4
-        width: 24
-        height: 18
-        color: "transparent"
-        border.color: activeFocus ? Theme.line : Theme.lineDim
-        border.width: Theme.lineWidth
-        activeFocusOnTab: selectedPlanetIndex < 7
-        Keys.onReturnPressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
-        Keys.onEnterPressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
-        Keys.onSpacePressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
-
-        TacticalLabel {
-            anchors.centerIn: parent
-            text: ">"
-            accent: selectedPlanetIndex < 7
-            dim: selectedPlanetIndex === 7
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: selectedPlanetIndex < 7 ? Qt.PointingHandCursor : Qt.ArrowCursor
-            hoverEnabled: true
-            onClicked: {
-                if (selectedPlanetIndex < 7)
-                    root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1);
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: selectedPlanetIndex > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                hoverEnabled: true
+                onClicked: {
+                    if (selectedPlanetIndex > 0)
+                        root.selectedPlanetIndex = Math.max(0, root.selectedPlanetIndex - 1);
+                }
+                onEntered: TooltipService.show("PREVIOUS PLANET", "Step the orbital detail target backward. Current target: " + root.selectedPlanet().name + ".", "orbit-prev")
+                onExited: TooltipService.clear("orbit-prev")
             }
-            onEntered: TooltipService.show("NEXT PLANET", "Step the orbital detail target forward. Current target: " + root.selectedPlanet().name + ".", "orbit-next")
-            onExited: TooltipService.clear("orbit-next")
+        }
+
+        Rectangle {
+            Layout.preferredWidth: 28
+            Layout.preferredHeight: 20
+            color: "transparent"
+            border.color: activeFocus ? Theme.line : Theme.lineDim
+            border.width: Theme.lineWidth
+            activeFocusOnTab: selectedPlanetIndex < 7
+            Keys.onReturnPressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
+            Keys.onEnterPressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
+            Keys.onSpacePressed: root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1)
+
+            TacticalLabel {
+                anchors.centerIn: parent
+                text: ">"
+                accent: selectedPlanetIndex < 7
+                dim: selectedPlanetIndex === 7
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: selectedPlanetIndex < 7 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                hoverEnabled: true
+                onClicked: {
+                    if (selectedPlanetIndex < 7)
+                        root.selectedPlanetIndex = Math.min(7, root.selectedPlanetIndex + 1);
+                }
+                onEntered: TooltipService.show("NEXT PLANET", "Step the orbital detail target forward. Current target: " + root.selectedPlanet().name + ".", "orbit-next")
+                onExited: TooltipService.clear("orbit-next")
+            }
         }
     }
 }

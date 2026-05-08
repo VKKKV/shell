@@ -16,6 +16,8 @@ Item {
     readonly property real hourAngle: ((Time.now.getHours() % 12) + Time.now.getMinutes() / 60) * 30
     readonly property real minuteAngle: (Time.now.getMinutes() + Time.now.getSeconds() / 60) * 6
     readonly property real secondAngle: Time.now.getSeconds() * 6
+    readonly property int outerRingWidth: Math.max(3, Theme.heavyLineWidth + 1)
+    readonly property int innerRingWidth: Math.max(2, Theme.heavyLineWidth)
 
     Item {
         id: dialFace
@@ -31,7 +33,18 @@ Item {
             radius: width / 2
             color: clockArea.containsMouse ? Theme.panelSoft : "#22000000"
             border.color: clockArea.containsMouse ? Theme.line : Theme.lineDim
-            border.width: Theme.heavyLineWidth
+            border.width: root.outerRingWidth
+        }
+
+        Rectangle {
+            anchors.centerIn: parent
+            width: parent.width * 0.94
+            height: width
+            radius: width / 2
+            color: "transparent"
+            border.color: Theme.border
+            border.width: Theme.lineWidth
+            opacity: 0.82
         }
 
         Rectangle {
@@ -40,8 +53,20 @@ Item {
             height: width
             radius: width / 2
             color: "transparent"
+            border.color: clockArea.containsMouse ? Theme.lineDim : Theme.border
+            border.width: root.innerRingWidth
+            opacity: clockArea.containsMouse ? 0.9 : 0.68
+        }
+
+        Rectangle {
+            anchors.centerIn: parent
+            width: parent.width * 0.72
+            height: width
+            radius: width / 2
+            color: "transparent"
             border.color: Theme.border
             border.width: Theme.lineWidth
+            opacity: 0.36
         }
 
         Repeater {
@@ -54,10 +79,10 @@ Item {
 
                 x: dialFace.width / 2 - width / 2
                 y: major ? 8 : 12
-                width: major ? Theme.heavyLineWidth : Theme.lineWidth
-                height: major ? dialFace.width * 0.1 : dialFace.width * 0.055
+                width: major ? Math.max(3, Theme.heavyLineWidth + 1) : Theme.lineWidth
+                height: major ? dialFace.width * 0.11 : dialFace.width * 0.06
                 color: major ? Theme.line : Theme.lineDim
-                opacity: major ? 0.95 : 0.42
+                opacity: major ? 0.98 : 0.48
                 transform: Rotation {
                     origin.x: width / 2
                     origin.y: dialFace.width / 2 - (parent.major ? 8 : 12)
