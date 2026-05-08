@@ -168,12 +168,12 @@ Item {
                 root.yaw = root.dragStartYaw + (mouse.x - root.dragPressX) * 0.55;
                 root.pitch = Math.max(-62, Math.min(62, root.dragStartPitch + (mouse.y - root.dragPressY) * 0.38));
             }
-            root.meshCanvas.requestPaint();
+            meshCanvas.requestPaint();
         }
         onEntered: TooltipService.show("AGENT CORE", "Open the visual agent neural mesh panel. Provider selection is staged as a placeholder until the backend contract is defined.", "agent-core")
         onExited: {
             TooltipService.clear("agent-core");
-            root.meshCanvas.requestPaint();
+            meshCanvas.requestPaint();
         }
         onPressed: (mouse) => {
             root.dragActive = true;

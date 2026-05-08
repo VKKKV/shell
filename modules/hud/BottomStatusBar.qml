@@ -39,11 +39,19 @@ TacticalFrame {
                 elide: Text.ElideRight
             }
 
+            Item {
+                Layout.fillWidth: true
+            }
+
             MissionDock {
                 Layout.preferredWidth: 720
                 Layout.maximumWidth: 760
                 Layout.minimumWidth: 360
                 Layout.alignment: Qt.AlignVCenter
+            }
+
+            Item {
+                Layout.fillWidth: true
             }
 
             RowLayout {
