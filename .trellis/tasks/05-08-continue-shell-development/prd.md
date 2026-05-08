@@ -125,3 +125,14 @@ Continue shell development with a small, verifiable feature slice focused on doc
 * `git diff --check`: passed.
 * `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
 * `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
+
+### Filesystem Panel Copy Refinement Slice
+
+* `modules/hud/FilesystemExpansionPanel.qml` now describes current filesystem behavior in present tense instead of saying mount actions are deferred.
+* Added `mountSummary()` helper that surfaces actionable glyph-tier counts (STABLE/ACTIVE/WARN/CRITICAL) from existing `SystemStats.filesystemRows` data without changing service behavior.
+* Right-side "STORAGE STATUS" block now surfaces `SystemStats.filesystemStatus` and the computed mount glyph tier summary alongside existing mount/df metadata.
+* "TACTICAL NOTES" block replaced stale "MOUNT ACTIONS: DEFERRED" and "SPARSE SURFACE" copy with concrete present-tense notes matching the Network panel style (glyph thresholds, read-only telemetry bus, live poll source, mount status tier visibility).
+* Memory coupling and left-side mount row display remain unchanged.
+* `git diff --check`: passed.
+* `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
+* `timeout 8s quickshell -p .`: passed; logs included `Configuration Loaded`.

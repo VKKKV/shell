@@ -29,6 +29,25 @@ CentralPanelChrome {
         return total / SystemStats.filesystemRows.length;
     }
 
+    function mountSummary(): string {
+        if (SystemStats.filesystemRows.length === 0)
+            return "MOUNT GLYPHS // NO MOUNTS TRACKED";
+        let stable = 0, active = 0, warn = 0, critical = 0;
+        for (const row of SystemStats.filesystemRows) {
+            const pct = row[2];
+            if (pct >= 0.85) critical++;
+            else if (pct >= 0.7) warn++;
+            else if (pct >= 0.45) active++;
+            else stable++;
+        }
+        let parts = [];
+        if (critical > 0) parts.push(critical + " CRIT");
+        if (warn > 0) parts.push(warn + " WARN");
+        parts.push(active + " ACTIVE");
+        parts.push(stable + " STABLE");
+        return "MOUNT GLYPHS // " + parts.join(" // ");
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: Theme.densitySpacing
@@ -149,7 +168,7 @@ CentralPanelChrome {
 
                 TextBlock {
                     title: "STORAGE STATUS"
-                    lines: [SystemStats.statusLine, "MOUNTS: " + SystemStats.filesystemRows.length, "SOURCE: df -B1", "TARGETS: / /home /data", "FAILSAFE: missing mounts skipped"]
+                    lines: [SystemStats.filesystemStatus, root.mountSummary(), "MOUNTS: " + SystemStats.filesystemRows.length, "SOURCE: df -B1", "TARGETS: / /home /data", "FAILSAFE: missing mounts skipped"]
                 }
 
                 MetricBlock {
@@ -159,7 +178,7 @@ CentralPanelChrome {
 
                 TextBlock {
                     title: "TACTICAL NOTES"
-                    lines: ["CLICK BACKDROP TO DISMISS", "LOW SPACE: >= 70%", "CRITICAL: >= 85%", "MOUNT ACTIONS: DEFERRED", "SPARSE SURFACE: FILLED BY ARRAY SUMMARY"]
+                    lines: ["BACKDROP / ESC CLOSES PANEL", "USAGE >= 70% // WARN GLYPH", "USAGE >= 85% // CRITICAL GLYPH", "READ-ONLY TELEMETRY BUS", "DF -B1 LIVE POLL // SYSTEMSTATS", "MOUNT STATUS TIERS VISIBLE IN ARRAY"]
                 }
             }
         }
