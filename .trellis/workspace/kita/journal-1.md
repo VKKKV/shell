@@ -1150,3 +1150,43 @@ Implemented review-driven shell hardening, orbital rendering/cache refinements, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 4: HUD Layout, Agent Module, Nixie Background, Earth Globe Polish
+
+**Date**: 2026-05-08
+**Task**: HUD Layout, Agent Module, Nixie Background, Earth Globe Polish
+**Branch**: `master`
+
+### Summary
+
+Rebalanced HUD top/bottom bars and fixed overlay overlap. Added visual-only Agent neural mesh module with central panel. Deepened Earth globe coastlines from ~10 to ~90 polylines. Added optional nixie background mode with dedicated WlrLayer.Background window. Replaced Canvas digits with DivergenceMeter PNG assets. Captured persistent background mode cross-layer contract in code-spec. Archived all completed tasks.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8d678e9` | (see git log) |
+| `4bfa000` | (see git log) |
+| `cfeac31` | (see git log) |
+| `13d0ee4` | (see git log) |
+| `08019a3` | (see git log) |
+| `62925ce` | (see git log) |
+| `2732763` | (see git log) |
+| `1e16ef9` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
