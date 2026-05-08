@@ -30,13 +30,14 @@ Avoid mixing these in the same task:
 - Agent local command execution MVP: added a non-persistent argv provider command path in `AgentService.qml`, disabled by default, with shaped unavailable/busy/failed/timeout/ok states.
 - Agent provider session config: added session-local provider presets for disabled, Hermes, and OpenClaw without settings persistence.
 - Agent provider persistence contract: persists only `agent.providerId` (`disabled`, `hermes`, `openclaw`) while keeping commands and custom providers out of persisted settings.
+- Hermes/OpenClaw adapter mapping: probes local command availability and maps available adapters onto the generic argv `--prompt` contract without provider-specific UI.
 
 ### Next Slices
 
-1. Hermes/OpenClaw adapter mapping
-   - Map each adapter onto the generic local command contract.
-   - Do not add provider-specific UI until the generic contract works.
-   - Keep custom providers out of scope until an allowlist is defined.
+1. Agent provider runtime validation
+   - Exercise real Hermes/OpenClaw commands when installed and document exact argv behavior.
+   - Keep missing-command fallback as the expected behavior on systems without those tools.
+   - Verification: provider missing fallback, available command response, `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.
 
 ## Backlog Guardrails
 

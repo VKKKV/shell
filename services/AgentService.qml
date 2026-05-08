@@ -17,10 +17,12 @@ Singleton {
     property string activePrompt: ""
     property string stdoutText: ""
     property string stderrText: ""
+    property bool hermesAvailable: false
+    property bool openClawAvailable: false
     readonly property var providerPresets: [
         { id: "disabled", name: "DISABLED", command: [], available: true, detail: "No provider command configured." },
-        { id: "hermes", name: "HERMES", command: ["hermes", "agent"], available: false, detail: "Planned local Hermes adapter; command availability not confirmed." },
-        { id: "openclaw", name: "OPENCLAW", command: ["openclaw", "agent"], available: false, detail: "Planned local OpenClaw adapter; command availability not confirmed." }
+        { id: "hermes", name: "HERMES", command: ["hermes", "agent"], available: hermesAvailable, detail: hermesAvailable ? "Hermes local command adapter available." : "Hermes command not found." },
+        { id: "openclaw", name: "OPENCLAW", command: ["openclaw", "agent"], available: openClawAvailable, detail: openClawAvailable ? "OpenClaw local command adapter available." : "OpenClaw command not found." }
     ]
     readonly property bool available: providerCommand.length > 0
     readonly property bool running: state === "running"
@@ -58,9 +60,13 @@ Singleton {
     }
 
     Component.onCompleted: {
+        probeProcess.running = true;
         if (!SettingsService.loading)
             applyProvider(SettingsService.agentProviderId, true);
     }
+
+    onHermesAvailableChanged: applyProvider(SettingsService.agentProviderId, true)
+    onOpenClawAvailableChanged: applyProvider(SettingsService.agentProviderId, true)
 
     Connections {
         target: SettingsService
@@ -120,6 +126,25 @@ Singleton {
             root.errorDetail = "provider exceeded 30s timeout";
             root.responseText = "PROMPT TIMEOUT // " + root.activePrompt;
             ServiceLogService.push("agent", "warn", root.statusLine);
+        }
+    }
+
+    Process {
+        id: probeProcess
+
+        command: ["sh", "-c", "command -v hermes >/dev/null 2>&1 && printf 'hermes=1\n' || printf 'hermes=0\n'; command -v openclaw >/dev/null 2>&1 && printf 'openclaw=1\n' || printf 'openclaw=0\n'"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.hermesAvailable = text.indexOf("hermes=1") >= 0;
+                root.openClawAvailable = text.indexOf("openclaw=1") >= 0;
+            }
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0) {
+                root.hermesAvailable = false;
+                root.openClawAvailable = false;
+                root.statusLine = "agent: provider probe fallback";
+            }
         }
     }
 
