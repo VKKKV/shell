@@ -25,7 +25,7 @@ CentralPanelChrome {
                 height: width
                 expanded: true
                 label: "NEURAL AGENT CORE"
-                statusText: "VISUAL LINK // STAGED"
+                statusText: AgentService.statusLine.toUpperCase()
             }
         }
 
@@ -37,13 +37,14 @@ CentralPanelChrome {
             PanelStatusStrip {
                 Layout.fillWidth: true
                 leftText: "AGENT BUS"
-                centerText: "STAGED UI"
+                centerText: AgentService.state.toUpperCase()
                 rightText: "ESC // CLOSE"
+                warning: !AgentService.available
             }
 
             MetricBlock {
                 title: "PROVIDER STAGE"
-                rows: [["HERMES", "PLANNED", -1, false], ["OPENCLAW", "PLANNED", -1, false], ["CUSTOM", "DEFERRED", -1, false], ["IPC", "UNBOUND", -1, false]]
+                rows: [["ACTIVE", AgentService.providerName, -1, AgentService.available], ["STATE", AgentService.state.toUpperCase(), -1, AgentService.running], ["HERMES", "PLANNED", -1, false], ["OPENCLAW", "PLANNED", -1, false], ["CUSTOM", "DEFERRED", -1, false]]
             }
 
             TextBlock {
@@ -55,7 +56,7 @@ CentralPanelChrome {
             TextBlock {
                 Layout.fillWidth: true
                 title: "CONTRACT GUARD"
-                lines: ["NO PROVIDER COMMAND EXECUTION", "NO SETTINGS SCHEMA CHANGE", "NO IPC UNTIL CONTRACT EXISTS", "VISUAL-ONLY FIRST SLICE"]
+                lines: [AgentService.statusLine.toUpperCase(), AgentService.responseText, "NO SETTINGS SCHEMA CHANGE", "NO IPC UNTIL CONTRACT EXISTS"]
             }
 
             Item { Layout.fillHeight: true }

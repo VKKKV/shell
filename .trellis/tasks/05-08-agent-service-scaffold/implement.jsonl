@@ -1,0 +1,4 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "AgentService must preserve component/module/service boundaries"}
+{"file": ".trellis/tasks/05-08-agent-provider-contract-plan/prd.md", "reason": "provider command contract and out-of-scope decisions"}

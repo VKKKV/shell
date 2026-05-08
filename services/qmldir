@@ -5,6 +5,7 @@ singleton HyprlandService 1.0 HyprlandService.qml
 singleton NiriService 1.0 NiriService.qml
 singleton CompositorService 1.0 CompositorService.qml
 singleton SettingsService 1.0 SettingsService.qml
+singleton AgentService 1.0 AgentService.qml
 singleton AudioService 1.0 AudioService.qml
 singleton SessionService 1.0 SessionService.qml
 singleton BatteryService 1.0 BatteryService.qml
