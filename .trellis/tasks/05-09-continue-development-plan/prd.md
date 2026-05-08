@@ -31,6 +31,7 @@ Continue the shell development plan with the next independently verifiable slice
 * Add a small visible procedural Earth slice that improves realism without waiting for full Natural Earth 10m data replacement.
 * Add Natural Earth generated-data evaluation support before replacing the active runtime coastline data.
 * Add a local-only generated coastline candidate review workflow with manifest validation before any Natural Earth runtime replacement.
+* Replace the active hand-authored coastline polygons with a reviewed Natural Earth generated runtime dataset that is visibly more realistic while remaining Canvas-friendly.
 * Preserve the existing `RotatingGlobe` public contract and runtime rendering behavior in this slice.
 * Keep all globe data offline at runtime.
 * Document how future Natural Earth 10m input should flow through the pipeline without checking in unverified large generated data yet.
@@ -42,10 +43,11 @@ Continue the shell development plan with the next independently verifiable slice
 * [ ] The scaffold output format matches the current `EarthCoastlineData.coastlines` shape: an array of polylines, each polyline containing `[lat, lon]` pairs.
 * [ ] Existing globe interactions still work: click/activate, horizontal drag rotation, signal nodes, grid, and optional location marker.
 * [ ] Runtime does not fetch map data from the network.
-* [ ] Current runtime coastline data remains unchanged unless a tiny fixture/sample is clearly separated from active runtime data.
+* [ ] Active runtime coastline data is generated from reviewed Natural Earth public-domain input, with raw input kept out of the repo.
 * [ ] The globe includes visible ocean/land/atmosphere procedural detail while preserving the tactical HUD style.
 * [ ] Generated coastline candidates can be inspected offline for polyline count, point count, byte size, coordinate bounds, and longest polyline before runtime replacement.
 * [ ] Generated coastline candidates can be reviewed through a manifest that records provenance, generation command, inspector stats, smoke checks, and reviewer notes.
+* [ ] The active globe uses substantially more realistic coastlines than the former hand-authored polygon pile.
 * [ ] Verification includes `git diff --check`, `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`, and a short `quickshell -p .` smoke run where available.
 
 ## Definition Of Done
@@ -104,6 +106,14 @@ Continue the shell development plan with the next independently verifiable slice
 **Decision**: Add a local-only candidate review workflow. Use `/tmp/opencode/coastline-candidates/<candidate-name>/` for raw input, generated output, and review manifests; add a dependency-free manifest validator that can compare recorded inspector stats against a local generated JS file. Keep runtime coastline data unchanged in this slice.
 
 **Consequences**: A future replacement task can require a validated manifest before touching `components/EarthCoastlineData.js`. The manifest fixture is intentionally tiny and synthetic, so it validates tooling shape but does not prove Natural Earth visual quality or Canvas repaint performance.
+
+## Follow-up Decision 4 (ADR-lite)
+
+**Context**: User-visible feedback confirmed that the previous procedural/detail and tooling-only slices still left the Earth module looking like a pile of crude polygons. The reviewed candidate workflow was available, so continuing to defer runtime replacement no longer matched the product goal.
+
+**Decision**: Replace `components/EarthCoastlineData.js` with generated Natural Earth 50m public-domain coastline vectors. Use the documented local candidate workflow, precision `2`, and deterministic Ramer-Douglas-Peucker simplification tolerance `0.03` degrees to keep the runtime JS around 493KB while preserving 28,853 coastline points.
+
+**Consequences**: The globe is materially more realistic offline at runtime and no longer depends on hand-authored placeholder geography. Natural Earth 10m can still be evaluated later if 50m detail is insufficient, but it must pass the same manifest and Canvas repaint review before replacing the runtime module.
 
 ## Candidate Slices
 

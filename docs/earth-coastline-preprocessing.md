@@ -38,11 +38,45 @@ node tools/preprocess-coastlines.js input.geojson output.js --precision 4
 
 The default precision is 3 decimal places. This is enough for the current tactical HUD scale while keeping generated arrays compact.
 
+Optional simplification and minimum-length filtering are available for reviewed runtime candidates:
+
+```bash
+node tools/preprocess-coastlines.js input.geojson output.js --precision 2 --simplify 0.03 --min-points 2
+```
+
+`--simplify` uses deterministic Ramer-Douglas-Peucker simplification in latitude/longitude degree space after coordinate conversion and duplicate removal. Keep the tolerance explicit in the manifest because it changes visual fidelity and Canvas repaint cost.
+
 `tools/fixtures/coastline-sample.geojson` is a tiny tool fixture only. It is not imported by the shell and does not replace the active runtime data in `components/EarthCoastlineData.js`.
+
+## Current Runtime Dataset
+
+`components/EarthCoastlineData.js` now contains a reviewed Natural Earth 50m coastline runtime replacement, not the original hand-authored polygons.
+
+- Source: `https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_coastline.geojson`
+- Dataset: Natural Earth `ne_50m_coastline`, public domain
+- Download date: 2026-05-09
+- Local-only candidate path: `/tmp/opencode/coastline-candidates/ne-50m-coastline-2026-05-09/`
+- Generation command:
+
+  ```bash
+  node tools/preprocess-coastlines.js /tmp/opencode/coastline-candidates/ne-50m-coastline-2026-05-09/input.geojson /tmp/opencode/coastline-candidates/ne-50m-coastline-2026-05-09/generated.js --precision 2 --simplify 0.03
+  ```
+
+- Inspector stats:
+  - polylines: 1,425
+  - points: 28,853
+  - generated JS size: 492,359 bytes before the extra provenance header in the committed runtime file; 492,929 bytes in the committed runtime file
+  - bounds: latitude `-85.19..83.6`, longitude `-180..180`
+  - longest polyline: `#1388` with 5,183 points
+  - short polylines: 0
+
+The generator drops degenerate two-point lines that collapse to one unique coordinate after precision rounding and simplification.
+
+Raw downloads and GeoJSON input remain local-only scratch artifacts; only the compact runtime JS module is committed.
 
 ## Future Natural Earth 10m Flow
 
-Do not check in unverified large generated data as part of the scaffold. For the future high-precision slice:
+Do not check in unverified large generated data as part of a candidate review. For a future 10m high-precision slice:
 
 1. Download or otherwise obtain Natural Earth 10m coastline GeoJSON outside the runtime shell path.
 2. Record the exact source URL/version and license notes in the follow-up task.

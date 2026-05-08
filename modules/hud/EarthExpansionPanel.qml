@@ -8,7 +8,7 @@ CentralPanelChrome {
     id: root
 
     title: "EARTH GEO // IP FIX"
-    headerText: "TERRESTRIAL LOCATION SURFACE // OFFLINE VECTOR COASTLINE // OPTIONAL IP GEO"
+    headerText: "TERRESTRIAL LOCATION SURFACE // NATURAL EARTH OFFLINE COASTLINE // OPTIONAL IP GEO"
 
     RowLayout {
         anchors.fill: parent
@@ -62,7 +62,8 @@ CentralPanelChrome {
                 Layout.fillWidth: true
                 title: "SURFACE MODEL"
                 lines: [
-                    "COAST: OFFLINE VECTOR DATASET + TACTICAL OVERLAY",
+                    "COAST: NATURAL EARTH 50M OFFLINE VECTORS",
+                    "DETAIL: 1425 LINES / 28853 COAST POINTS",
                     "OCEAN: PROCEDURAL DEPTH HASH + SCAN TEXTURE",
                     "LAND: CLIPPED TERRAIN TINT / CONTOUR NOISE",
                     "DRAG: HORIZONTAL SWIPE ROTATES LONGITUDE",

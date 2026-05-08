@@ -39,6 +39,7 @@ Avoid mixing these in the same task:
 - Earth procedural terrain prototype: added Canvas2D ocean depth texture, clipped land terrain hints, and atmospheric rim glow while preserving the existing offline coastline data and tactical HUD interactions.
 - Earth generated coastline evaluation support: added a dependency-free inspector for generated coastline modules and a Natural Earth review checklist covering source/version/license, generation commands, stats, thresholds, and smoke checks before runtime data replacement.
 - Earth candidate review workflow: added a local-only candidate manifest convention plus validator so Natural Earth replacement candidates can be checked for provenance, inspection stats, and smoke-test evidence without committing large generated data.
+- Earth Natural Earth coastline replacement: replaced the hand-authored transitional coastlines with reviewed Natural Earth 50m public-domain vectors generated through the local candidate workflow, yielding 1,425 polylines and 28,853 runtime points while keeping raw downloads out of the repo.
 
 ### Next Slices
 
@@ -46,8 +47,8 @@ Avoid mixing these in the same task:
    - Find the real OpenClaw CLI entry point and map it to the generic contract.
    - Keep missing-command and unvalidated-adapter fallback language until the contract is confirmed.
 2. Earth globe high-precision coastline and procedural terrain upgrade
-   - Create a reviewed Natural Earth 10m candidate under the documented local candidate workflow, validate its manifest with `tools/validate-coastline-candidate.js --check-output`, then replace the current hand-authored/transitional coastline polylines only after provenance, inspector stats, and smoke checks are recorded.
-   - Target 10K+ coordinate points while keeping all data offline, and commit only the approved runtime JS module rather than raw downloads or temporary generated artifacts.
+   - Optional next data slice: evaluate Natural Earth 10m under the same candidate workflow if 50m coastline detail is still insufficient; validate the manifest with `tools/validate-coastline-candidate.js --check-output` and replace runtime data only after inspector stats and smoke checks show acceptable Canvas repaint behavior.
+   - Keep all map data offline at runtime and commit only approved compact JS modules rather than raw downloads or temporary generated artifacts.
    - Refine the procedural Canvas2D layers around the approved data: tune ocean depth hash density, clipped terrain hints, high-precision coastline strokes, atmospheric rim glow, and the existing tactical grid, signal nodes, and location markers.
    - Reference Natural Earth data, D3 geo projection math, and `world-map-gen` for projection/data-pipeline ideas without introducing runtime network dependencies.
    - Expected trade-off: medium difficulty, mainly data preprocessing and render-pipeline splitting; larger embedded data around 200KB compressed; procedural noise approximates terrain instead of using real land textures.
