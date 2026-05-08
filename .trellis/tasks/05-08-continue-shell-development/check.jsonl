@@ -1,0 +1,2 @@
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Check agent should verify QML lint/smoke expectations and docs-only skip logic where applicable."}
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"Check agent should verify the HUD change stays in module layout code and does not violate component/service boundaries."}

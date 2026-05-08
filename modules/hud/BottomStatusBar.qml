@@ -9,7 +9,11 @@ TacticalFrame {
 
     readonly property string fullDateText: "[" + CalendarService.dayText + " // " + CalendarService.dateText + "]"
     readonly property string shortDateText: "[" + CalendarService.dateText + "]"
-    readonly property int fixedRowWidth: Theme.panelPadding * 2 + 240 + 720 + 328 + 8 * 5
+    readonly property int rowGap: Theme.densitySmallSpacing
+    readonly property int nodeReadoutWidth: Math.min(240, Math.max(160, Math.round(width * 0.14)))
+    readonly property int missionDockWidth: Math.min(720, Math.max(420, Math.round(width * 0.42)))
+    readonly property int channelReadoutWidth: Math.min(328, Math.max(220, Math.round(width * 0.18)))
+    readonly property int fixedRowWidth: Theme.panelPadding * 2 + nodeReadoutWidth + missionDockWidth + channelReadoutWidth + rowGap * 5
     readonly property int availableDateWidth: Math.max(shortDateProbe.implicitWidth, width - fixedRowWidth)
     readonly property bool useShortDate: availableDateWidth < fullDateProbe.implicitWidth
 
@@ -46,9 +50,10 @@ TacticalFrame {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: 8
+            spacing: root.rowGap
 
             TacticalLabel {
+                Layout.preferredWidth: root.nodeReadoutWidth
                 Layout.maximumWidth: 240
                 text: "VOID-HYPRLAND // NODE_02 // ID: 10.0.0.12"
                 dim: true
@@ -89,7 +94,7 @@ TacticalFrame {
             }
 
             MissionDock {
-                Layout.preferredWidth: 720
+                Layout.preferredWidth: root.missionDockWidth
                 Layout.maximumWidth: 760
                 Layout.minimumWidth: 360
                 Layout.alignment: Qt.AlignVCenter
@@ -100,9 +105,9 @@ TacticalFrame {
             }
 
             RowLayout {
-                Layout.preferredWidth: 328
+                Layout.preferredWidth: root.channelReadoutWidth
                 Layout.maximumWidth: 328
-                spacing: 8
+                spacing: root.rowGap
 
                 TacticalLabel {
                     Layout.fillWidth: true

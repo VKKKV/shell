@@ -39,6 +39,7 @@ Fallback if `XDG_CONFIG_HOME` is unset:
   },
   "data": {
     "liveDataEnabled": true,
+    "networkGeolocationEnabled": false,
     "updateIntervalMs": 5000
   },
   "panels": {
@@ -71,6 +72,7 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `visual.backgroundMode: "void"` is the default, so optional wallpaper effects start disabled.
 - `visual.backgroundMode: "nixie"` renders the local Canvas-based vacuum tube clock backdrop inside the shell background layer; it does not start external processes or fetch network data.
 - `data.liveDataEnabled` is boolean.
+- `data.networkGeolocationEnabled` is boolean and defaults to `false`; when disabled, location-dependent surfaces use offline timezone inference instead of contacting an IP geolocation endpoint.
 - `data.updateIntervalMs` is clamped to `1000..30000`.
 - panel visibility fields are booleans.
 - `agent.providerId` is one of `disabled`, `hermes`, or `openclaw` and defaults to `disabled`.
