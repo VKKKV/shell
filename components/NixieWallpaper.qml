@@ -1,19 +1,21 @@
 import "../services"
 import "../theme"
 import QtQuick
+import QtQuick.Layouts
 
 Item {
     id: root
 
     property real phase: 0
     readonly property string valueText: Qt.formatDateTime(Time.now, "hh.mm.ss")
-    readonly property real tubeWidth: Math.max(70, Math.min(root.width * 0.076, root.height * 0.14))
-    readonly property real tubeHeight: tubeWidth * 2.2
-    readonly property real tubeGap: Math.max(14, tubeWidth * 0.16)
-    readonly property real colonWidth: Math.max(20, tubeWidth * 0.22)
-    readonly property real totalWidth: 6 * tubeWidth + 2 * colonWidth + 7 * tubeGap
-    readonly property real areaX: (root.width - totalWidth) * 0.5
-    readonly property real areaY: (root.height - tubeHeight) * 0.5
+    readonly property int digitHeight: Math.max(140, Math.min(root.height * 0.35, root.width * 0.12))
+    readonly property int digitWidth: Math.round(digitHeight * 0.62)
+    readonly property int colonWidth: Math.max(16, Math.round(digitWidth * 0.22))
+    readonly property int gap: Math.max(8, Math.round(digitWidth * 0.16))
+    readonly property int totalWidth: 6 * (digitWidth + gap) + 2 * (colonWidth + gap) - gap
+    readonly property int startX: Math.round((root.width - totalWidth) / 2)
+    readonly property int startY: Math.round((root.height - digitHeight) / 2)
+    readonly property string digitsDir: Qt.resolvedUrl("../assets/nixie/").toString()
 
     NumberAnimation on phase {
         from: 0; to: 360
@@ -23,186 +25,189 @@ Item {
     }
 
     Canvas {
-        id: bgCanvas
+        id: backdropCanvas
         anchors.fill: parent
         antialiasing: true
         onPaint: {
-            const ctx = getContext("2d");
+            var ctx = getContext("2d");
             ctx.reset();
             ctx.clearRect(0, 0, width, height);
-            const cx = width * 0.5;
-            const cy = height * 0.5;
-            const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(width, height) * 0.48);
-            glow.addColorStop(0, "#1a0c04");
-            glow.addColorStop(0.38, "#0a0401");
+            var cx = width * 0.5, cy = height * 0.5;
+            var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(width, height) * 0.55);
+            glow.addColorStop(0, "#0d0502");
+            glow.addColorStop(0.5, "#050201");
             glow.addColorStop(1, "#000000");
-            ctx.globalAlpha = 0.7;
+            ctx.globalAlpha = 0.85;
             ctx.fillStyle = glow;
             ctx.fillRect(0, 0, width, height);
+
+            ctx.globalAlpha = 0.06;
+            ctx.strokeStyle = Theme.lineDim.toString();
+            ctx.lineWidth = Theme.lineWidth;
+            for (var x = 0; x < width; x += 112) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x + Math.sin((root.phase + x) * Math.PI / 180) * 12, height);
+                ctx.stroke();
+            }
         }
     }
 
-    Canvas {
-        id: tubesCanvas
-        anchors.fill: parent
-        antialiasing: true
+    RowLayout {
+        anchors.centerIn: parent
+        spacing: 0
+        opacity: 0.94
 
-        function drawTubeDigit(ctx, x, y, w, h, digit, pulse) {
-            ctx.save();
-            ctx.translate(x, y);
+        Repeater {
+            model: 8
 
-            // tube body
-            const rx = w * 0.32;
-            ctx.fillStyle = "#0a0301";
-            ctx.globalAlpha = 0.92;
-            ctx.beginPath();
-            ctx.moveTo(rx, 0);
-            ctx.lineTo(w - rx, 0);
-            ctx.arcTo(w, 0, w, rx, rx);
-            ctx.lineTo(w, h - rx);
-            ctx.arcTo(w, h, w - rx, h, rx);
-            ctx.lineTo(rx, h);
-            ctx.arcTo(0, h, 0, h - rx, rx);
-            ctx.lineTo(0, rx);
-            ctx.arcTo(0, 0, rx, 0, rx);
-            ctx.fill();
+            Item {
+                required property int index
 
-            // glass border
-            ctx.globalAlpha = 0.55 + pulse * 0.12;
-            ctx.strokeStyle = "#4a2a16";
-            ctx.lineWidth = 2;
-            ctx.stroke();
+                readonly property string digit: root.valueText.charAt(index)
+                readonly property bool isColon: digit === "."
+                readonly property real pulse: 0.5 + 0.5 * Math.sin((root.phase + index * 28) * Math.PI / 180)
+                readonly property string digitImage: isColon ? "p.png" : digit + ".png"
 
-            // inner glass ring
-            ctx.globalAlpha = 0.22 + pulse * 0.06;
-            ctx.strokeStyle = "#6a3c1a";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(rx + 4, 4);
-            ctx.lineTo(w - rx - 4, 4);
-            ctx.arcTo(w - 4, 4, w - 4, rx + 4, rx - 4);
-            ctx.lineTo(w - 4, h - rx - 4);
-            ctx.arcTo(w - 4, h - 4, w - rx - 4, h - 4, rx - 4);
-            ctx.lineTo(rx + 4, h - 4);
-            ctx.arcTo(4, h - 4, 4, h - rx - 4, rx - 4);
-            ctx.lineTo(4, rx + 4);
-            ctx.arcTo(4, 4, rx + 4, 4, rx - 4);
-            ctx.stroke();
+                Layout.preferredWidth: isColon ? root.colonWidth : root.digitWidth
+                Layout.preferredHeight: root.digitHeight
 
-            // anode grid top
-            ctx.globalAlpha = 0.18;
-            ctx.strokeStyle = "#995a2c";
-            ctx.lineWidth = 0.8;
-            for (let gx = w * 0.18; gx < w * 0.85; gx += w * 0.08) {
-                ctx.beginPath();
-                ctx.moveTo(gx, h * 0.08);
-                ctx.lineTo(gx, h * 0.16);
-                ctx.stroke();
-            }
+                Item {
+                    visible: isColon
+                    anchors.fill: parent
+                    Image {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.topMargin: parent.height * 0.12
+                        width: parent.width * 0.9
+                        height: parent.height * 0.28
+                        source: root.digitsDir + "/" + parent.parent.digitImage
+                        fillMode: Image.PreserveAspectFit
+                        opacity: 0.55 + parent.parent.pulse * 0.22
+                    }
+                    Image {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: parent.height * 0.12
+                        width: parent.width * 0.9
+                        height: parent.height * 0.28
+                        source: root.digitsDir + "/" + parent.parent.digitImage
+                        fillMode: Image.PreserveAspectFit
+                        opacity: 0.55 + parent.parent.pulse * 0.22
+                    }
+                }
 
-            // faint ghost digits - all 10 stacked
-            const fontSize = h * 0.5;
-            ctx.globalAlpha = 0.07;
-            ctx.fillStyle = "#c06a2a";
-            ctx.font = fontSize + "px " + Theme.fontFamily;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            const dig = Number(digit);
-            for (let i = 0; i < 10; i++) {
-                if (i === dig) continue;
-                ctx.fillText(String(i), w * 0.5, h * 0.5);
-            }
+                Item {
+                    visible: !isColon
+                    anchors.fill: parent
 
-            // lit digit - primary glow layer
-            ctx.globalAlpha = 0.42 + pulse * 0.18;
-            ctx.fillStyle = "#ff7a20";
-            ctx.font = "bold " + fontSize + "px " + Theme.fontFamily;
-            ctx.fillText(digit, w * 0.5, h * 0.5);
+                    // outer metal box
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width * 1.12
+                        height: parent.height * 1.05
+                        radius: width * 0.22
+                        color: "#0c0402"
+                        border.color: "#2a1609"
+                        border.width: Math.max(2, Theme.heavyLineWidth)
+                        opacity: 0.88
+                    }
 
-            // lit digit - core bright layer
-            ctx.globalAlpha = 0.88 + pulse * 0.1;
-            ctx.fillStyle = "#ffaa3c";
-            ctx.font = fontSize + "px " + Theme.fontFamily;
-            ctx.fillText(digit, w * 0.5, h * 0.5);
+                    // inner glass tube body
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width * 0.96
+                        height: parent.height * 0.98
+                        radius: width * 0.36
+                        color: "#0a0401"
+                        border.color: "#5a2c14"
+                        border.width: Math.max(2, Theme.heavyLineWidth)
+                        opacity: 0.8
+                    }
 
-            // bottom electrode
-            ctx.globalAlpha = 0.24;
-            ctx.fillStyle = "#c06a2a";
-            ctx.beginPath();
-            ctx.arc(w * 0.5, h * 0.9, w * 0.07, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 0.14;
-            ctx.strokeStyle = "#d08040";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(w * 0.5, h * 0.9);
-            ctx.lineTo(w * 0.5, h * 0.96);
-            ctx.stroke();
+                    // inner glass rim
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width * 0.88
+                        height: parent.height * 0.94
+                        radius: width * 0.38
+                        color: "transparent"
+                        border.color: "#9a4f1c"
+                        border.width: Theme.lineWidth
+                        opacity: 0.14 + parent.pulse * 0.06
+                    }
 
-            // glass reflection streak
-            ctx.globalAlpha = 0.06;
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 1.2;
-            ctx.beginPath();
-            ctx.moveTo(w * 0.22, h * 0.12);
-            ctx.lineTo(w * 0.22, h * 0.78);
-            ctx.stroke();
+                    // digit image
+                    Image {
+                        anchors.centerIn: parent
+                        width: parent.width * 0.76
+                        height: parent.height * 0.82
+                        source: root.digitsDir + "/" + parent.digitImage
+                        fillMode: Image.PreserveAspectFit
+                        opacity: 0.88 + parent.pulse * 0.1
+                    }
 
-            ctx.restore();
-        }
+                    // glow overlay
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width * 0.72
+                        height: parent.height * 0.76
+                        radius: width * 0.5
+                        color: "#ff7a20"
+                        opacity: 0.04 + parent.pulse * 0.03
+                    }
 
-        function drawColon(ctx, x, y, w, h) {
-            const dotR = Math.max(3, w * 0.18);
-            ctx.save();
-            ctx.fillStyle = "#ff8b2e";
-            ctx.globalAlpha = 0.6;
-            ctx.beginPath();
-            ctx.arc(x + w * 0.5, y + h * 0.35, dotR, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 0.8;
-            ctx.beginPath();
-            ctx.arc(x + w * 0.5, y + h * 0.35, dotR * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 0.6;
-            ctx.beginPath();
-            ctx.arc(x + w * 0.5, y + h * 0.62, dotR, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 0.8;
-            ctx.beginPath();
-            ctx.arc(x + w * 0.5, y + h * 0.62, dotR * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
+                    // top anode wire
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.topMargin: parent.height * 0.04
+                        width: parent.width * 0.55
+                        height: Math.max(1, Theme.lineWidth)
+                        color: "#ffd08a"
+                        opacity: 0.22
+                    }
 
-        onPaint: {
-            const ctx = getContext("2d");
-            ctx.reset();
-            ctx.clearRect(0, 0, width, height);
+                    // bottom electrode
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: parent.height * 0.06
+                        width: parent.width * 0.2
+                        height: Math.max(4, Theme.heavyLineWidth + 2)
+                        color: "#c06a2a"
+                        opacity: 0.26
+                    }
 
-            const tw = root.tubeWidth;
-            const th = root.tubeHeight;
-            const gap = root.tubeGap;
-            const cw = root.colonWidth;
-            let posX = root.areaX;
+                    // glass reflection
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.leftMargin: parent.width * 0.15
+                        anchors.top: parent.top
+                        anchors.topMargin: parent.height * 0.1
+                        width: Math.max(1.5, Theme.lineWidth)
+                        height: parent.height * 0.7
+                        color: "#ffffff"
+                        opacity: 0.05
+                    }
 
-            for (let i = 0; i < root.valueText.length; i++) {
-                const ch = root.valueText.charAt(i);
-                const pulse = 0.5 + 0.5 * Math.sin((root.phase + i * 31) * Math.PI / 180);
-
-                if (ch === ".") {
-                    posX += gap;
-                    drawColon(ctx, posX, root.areaY, cw, th);
-                    posX += cw + gap;
-                } else {
-                    posX += gap;
-                    drawTubeDigit(ctx, posX, root.areaY, tw, th, ch, pulse);
-                    posX += tw;
+                    // bottom pin
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: -parent.height * 0.02
+                        width: parent.width * 0.16
+                        height: parent.height * 0.04
+                        color: "#5a2c14"
+                        radius: 2
+                        opacity: 0.6
+                    }
                 }
             }
         }
     }
 
-    onPhaseChanged: { bgCanvas.requestPaint(); tubesCanvas.requestPaint(); }
-    onWidthChanged: { bgCanvas.requestPaint(); tubesCanvas.requestPaint(); }
-    onHeightChanged: { bgCanvas.requestPaint(); tubesCanvas.requestPaint(); }
+    onPhaseChanged: backdropCanvas.requestPaint()
+    onWidthChanged: backdropCanvas.requestPaint()
+    onHeightChanged: backdropCanvas.requestPaint()
 }

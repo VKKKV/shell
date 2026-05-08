@@ -59,7 +59,25 @@ Inspect the current shell codebase after the HUD/background work, fix the new ru
 * Real Agent backend integration unless explicitly selected and contracted.
 * Copying external assets without licensing/fit review.
 * Adding a true `WlrLayer.Background` wallpaper window in this slice.
-* Directly copying DivergenceMeter digital assets; GPLv3 code is used as visual reference only.
+
+## Slice 3
+
+- Copy DivergenceMeter digit PNG assets (`0.png`–`9.png`, `p.png`) into `assets/nixie/` under GPLv3 terms.
+- Replace Canvas-drawn nixie digits with `Image` elements referencing the external PNG assets for authentic nixie tube appearance.
+- Retain tube body frames, glass overlays, anode/electrode detail, and passive pulse animation around the images.
+
+## Slice 3 Acceptance Criteria
+
+- [x] Digit images display from `assets/nixie/` rather than Canvas-drawn text.
+- [x] Tube frames, metal box, glass reflection, and electrodes remain present.
+- [x] `zig build`, `qmllint ...`, `timeout 8s quickshell -p .` pass.
+
+## Slice 3 Verification
+
+- `git diff --check`: passed
+- `zig build`: passed
+- `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`: passed
+- `timeout 8s quickshell -p .`: passed; logs included `Configuration Loaded`
 
 ## Slice 2 (Current)
 
