@@ -34,10 +34,27 @@ Avoid mixing these in the same task:
 
 ### Next Slices
 
-1. Agent provider runtime validation
+1. Agent adapter polish and race fixes
+   - Add a probe-complete gate so persisted Hermes/OpenClaw selection is applied after command availability is known, avoiding temporary unavailable flicker.
+   - Update Agent panel copy now that provider id persistence and conditional command execution exist.
+   - Remove duplicate static `HERMES`/`OPENCLAW` planned rows or replace them with live availability state.
+   - Keep provider preset helper extraction and debounced/periodic re-probing deferred until more providers or runtime install workflows exist.
+   - Verification: `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.
+
+2. Agent provider runtime validation
    - Exercise real Hermes/OpenClaw commands when installed and document exact argv behavior.
    - Keep missing-command fallback as the expected behavior on systems without those tools.
    - Verification: provider missing fallback, available command response, `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.
+
+## Review Findings
+
+### Agent adapter mapping review 2026-05-08
+
+- P1: `AgentService` applies the persisted provider before probe results are known; fix with probe completion gating or by applying only after probe completion.
+- P2: Agent panel footer and submit tooltip still describe provider execution as disabled/staged; update copy to reflect persisted provider selection and conditional command execution.
+- P3: Agent panel provider metric rows still include static `HERMES`/`OPENCLAW` planned rows even though live preset rows now exist; remove duplication or show live availability.
+- Deferred: provider preset factory extraction is unnecessary while only three presets exist.
+- Deferred: refresh/debounced re-probing can wait until runtime provider installation is an explicit workflow.
 
 ## Backlog Guardrails
 
