@@ -59,6 +59,28 @@ Inspect the current shell codebase after the HUD/background work, fix the new ru
 * Real Agent backend integration unless explicitly selected and contracted.
 * Copying external assets without licensing/fit review.
 * Adding a true `WlrLayer.Background` wallpaper window in this slice.
+* Directly copying DivergenceMeter digital assets; GPLv3 code is used as visual reference only.
+
+## Slice 2 (Current)
+
+- Move nixie wallpaper to a dedicated `PanelWindow` with `WlrLayershell.layer: WlrLayer.Background` so it sits below application windows instead of above them.
+- Redesign `NixieWallpaper.qml` with Canvas-drawn nixie tube digits: glass-like tube bodies with stacked cathode ghost digits, amber/orange active digit glow, anode grid, electrode, and glass reflection streak.
+- Significantly expand `RotatingGlobe.qml` coastline data from ~10 rough polylines to ~90 detailed polylines covering all continents and major islands.
+- Add land-mass fill behind coastlines for a more solid, less plastic Earth appearance.
+
+## Slice 2 Acceptance Criteria
+
+- [x] Nixie wallpaper renders in a background-layer window below all application windows.
+- [x] Nixie tube digits have glass body, ghost digits, active glow, anode grid, and electrode details.
+- [x] Earth globe coastline data covers all major continental outlines with recognizable island chains.
+- [x] `zig build`, `qmllint ...`, `timeout 8s quickshell -p .` pass without warnings.
+
+## Slice 2 Verification
+
+- `git diff --check`: passed
+- `zig build`: passed
+- `qmllint shell.qml components/*.qml modules/hud/*.qml services/*.qml theme/Theme.qml`: passed
+- `timeout 8s quickshell -p .`: passed; logs included `Configuration Loaded` with no warnings
 
 ## Technical Notes
 

@@ -1,27 +1,29 @@
 import "../services"
 import "../theme"
 import QtQuick
-import QtQuick.Layouts
 
 Item {
     id: root
 
     property real phase: 0
     readonly property string valueText: Qt.formatDateTime(Time.now, "hh.mm.ss")
-    readonly property real parallaxX: Math.sin(phase * Math.PI / 180) * 0.18
-    readonly property real parallaxY: Math.cos(phase * Math.PI / 240) * 0.12
+    readonly property real tubeWidth: Math.max(70, Math.min(root.width * 0.076, root.height * 0.14))
+    readonly property real tubeHeight: tubeWidth * 2.2
+    readonly property real tubeGap: Math.max(14, tubeWidth * 0.16)
+    readonly property real colonWidth: Math.max(20, tubeWidth * 0.22)
+    readonly property real totalWidth: 6 * tubeWidth + 2 * colonWidth + 7 * tubeGap
+    readonly property real areaX: (root.width - totalWidth) * 0.5
+    readonly property real areaY: (root.height - tubeHeight) * 0.5
 
     NumberAnimation on phase {
-        from: 0
-        to: 360
+        from: 0; to: 360
         duration: 9000
         loops: Animation.Infinite
         running: root.visible
     }
 
     Canvas {
-        id: backdropCanvas
-
+        id: bgCanvas
         anchors.fill: parent
         antialiasing: true
         onPaint: {
@@ -30,186 +32,177 @@ Item {
             ctx.clearRect(0, 0, width, height);
             const cx = width * 0.5;
             const cy = height * 0.5;
-            const glow = ctx.createRadialGradient(cx + root.parallaxX * 120, cy + root.parallaxY * 80, 0, cx, cy, Math.max(width, height) * 0.58);
-            glow.addColorStop(0, "#3d230d");
-            glow.addColorStop(0.42, "#140b04");
+            const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(width, height) * 0.48);
+            glow.addColorStop(0, "#1a0c04");
+            glow.addColorStop(0.38, "#0a0401");
             glow.addColorStop(1, "#000000");
-            ctx.globalAlpha = (0.5 + 0.08 * Math.sin(root.phase * Math.PI / 180)) * SettingsService.intensity;
+            ctx.globalAlpha = 0.7;
             ctx.fillStyle = glow;
             ctx.fillRect(0, 0, width, height);
+        }
+    }
 
-            ctx.globalAlpha = 0.08 * SettingsService.intensity;
-            ctx.strokeStyle = Theme.lineDim.toString();
-            ctx.lineWidth = Theme.lineWidth;
-            for (let x = 0; x < width; x += 96) {
+    Canvas {
+        id: tubesCanvas
+        anchors.fill: parent
+        antialiasing: true
+
+        function drawTubeDigit(ctx, x, y, w, h, digit, pulse) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            // tube body
+            const rx = w * 0.32;
+            ctx.fillStyle = "#0a0301";
+            ctx.globalAlpha = 0.92;
+            ctx.beginPath();
+            ctx.moveTo(rx, 0);
+            ctx.lineTo(w - rx, 0);
+            ctx.arcTo(w, 0, w, rx, rx);
+            ctx.lineTo(w, h - rx);
+            ctx.arcTo(w, h, w - rx, h, rx);
+            ctx.lineTo(rx, h);
+            ctx.arcTo(0, h, 0, h - rx, rx);
+            ctx.lineTo(0, rx);
+            ctx.arcTo(0, 0, rx, 0, rx);
+            ctx.fill();
+
+            // glass border
+            ctx.globalAlpha = 0.55 + pulse * 0.12;
+            ctx.strokeStyle = "#4a2a16";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // inner glass ring
+            ctx.globalAlpha = 0.22 + pulse * 0.06;
+            ctx.strokeStyle = "#6a3c1a";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(rx + 4, 4);
+            ctx.lineTo(w - rx - 4, 4);
+            ctx.arcTo(w - 4, 4, w - 4, rx + 4, rx - 4);
+            ctx.lineTo(w - 4, h - rx - 4);
+            ctx.arcTo(w - 4, h - 4, w - rx - 4, h - 4, rx - 4);
+            ctx.lineTo(rx + 4, h - 4);
+            ctx.arcTo(4, h - 4, 4, h - rx - 4, rx - 4);
+            ctx.lineTo(4, rx + 4);
+            ctx.arcTo(4, 4, rx + 4, 4, rx - 4);
+            ctx.stroke();
+
+            // anode grid top
+            ctx.globalAlpha = 0.18;
+            ctx.strokeStyle = "#995a2c";
+            ctx.lineWidth = 0.8;
+            for (let gx = w * 0.18; gx < w * 0.85; gx += w * 0.08) {
                 ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x + Math.sin((root.phase + x) * Math.PI / 180) * 12, height);
+                ctx.moveTo(gx, h * 0.08);
+                ctx.lineTo(gx, h * 0.16);
                 ctx.stroke();
             }
 
-            ctx.globalAlpha = 0.18 * SettingsService.intensity;
-            ctx.strokeStyle = "#5a3218";
-            ctx.lineWidth = Theme.heavyLineWidth;
+            // faint ghost digits - all 10 stacked
+            const fontSize = h * 0.5;
+            ctx.globalAlpha = 0.07;
+            ctx.fillStyle = "#c06a2a";
+            ctx.font = fontSize + "px " + Theme.fontFamily;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            const dig = Number(digit);
+            for (let i = 0; i < 10; i++) {
+                if (i === dig) continue;
+                ctx.fillText(String(i), w * 0.5, h * 0.5);
+            }
+
+            // lit digit - primary glow layer
+            ctx.globalAlpha = 0.42 + pulse * 0.18;
+            ctx.fillStyle = "#ff7a20";
+            ctx.font = "bold " + fontSize + "px " + Theme.fontFamily;
+            ctx.fillText(digit, w * 0.5, h * 0.5);
+
+            // lit digit - core bright layer
+            ctx.globalAlpha = 0.88 + pulse * 0.1;
+            ctx.fillStyle = "#ffaa3c";
+            ctx.font = fontSize + "px " + Theme.fontFamily;
+            ctx.fillText(digit, w * 0.5, h * 0.5);
+
+            // bottom electrode
+            ctx.globalAlpha = 0.24;
+            ctx.fillStyle = "#c06a2a";
             ctx.beginPath();
-            ctx.moveTo(width * 0.18, height * 0.68);
-            ctx.lineTo(width * 0.82, height * 0.68);
+            ctx.arc(w * 0.5, h * 0.9, w * 0.07, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 0.14;
+            ctx.strokeStyle = "#d08040";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.5, h * 0.9);
+            ctx.lineTo(w * 0.5, h * 0.96);
             ctx.stroke();
+
+            // glass reflection streak
+            ctx.globalAlpha = 0.06;
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.22, h * 0.12);
+            ctx.lineTo(w * 0.22, h * 0.78);
+            ctx.stroke();
+
+            ctx.restore();
         }
-    }
 
-    RowLayout {
-        anchors.centerIn: parent
-        anchors.horizontalCenterOffset: root.parallaxX * 28
-        anchors.verticalCenterOffset: root.parallaxY * 14
-        spacing: Math.max(10, Math.min(width, height) * 0.018)
-        opacity: 0.92
+        function drawColon(ctx, x, y, w, h) {
+            const dotR = Math.max(3, w * 0.18);
+            ctx.save();
+            ctx.fillStyle = "#ff8b2e";
+            ctx.globalAlpha = 0.6;
+            ctx.beginPath();
+            ctx.arc(x + w * 0.5, y + h * 0.35, dotR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 0.8;
+            ctx.beginPath();
+            ctx.arc(x + w * 0.5, y + h * 0.35, dotR * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 0.6;
+            ctx.beginPath();
+            ctx.arc(x + w * 0.5, y + h * 0.62, dotR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 0.8;
+            ctx.beginPath();
+            ctx.arc(x + w * 0.5, y + h * 0.62, dotR * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
 
-        Repeater {
-            model: root.valueText.length
+        onPaint: {
+            const ctx = getContext("2d");
+            ctx.reset();
+            ctx.clearRect(0, 0, width, height);
 
-            Item {
-                required property int index
+            const tw = root.tubeWidth;
+            const th = root.tubeHeight;
+            const gap = root.tubeGap;
+            const cw = root.colonWidth;
+            let posX = root.areaX;
 
-                readonly property string digit: root.valueText.charAt(index)
-                readonly property bool separator: digit === "."
-                readonly property real tubePulse: 0.5 + 0.5 * Math.sin((root.phase + index * 29) * Math.PI / 180)
+            for (let i = 0; i < root.valueText.length; i++) {
+                const ch = root.valueText.charAt(i);
+                const pulse = 0.5 + 0.5 * Math.sin((root.phase + i * 31) * Math.PI / 180);
 
-                Layout.preferredWidth: separator ? Math.max(20, root.width * 0.017) : Math.max(82, root.width * 0.076)
-                Layout.preferredHeight: Math.max(150, root.height * 0.27)
-
-                Rectangle {
-                    visible: !parent.separator
-                    anchors.centerIn: parent
-                    width: parent.width * 1.16
-                    height: parent.height * 1.06
-                    radius: width * 0.28
-                    color: "#110704"
-                    border.color: "#2a1609"
-                    border.width: Math.max(2, Theme.heavyLineWidth)
-                    opacity: 0.9
-                }
-
-                Rectangle {
-                    visible: !parent.separator
-                    anchors.centerIn: parent
-                    width: parent.width * 0.92
-                    height: parent.height
-                    radius: width * 0.42
-                    color: "#2a1208"
-                    border.color: "#9a4f1c"
-                    border.width: Math.max(2, Theme.heavyLineWidth)
-                    opacity: 0.78
-                }
-
-                Rectangle {
-                    visible: !parent.separator
-                    anchors.centerIn: parent
-                    width: parent.width * 0.66
-                    height: parent.height * 0.88
-                    radius: width * 0.5
-                    color: "#190b05"
-                    border.color: "#ff9b3c"
-                    border.width: Theme.lineWidth
-                    opacity: 0.24 + parent.tubePulse * 0.08
-                }
-
-                Repeater {
-                    model: parent.separator ? 0 : 10
-
-                    Text {
-                        required property int index
-
-                        anchors.centerIn: parent
-                        text: String(index)
-                        color: "#6a2f12"
-                        opacity: index === Number(parent.digit) ? 0 : 0.12
-                        font.family: Theme.fontFamily
-                        font.pixelSize: parent.height * 0.53
-                        font.bold: true
-                    }
-                }
-
-                Text {
-                    anchors.centerIn: parent
-                    text: parent.separator ? ":" : parent.digit
-                    color: parent.separator ? "#9a5722" : "#ff8b2e"
-                    opacity: parent.separator ? 0.72 : 0.96
-                    font.family: Theme.fontFamily
-                    font.pixelSize: parent.separator ? parent.height * 0.34 : parent.height * 0.58
-                    font.bold: true
-                }
-
-                Text {
-                    visible: !parent.separator
-                    anchors.centerIn: parent
-                    text: parent.digit
-                    color: "#ffd08a"
-                    opacity: 0.3 + parent.tubePulse * 0.16
-                    font.family: Theme.fontFamily
-                    font.pixelSize: parent.height * 0.6
-                    font.bold: true
-                }
-
-                Rectangle {
-                    visible: !parent.separator
-                    anchors.centerIn: parent
-                    width: parent.width * 0.95
-                    height: parent.height * 0.98
-                    radius: width * 0.42
-                    color: "transparent"
-                    border.color: "#ffd08a"
-                    border.width: Theme.lineWidth
-                    opacity: 0.12
-                }
-
-                Rectangle {
-                    visible: !parent.separator
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: parent.height * 0.08
-                    width: parent.width * 0.52
-                    height: Theme.lineWidth
-                    color: "#ffd08a"
-                    opacity: 0.34
-                }
-
-                Rectangle {
-                    visible: !parent.separator
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: parent.height * 0.1
-                    width: parent.width * 0.5
-                    height: Theme.lineWidth
-                    color: "#7a3c16"
-                    opacity: 0.42
-                }
-
-                Rectangle {
-                    visible: !parent.separator
-                    anchors.left: parent.left
-                    anchors.leftMargin: parent.width * 0.18
-                    anchors.top: parent.top
-                    anchors.topMargin: parent.height * 0.08
-                    width: Math.max(2, Theme.lineWidth)
-                    height: parent.height * 0.8
-                    color: "#fff0bd"
-                    opacity: 0.08
+                if (ch === ".") {
+                    posX += gap;
+                    drawColon(ctx, posX, root.areaY, cw, th);
+                    posX += cw + gap;
+                } else {
+                    posX += gap;
+                    drawTubeDigit(ctx, posX, root.areaY, tw, th, ch, pulse);
+                    posX += tw;
                 }
             }
         }
     }
 
-    TacticalLabel {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.verticalCenter
-        anchors.topMargin: Math.max(110, parent.height * 0.18)
-        text: "NIXIE WALLPAPER // LOCAL TIME // DIVERGENCE METER INSPIRED"
-        accent: true
-        opacity: 0.42
-    }
-
-    onPhaseChanged: backdropCanvas.requestPaint()
-    onWidthChanged: backdropCanvas.requestPaint()
-    onHeightChanged: backdropCanvas.requestPaint()
+    onPhaseChanged: { bgCanvas.requestPaint(); tubesCanvas.requestPaint(); }
+    onWidthChanged: { bgCanvas.requestPaint(); tubesCanvas.requestPaint(); }
+    onHeightChanged: { bgCanvas.requestPaint(); tubesCanvas.requestPaint(); }
 }

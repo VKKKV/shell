@@ -130,16 +130,6 @@ Item {
         }
     }
 
-    Loader {
-        active: SettingsService.backgroundMode === "nixie"
-        anchors.fill: parent
-        sourceComponent: Component {
-            NixieWallpaper {
-                anchors.fill: parent
-            }
-        }
-    }
-
     TopStatusBar {
         id: topBar
 
