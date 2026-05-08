@@ -26,29 +26,24 @@ Avoid mixing these in the same task:
 
 - Provider contract plan: defined the local command MVP, failure matrix, and service/module boundaries.
 - Agent service scaffold: added importable `AgentService` state and wired the Agent panel to shaped service state without command execution.
+- Agent prompt surface: added a staged prompt input that routes submit intent to `AgentService.submit()` while command execution remains blocked.
 
 ### Next Slices
 
-1. Agent prompt surface
-   - Add a small prompt/input surface to `AgentExpansionPanel.qml`.
-   - Route submit intent to `AgentService.submit()`.
-   - Keep `AgentService.submit()` blocked until command execution is implemented.
-   - Verification: `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.
-
-2. Agent local command execution MVP
+1. Agent local command execution MVP
    - Add a disabled-by-default provider command field inside `AgentService.qml` only.
    - Execute only argv-array commands; no shell interpolation.
    - Implement states: `idle`, `running`, `ok`, `failed`, `timeout`, `unavailable`.
    - Keep provider config non-persistent.
    - Verification: missing-command fallback, busy request rejection, `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.
 
-3. Agent provider configuration contract
+2. Agent provider configuration contract
    - Decide whether provider selection becomes session-local UI state or persistent settings.
    - If persistent, update `SettingsService.qml`, `src/settings/main.zig`, and `docs/settings.md` together.
    - Add Zig validation tests before accepting stored provider fields.
    - Verification: `zig build test`, `zig build`, `qmllint`, `git diff --check`, `timeout 8s quickshell -p .`.
 
-4. Hermes/OpenClaw adapter mapping
+3. Hermes/OpenClaw adapter mapping
    - Map each adapter onto the generic local command contract.
    - Do not add provider-specific UI until the generic contract works.
    - Keep custom providers out of scope until an allowlist is defined.

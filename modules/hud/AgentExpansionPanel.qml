@@ -7,6 +7,17 @@ import QtQuick.Layouts
 CentralPanelChrome {
     id: root
 
+    property string promptText: ""
+
+    function submitPrompt(): void {
+        const clean = promptText.trim();
+        if (clean.length === 0)
+            return;
+
+        AgentService.submit(clean);
+        promptText = "";
+    }
+
     title: "AGENT CORE // NEURAL MESH"
     headerText: "DEPLOYED FROM LEFT AGENT NODE // STAGED VISUAL CONTRACT // PROVIDER API DEFERRED"
 
@@ -57,6 +68,83 @@ CentralPanelChrome {
                 Layout.fillWidth: true
                 title: "CONTRACT GUARD"
                 lines: [AgentService.statusLine.toUpperCase(), AgentService.responseText, "NO SETTINGS SCHEMA CHANGE", "NO IPC UNTIL CONTRACT EXISTS"]
+            }
+
+            TacticalFrame {
+                Layout.fillWidth: true
+                implicitHeight: 84
+                title: "PROMPT // STAGED"
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: Theme.panelPadding
+                    anchors.rightMargin: Theme.panelPadding
+                    anchors.topMargin: 28
+                    anchors.bottomMargin: 8
+                    spacing: Theme.densitySmallSpacing
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: Theme.panelSoft
+                        border.color: promptInput.activeFocus ? Theme.line : Theme.lineDim
+                        border.width: Theme.lineWidth
+
+                        TextInput {
+                            id: promptInput
+
+                            anchors.fill: parent
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+                            verticalAlignment: TextInput.AlignVCenter
+                            color: Theme.text
+                            selectionColor: Theme.lineDim
+                            selectedTextColor: Theme.background
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.fontSmall
+                            text: root.promptText
+                            clip: true
+                            onTextChanged: root.promptText = text
+                            onAccepted: root.submitPrompt()
+                        }
+
+                        TacticalLabel {
+                            visible: promptInput.text.length === 0 && !promptInput.activeFocus
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "ENTER LOCAL AGENT PROMPT"
+                            dim: true
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.preferredWidth: 86
+                        Layout.fillHeight: true
+                        color: submitArea.containsMouse ? Theme.panelSoft : "transparent"
+                        border.color: root.promptText.trim().length > 0 ? Theme.line : Theme.lineDim
+                        border.width: Theme.lineWidth
+                        opacity: root.promptText.trim().length > 0 ? 1 : 0.45
+
+                        MouseArea {
+                            id: submitArea
+
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: root.promptText.trim().length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            onClicked: root.submitPrompt()
+                            onEntered: TooltipService.show("AGENT SUBMIT", "Stage prompt through AgentService. Provider execution remains disabled.", "agent-submit")
+                            onExited: TooltipService.clear("agent-submit")
+                        }
+
+                        TacticalLabel {
+                            anchors.centerIn: parent
+                            text: "SUBMIT"
+                            accent: root.promptText.trim().length > 0
+                            dim: root.promptText.trim().length === 0
+                        }
+                    }
+                }
             }
 
             Item { Layout.fillHeight: true }
