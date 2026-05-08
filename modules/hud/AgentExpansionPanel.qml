@@ -19,7 +19,7 @@ CentralPanelChrome {
     }
 
     title: "AGENT CORE // NEURAL MESH"
-    headerText: "DEPLOYED FROM LEFT AGENT NODE // STAGED VISUAL CONTRACT // PROVIDER API DEFERRED"
+    headerText: "DEPLOYED FROM LEFT AGENT NODE // LOCAL HERMES WHEN AVAILABLE // OPENCLAW UNVALIDATED"
 
     RowLayout {
         anchors.fill: parent
@@ -54,7 +54,7 @@ CentralPanelChrome {
             }
 
             MetricBlock {
-                title: "PROVIDER STAGE"
+                title: "PROVIDER ROUTE"
                 rows: [["ACTIVE", AgentService.providerName, -1, AgentService.available], ["STATE", AgentService.state.toUpperCase(), -1, AgentService.running], ["HERMES", AgentService.hermesAvailable ? "AVAILABLE" : "NOT FOUND", -1, AgentService.hermesAvailable], ["OPENCLAW", AgentService.openClawAvailable ? "AVAILABLE" : "NOT FOUND", -1, AgentService.openClawAvailable], ["CUSTOM", "DEFERRED", -1, false]]
             }
 
@@ -103,19 +103,19 @@ CentralPanelChrome {
             TextBlock {
                 Layout.fillWidth: true
                 title: "INTERACTION MODEL"
-                lines: ["HOVER: LOCAL NODE PERTURB", "DRAG: ROTATE MESH", "CLICK ENTRY: OPEN PANEL", "CONFIG: FUTURE CONTRACT ONLY", "PERSISTENCE: NOT ENABLED"]
+                lines: ["HOVER: LOCAL NODE PERTURB", "DRAG: ROTATE MESH", "CLICK ENTRY: OPEN PANEL", "PROVIDER ID: PERSISTED", "HERMES: LOCAL ONESHOT WHEN FOUND"]
             }
 
             TextBlock {
                 Layout.fillWidth: true
                 title: "CONTRACT GUARD"
-                lines: [AgentService.statusLine.toUpperCase(), AgentService.responseText, "NO SETTINGS SCHEMA CHANGE", "NO IPC UNTIL CONTRACT EXISTS"]
+                lines: [AgentService.statusLine.toUpperCase(), AgentService.responseText, "OPENCLAW CONTRACT UNVALIDATED", "CUSTOM PROVIDERS DEFERRED"]
             }
 
             TacticalFrame {
                 Layout.fillWidth: true
                 implicitHeight: 84
-                title: "PROMPT // STAGED"
+                title: "PROMPT // LOCAL PROVIDER"
 
                 RowLayout {
                     anchors.fill: parent
@@ -193,7 +193,7 @@ CentralPanelChrome {
 
             TacticalLabel {
                 Layout.fillWidth: true
-                text: "Provider selection persists across sessions. Commands execute only when the selected provider binary is available on PATH."
+                text: "Provider selection persists across sessions. Hermes can execute locally when available; OpenClaw remains a safe unvalidated adapter until a local environment exists."
                 dim: true
                 wrapMode: Text.WordWrap
                 size: Theme.fontTiny

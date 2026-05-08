@@ -61,8 +61,17 @@ Continue shell development with a small, verifiable feature slice focused on doc
 * OpenClaw CLI support remains deferred because the local `openclaw` command/environment is unavailable.
 * Implemented `docs/settings.md` update for persisted `data.networkGeolocationEnabled`.
 * Implemented `modules/hud/BottomStatusBar.qml` responsive widths for node, mission dock, and channel readouts to reduce rigid fixed-width pressure.
+* Follow-up slice: cleaned stale Agent panel copy now that Hermes can execute locally when available.
+* OpenClaw remains explicitly unvalidated/deferred until a local validation environment exists.
 
 ## Verification
+
+* `git diff --check`: passed.
+* `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.
+* `timeout 5s quickshell -p .`: passed; logs included `Configuration Loaded`.
+* Independent `trellis-check` review: passed with no findings.
+
+### Agent Copy Cleanup Slice
 
 * `git diff --check`: passed.
 * `qmllint shell.qml modules/**/*.qml components/*.qml services/*.qml theme/*.qml`: passed.

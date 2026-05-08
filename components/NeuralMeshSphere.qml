@@ -170,7 +170,7 @@ Item {
             }
             meshCanvas.requestPaint();
         }
-        onEntered: TooltipService.show("AGENT CORE", "Open the visual agent neural mesh panel. Provider selection is staged as a placeholder until the backend contract is defined.", "agent-core")
+        onEntered: TooltipService.show("AGENT CORE", "Open the agent mesh panel. Hermes can dispatch locally when available; OpenClaw and custom providers remain staged until validated.", "agent-core")
         onExited: {
             TooltipService.clear("agent-core");
             meshCanvas.requestPaint();

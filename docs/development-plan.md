@@ -36,9 +36,9 @@ Avoid mixing these in the same task:
 
 ### Next Slices
 
-1. OpenClaw CLI contract discovery
+1. OpenClaw CLI contract discovery (deferred until a local validation environment exists)
    - Find the real OpenClaw CLI entry point and map it to the generic contract.
-   - Keep missing-command fallback until the contract is confirmed.
+   - Keep missing-command and unvalidated-adapter fallback language until the contract is confirmed.
 
 ## Review Findings
 
