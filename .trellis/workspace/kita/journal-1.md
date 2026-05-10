@@ -1344,3 +1344,37 @@ Advanced Earth globe realism with coastline preprocessing, procedural rendering,
 ### Next Steps
 
 - None - task complete
+
+
+## Session 9: Earth globe and nixie session
+
+**Date**: 2026-05-10
+**Task**: Earth globe and nixie session
+**Branch**: `master`
+
+### Summary
+
+Evaluated Natural Earth 10m coastline candidate, kept 50m runtime data, tightened expanded Earth rendering budgets, and finished the Nixie image-based backdrop work.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2fef94c` | (see git log) |
+| `14aa10b` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

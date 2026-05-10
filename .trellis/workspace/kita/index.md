@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 8
-- **Last Active**: 2026-05-09
+- **Total Sessions**: 9
+- **Last Active**: 2026-05-10
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1346 | Active |
+| `journal-1.md` | ~1380 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 9 | 2026-05-10 | Earth globe and nixie session | `2fef94c`, `14aa10b` | `master` |
 | 8 | 2026-05-09 | Earth realism development | `8f79933`, `239211e`, `acee878`, `4ca6845`, `6a0223e`, `e60db11` | `master` |
 | 7 | 2026-05-09 | Continue shell development plan | `e3073ce`, `76db993` | `master` |
 | 6 | 2026-05-09 | Shell continuation: HUD readability, agent copy, Earth drag, Nixie fix, panel copy polish | `c982a9e`, `abd9ca9`, `af1edbd`, `91a13c5`, `bd53e4e`, `ff694aa` | `master` |
