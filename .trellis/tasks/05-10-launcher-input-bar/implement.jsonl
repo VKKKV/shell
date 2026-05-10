@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"Module/service/component boundaries for adding a HUD launcher bar and registering a new module."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Verification commands, fallback behavior, shortcut/input-region risks, qmldir updates, and tactical visual language."}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Launcher bar spans service query/selection state, HUD composition, keyboard input, and launch activation."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Reuse existing LauncherService and command center search patterns instead of duplicating launcher behavior."}

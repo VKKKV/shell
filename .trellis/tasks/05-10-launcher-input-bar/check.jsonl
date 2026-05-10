@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"Check launcher logic remains in services and the new bar is a module-level HUD surface with proper registration."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Check keyboard/focus behavior, fallbacks, lint/smoke verification, and no unrelated shell command changes."}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Check service-to-HUD data flow, focus/dismiss boundaries, and launch activation behavior."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Check LauncherService and existing TextInput/result patterns are reused rather than duplicated."}

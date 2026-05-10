@@ -11,6 +11,9 @@ Singleton {
     property string query: ""
     property string statusLine: "launcher: initializing"
     property string pendingCopyText: ""
+    property bool barOpen: false
+    property int selectedIndex: 0
+    readonly property int barResultLimit: 4
     property var apps: []
     readonly property var actions: [{
         id: "settings",
@@ -30,6 +33,9 @@ Singleton {
         command: "lock"
     }]
     readonly property var filtered: filterEntries()
+
+    onQueryChanged: clampSelection()
+    onAppsChanged: clampSelection()
 
     function filterEntries(): var {
         const needle = query.trim().toLowerCase();
@@ -145,6 +151,57 @@ Singleton {
         } else if (entry.command === "lock") {
             SessionService.confirm("lock");
         }
+    }
+
+    function openBar(): void {
+        barOpen = true;
+        clampSelection();
+        statusLine = "launcher: bar open";
+    }
+
+    function closeBar(): void {
+        barOpen = false;
+        selectedIndex = 0;
+        statusLine = "launcher: bar closed";
+    }
+
+    function toggleBar(): void {
+        if (barOpen)
+            closeBar();
+        else
+            openBar();
+    }
+
+    function clampSelection(): void {
+        const count = Math.min(filtered.length, barResultLimit);
+        if (count <= 0) {
+            selectedIndex = 0;
+            return;
+        }
+
+        selectedIndex = Math.max(0, Math.min(selectedIndex, count - 1));
+    }
+
+    function moveSelection(delta: int): void {
+        const count = Math.min(filtered.length, barResultLimit);
+        if (count <= 0) {
+            selectedIndex = 0;
+            return;
+        }
+
+        selectedIndex = Math.max(0, Math.min(selectedIndex + delta, count - 1));
+    }
+
+    function launchSelected(): void {
+        const count = filtered.length;
+        if (count <= 0) {
+            statusLine = apps.length === 0 ? "launcher: no apps indexed" : "launcher: no matching result";
+            return;
+        }
+
+        clampSelection();
+        launch(filtered[selectedIndex]);
+        closeBar();
     }
 
     function refresh(): void {

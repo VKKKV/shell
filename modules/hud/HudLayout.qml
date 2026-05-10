@@ -441,10 +441,17 @@ Item {
     }
 
     Shortcut {
+        sequence: "Ctrl+Space"
+        onActivated: LauncherService.openBar()
+    }
+
+    Shortcut {
         sequence: "Escape"
-        enabled: SettingsService.panelOpen || ExpansionService.open
+        enabled: LauncherService.barOpen || SettingsService.panelOpen || ExpansionService.open
         onActivated: {
-            if (ExpansionService.open)
+            if (LauncherService.barOpen)
+                LauncherService.closeBar();
+            else if (ExpansionService.open)
                 ExpansionService.close();
             else
                 SettingsService.panelOpen = false;

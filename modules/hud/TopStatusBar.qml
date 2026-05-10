@@ -100,6 +100,7 @@ TacticalFrame {
 
             TacticalLabel {
                 Layout.fillWidth: true
+                visible: !LauncherService.barOpen
                 horizontalAlignment: Text.AlignRight
                 text: "// VOID.SYS.V2.0"
                 accent: true
@@ -108,14 +109,21 @@ TacticalFrame {
 
             TacticalLabel {
                 Layout.fillWidth: true
+                visible: !LauncherService.barOpen
                 horizontalAlignment: Text.AlignRight
                 elide: Text.ElideRight
                 text: CompositorService.compositorName.toUpperCase() + " // " + (CompositorService.available ? "ONLINE" : "FALLBACK")
                 dim: true
             }
 
+            LauncherInputBar {
+                Layout.fillWidth: true
+                Layout.preferredHeight: implicitHeight
+            }
+
             RowLayout {
                 Layout.fillWidth: true
+                visible: !LauncherService.barOpen
                 Layout.alignment: Qt.AlignRight
                 spacing: 6
 

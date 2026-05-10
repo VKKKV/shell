@@ -4,6 +4,7 @@ HudLayout 1.0 HudLayout.qml
 ExpansionPanelSlot 1.0 ExpansionPanelSlot.qml
 HudTooltipBox 1.0 HudTooltipBox.qml
 TopStatusBar 1.0 TopStatusBar.qml
+LauncherInputBar 1.0 LauncherInputBar.qml
 BottomStatusBar 1.0 BottomStatusBar.qml
 MissionDock 1.0 MissionDock.qml
 LeftTacticalPanel 1.0 LeftTacticalPanel.qml
