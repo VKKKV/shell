@@ -68,9 +68,10 @@ Fallback if `XDG_CONFIG_HOME` is unset:
 - `visual.density` is one of `compact`, `normal`, or `dense` and drives coarse QML layout density.
 - `visual.profile` is one of `gray`, `amber`, `green`, `blue`, or `red` and defaults to `gray`.
 - `visual.accentColor` is a hex RGB color (`#RRGGBB`) and defaults to `#8A8A8A`.
-- `visual.backgroundMode` is one of `void`, `grid`, `radar`, or `nixie`.
+- `visual.backgroundMode` is one of `void`, `grid`, `radar`, `nixie`, or `tianji`.
 - `visual.backgroundMode: "void"` is the default, so optional wallpaper effects start disabled.
-- `visual.backgroundMode: "nixie"` renders the local Canvas-based vacuum tube clock backdrop inside the shell background layer; it does not start external processes or fetch network data.
+- `visual.backgroundMode: "nixie"` renders the local image-based vacuum tube clock backdrop inside the shell background layer; it does not start external processes or fetch network data.
+- `visual.backgroundMode: "tianji"` is a safe persisted placeholder for deferred background work and currently does not activate a dedicated background layer.
 - `data.liveDataEnabled` is boolean.
 - `data.networkGeolocationEnabled` is boolean and defaults to `false`; when disabled, location-dependent surfaces use offline timezone inference instead of contacting an IP geolocation endpoint.
 - `data.updateIntervalMs` is clamped to `1000..30000`.

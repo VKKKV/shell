@@ -1,0 +1,2 @@
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Check docs-only verification, no code/assets added, and README claims match implemented project behavior."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Check README stays aligned with development-plan language and avoids drifting duplicate feature descriptions."}

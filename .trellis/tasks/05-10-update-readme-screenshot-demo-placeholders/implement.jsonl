@@ -1,2 +1,0 @@
-{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Docs-only verification and checkpoint expectations; README should reflect implemented features without claiming unavailable behavior."}
-{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Use existing docs/development-plan as feature source of truth and avoid duplicating inconsistent claims."}

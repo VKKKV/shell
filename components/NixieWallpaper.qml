@@ -25,42 +25,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "#010101"
-    }
-
-    Canvas {
-        id: ambientCanvas
-
-        anchors.fill: parent
-        antialiasing: true
-        onPaint: {
-            var ctx = getContext("2d");
-            ctx.reset();
-            ctx.clearRect(0, 0, width, height);
-            var cx = width * 0.5, cy = height * 0.5;
-            var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(width, height) * 0.62);
-            glow.addColorStop(0, "#1b0902");
-            glow.addColorStop(0.38, "#090301");
-            glow.addColorStop(1, "#000000");
-            ctx.globalAlpha = 0.72;
-            ctx.fillStyle = glow;
-            ctx.fillRect(0, 0, width, height);
-
-            var halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(width, height) * 0.28);
-            halo.addColorStop(0, "#ff6b1a");
-            halo.addColorStop(0.36, "#4a1604");
-            halo.addColorStop(1, "#000000");
-            ctx.globalAlpha = 0.1;
-            ctx.fillStyle = halo;
-            ctx.fillRect(0, 0, width, height);
-
-            ctx.globalAlpha = 0.035;
-            ctx.fillStyle = "#f06f1e";
-            for (var y = 0; y < height; y += 5) {
-                var offset = Math.sin((root.phase + y) * Math.PI / 180) * 0.5;
-                ctx.fillRect(0, y + offset, width, 1);
-            }
-        }
+        color: "#000000"
     }
 
     RowLayout {
@@ -105,7 +70,4 @@ Item {
         }
     }
 
-    onPhaseChanged: ambientCanvas.requestPaint()
-    onWidthChanged: ambientCanvas.requestPaint()
-    onHeightChanged: ambientCanvas.requestPaint()
 }
