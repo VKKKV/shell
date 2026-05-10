@@ -1,0 +1,3 @@
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"Check that the component remains visual-only and does not leak service/application state."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Check required QML verification and small vertical slice completion criteria."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Check constants/helpers are not duplicated unnecessarily and related docs/copy stay aligned."}
