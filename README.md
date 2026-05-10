@@ -1,33 +1,58 @@
 # Shell
 
-A tactical desktop environment based on Hyprland and QML.
+A Quickshell tactical desktop shell for Hyprland and Wayland.
 
 ## Overview
 
-This project aims to create a highly functional and visually striking tactical desktop environment. It features a high-contrast, techwear-inspired aesthetic with integrated system monitoring and a focus on power-user efficiency.
+This project is a high-contrast tactical HUD shell built with Quickshell/QML. It combines launcher, command-center, telemetry, tray, media, network, settings, and visual background controls into a keyboard-friendly desktop surface.
 
-## Visual Progress
+## Screenshot Demo
 
-To help with development and visual debugging, here is the comparison between the target design and the current implementation.
+Screenshots are intentionally left as future placeholders. Add the image files under `docs/screenshots/` when captures are ready.
 
 ### Target Design
 ![Target](target.png)
 
-### Current Progress
-![Current](now.png)
+### Main HUD
+![Main HUD placeholder](docs/screenshots/01-main-hud.png)
+
+Full shell view with the top bar, left/right telemetry panels, central safe area, bottom HUD frame, tray/media/network indicators, and tactical scanline styling.
+
+### Command Center
+![Command center placeholder](docs/screenshots/02-command-center.png)
+
+The `Ctrl+Alt+S` command center with system overview, settings/background controls, launcher/search, service status/logs, tray drawer, clipboard, calendar, notifications, keybinds, emoji, media, and power/session actions.
+
+### Earth Panel
+![Earth panel placeholder](docs/screenshots/03-earth-panel.png)
+
+Left-panel Natural Earth globe with offline coastline vectors, procedural ocean/terrain hints, atmospheric rim glow, and drag-to-rotate longitude control.
+
+### Top-Bar Launcher
+![Top-bar launcher placeholder](docs/screenshots/04-launcher-bar.png)
+
+Compact `Ctrl+Space` launcher surface for installed desktop apps, built-in actions, calculator results, and shell command dispatch while preserving the command-center launcher.
+
+### Settings And Backgrounds
+![Settings and backgrounds placeholder](docs/screenshots/05-settings-backgrounds.png)
+
+Runtime appearance controls for accent, theme, scanlines, panel visibility, font scale, polling, wallpaper scan/apply/color sampling, and optional default-off Nixie/vacuum-tube background mode.
+
+### Shell Self-Performance
+![Shell self-performance placeholder](docs/screenshots/06-shell-performance.png)
+
+Left-panel self-monitoring for the running Quickshell process, including CPU, RSS memory, child helper count, uptime, and recent service health.
 
 ## Features
 
-- **Techwear Aesthetic:** High-contrast tactical HUD styling with pure-black surfaces, sharp frames, scanlines, and a default gray tactical accent.
-- **Runtime Appearance Controls:** Command-center settings for accent color, theme profile, scanlines, background mode, font scale, panel visibility, intensity, and polling interval.
-- **Adaptive Edge Panels:** Left/right panels grow to fit content until they hit the top/bottom bars, then switch to internal scrolling.
-- **Integrated Monitoring:** Live CPU, memory, swap, network, filesystem, power, battery, weather, environment/night-light, and service fallback telemetry.
-- **Central Tactical Expansions:** Clickable orbital, CPU, network, filesystem, and log drill-downs deploy into the central safe area.
-- **Graphical Orbital Sensor:** The left analog orbital clock opens a translucent sci-fi solar orbit view with time-based approximate planet positions, trails, reticles, and warning-yellow labels.
-- **Command Center:** Unified central panel for system overview, settings, launcher/search, service status, service logs, tray drawer, clipboard history, calendar, notifications, keybinds, emoji, media, and power/session controls.
-- **Launcher Providers:** Search installed desktop apps, built-in actions, calculator expressions via `=<expr>`, and shell commands via `$ <command>`.
-- **Audio, Media, And Controls:** `wpctl` volume/microphone controls, local spectrum visualizer, MPRIS controls through `playerctl`, and local lyrics fallback.
-- **Networking And Tray:** Network/VPN/Bluetooth telemetry, Wi-Fi scan/connect/rescan actions, active connection controls, and Quickshell system tray menu bridging.
+- **Techwear HUD Aesthetic:** Pure-black surfaces, sharp tactical frames, scanlines, gray default accent, and high-density instrument styling.
+- **Top-Bar Launcher:** `Ctrl+Space` focuses a compact launcher for apps, actions, calculator expressions via `=<expr>`, and shell commands via `$ <command>`.
+- **Command Center:** `Ctrl+Alt+S` opens a unified panel for system overview, settings, launcher/search, service status/logs, tray drawer, clipboard history, calendar, notifications, keybinds, emoji, media, and power/session controls.
+- **Left/Right Telemetry:** Adaptive edge panels show live CPU, memory, swap, network, filesystem, power, battery, weather, environment/night-light, service fallback, and shell self-performance telemetry.
+- **Earth And Orbital Panels:** The left analog/orbital area opens graphical orbital and Natural Earth globe views with offline coastlines, procedural terrain hints, trails, reticles, and tactical labels.
+- **Shell Self-Performance:** Tracks the running Quickshell process with CPU, RSS memory, child helper count, uptime, and recent service health.
+- **Settings And Background Controls:** Runtime controls for accent color, theme profile, scanlines, tactical background mode, optional Nixie/vacuum-tube backdrop, font scale, panel visibility, intensity, live data polling, and wallpaper scan/apply/color sampling.
+- **Tray, Media, Network, And System Monitoring:** Quickshell tray menu bridging, `wpctl` audio/microphone controls, `playerctl` MPRIS media controls, local spectrum/lyrics fallbacks, `nmcli` network/Wi-Fi actions, VPN-like connection telemetry, and Bluetooth status.
 - **Persistence:** Settings are normalized and persisted by the Zig helper `void-shell-settings`.
 - **Hyprland & QML:** Built on Quickshell/QML for Hyprland with documented layer-shell/blur integration.
 - **Modular Design:** Reusable primitives in `components/`, product surfaces in `modules/hud/`, and external integrations in `services/`.
@@ -126,11 +151,13 @@ See [docs/hyprland.md](docs/hyprland.md) for details.
 
 ### Controls
 
-Open the command center from the visible top-bar `SETTINGS` control or with `Ctrl+Alt+S`.
+Open the command center from the visible top-bar `SETTINGS` control or with `Ctrl+Alt+S`. Focus the compact top-bar launcher with `Ctrl+Space`.
 
 Common interactions:
 
 - `Escape`: close the active central panel or command center
+- `Ctrl+Space`: focus/dismiss the top-bar launcher
+- `Ctrl+Alt+S`: open the command center
 - Top workspace cells: switch Hyprland workspace
 - Left analog orbital clock: open graphical orbital sensor
 - Right CPU/network/filesystem/log sections: open central drill-down panels
