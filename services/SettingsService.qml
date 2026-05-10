@@ -78,7 +78,7 @@ Singleton {
     }
 
     function normalizeBackgroundMode(value: string): string {
-        return ["void", "grid", "radar", "nixie"].indexOf(value) >= 0 ? value : "void";
+        return ["void", "grid", "radar", "nixie", "tianji"].indexOf(value) >= 0 ? value : "void";
     }
 
     function normalizeAgentProviderId(value: string): string {

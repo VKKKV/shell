@@ -45,29 +45,30 @@ Avoid mixing these in the same task:
 - Earth procedural visual refinement: cleaned up expanded-only bathymetry budgets, renamed coastline-sampled land detail as coastal relief, added expanded coastline stroke hierarchy, tuned relief thresholds, and polished the atmospheric rim/terminator while keeping compact rendering lower-budget.
 - Left-panel shell self-performance module: added a service-owned `/proc` sampler for the Quickshell process plus direct child helpers and surfaced compact CPU, RSS, child count, uptime, and recent service health rows in the left panel.
 - Launcher input bar: added a compact top-bar launcher surface with `Ctrl+Space` focus, Escape dismissal, service-owned selection/activation helpers, and filtered actions/apps/calculator result rendering while preserving command-center search.
+- Nixie image-based background glow: kept the backdrop default-off, switched the Nixie presentation to per-character local image assets, and added a safe selectable `tianji` background placeholder for future visual work.
 
 ### Next Slices
 
-1. OpenClaw CLI contract discovery (deferred until a local validation environment exists)
-   - Find the real OpenClaw CLI entry point and map it to the generic contract.
-   - Keep missing-command and unvalidated-adapter fallback language until the contract is confirmed.
-2. Earth globe high-precision coastline and procedural terrain upgrade
+1. Earth globe high-precision coastline and procedural terrain upgrade
     - Optional next data slice: evaluate Natural Earth 10m under the same candidate workflow if 50m coastline detail is still insufficient; validate the manifest with `tools/validate-coastline-candidate.js --check-output` and replace runtime data only after inspector stats and smoke checks show acceptable Canvas repaint behavior.
     - Keep all map data offline at runtime and commit only approved compact JS modules rather than raw downloads or temporary generated artifacts.
     - Further refine the procedural Canvas2D layers only as profiling or visible artifacts justify it: compare the 50m coastline hierarchy against visible artifacts, consider true interior terrain sampling only as a bounded offline/runtime pass, and keep the existing tactical grid, signal nodes, and location markers stable; keep expanded mode rich while compact/left-panel mode uses a bounded polyline/point budget.
     - Reference Natural Earth data, D3 geo projection math, and `world-map-gen` for projection/data-pipeline ideas without introducing runtime network dependencies.
     - Expected trade-off: medium difficulty, mainly data preprocessing and render-pipeline splitting; larger embedded data around 200KB compressed; procedural noise approximates terrain instead of using real land textures.
-3. Shell self-performance follow-up
+2. Shell self-performance follow-up
    - Consider frame/render cadence or QML profiler-derived signals only after the `/proc` MVP has runtime evidence that they are needed.
    - Keep any deeper helper attribution behind `ShellPerformanceService`; recursive process-tree aggregation and per-child drilldowns remain out of scope until requested.
    - Validate idle CPU behavior after longer shell sessions and tune polling only from measured repaint/process cost.
-4. Launcher follow-up polish
+3. Launcher follow-up polish
    - Consider result ranking/fuzzy matching, provider ordering, launcher history/favorites, and broader provider configuration only after the first top-bar launcher has runtime use evidence.
    - Keep follow-up work inside `LauncherService` contracts so the command center and compact bar continue to share query/result/activation behavior.
-5. Screenshot bottom surface
-   - Add a bottom-positioned screenshot capture surface as a separate vertical slice, with capture command probing/execution isolated in a service and the module limited to shaped status, actions, and preview/fallback presentation.
-   - First slice should support a minimal capture action and readable unavailable/denied/failed states for missing tools, portals, or permissions; defer annotation tools, history/gallery persistence, upload/share flows, and configurable save destinations.
-   - Verification should include QML lint, startup smoke, missing-command fallback smoke where feasible, and manual confirmation that the bottom surface stays within reserved HUD geometry and does not interfere with existing central expansion panels.
+4. Screenshot bottom surface
+    - Add a bottom-positioned screenshot capture surface as a separate vertical slice, with capture command probing/execution isolated in a service and the module limited to shaped status, actions, and preview/fallback presentation.
+    - First slice should support a minimal capture action and readable unavailable/denied/failed states for missing tools, portals, or permissions; defer annotation tools, history/gallery persistence, upload/share flows, and configurable save destinations.
+    - Verification should include QML lint, startup smoke, missing-command fallback smoke where feasible, and manual confirmation that the bottom surface stays within reserved HUD geometry and does not interfere with existing central expansion panels.
+5. OpenClaw CLI contract discovery (deferred until the end of this sequence and until a local validation environment exists)
+   - Find the real OpenClaw CLI entry point and map it to the generic contract.
+   - Keep missing-command and unvalidated-adapter fallback language until the contract is confirmed.
 
 ## Review Findings
 

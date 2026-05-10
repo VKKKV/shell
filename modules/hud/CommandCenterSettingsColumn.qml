@@ -103,6 +103,7 @@ ColumnLayout {
         lines: [
             "default: VOID keeps the nixie/vacuum-tube layer off",
             "NIXIE: background layer mode; not a wallpaper scan/apply action",
+            "TIANJI: selectable placeholder; visual implementation deferred",
             "active mode persists as visual.backgroundMode"
         ]
     }
@@ -114,19 +115,20 @@ ColumnLayout {
         columnSpacing: Theme.densitySmallSpacing
 
         Repeater {
-            model: ["void", "grid", "radar", "nixie"]
+            model: ["void", "grid", "radar", "nixie", "tianji"]
 
             Rectangle {
                 required property string modelData
 
                 readonly property bool isActive: SettingsService.backgroundMode === modelData
                 readonly property bool isNixie: modelData === "nixie"
+                readonly property bool isDeferred: modelData === "tianji"
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: isNixie ? Theme.densityControlHeight * 1.35 : Theme.densityControlHeight
+                Layout.preferredHeight: isNixie || isDeferred ? Theme.densityControlHeight * 1.35 : Theme.densityControlHeight
                 color: isActive ? Theme.lineDim : (backgroundModeArea.containsMouse ? Theme.panelSoft : "transparent")
-                border.color: isActive || isNixie ? Theme.line : Theme.lineDim
-                border.width: isActive || isNixie ? Theme.lineWidth * 1.5 : Theme.lineWidth
+                border.color: isActive || isNixie || isDeferred ? Theme.line : Theme.lineDim
+                border.width: isActive || isNixie || isDeferred ? Theme.lineWidth * 1.5 : Theme.lineWidth
 
                 MouseArea {
                     id: backgroundModeArea
@@ -145,7 +147,7 @@ ColumnLayout {
                     TacticalLabel {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignVCenter
-                        text: parent.parent.modelData.toUpperCase() + (parent.parent.isNixie ? " // OPTIONAL" : "")
+                        text: parent.parent.modelData.toUpperCase() + (parent.parent.isNixie ? " // OPTIONAL" : (parent.parent.isDeferred ? " // STAGED" : ""))
                         accent: parent.parent.isActive || parent.parent.isNixie
                         dim: !parent.parent.isActive && !parent.parent.isNixie
                         horizontalAlignment: Text.AlignHCenter
@@ -153,8 +155,8 @@ ColumnLayout {
 
                     TacticalLabel {
                         Layout.fillWidth: true
-                        visible: parent.parent.isNixie
-                        text: parent.parent.isActive ? "layer armed; wallpaper unchanged" : "default-off vacuum tube backdrop"
+                        visible: parent.parent.isNixie || parent.parent.isDeferred
+                        text: parent.parent.isNixie ? (parent.parent.isActive ? "layer armed; wallpaper unchanged" : "default-off vacuum tube backdrop") : "safe placeholder; no layer yet"
                         accent: parent.parent.isActive
                         dim: !parent.parent.isActive
                         size: Theme.fontTiny
