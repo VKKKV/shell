@@ -25,7 +25,11 @@ The `Ctrl+Alt+S` command center with system overview, settings/background contro
 
 Left-panel Natural Earth globe with offline coastline vectors, procedural ocean/terrain hints, atmospheric rim glow, and drag-to-rotate longitude control.
 
-![Earth panel placeholder](docs/screenshots/04-panel.png)
+![Orbital panel](docs/screenshots/04-panel.png)
+
+![Nixie vacuum-tube backdrop](docs/screenshots/05-nixie.png)
+
+Optional Nixie/vacuum-tube background with image-based digit glow, kept default-off behind the background mode setting.
 
 ## Features
 
