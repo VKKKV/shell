@@ -10,9 +10,6 @@ This project is a high-contrast tactical HUD shell built with Quickshell/QML. It
 
 Screenshots are intentionally left as future placeholders. Add the image files under `docs/screenshots/` when captures are ready.
 
-### Target Design
-![Target](target.png)
-
 ### Main HUD
 ![Main HUD placeholder](docs/screenshots/01-main-hud.png)
 
@@ -28,20 +25,7 @@ The `Ctrl+Alt+S` command center with system overview, settings/background contro
 
 Left-panel Natural Earth globe with offline coastline vectors, procedural ocean/terrain hints, atmospheric rim glow, and drag-to-rotate longitude control.
 
-### Top-Bar Launcher
-![Top-bar launcher placeholder](docs/screenshots/04-launcher-bar.png)
-
-Compact `Ctrl+Space` launcher surface for installed desktop apps, built-in actions, calculator results, and shell command dispatch while preserving the command-center launcher.
-
-### Settings And Backgrounds
-![Settings and backgrounds placeholder](docs/screenshots/05-settings-backgrounds.png)
-
-Runtime appearance controls for accent, theme, scanlines, panel visibility, font scale, polling, wallpaper scan/apply/color sampling, and optional default-off Nixie/vacuum-tube background mode.
-
-### Shell Self-Performance
-![Shell self-performance placeholder](docs/screenshots/06-shell-performance.png)
-
-Left-panel self-monitoring for the running Quickshell process, including CPU, RSS memory, child helper count, uptime, and recent service health.
+![Earth panel placeholder](docs/screenshots/04-panel.png)
 
 ## Features
 
