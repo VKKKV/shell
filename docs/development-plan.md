@@ -60,6 +60,14 @@ Avoid mixing these in the same task:
    - Consider frame/render cadence or QML profiler-derived signals only after the `/proc` MVP has runtime evidence that they are needed.
    - Keep any deeper helper attribution behind `ShellPerformanceService`; recursive process-tree aggregation and per-child drilldowns remain out of scope until requested.
    - Validate idle CPU behavior after longer shell sessions and tune polling only from measured repaint/process cost.
+4. Launcher input bar
+   - Add a compact command/search launcher input as its own independently verifiable UI slice, with a clear service boundary for query state, result shaping, activation intent, and fallback copy when no providers are available.
+   - Keep first-slice scope to opening/focusing the bar, typing input, rendering local/static or safely probed results, and dismiss/escape behavior; defer provider persistence, plugin ordering, fuzzy-ranking polish, and broad command execution until follow-up slices.
+   - Verification should include QML lint, startup smoke, and manual checks that the bar focuses predictably, empty/error states are readable, and existing HUD keyboard/left-panel interactions are not regressed.
+5. Screenshot bottom surface
+   - Add a bottom-positioned screenshot capture surface as a separate vertical slice, with capture command probing/execution isolated in a service and the module limited to shaped status, actions, and preview/fallback presentation.
+   - First slice should support a minimal capture action and readable unavailable/denied/failed states for missing tools, portals, or permissions; defer annotation tools, history/gallery persistence, upload/share flows, and configurable save destinations.
+   - Verification should include QML lint, startup smoke, missing-command fallback smoke where feasible, and manual confirmation that the bottom surface stays within reserved HUD geometry and does not interfere with existing central expansion panels.
 
 ## Review Findings
 
