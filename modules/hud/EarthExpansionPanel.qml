@@ -64,8 +64,9 @@ CentralPanelChrome {
                 lines: [
                     "COAST: NATURAL EARTH 50M OFFLINE VECTORS",
                     "DETAIL: 1425 LINES / 28853 COAST POINTS",
-                    "OCEAN: PROCEDURAL DEPTH HASH + SCAN TEXTURE",
-                    "LAND: CLIPPED TERRAIN TINT / CONTOUR NOISE",
+                    "OCEAN: EXPANDED-ONLY DEPTH HASH + RIDGE SCANS",
+                    "LAND: CLIPPED TINT / COASTAL RELIEF NOISE",
+                    "COAST: MAJOR-LINE HIERARCHY IN EXPANDED MODE",
                     "DRAG: HORIZONTAL SWIPE ROTATES LONGITUDE",
                     "GRID: 15/30 DEG LAT/LON",
                     "NODES: LOCAL SIGNAL BEACONS",

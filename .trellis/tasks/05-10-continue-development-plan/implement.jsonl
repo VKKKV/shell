@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"QML component/module/service boundaries and Canvas visual component expectations for RotatingGlobe and future left-panel roadmap note."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Small vertical slice requirements, verification commands, service boundaries, and tactical visual language constraints."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Changing render constants and helper names requires searching for related usage and avoiding duplicated configuration."}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Future shell self-performance module is roadmap-only here but should be framed as a later service-to-left-panel cross-layer slice."}

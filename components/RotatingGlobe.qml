@@ -100,6 +100,12 @@ Item {
         return value - Math.floor(value);
     }
 
+    function terrainRidgeNoise(lat, lon) {
+        var primary = terrainNoise(lat * 0.73 + 11.0, lon * 0.61 - 7.0);
+        var secondary = terrainNoise(lat * 1.31 - 5.0, lon * 1.17 + 19.0);
+        return primary * 0.62 + secondary * 0.38;
+    }
+
     function isClosedPolyline(points) {
         if (points.length < 4)
             return false;
@@ -141,36 +147,101 @@ Item {
         for (var lat = -75; lat <= 75; lat += root.textureLatStep) {
             for (var lon = -180; lon < 180; lon += root.textureLonStep) {
                 var sampleLon = lon + displayPhase * 0.18;
-                var projected = project(lat, sampleLon);
-                if (!projected.visible)
+                var textureProjected = project(lat, sampleLon);
+                if (!textureProjected.visible)
                     continue;
 
-                var noise = terrainNoise(lat, lon);
-                if (noise < 0.42)
+                var textureNoise = terrainNoise(lat, lon);
+                if (textureNoise < 0.42)
                     continue;
 
-                var length = radius * (0.012 + noise * 0.018);
-                ctx.globalAlpha = (root.expanded ? 0.09 : 0.055) * projected.edge;
+                var textureLength = radius * (0.012 + textureNoise * 0.018);
+                ctx.globalAlpha = (root.expanded ? 0.09 : 0.055) * textureProjected.edge;
                 ctx.beginPath();
-                ctx.moveTo(projected.x - length, projected.y + length * 0.35);
-                ctx.lineTo(projected.x + length, projected.y - length * 0.35);
+                ctx.moveTo(textureProjected.x - textureLength, textureProjected.y + textureLength * 0.35);
+                ctx.lineTo(textureProjected.x + textureLength, textureProjected.y - textureLength * 0.35);
                 ctx.stroke();
+            }
+        }
+
+        if (root.expanded) {
+            var bathymetryLatStep = 9;
+            var bathymetryLonStep = 14;
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = Math.max(0.45, Theme.lineWidth * 0.45);
+            for (var bathyLat = -72; bathyLat <= 72; bathyLat += bathymetryLatStep) {
+                for (var bathyLon = -174; bathyLon < 180; bathyLon += bathymetryLonStep) {
+                    var bathySampleLon = bathyLon - displayPhase * 0.12;
+                    var bathyProjected = project(bathyLat, bathySampleLon);
+                    if (!bathyProjected.visible)
+                        continue;
+
+                    var bathyNoise = terrainRidgeNoise(bathyLat, bathyLon);
+                    if (bathyNoise < 0.7)
+                        continue;
+
+                    var bathyLength = radius * (0.008 + bathyNoise * 0.013);
+                    var bathyTilt = terrainNoise(bathyLat - 17, bathyLon + 23) - 0.5;
+                    ctx.globalAlpha = 0.07 * bathyProjected.edge;
+                    ctx.beginPath();
+                    ctx.moveTo(bathyProjected.x - bathyLength, bathyProjected.y + bathyLength * bathyTilt);
+                    ctx.lineTo(bathyProjected.x + bathyLength, bathyProjected.y - bathyLength * bathyTilt);
+                    ctx.stroke();
+                }
             }
         }
 
         ctx.fillStyle = accent;
         for (var band = -60; band <= 60; band += 30) {
             for (var meridian = -165; meridian < 180; meridian += 30) {
-                projected = project(band + 5, meridian - displayPhase * 0.1);
-                if (!projected.visible)
+                var gridProjected = project(band + 5, meridian - displayPhase * 0.1);
+                if (!gridProjected.visible)
                     continue;
-                ctx.globalAlpha = (root.expanded ? 0.045 : 0.03) * projected.edge;
+                ctx.globalAlpha = (root.expanded ? 0.045 : 0.03) * gridProjected.edge;
                 ctx.beginPath();
-                ctx.arc(projected.x, projected.y, Math.max(0.7, radius * 0.008), 0, Math.PI * 2);
+                ctx.arc(gridProjected.x, gridProjected.y, Math.max(0.7, radius * 0.008), 0, Math.PI * 2);
                 ctx.fill();
             }
         }
         ctx.restore();
+    }
+
+    function drawCoastalRelief(ctx, pts, terrain) {
+        var reliefStride = root.expanded ? 4 : (root.globeSize < 165 ? 18 : 14);
+        ctx.strokeStyle = terrain;
+        ctx.lineWidth = Math.max(0.45, Theme.lineWidth * 0.5);
+
+        for (var i = 0; i < pts.length; i += reliefStride) {
+            var point = project(pts[i][0], pts[i][1]);
+            if (!point.visible)
+                continue;
+
+            var ridge = terrainRidgeNoise(pts[i][0], pts[i][1]);
+            if (ridge < 0.6)
+                continue;
+
+            var run = root.globeRadius * (0.014 + ridge * 0.016);
+            var slant = terrainNoise(pts[i][0] + 31, pts[i][1] - 29) - 0.5;
+            ctx.globalAlpha = (root.expanded ? 0.105 : 0.05) * point.edge;
+            ctx.beginPath();
+            ctx.moveTo(point.x - run, point.y + run * slant);
+            ctx.lineTo(point.x + run, point.y - run * slant);
+            ctx.stroke();
+        }
+    }
+
+    function drawCoastlineHierarchy(ctx, accent, dim) {
+        for (var c = 0; c < root.coastlines.length; c += root.coastlinePolylineStride) {
+            var pts = root.coastlines[c];
+            var major = root.expanded && pts.length >= 44;
+            var visibleAlpha = major ? 0.86 : (root.expanded ? 0.72 : 0.64);
+            var visibleWidth = major ? 2.15 : (root.expanded ? 1.55 : 1.25);
+
+            if (major)
+                root.drawPolyline(ctx, pts, dim, 0.22, 3.2, root.coastlinePointStride);
+
+            root.drawPolyline(ctx, pts, accent, visibleAlpha, visibleWidth, root.coastlinePointStride);
+        }
     }
 
     function drawLandMasses(ctx, accent, terrain) {
@@ -213,13 +284,16 @@ Item {
                 if (!point.visible)
                     continue;
                 var noise = terrainNoise(pts[i][0], pts[i][1]);
-                if (noise < 0.34)
+                if (noise < (root.expanded ? 0.42 : 0.36))
                     continue;
-                ctx.globalAlpha = (root.expanded ? 0.1 : 0.06) * point.edge;
+                ctx.globalAlpha = (root.expanded ? 0.085 : 0.055) * point.edge;
                 ctx.beginPath();
-                ctx.arc(point.x, point.y, 0.8 + noise * 1.2, 0, Math.PI * 2);
+                ctx.arc(point.x, point.y, 0.7 + noise * (root.expanded ? 1.0 : 0.9), 0, Math.PI * 2);
                 ctx.fill();
             }
+
+            if (root.expanded)
+                drawCoastalRelief(ctx, pts, terrain);
             ctx.restore();
         }
     }
@@ -268,10 +342,11 @@ Item {
             ctx.fill();
 
             // atmospheric rim glow
-            var atmosphere = ctx.createRadialGradient(cx, cy, radius * 0.72, cx, cy, radius * 1.08);
+            var atmosphere = ctx.createRadialGradient(cx - radius * 0.08, cy - radius * 0.1, radius * 0.68, cx, cy, radius * 1.1);
             atmosphere.addColorStop(0, "#00000000");
-            atmosphere.addColorStop(0.78, Theme.alphaColor(Theme.line.toString(), root.expanded ? 0.05 : 0.035));
-            atmosphere.addColorStop(1, Theme.alphaColor(Theme.line.toString(), root.expanded ? 0.3 : 0.22));
+            atmosphere.addColorStop(0.72, Theme.alphaColor(Theme.line.toString(), root.expanded ? 0.035 : 0.03));
+            atmosphere.addColorStop(0.9, Theme.alphaColor(Theme.terminalGreen.toString(), root.expanded ? 0.12 : 0.075));
+            atmosphere.addColorStop(1, Theme.alphaColor(Theme.line.toString(), root.expanded ? 0.34 : 0.22));
             ctx.globalCompositeOperation = "screen";
             ctx.globalAlpha = 1;
             ctx.fillStyle = atmosphere;
@@ -327,8 +402,7 @@ Item {
             root.drawLandMasses(ctx, accent, terrain);
 
             // coastline strokes
-            for (var c = 0; c < root.coastlines.length; c += root.coastlinePolylineStride)
-                root.drawPolyline(ctx, root.coastlines[c], accent, root.expanded ? 0.82 : 0.64, root.expanded ? 2.0 : 1.25, root.coastlinePointStride);
+            root.drawCoastlineHierarchy(ctx, accent, dim);
 
             // signal nodes
             ctx.globalCompositeOperation = "screen";
@@ -337,13 +411,26 @@ Item {
             ctx.globalCompositeOperation = "source-over";
 
             // night terminator
-            var night = ctx.createLinearGradient(cx + radius * 0.18, cy - radius, cx + radius * 0.88, cy + radius);
+            var night = ctx.createLinearGradient(cx + radius * 0.08, cy - radius, cx + radius * 0.92, cy + radius);
             night.addColorStop(0, "#00000000");
-            night.addColorStop(0.45, "#22000000");
-            night.addColorStop(1, "#cc000000");
-            ctx.globalAlpha = 0.7;
+            night.addColorStop(0.42, "#18000000");
+            night.addColorStop(0.74, "#72000000");
+            night.addColorStop(1, "#c9000000");
+            ctx.globalAlpha = root.expanded ? 0.66 : 0.7;
             ctx.fillStyle = night;
             ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+
+            if (root.expanded) {
+                var dusk = ctx.createLinearGradient(cx + radius * 0.24, cy - radius * 0.86, cx + radius * 0.68, cy + radius * 0.86);
+                dusk.addColorStop(0, "#00000000");
+                dusk.addColorStop(0.5, Theme.alphaColor(Theme.line.toString(), 0.1));
+                dusk.addColorStop(1, "#00000000");
+                ctx.globalCompositeOperation = "screen";
+                ctx.globalAlpha = 0.38;
+                ctx.fillStyle = dusk;
+                ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+                ctx.globalCompositeOperation = "source-over";
+            }
 
             ctx.restore();
 

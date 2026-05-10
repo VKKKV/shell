@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"Check that RotatingGlobe remains visual-only, panel copy stays accurate, and future performance module is only roadmaped, not mixed into this slice."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Check verification commands, small vertical slice completion, fallback behavior, and tactical visual language."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Check render constants/helpers are not misleading or duplicated and related docs/copy stay aligned."}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Check the future shell self-performance roadmap item is described as a separate cross-layer slice with service/module boundaries."}
