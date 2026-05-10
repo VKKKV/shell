@@ -66,10 +66,15 @@ TacticalFrame {
                 rows: [["CENTER", "HYPRLAND", -1, true], ["HUD", "EDGE ONLY", -1, false], ["INPUT", "PASSTHRU", -1, false]]
             }
 
+            MetricBlock {
+                title: "SHELL SELF"
+                rows: ShellPerformanceService.rows
+            }
+
             Sparkline {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 34
-                values: [0.2, 0.5, 0.32, 0.72, 0.45, 0.9, 0.62, 0.36, 0.78, 0.54, 0.26, 0.66]
+                values: ShellPerformanceService.history
             }
 
             Item {

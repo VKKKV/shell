@@ -43,6 +43,7 @@ Avoid mixing these in the same task:
 - Earth compact rendering optimization: tuned the Canvas2D globe frame/rim alignment, hid clip-edge seams with an inner rim, and added compact-mode coastline/texture budgets so the left panel no longer repaints every Natural Earth point at full expanded detail.
 - Earth procedural fidelity budget: added expanded-only bathymetry/ridge scan passes and budgeted land relief strokes while preserving compact-mode sparse texture/detail sampling and the Natural Earth 50m runtime dataset.
 - Earth procedural visual refinement: cleaned up expanded-only bathymetry budgets, renamed coastline-sampled land detail as coastal relief, added expanded coastline stroke hierarchy, tuned relief thresholds, and polished the atmospheric rim/terminator while keeping compact rendering lower-budget.
+- Left-panel shell self-performance module: added a service-owned `/proc` sampler for the Quickshell process plus direct child helpers and surfaced compact CPU, RSS, child count, uptime, and recent service health rows in the left panel.
 
 ### Next Slices
 
@@ -55,10 +56,10 @@ Avoid mixing these in the same task:
     - Further refine the procedural Canvas2D layers only as profiling or visible artifacts justify it: compare the 50m coastline hierarchy against visible artifacts, consider true interior terrain sampling only as a bounded offline/runtime pass, and keep the existing tactical grid, signal nodes, and location markers stable; keep expanded mode rich while compact/left-panel mode uses a bounded polyline/point budget.
     - Reference Natural Earth data, D3 geo projection math, and `world-map-gen` for projection/data-pipeline ideas without introducing runtime network dependencies.
     - Expected trade-off: medium difficulty, mainly data preprocessing and render-pipeline splitting; larger embedded data around 200KB compressed; procedural noise approximates terrain instead of using real land textures.
-3. Left-panel shell self-performance/resource module
-   - Add a small left-panel readout for the shell's own CPU, memory, frame/render cadence, and recent warning/error behavior.
-   - Keep process/resource collection behind a service boundary with conservative polling and readable missing-command/session fallbacks.
-   - Treat this as its own cross-layer slice; do not mix it with Earth renderer polish or provider integrations.
+3. Shell self-performance follow-up
+   - Consider frame/render cadence or QML profiler-derived signals only after the `/proc` MVP has runtime evidence that they are needed.
+   - Keep any deeper helper attribution behind `ShellPerformanceService`; recursive process-tree aggregation and per-child drilldowns remain out of scope until requested.
+   - Validate idle CPU behavior after longer shell sessions and tune polling only from measured repaint/process cost.
 
 ## Review Findings
 

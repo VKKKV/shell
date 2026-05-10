@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"Check collection stays in services, left panel only composes shaped rows, and existing interactions remain intact."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Check live data polling, fallbacks, qmldir registration, verification commands, and tactical visual consistency."}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Check /proc-to-service-to-UI data flow, error boundaries, and direct-child aggregation scope."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Check existing components/polling patterns are reused and no unnecessary duplicate abstractions are introduced."}

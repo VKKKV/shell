@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"Service/module/component boundary rules for adding a left-panel readout backed by a singleton service."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Verification commands, live data polling constraints, fallback behavior, qmldir updates, and tactical visual language."}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"This feature spans /proc/process data collection, service shaping, and left-panel display; define boundaries and fallbacks."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Reuse existing MetricBlock/Sparkline and SystemStats polling patterns instead of duplicating UI/service logic unnecessarily."}
