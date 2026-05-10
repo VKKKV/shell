@@ -1,0 +1,6 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Check QML quality, verification commands, no runtime fetches, and runtime fallback/visual quality expectations."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Check that existing coastline tools and rendering contracts are reused rather than duplicated."}
+{"file":".trellis/tasks/05-10-earth-globe-high-precision-coastline-and-terrain-upgrade/prd.md","reason":"Check final changes against accepted scope and evidence requirements."}
+{"file":"docs/earth-coastline-preprocessing.md","reason":"Check generated candidate provenance, manifest validation, and runtime data replacement rules."}
+{"file":"components/RotatingGlobe.qml","reason":"Check central-panel load latency, budgets, and any rendering-path adjustments against current runtime renderer behavior."}

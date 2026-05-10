@@ -25,10 +25,13 @@ Item {
     readonly property int globeCenterY: height / 2
     readonly property real surfaceRadius: globeRadius * (expanded ? 0.945 : 0.93)
     readonly property real frameRadius: globeRadius * (expanded ? 0.96 : 0.945)
+    // Keep expanded repaint work bounded so opening the central Earth panel does
+    // not stall on every reviewed coastline point. The current 50m data remains
+    // the runtime source; 10m candidates are too large for stride-1 activation.
     readonly property int coastlinePolylineStride: expanded ? 1 : (globeSize < 165 ? 4 : 3)
-    readonly property int coastlinePointStride: expanded ? 1 : (globeSize < 165 ? 5 : 4)
-    readonly property int landPolylineStride: expanded ? 1 : (globeSize < 165 ? 8 : 6)
-    readonly property int terrainPointStride: expanded ? 2 : (globeSize < 165 ? 12 : 9)
+    readonly property int coastlinePointStride: expanded ? 2 : (globeSize < 165 ? 5 : 4)
+    readonly property int landPolylineStride: expanded ? 2 : (globeSize < 165 ? 8 : 6)
+    readonly property int terrainPointStride: expanded ? 4 : (globeSize < 165 ? 12 : 9)
     readonly property int minRenderedPolylinePoints: expanded ? 2 : (globeSize < 165 ? 10 : 7)
     readonly property int textureLatStep: expanded ? 10 : 20
     readonly property int textureLonStep: expanded ? 15 : 30
@@ -233,7 +236,7 @@ Item {
     function drawCoastlineHierarchy(ctx, accent, dim) {
         for (var c = 0; c < root.coastlines.length; c += root.coastlinePolylineStride) {
             var pts = root.coastlines[c];
-            var major = root.expanded && pts.length >= 44;
+            var major = root.expanded && pts.length >= 72;
             var visibleAlpha = major ? 0.86 : (root.expanded ? 0.72 : 0.64);
             var visibleWidth = major ? 2.15 : (root.expanded ? 1.55 : 1.25);
 
